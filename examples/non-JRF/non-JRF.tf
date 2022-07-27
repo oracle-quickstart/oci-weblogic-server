@@ -10,6 +10,10 @@ variable "region" {
   default = "us-phoenix-1"
 }
 
+module "compute-keygen" {
+  source = "../../modules/keygen"
+}
+
 module "non-JRF" {
   source = "../../modules/compute/wls_compute"
   add_loadbalancer = false
@@ -22,8 +26,10 @@ module "non-JRF" {
   load_balancer_id = ""
   mode = "PROD"
   network_compartment_id = "ocid1.compartment.oc1..aaaaaaaa7cpsku5d7xingyadmnchaeeg5ryqhnzo74md6rgw2ghtwvsic4uq"
-  opc_key = {public_key_openssh = "", private_key_pem = ""}
-  oracle_key = {public_key_openssh = "", private_key_pem = ""}
+  #opc_key = {public_key_openssh = "", private_key_pem = ""}
+  #oracle_key = {public_key_openssh = "", private_key_pem = ""}
+  oracle_key = module.compute-keygen.OraclePrivateKey
+  opc_key = module.compute-keygen.OPCPrivateKey
   region = var.region
   ssh_public_key = var.ssh_public_key
   subnet_ocid = "ocid1.subnet.oc1.phx.aaaaaaaaa6yhz37v7saxkvo3tvfrofkviw2cql4w4nddduvl5anelod7af2a"
@@ -42,4 +48,5 @@ module "non-JRF" {
   wls_version = "12.2.1.4"
   numVMInstances = "2"
   compute_name_prefix = "nonjrf-instance"
+  service_name_prefix = "nonjrf-instance"
 }

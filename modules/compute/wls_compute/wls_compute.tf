@@ -28,6 +28,7 @@ instance_params = { for x in range(var.numVMInstances) : "${local.host_label}-${
   metadata = {
 
     service_name                       = var.compute_name_prefix
+    service_name_prefix                = var.service_name_prefix
     tf_script_version                  = var.tf_script_version
     ssh_authorized_keys                = var.ssh_public_key
     wls_admin_user                     = var.wls_admin_user

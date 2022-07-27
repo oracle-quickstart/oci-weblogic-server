@@ -36,6 +36,11 @@ variable "ssh_public_key" {
   description = "The ssh public key that will be added to the compute to allow the opc user to ssh to it using its corresponding private key"
 }
 
+variable "service_name_prefix" {
+  type = string
+  description = "Prefix used by the WebLogic for OCI instance of which this compute is part"
+}
+
 variable "compute_name_prefix" {
   type = string
   description = "The prefix for the name of the compute. If not specified, a default value will be used"
