@@ -16,19 +16,13 @@ variable "compartment_id" {
   }
 }
 
-variable "service_name" {
+variable "resource_name_prefix" {
   type        = string
-  description = "Prefix to be added to the policy"
+  description = "Prefix used to name resources created by this module"
   validation {
-    condition     = var.service_name != ""
-    error_message = "The value for service_name cannot be empty."
+    condition     = var.resource_name_prefix != ""
+    error_message = "The value for resource_name_prefix cannot be empty."
   }
-}
-
-variable "create_policies" {
-  type        = bool
-  description = "Set to true if you want to create policies"
-  default     = true
 }
 
 variable "tags" {
@@ -47,5 +41,12 @@ variable "dynamic_group_rule" {
   type        = string
   description = "Value of the tag to be used to identify resources that should be included in the dynamic groups for the policies"
 }
+
+variable "wls_admin_password_id" {
+  type = string
+  description = "The OCID of the vault secret containing the password for the WebLogic administration user"
+}
+
+
 
 
