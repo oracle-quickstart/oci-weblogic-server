@@ -1,9 +1,3 @@
-
-locals {
-  bastion_public_ssh_key  = var.use_existing_subnet ? tls_private_key.bastion_opc_key[var.vm_count - 1].public_key_openssh : tls_private_key.bastion_opc_key[0].public_key_openssh
-  bastion_private_ssh_key = var.use_existing_subnet ? tls_private_key.bastion_opc_key[var.vm_count - 1].private_key_pem : tls_private_key.bastion_opc_key[0].private_key_pem
-}
-
 # Gets a list of Availability Domains in the tenancy
 data "oci_identity_availability_domains" "ADs" {
   compartment_id = var.tenancy_id

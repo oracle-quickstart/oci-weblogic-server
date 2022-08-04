@@ -51,18 +51,9 @@ variable "instance_name" {
   default     = "bastion-instance"
 }
 
-variable "instance_count" {
-  type        = number
-  description = "Set to 0 if a bastion instance should not be created. Set to 1 if a bastion instance should be created"
-  validation {
-    condition     = var.instance_count == 0 || var.instance_count == 1
-    error_message = "The allowed values for instance_count are 0 or 1."
-  }
-}
-
 variable "vm_count" {
   type        = number
-  description = "Number of WebLogic VM nodes the WebLogic for OCI instance associated to this bastion instance has"
+  description = "Number of WebLogic VM nodes in the WebLogic for OCI instance associated to this bastion"
   validation {
     condition     = var.vm_count > 0
     error_message = "The value for vm_count must be greater than 0."
@@ -130,14 +121,14 @@ variable "disable_legacy_metadata_endpoint" {
   default     = true
 }
 
-variable "defined_tags" {
-  type        = map
-  description = "A map with keys that will be added as defined tags to the bastion compute instance"
-  default     = {}
-}
-
-variable "freeform_tags" {
-  type        = map
-  description = "A map with keys that will be added as freeform tags to the bastion compute instance"
-  default     = {}
+variable "tags" {
+  type = object({
+    defined_tags  = map(any),
+    freeform_tags = map(any)
+  })
+  description = "Defined tags and freeform tags to be added to the bastion compute instance"
+  default = {
+    defined_tags  = {},
+    freeform_tags = {}
+  }
 }

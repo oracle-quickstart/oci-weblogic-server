@@ -1,5 +1,5 @@
 resource "oci_core_instance" "wls-bastion-instance" {
-  count = (var.is_bastion_instance_required && var.existing_bastion_instance_id == "") ? var.instance_count : 0
+  count = (var.is_bastion_instance_required && var.existing_bastion_instance_id == "") ? 1 : 0
 
   availability_domain = var.availability_domain
 
@@ -7,8 +7,8 @@ resource "oci_core_instance" "wls-bastion-instance" {
   display_name   = var.instance_name
   shape          = var.instance_shape
 
-  defined_tags  = var.defined_tags
-  freeform_tags = var.freeform_tags
+  defined_tags  = var.tags.defined_tags
+  freeform_tags = var.tags.freeform_tags
 
   create_vnic_details {
     subnet_id              = var.bastion_subnet_id
@@ -45,4 +45,7 @@ resource "oci_core_public_ip" "reserved_public_ip" {
   display_name   = "${var.instance_name}-reserved-public-ip"
   lifetime       = "RESERVED"
   private_ip_id  = data.oci_core_private_ips.bastion_private_ips[0].private_ips[0]["id"]
+
+  defined_tags  = var.tags.defined_tags
+  freeform_tags = var.tags.freeform_tags
 }
