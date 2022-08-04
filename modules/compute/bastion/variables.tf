@@ -72,15 +72,6 @@ variable "is_bastion_with_reserved_public_ip" {
   default     = false
 }
 
-variable "existing_bastion_instance_id" {
-  type        = string
-  description = "Specify the OCID of a compute instance that will be used as bastion, instead of creating a new bastion compute"
-  validation {
-    condition     = var.existing_bastion_instance_id == "" || length(regexall("^ocid1.instance.*$", var.existing_bastion_instance_id)) > 0
-    error_message = "The value for existing_bastion_instance_id should be blank or start with \"ocid1.instance.\"."
-  }
-}
-
 variable "bastion_subnet_id" {
   type        = string
   description = "The OCID of the subnet where the bastion compute will be created"

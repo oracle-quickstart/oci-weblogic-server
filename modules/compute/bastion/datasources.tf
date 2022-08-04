@@ -23,7 +23,7 @@ data "oci_core_shapes" "oci_shapes" {
 }
 
 data "oci_core_private_ips" "bastion_private_ips" {
-  count = var.is_bastion_with_reserved_public_ip ? 1 : 0
+  count = (var.is_bastion_instance_required && var.is_bastion_with_reserved_public_ip) ? 1 : 0
 
   ip_address = oci_core_instance.wls-bastion-instance[0].private_ip
   subnet_id  = var.bastion_subnet_id

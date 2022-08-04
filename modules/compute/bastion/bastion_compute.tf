@@ -1,5 +1,5 @@
 resource "oci_core_instance" "wls-bastion-instance" {
-  count = (var.is_bastion_instance_required && var.existing_bastion_instance_id == "") ? 1 : 0
+  count = var.is_bastion_instance_required ? 1 : 0
 
   availability_domain = var.availability_domain
 
@@ -39,7 +39,7 @@ resource "oci_core_instance" "wls-bastion-instance" {
 }
 
 resource "oci_core_public_ip" "reserved_public_ip" {
-  count = var.is_bastion_with_reserved_public_ip ? 1 : 0
+  count = (var.is_bastion_instance_required && var.is_bastion_with_reserved_public_ip) ? 1 : 0
 
   compartment_id = var.compartment_id
   display_name   = "${var.instance_name}-reserved-public-ip"
