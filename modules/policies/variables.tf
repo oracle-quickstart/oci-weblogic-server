@@ -31,21 +31,21 @@ variable "create_policies" {
   default     = true
 }
 
-variable "defined_tags" {
-  type        = map
-  description = "Defined tags to be added to the policy"
-  default     = {}
+variable "tags" {
+  type = object({
+    defined_tags  = map(any),
+    freeform_tags = map(any)
+  })
+  description = "Defined tags and freeform tags to be added to the policy"
+  default = {
+    defined_tags  = {},
+    freeform_tags = {}
+  }
 }
 
-variable "freeform_tags" {
-  type        = map
-  description = "Free-form tags to be added to the policy"
-  default     = {}
+variable "dynamic_group_rule" {
+  type        = string
+  description = "Value of the tag to be used to identify resources that should be included in the dynamic groups for the policies"
 }
 
-# TODO Add dynamic_group_rule
-#variable "dynamic_group_rule" {
-#  type = string
-#  description = "value of the tag to identify resources"
-#}
 
