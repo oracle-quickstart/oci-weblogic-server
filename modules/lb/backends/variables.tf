@@ -9,11 +9,6 @@ variable "instance_private_ips" {
   description = "The list of private IP addresses of the instances for the backened servers"
 }
 
-variable "name" {
-  default     = "wls-loadbalancer"
-  description = "The name of the backend set to add the backend server to"
-}
-
 variable "wls_ms_port" {
   type        = string
   description = "WebLogic managed server port"
@@ -45,7 +40,7 @@ variable "policy_weight" {
 }
 
 variable "add_load_balancer" {
-  type = bool
+  type        = bool
   description = "Set to true of a load balancer was created as part of the WebLogic for OCI stack"
 }
 
@@ -81,17 +76,17 @@ variable "allow_manual_domain_extension" {
 }
 
 variable "load_balancer_id" {
-  type = string
+  type        = string
   description = "The OCID of the load balancer that was created as part of the WebLogic for OCI stack"
 }
 
 variable "use_existing_lb" {
-  type = bool
+  type        = bool
   description = "Flag to indicate to use existing load balancer"
-  default = false
+  default     = false
 }
 
-variable "service_name_prefix" {
-  type = string
+variable "resource_name_prefix" {
+  type        = string
   description = "Prefix used by the WebLogic for OCI instance of which this compute is part"
 }

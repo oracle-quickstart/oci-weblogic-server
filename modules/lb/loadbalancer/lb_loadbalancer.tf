@@ -1,5 +1,5 @@
 
-resource "oci_load_balancer_load_balancer" "wls-loadbalancer-reservedip" {
+resource "oci_load_balancer_load_balancer" "wls_loadbalancer_reservedip" {
   count            = var.add_load_balancer && var.existing_load_balancer_id == "" && var.add_lb_reserved_public_ip_id ? 1 : 0
 
   shape            = "flexible"
@@ -23,8 +23,8 @@ resource "oci_load_balancer_load_balancer" "wls-loadbalancer-reservedip" {
   }
   display_name  = var.lb_name
   is_private    = var.is_lb_private
-  defined_tags  = var.defined_tags
-  freeform_tags = var.freeform_tags
+  defined_tags  = var.tags.defined_tags
+  freeform_tags = var.tags.freeform_tags
 }
 
 
@@ -48,6 +48,6 @@ resource "oci_load_balancer_load_balancer" "wls-loadbalancer" {
   }
   display_name  = var.lb_name
   is_private    = var.is_lb_private
-  defined_tags  = var.defined_tags
-  freeform_tags = var.freeform_tags
+  defined_tags  = var.tags.defined_tags
+  freeform_tags = var.tags.freeform_tags
 }

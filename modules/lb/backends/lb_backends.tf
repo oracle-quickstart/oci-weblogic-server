@@ -7,7 +7,7 @@ locals {
 
 resource "oci_load_balancer_backend_set" "wls_lb_backendset" {
   # If using existing load balancer, use per-created backend set of existing lb
-  count            = var.use_existing_lb ? 0: var.lbCount
+  count            = var.use_existing_lb ? 0 : 1
 
   name             = var.lb_backendset_name
   load_balancer_id = var.load_balancer_id
@@ -28,7 +28,7 @@ resource "oci_load_balancer_backend_set" "wls_lb_backendset" {
 resource "oci_load_balancer_listener" "wls_lb_listener_https" {
   count                    = local.use_https_listener_count
   load_balancer_id         = var.load_balancer_id
-  name                     = "${var.service_name_prefix}_https"
+  name                     = "${var.resource_name_prefix}_https"
   default_backend_set_name = var.use_existing_lb ? var.lb_backendset_name : oci_load_balancer_backend_set.wls_lb_backendset[count.index].name
   port                     = var.lb_https_lstr_port
   protocol                 = var.lb_protocol
@@ -65,7 +65,7 @@ resource "oci_load_balancer_rule_set" "SSL_headers" {
   count            = local.use_https_listener_count
 
   load_balancer_id = var.load_balancer_id
-  name             = "${var.service_name_prefix}_SSLHeaders"
+  name             = "${var.resource_name_prefix}_SSLHeaders"
   items {
     action = "ADD_HTTP_REQUEST_HEADER"
     header = "WL-Proxy-SSL"
@@ -79,10 +79,10 @@ resource "oci_load_balancer_rule_set" "SSL_headers" {
 }
 
 resource "oci_load_balancer_certificate" "demo_certificate" {
-  count = var.lbCount
+  count = var.add_load_balancer ? 1 : 0
 
   #Required
-  certificate_name = "${var.service_name_prefix}_${var.lb_certificate_name}"
+  certificate_name = "${var.resource_name_prefix}_${var.lb_certificate_name}"
   load_balancer_id = var.load_balancer_id
 
   #Optional

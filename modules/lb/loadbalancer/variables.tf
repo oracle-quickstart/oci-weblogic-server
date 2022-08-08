@@ -40,7 +40,7 @@ variable "is_lb_private" {
 
 variable "add_lb_reserved_public_ip_id" {
   type        = bool
-  description = "Whetehr Ocid of the pre-created public IP should be attached to this load balancer"
+  description = "Whether Ocid of the pre-created public IP should be attached to this load balancer"
 }
 
 variable "lb_reserved_public_ip_id" {
@@ -49,24 +49,23 @@ variable "lb_reserved_public_ip_id" {
 }
 
 variable "lb_subnet_2_id" {
-  type        = list
+  type        = list(string)
   description = "An array of subnet OCIDs"
 }
 
 variable "lb_subnet_1_id" {
-  type        = list
+  type        = list(string)
   description = "An array of subnet OCIDs"
 }
 
-variable "defined_tags" {
-  type        = map
-  default     = {}
-  description = "Defined tags to be added to the compute instance"
+variable "tags" {
+  type = object({
+    defined_tags  = map(any),
+    freeform_tags = map(any)
+  })
+  description = "Defined tags and freeform tags to be added to the company instance"
+  default = {
+    defined_tags  = {},
+    freeform_tags = {}
+  }
 }
-
-variable "freeform_tags" {
-  type        = map
-  default     = {}
-  description = "Free-form tags to be added to the compute instance"
-}
-
