@@ -6,7 +6,7 @@ variable "subnet_ids" {
 
 variable "instance_private_ips" {
   type        = list
-  description = "The list of private ipaddresses of the instances for the backened servers"
+  description = "The list of private IP addresses of the instances for the backened servers"
 }
 
 variable "name" {
@@ -16,20 +16,20 @@ variable "name" {
 
 variable "wls_ms_port" {
   type        = string
-  description = "weblogic managed server port"
+  description = "WebLogic managed server port"
 }
 
-variable "lb-protocol" {
+variable "lb_protocol" {
   default     = "HTTP"
   description = "The protocol the health check must use"
 }
 
-variable "lb-https-lstr-port" {
+variable "lb_https_lstr_port" {
   default     = "443"
   description = "The communication port for the listener"
 }
 
-variable "numVMInstances" {
+variable "num_vm_instances" {
   type        = string
   description = "The number of compute instances that are available"
 }
@@ -73,11 +73,6 @@ variable "lb_certificate_name" {
   type        = string
   default     = "demo_cert"
   description = "A friendly name for the certificate bundle"
-}
-
-variable "lbCount" {
-  type        = number
-  description = "Set to 1 if add load balancer is set to true"
 }
 
 variable "allow_manual_domain_extension" {
