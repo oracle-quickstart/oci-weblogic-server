@@ -1,10 +1,3 @@
-/*
- * Copyright (c) 2019, 2020, Oracle and/or its affiliates. All rights reserved.
- */
-/*
- * Load Balancer - This resource provides the Load Balancer resource in Oracle Cloud Infrastructure Load Balancer service.
- * See https://www.terraform.io/docs/providers/oci/r/load_balancer_load_balancer.html
- */
 
 locals {
   /* count decides whether to provision load balancer */
