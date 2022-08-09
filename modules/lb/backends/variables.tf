@@ -60,11 +60,6 @@ variable "lb_certificate_name" {
   description = "A friendly name for the certificate bundle"
 }
 
-variable "allow_manual_domain_extension" {
-  type        = bool
-  description = "Set to true to indicate that the domain will not be automatically extended for managed servers, meaning that users have to manually extend the domain in the compute instance"
-}
-
 variable "load_balancer_id" {
   type        = string
   description = "The OCID of the load balancer that was created as part of the WebLogic for OCI stack"
