@@ -1,7 +1,7 @@
 
 locals {
   system_defined_dg_tag_value = format("%s-%s", var.service_name, substr(random_uuid.uuid_1.result, 0, 8))
-  system_tag_value = {"wlsoci-${var.service_name}-system-tag":local.system_defined_dg_tag_value}
+  system_tag_value            = { "wlsoci-${var.service_name}-system-tag" : local.system_defined_dg_tag_value }
 }
 
 resource "random_uuid" "uuid_1" {
@@ -36,10 +36,10 @@ resource "oci_identity_tag" "wlsoci_dynamic_group_tag_key" {
 }
 
 resource "time_sleep" "tag_creation_delay" {
-  count           = var.create_dg_tags ? 1 : 0
+  count = var.create_dg_tags ? 1 : 0
 
   create_duration = "180s"
   triggers = {
-    dg_tag_key_name     = var.create_dg_tags ? oci_identity_tag.wlsoci_dynamic_group_tag_key[0].name : ""
+    dg_tag_key_name = var.create_dg_tags ? oci_identity_tag.wlsoci_dynamic_group_tag_key[0].name : ""
   }
 }
