@@ -44,11 +44,6 @@ variable "policy_weight" {
   description = "The load balancing policy weight assigned to the server"
 }
 
-variable "add_load_balancer" {
-  type        = bool
-  description = "Set to true of a load balancer was created as part of the WebLogic for OCI stack"
-}
-
 variable "lb_backendset_name" {
   default     = "wls-lb-backendset"
   description = "A friendly name for the backend set"
@@ -57,16 +52,6 @@ variable "lb_backendset_name" {
 variable "lb_policy" {
   default     = "ROUND_ROBIN"
   description = "The load balancer policy for the backend set"
-}
-
-variable "is_idcs_selected" {
-  type        = bool
-  description = "Indicates that idcs has to be provisioned"
-}
-
-variable "idcs_cloudgate_port" {
-  type        = string
-  description = "Value for idcs cloud gate port"
 }
 
 variable "lb_certificate_name" {

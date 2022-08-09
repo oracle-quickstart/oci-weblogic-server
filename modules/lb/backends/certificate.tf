@@ -1,12 +1,10 @@
 resource "tls_private_key" "ss_private_key" {
-  count = var.add_load_balancer ? 1 : 0
 
   algorithm = "RSA"
   rsa_bits  = "4096"
 }
 
 resource "tls_self_signed_cert" "demo_cert" {
-  count = var.add_load_balancer ? 1 : 0
 
   private_key_pem = tls_private_key.ss_private_key[0].private_key_pem
 
