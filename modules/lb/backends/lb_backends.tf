@@ -39,7 +39,7 @@ resource "oci_load_balancer_listener" "wls_lb_listener_https" {
   }
   ssl_configuration {
     #Required
-    certificate_name        = oci_load_balancer_certificate.demo_certificate[0].certificate_name
+    certificate_name        = oci_load_balancer_certificate.demo_certificate.certificate_name
     verify_peer_certificate = false
   }
 }
@@ -85,8 +85,8 @@ resource "oci_load_balancer_certificate" "demo_certificate" {
   load_balancer_id = var.load_balancer_id
 
   #Optional
-  public_certificate = tls_self_signed_cert.demo_cert[0].cert_pem
-  private_key        = tls_private_key.ss_private_key[0].private_key_pem
+  public_certificate = tls_self_signed_cert.demo_cert.cert_pem
+  private_key        = tls_private_key.ss_private_key.private_key_pem
 
   lifecycle {
     create_before_destroy = true

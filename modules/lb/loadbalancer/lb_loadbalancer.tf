@@ -24,7 +24,7 @@ resource "oci_load_balancer_load_balancer" "wls_loadbalancer" {
   dynamic "reserved_ips" {
     for_each = var.lb_reserved_public_ip_id
     content {
-      id = var.lb_reserved_public_ip_id
+      id = reserved_ips.value
     }
   }
 
