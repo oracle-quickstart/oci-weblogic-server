@@ -43,7 +43,7 @@ variable "dynamic_group_rule" {
 }
 
 variable "wls_admin_password_id" {
-  type = string
+  type        = string
   description = "The OCID of the vault secret containing the password for the WebLogic administration user"
 }
 

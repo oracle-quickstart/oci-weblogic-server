@@ -1,6 +1,6 @@
 locals {
 
-  label_prefix = replace(var.resource_name_prefix, "/[^a-zA-Z0-9]/", "")
+  label_prefix     = replace(var.resource_name_prefix, "/[^a-zA-Z0-9]/", "")
   compartment_rule = format("instance.compartment.id='%s'", var.compartment_id)
 
   # This policy with "use instances" verb is needed because there is code in the WebLogic for OCI compute image that updates metadata of the compute instance, when more than one VM nodes are created
@@ -13,5 +13,7 @@ locals {
 
   #TODO: When other categories with more statements are added here, concat them with service_statements
   policy_statements = concat(local.service_statements, [])
+
+  reserved_ips_info = var.compartment_id == "" ? [{ id = var.resource_name_prefix } ] : []
 
 }
