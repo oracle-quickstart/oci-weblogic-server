@@ -9,9 +9,14 @@ variable "instance_private_ips" {
   description = "The list of private IP addresses of the instances for the backened servers"
 }
 
-variable "wls_ms_port" {
+variable "lb_port" {
   type        = string
-  description = "WebLogic managed server port"
+  description = "Load Balancer backened port"
+}
+
+variable "health_check_url" {
+  type        = string
+  description = "Load Balancer health check URL path"
 }
 
 variable "lb_protocol" {
