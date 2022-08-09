@@ -1,5 +1,5 @@
 output "wls-loadbalancer-reservedip_id" {
-  value       = oci_load_balancer_load_balancer.wls-loadbalancer-reservedip.*.id
+  value       = oci_load_balancer_load_balancer.wls_loadbalancer_reservedip.*.id
   description = "The Ocid of the pre-created public IP of the load balancer"
 }
 

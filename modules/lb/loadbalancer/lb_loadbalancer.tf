@@ -1,15 +1,15 @@
 
 resource "oci_load_balancer_load_balancer" "wls_loadbalancer_reservedip" {
-  count            = var.add_load_balancer && var.existing_load_balancer_id == "" && var.add_lb_reserved_public_ip_id ? 1 : 0
+  count = var.add_load_balancer && var.existing_load_balancer_id == "" && var.add_lb_reserved_public_ip_id ? 1 : 0
 
-  shape            = "flexible"
-  compartment_id   = var.compartment_id
+  shape          = var.lb_shape
+  compartment_id = var.compartment_id
 
   subnet_ids = compact(
-     concat(
-        compact(var.lb_subnet_1_id),
-        compact(var.lb_subnet_2_id)
-     )
+    concat(
+      compact(var.lb_subnet_1_id),
+      compact(var.lb_subnet_2_id)
+    )
   )
 
   reserved_ips {
@@ -28,17 +28,17 @@ resource "oci_load_balancer_load_balancer" "wls_loadbalancer_reservedip" {
 }
 
 
-resource "oci_load_balancer_load_balancer" "wls-loadbalancer" {
-  count          = var.add_load_balancer && var.existing_load_balancer_id == "" && !var.add_lb_reserved_public_ip_id ? 1 : 0
+resource "oci_load_balancer_load_balancer" "wls_loadbalancer" {
+  count = var.add_load_balancer && var.existing_load_balancer_id == "" && !var.add_lb_reserved_public_ip_id ? 1 : 0
 
-  shape          = "flexible"
+  shape          = var.lb_shape
   compartment_id = var.compartment_id
 
   subnet_ids = compact(
-     concat(
-       compact(var.lb_subnet_1_id),
-       compact(var.lb_subnet_2_id)
-     )
+    concat(
+      compact(var.lb_subnet_1_id),
+      compact(var.lb_subnet_2_id)
+    )
   )
 
   shape_details {

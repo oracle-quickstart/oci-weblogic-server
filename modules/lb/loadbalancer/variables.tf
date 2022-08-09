@@ -23,6 +23,12 @@ variable "lb_name" {
   description = "A user-friendly load balancer name"
 }
 
+variable "lb_shape" {
+  type        = string
+  description = "Load balancer shape"
+  default     = "flexible"
+}
+
 variable "lb_max_bandwidth" {
   type        = number
   description = "Bandwidth in Mbps that determines the maximum bandwidth (ingress plus egress) that the load balancer can achieve"
