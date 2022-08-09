@@ -15,7 +15,7 @@ resource "oci_load_balancer_backend_set" "wls_lb_backendset" {
 
   health_checker {
     port                = var.is_idcs_selected ? var.idcs_cloudgate_port : var.wls_ms_port
-    protocol            = var.lb-protocol
+    protocol            = var.lb_protocol
     response_body_regex = ".*"
     url_path            = local.health_check_url_path
     return_code         = var.return_code
