@@ -8,16 +8,6 @@ variable "compartment_id" {
   }
 }
 
-variable "add_load_balancer" {
-  type        = bool
-  description = "Set to true if a load balancer was created as part of the WebLogic for OCI stack"
-}
-
-variable "existing_load_balancer_id" {
-  type        = string
-  description = "The OCID of the existing load balancer"
-}
-
 variable "lb_name" {
   type        = string
   description = "A user-friendly load balancer name"
@@ -44,23 +34,24 @@ variable "is_lb_private" {
   description = "Whether the load balancer has a VCN-local (private) IP address"
 }
 
-variable "add_lb_reserved_public_ip_id" {
-  type        = bool
-  description = "Whether Ocid of the pre-created public IP should be attached to this load balancer"
-}
-
 variable "lb_reserved_public_ip_id" {
-  type        = string
-  description = "Ocid of the pre-created public IP that should be attached to this load balancer"
+  type        = list(any)
+  description = "The list of OCIDs of the pre-created public IP that should be attached to this load balancer"
+  default     = []
+  validation {
+    condition     = length(var.lb_reserved_public_ip_id) == 0 || length(var.lb_reserved_public_ip_id) == 1
+    error_message = "The lb reserved public ip id value should be zero or one."
+  }
+  
 }
 
 variable "lb_subnet_2_id" {
-  type        = list(string)
+  type        = list(any)
   description = "An array of subnet OCIDs"
 }
 
 variable "lb_subnet_1_id" {
-  type        = list(string)
+  type        = list(any)
   description = "An array of subnet OCIDs"
 }
 

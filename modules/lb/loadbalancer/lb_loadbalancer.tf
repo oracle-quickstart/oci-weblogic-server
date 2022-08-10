@@ -1,10 +1,5 @@
 
-locals {
-  reserved_ips_info = var.add_lb_reserved_public_ip_id ? [ var.lb_reserved_public_ip_id ] : []
-}
-
 resource "oci_load_balancer_load_balancer" "wls_loadbalancer" {
-  count = var.add_load_balancer && var.existing_load_balancer_id == "" ? 1 : 0
 
   shape          = var.lb_shape
   compartment_id = var.compartment_id
@@ -27,7 +22,7 @@ resource "oci_load_balancer_load_balancer" "wls_loadbalancer" {
   freeform_tags = var.tags.freeform_tags
 
   dynamic "reserved_ips" {
-    for_each = local.reserved_ips_info
+    for_each = var.lb_reserved_public_ip_id
     content {
       id = reserved_ips.value
     }
