@@ -48,7 +48,6 @@ variable "ocpu_count" {
 variable "instance_name" {
   type        = string
   description = "The name to be used as display_name for the bastion compute and its associated reserved public ip, if specified"
-  default     = "bastion-instance"
 }
 
 variable "vm_count" {
@@ -58,12 +57,6 @@ variable "vm_count" {
     condition     = var.vm_count > 0
     error_message = "The value for vm_count must be greater than 0."
   }
-}
-
-variable "is_bastion_instance_required" {
-  type        = bool
-  description = "Set to true if a bastion instance should be created"
-  default     = true
 }
 
 variable "is_bastion_with_reserved_public_ip" {
