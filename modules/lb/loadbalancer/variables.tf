@@ -38,6 +38,11 @@ variable "lb_reserved_public_ip_id" {
   type        = list(any)
   description = "The list of OCIDs of the pre-created public IP that should be attached to this load balancer"
   default     = []
+  validation {
+    condition     = length(var.lb_reserved_public_ip_id) == 0 || length(var.lb_reserved_public_ip_id) == 1
+    error_message = "The lb reserved public ip id value should be zero or one."
+  }
+  
 }
 
 variable "lb_subnet_2_id" {
