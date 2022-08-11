@@ -1,9 +1,4 @@
 
-variable "subnet_ids" {
-  type        = list(any)
-  description = "The list of OCIDs of subnets for the backened servers"
-}
-
 variable "instance_private_ips" {
   type        = list(any)
   description = "The list of private IP addresses of the instances for the backened servers"

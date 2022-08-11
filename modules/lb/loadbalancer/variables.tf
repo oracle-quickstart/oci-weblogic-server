@@ -1,7 +1,7 @@
 
 variable "compartment_id" {
   type        = string
-  description = "The OCID of the compartment where the lb will be created"
+  description = "The OCID of the compartment where the load balancer will be created"
   validation {
     condition     = length(regexall("^ocid1.compartment.*$", var.compartment_id)) > 0
     error_message = "The value for compartment_id should start with \"ocid1.compartment.\"."
