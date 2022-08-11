@@ -5,7 +5,7 @@ resource "null_resource" "dev_mode_provisioning" {
   // In developer mode we will upload the vmscripts to the instance.
 
   provisioner "file" {
-    source      = var.wlsoci_vmscripts_zip_bundle
+    source      = var.wlsoci_vmscripts_zip_bundle_path
     destination = "/tmp/wlsoci-vmscripts.zip"
 
     connection {
