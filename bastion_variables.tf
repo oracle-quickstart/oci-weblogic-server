@@ -1,12 +1,12 @@
 variable "is_bastion_instance_required" {
-  type = bool
+  type        = bool
   description = "Set to true to use a bastion, either new or existing. If existing_bastion_instance_id is blank, a new bastion will be created"
 }
 
 variable "existing_bastion_instance_id" {
-  type = string
+  type        = string
   description = "The OCID of a compute instance that will work as bastion"
-  default = ""
+  default     = ""
 }
 
 variable "bastion_instance_shape" {
@@ -16,9 +16,9 @@ variable "bastion_instance_shape" {
 }
 
 variable "bastion_instance_image_id" {
-  type = string
+  type        = string
   description = "The OCID of the image to be used to create a bastion VM instance"
-  default = ""
+  default     = ""
 }
 
 variable "bastion_ssh_private_key" {

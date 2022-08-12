@@ -1,7 +1,7 @@
 variable "network_compartment_id" {
-  type    = string
+  type        = string
   description = "The OCID of the compartment for network resources. Leave it blank to use the the same compartment for both compute and network resources"
-  default = ""
+  default     = ""
 }
 
 variable "wls_vcn_cidr" {
@@ -16,13 +16,13 @@ variable "use_regional_subnet" {
 }
 
 variable "wls_subnet_id" {
-  type = string
+  type        = string
   description = "The OCID of the subnet for the WebLogic instances. Leave it blank if a new subnet will be created by the stack"
   default     = ""
 }
 
 variable "bastion_subnet_id" {
-  type = string
+  type        = string
   description = "The OCID of the subnet for the bastion instance"
   default     = ""
 
@@ -78,13 +78,13 @@ variable "lb_min_bandwidth" {
 }
 
 variable "lb_subnet_1_id" {
-  type = string
+  type        = string
   description = "The OCID of a regional or AD-specific subnet for primary load balancer"
   default     = ""
 }
 
 variable "lb_subnet_2_id" {
-  type = string
+  type        = string
   description = "The OCID of a regional or AD-specific subnet for secondary load balancer"
   default     = ""
 }
