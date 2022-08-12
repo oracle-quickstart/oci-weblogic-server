@@ -32,3 +32,8 @@ output "availability_domains" {
   value       = coalescelist(module.wls-instances.availability_domains, tolist([""]))
   description = "The availability domain of each WebLogic compute instance"
 }
+
+output "ssh_private_key_opc" {
+  value = module.compute-keygen.opc_keys["private_key_pem"]
+  description =  "The ssh private key in PEM format generated for the opc user"
+}

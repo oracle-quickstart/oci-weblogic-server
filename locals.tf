@@ -1,29 +1,22 @@
 locals {
 
-  # Logic to use AD name provided by user input on ORM or to lookup for the AD name when running from CLI
-  availability_domain = (var.availability_domain_name != "" ? var.availability_domain_name : data.oci_identity_availability_domain.ad.name)
+  dg_system_tags_key =  format("%s.%s", module.system-tags.tag_namespace, module.system-tags.dg_tag_key)
+  dynamic_group_rule = local.create_dg_tags ? format("%s.%s.%s='%s'", "tag", local.dg_system_tags_key, "value", module.system-tags.dg_tag_value) : length(var.service_tags.definedTags) > 0 ? format("tag.%s.value='%s'", keys(var.service_tags.definedTags)[0],values(var.service_tags.definedTags)[0]): ""
+  dg_defined_tags    = zipmap([local.dg_system_tags_key], [module.system-tags.dg_tag_value])
+  defined_tags = var.service_tags.definedTags
+  free_form_tags = length(var.service_tags.freeformTags) >0 ? var.service_tags.freeformTags : module.system-tags.system_tag_value
 
-  # local.use_existing_network referenced in network.tf
-  use_existing_network = var.network_strategy == var.network_strategy_enum["USE_EXISTING_VCN_SUBNET"] ? true : false
+  create_dg_tags = var.create_policies && var.generate_dg_tag
 
-  # local.is_public_subnet referenced in compute.tf
-  is_public_subnet = var.subnet_type == var.subnet_type_enum["PUBLIC_SUBNET"] ? true : false
+  home_region      = lookup(data.oci_identity_regions.home_region.regions[0], "name")
 
-  # Logic to select Oracle Autonomous Linux 7 platform image (version pegged in data source filter)
-  platform_image_id = data.oci_core_images.autonomous_ol7.images[0].id
+  service_name_prefix = replace(var.service_name, "/[^a-zA-Z0-9]/", "")
 
-  # Logic to choose a custom image or a marketplace image.
-  compute_image_id = var.mp_subscription_enabled ? var.mp_listing_resource_id : var.custom_image_id
+  bastion_availability_domain = var.bastion_subnet_id != "" ? (var.use_regional_subnet ? var.wls_availability_domain_name !="" ? var.wls_availability_domain_name : local.ad_names[0] : data.oci_core_subnet.bastion_subnet[0].availability_domain) : (var.use_regional_subnet ? var.wls_availability_domain_name !="" ? var.wls_availability_domain_name : local.ad_names[0] : var.wls_availability_domain_name)
 
-  # Local to control subscription to Marketplace image.
-  mp_subscription_enabled = var.mp_subscription_enabled ? 1 : 0
+  wls_availability_domain      = var.use_regional_subnet ? (var.wls_availability_domain_name == "" ? local.ad_names[0] : var.wls_availability_domain_name) : (var.wls_subnet_id == "" ? var.wls_availability_domain_name : data.oci_core_subnet.wls_subnet[0].availability_domain)
 
-  # Marketplace Image listing variables - required for subscription only
-  listing_id               = var.mp_listing_id
-  listing_resource_id      = var.mp_listing_resource_id
-  listing_resource_version = var.mp_listing_resource_version
+  network_compartment_id = var.network_compartment_id == "" ? var.compartment_id : var.network_compartment_id
 
-  
-  is_flex_shape = var.vm_compute_shape == "VM.Standard.E3.Flex" ? [var.vm_flex_shape_ocpus]:[]
-    
+  ad_names                    = compact(data.template_file.ad_names.*.rendered)
 }

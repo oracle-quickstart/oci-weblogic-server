@@ -104,10 +104,10 @@ variable "wls_admin_server_wait_timeout_mins" {
 }
 variable "wls_version" {
   type        = string
-  description = "The WebLogic version to be installed in this instance. Accepted values are: 12.2.1.3, 12.2.1.4, 14.1.1.0"
+  description = "The WebLogic version to be installed in this instance. Accepted values are: 12.2.1.4, 14.1.1.0"
   validation {
-    condition     = contains(["12.2.1.3", "12.2.1.4", "14.1.1.0"], var.wls_version)
-    error_message = "Allowed values for wls_version are 12.2.1.3, 12.2.1.4, 14.1.1.0."
+    condition     = contains(["12.2.1.4", "14.1.1.0"], var.wls_version)
+    error_message = "Allowed values for wls_version are 12.2.1.4, 14.1.1.0."
   }
 }
 variable "wls_14c_jdk_version" {
