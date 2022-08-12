@@ -1,3 +1,21 @@
+
+output "virtual_cloud_network_cidr" {
+  value = var.wls_vcn_cidr
+}
+
+output "load_balancer_subnets_id" {
+  value = compact(
+    concat(
+      [var.lb_subnet_1_id],
+      [var.lb_subnet_2_id]
+    ),
+  )
+}
+
+output "weblogic_subnet_id" {
+  value = var.wls_subnet_id
+}
+
 output "load_balancer_id" {
   value = local.lb_id
 }
@@ -14,7 +32,7 @@ output "bastion_instance_public_ip" {
   value = local.bastion_public_ip
 }
 
-output "webLogic_instances" {
+output "weblogic_instances" {
   value = jsonencode(formatlist(
     "{ Instance Id:%s, Instance name:%s, Availability Domain:%s, Instance Shape:%s, Private IP:%s, Public IP:%s }",
     module.compute.instance_ids,
@@ -26,7 +44,7 @@ output "webLogic_instances" {
   ))
 }
 
-output "webLogic_version" {
+output "weblogic_version" {
   value = format(
     "%s %s %s",
     module.compute.wls_version,
@@ -35,4 +53,34 @@ output "webLogic_version" {
   )
 }
 
+output "weblogic_server_administration_console" {
+  value = local.admin_console_app_url
+}
 
+output "sample_application" {
+  value = local.sample_app_url
+}
+
+output "listing_version" {
+  value = var.tf_script_version
+}
+
+output "provisioning_status" {
+  value = local.async_prov_mode
+}
+
+output "jdk_version" {
+  value = local.jdk_version
+}
+
+output "ssh_command" {
+  value = local.ssh_proxyjump_access
+}
+
+output "ssh_command_with_dynamic_port_forwarding" {
+  value = local.ssh_dp_fwd
+}
+
+output "resource_identifier_value" {
+  value = compact(concat([module.system-tags.dg_tag_value], local.user_defined_tag_values))
+}

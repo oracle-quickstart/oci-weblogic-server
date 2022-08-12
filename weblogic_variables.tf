@@ -53,9 +53,26 @@ variable "wls_server_startup_args" {
   default     = ""
 }
 
+variable "wls_extern_ssl_admin_port" {
+  type        = number
+  default     = 7002
+  description = "The administration server SSL port on which to access the administration console"
+}
+
 variable "wls_ms_extern_port" {
   type        = number
   description = "The managed server port on which to send application traffic"
   default     = 7003
 }
 
+variable "wls_ms_extern_ssl_port" {
+  type        = string
+  default     = "7004"
+  description = "The managed server SSL port on which to send application traffic"
+}
+
+variable "deploy_sample_app" {
+  type        = bool
+  description = "Set to true to install a sample application in the WebLogic domain"
+  default     = true
+}
