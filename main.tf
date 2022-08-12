@@ -113,7 +113,7 @@ module load-balancer-backends {
   health_check_url     = "/"
   instance_private_ips = module.compute.instance_private_ips
   lb_port              = var.wls_ms_extern_port #TODO: change name of this variable lb_port to be more descriptive
-  load_balancer_id     = var.add_load_balancer ? (var.existing_load_balancer_id != "" ? var.existing_load_balancer_id : element(coalescelist(module.load-balancer[0].wls_loadbalancer_id, [""]), 0)) : ""
+  load_balancer_id     = var.add_load_balancer ? (var.existing_load_balancer_id != "" ? var.existing_load_balancer_id : element(coalescelist(module.load-balancer[*].wls_loadbalancer_id, [""]), 0)) : ""
   num_vm_instances     = var.wls_node_count
   resource_name_prefix = local.service_name_prefix
   # TODO: check if we can add suport to tags
