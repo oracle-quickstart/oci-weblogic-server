@@ -57,7 +57,7 @@ output "weblogic_server_administration_console" {
   value = local.admin_console_app_url
 }
 
-output "sample_application" {
+output "sample_application_url" {
   value = local.sample_app_url
 }
 

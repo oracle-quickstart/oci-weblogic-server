@@ -70,9 +70,9 @@ module load-balancer {
 
 module "compute" {
   source                 = "./modules/compute/wls_compute"
-  add_loadbalancer       = false
-  is_lb_private          = false
-  load_balancer_id       = ""
+  add_loadbalancer       = var.add_load_balancer
+  is_lb_private          = var.is_lb_private
+  load_balancer_id       = var.add_load_balancer ? (var.existing_load_balancer_id != "" ? var.existing_load_balancer_id : element(coalescelist(module.load-balancer[*].wls_loadbalancer_id, [""]), 0)) : ""
   assign_public_ip       = var.assign_weblogic_public_ip
   availability_domain    = local.wls_availability_domain
   compartment_id         = var.compartment_id
@@ -116,7 +116,7 @@ module load-balancer-backends {
   load_balancer_id     = var.add_load_balancer ? (var.existing_load_balancer_id != "" ? var.existing_load_balancer_id : element(coalescelist(module.load-balancer[*].wls_loadbalancer_id, [""]), 0)) : ""
   num_vm_instances     = var.wls_node_count
   resource_name_prefix = local.service_name_prefix
-  # TODO: check if we can add suport to tags
+  # TODO: check if we can add support to tags
   /*tags = {
     defined_tags = local.defined_tags
     freeform_tags = local.free_form_tags

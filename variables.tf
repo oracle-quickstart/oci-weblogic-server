@@ -7,7 +7,6 @@ variable "tenancy_id" {
 variable "region" {
   type        = string
   description = "The region where the WebLogic for OCI stack will be created"
-  default     = "us-phoenix-1"
 }
 
 variable "compartment_id" {
@@ -71,4 +70,5 @@ variable "tf_script_version" {
 variable "instance_shape" {
   type        = string
   description = "The OCI VM shape for WebLogic VM instances"
+  default = "VM.Standard.E4.Flex"
 }
