@@ -36,18 +36,6 @@ variable "generate_dg_tag" {
   default     = false
 }
 
-variable "use_baselinux_marketplace_image" {
-  type        = bool
-  description = "" #TODO: add description
-  default     = true
-}
-
-variable "mp_baselinux_instance_image_id" {
-  type        = string
-  description = "" #TODO: add description
-  default     = "ocid1.image.oc1..aaaaaaaaoa3exyconrosq5czu5xoryd5ahau5s5ocuc7gnknexqpe6zme6mq"
-}
-
 variable "service_tags" {
   type = object({
     freeformTags = map(any)
