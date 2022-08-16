@@ -1,4 +1,4 @@
-resource "oci_core_virtual_network" "wls-vcn" {
+resource "oci_core_virtual_network" "wls_vcn" {
   // If vcn_name is provided and existing subnets are not used then we create VCN regardless of existing vcn_id value.
   // So vcn_name has preference.
   // If user wants to use existing vcn_id, then don't provide vcn_name and new VCN won't be created.
