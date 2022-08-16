@@ -1,3 +1,6 @@
+# Copyright (c) 2022, Oracle and/or its affiliates.
+# Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
+
 data "oci_identity_fault_domains" "wls_fault_domains" {
   availability_domain = var.availability_domain
   compartment_id      = var.compartment_id

@@ -1,3 +1,6 @@
+# Copyright (c) 2022, Oracle and/or its affiliates.
+# Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
+
 variable "wls_version" {
   type        = string
   description = "The WebLogic version to be installed for this stack. Accepted values are: 12.2.1.4, 14.1.1.0"
