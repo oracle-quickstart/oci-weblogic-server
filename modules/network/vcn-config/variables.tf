@@ -31,6 +31,7 @@ variable "existing_vcn_id" {
 variable "add_load_balancer" {
   type    = bool
   default = false
+  
 }
 
 // Optional params
@@ -136,33 +137,36 @@ variable "idcs_cloudgate_port" {}
 
 variable "is_vcn_peering" {}
 
-variable "defined_tags" {
-  type    = map
-  default = {}
-}
-
-variable "freeform_tags" {
-  type    = map
-  default = {}
+variable "tags" {
+  type = object({
+    defined_tags    = map(any),
+    freeform_tags   = map(any),
+  })
+  description = "Defined tags and freeform tags to be added to the VCN config"
+  default = {
+    defined_tags    = {},
+    freeform_tags   = {},
+  }
 }
 
 variable "appdb_vcn_peering" {
-  type    = bool
-  default = false
+  type        = bool
+  description = "Set to true if you want appdb VCN peering" 
+  default     = false
 }
 
 variable "existing_mt_subnet_id" {
-  type = string
+  type        = string
+  description = "The OCID of the exisitng mount target subnet id"
 }
 
 variable "add_fss" {
-  type = bool
+  type        = bool
+  description = "Set to true if you want FSS to be assigned to the VCN"
+  default     = false
 }
 
 variable "vcn_cidr" {
-  type = string
-}
-
-variable "oci_identity_tag_ns_id" {
-  type = string
+  type        = string
+  description = "The range of IP addresses that a packet originating from the instance can go to"
 }

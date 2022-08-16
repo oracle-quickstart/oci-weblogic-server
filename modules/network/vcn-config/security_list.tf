@@ -1,8 +1,4 @@
 /*
- * Copyright (c) 2019, 2021, Oracle and/or its affiliates. All rights reserved.
- */
-
-/*
 * Creates a new security lists for the specified VCN.
 * Also see: https://www.terraform.io/docs/providers/oci/r/core_security_list.html
 */
