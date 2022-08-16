@@ -27,7 +27,7 @@ variable "wls_vcn_cidr" {
 
 variable "use_existing_subnets" {
   type        = bool
-  description = "Set to true if the exsiting subnets are used to create VCN"
+  description = "Set to true if the existing subnets are used to create VCN"
   default     = false
 }
 

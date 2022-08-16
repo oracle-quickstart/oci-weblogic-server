@@ -1,10 +1,10 @@
 # Output of the vcn creation
-output "VcnID" {
-  description = "OCID of VCN that is created"
+output "vcn_id" {
+  description = "The OCID of the new VCN or existing VCN"
   value       = local.vcn_id
 }
 
-output "VcnCIDR" {
-  description = "CIDR value of VCN that is created"
+output "vcn_cidr" {
+  description = "The CIDR value of the new VCN or existing VCN"
   value       = local.vcn_cidr
 }
