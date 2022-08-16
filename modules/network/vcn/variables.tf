@@ -9,13 +9,13 @@ variable "compartment_id" {
 
 variable "vcn_name" {
   type        = string
-  description = "A user-friendly VCN name that will be created"
+  description = "The name of the vcn that will be created"
   default     = "wls-vcn"
 }
 
 variable "vcn_id" {
   type        = string
-  description = "The OCID of the VCN that is created"
+  description = "The OCID of the existing vcn value"
   default     = ""
 }
 
