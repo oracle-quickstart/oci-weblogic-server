@@ -1,6 +1,6 @@
 variable "compartment_id" {
   type        = string
-  description = "The OCID of the compartment where the vcn will be created"
+  description = "The OCID of the compartment where the VCN will be created"
   validation {
     condition     = length(regexall("^ocid1.compartment.*$", var.compartment_id)) > 0
     error_message = "The value for compartment_id should start with \"ocid1.compartment.\"."
@@ -15,7 +15,7 @@ variable "vcn_name" {
 
 variable "vcn_id" {
   type        = string
-  description = "The OCID of the VCN that is created"
+  description = "The OCID of the existing VCN"
   default     = ""
 }
 
@@ -27,7 +27,7 @@ variable "wls_vcn_cidr" {
 
 variable "use_existing_subnets" {
   type        = bool
-  description = "Set to true if the exsiting subnets are used to create VCN"
+  description = "Set to true if the existing subnets are used to create VCN"
   default     = false
 }
 
