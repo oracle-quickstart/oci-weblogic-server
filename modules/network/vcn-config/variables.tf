@@ -20,7 +20,7 @@ variable "vcn_id" {
 
 variable "wls_vcn_name" {
   type        = string
-  description = "A user-friendly VCN name"
+  description = "A user-friendly name of the VCN"
 }
 
 variable "existing_vcn_id" {
@@ -29,29 +29,37 @@ variable "existing_vcn_id" {
 }
 
 variable "add_load_balancer" {
-  type    = bool
-  default = false
-  
+  type        = bool
+  description = "Set to true if ypu want loadbalancer"
+  default     = false
 }
 
 // Optional params
 
 variable "dhcp_options_name" {
   default = "dhcpOptions"
+  description = "A user-friendly name of the DHCP options in a VCN"
 }
 
 variable "route_table_name" {
-  default = "routetable"
+  type        = string
+  description = "A user-friendly name of the route table"
+  default     = "routetable"
 }
 
 variable "is_lb_private" {
+  type        = bool
+  description = "Set to true if you want private loadbalancer"
 }
 
 variable "wls_expose_admin_port" {
-  type = bool
+  type        = bool
+  description = "Set to true if you want to export wls admin port"
 }
 
 variable "wls_admin_port_source_cidr" {
+  type        = string
+  description = "The CIDR value of the wls admin source port"
 }
 
 // Optional params
@@ -65,77 +73,118 @@ in LB frontend subnet.
 For LB frontend subnet - this is not passed.
 */
 
-variable "wls_subnet_cidr" {}
+variable "wls_subnet_cidr" {
+  type        = string
+  description = "The CIDR value of the wls subnet"
+}
 
-variable "lb_subnet_1_cidr" {}
+variable "lb_subnet_1_cidr" {
+  type        = string
+  description = "The CIDR value of the loadbalancer subnet 1"
+}
 
-variable "lb_subnet_2_cidr" {}
+variable "lb_subnet_2_cidr" {
+  type        = string
+  description = "The CIDR value of the loadbalancer subnet 2"
+}
 
 // Optional params
 variable "wls_admin_port" {
-  default = "7001"
+  type        = number
+  description = "The administration server port for T3 protocol"
+  default     = 7001
 }
 
-variable "wls_ssl_admin_port" {
-  default = "7002"
+variable "wls_admin_ssl_port" {
+  type        = number
+  description = "The administration server port for T3s protocol"
+  default     = 7002
 }
 
 variable "wls_ms_port" {
-  default = "7003"
+  type        = number
+  description = "The managed server port for T3 protocol"
+  default     = 7003
 }
 
 variable "wls_ms_ssl_port" {
-  default = "7004"
+  type        = number
+  description = "The managed server port for T3s protocol"
+  default     = 7004
 }
 
 variable "wls_security_list_name" {
-  default = "wls-security-list"
+  type        = string
+  description = "A user-friendly name of the compute instance seclist"
+  default     = "wls-security-list"
 }
 
 variable "use_existing_subnets" {
-  default = false
+  type        = bool
+  description = "Set to true if the exsiting subnets are used to create VCN config"
+  default     = false
 }
 
-variable "service_name_prefix" {}
-
-variable "nat_gateway_display_name" {
-  default = "nat-gateway"
+variable "resource_name_prefix" {
+  type        = string
+  description = "Prefix which will be used to create VCN config display name"
 }
 
 variable "assign_backend_public_ip" {
-  default = true
+  type        = bool
+  description = "Set to true if loadbalancer backened needs to be assigned public ip"
+  default     = true
 }
 
 variable "use_regional_subnets" {
-  type    = bool
-  default = false
+  type        = bool
+  description = "Set to true if regional subnets to be used" 
+  default     = false
 }
 
 variable "wls_bastion_security_list_name" {
-  default = "wls-bastion-security-list"
+  type        = string 
+  description = "A user-friendly name of the bastion instance seclist"
+  default     = "wls-bastion-security-list"
 }
 
 variable "bastion_subnet_cidr" {
-  default = ""
+  type        = string 
+  description = "The CIDR value of the bastion subnet"
+  default     = ""
 }
 
 variable "is_bastion_instance_required" {
-  type = bool
+  type        = bool
+  description = "Whether bastion instance is required to connect to the compute instance"
+  default     = true
 }
 
 variable "existing_bastion_instance_id" {
-  type = string
+  type        = string
+  description = "An OCID of the existing bastion instance to connect to the compute instance"
 }
 
-variable "is_single_ad_region" {}
+variable "is_single_ad_region" {
+  type        = bool
+  description = "Set to true if you want single AD region"
+}
 
 variable "is_idcs_selected" {
-  type = bool
+  type        = bool
+  description = "Set to true if you want IDCS to be assigned to the VCN"
 }
 
-variable "idcs_cloudgate_port" {}
+variable "idcs_cloudgate_port" {
+  type        = number
+  description = "IDCS cloudgate port when IDCS is set to true"
+}
 
-variable "is_vcn_peering" {}
+variable "is_vcn_peering" {
+  type        = bool
+  description = "Set to true if you want VCN peering"
+  default     = false
+}
 
 variable "tags" {
   type = object({

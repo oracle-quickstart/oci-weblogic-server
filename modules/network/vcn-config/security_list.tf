@@ -26,13 +26,13 @@ locals {
 *   Source 0.0.0.0/0, protocol TCP, Destination Port: <wls_ssl_admin_port>
 *   Source <WLS Subnet CIDR>, protocol TCP, Destination Port: ALL
 */
-resource "oci_core_security_list" "wls-security-list" {
+resource "oci_core_security_list" "wls_security_list" {
   count = var.use_existing_subnets ? 0 : 1
 
   #Required
   compartment_id = var.compartment_id
   vcn_id         = var.vcn_id
-  display_name   = "${var.service_name_prefix}-${var.wls_security_list_name}"
+  display_name   = "${var.resource_name_prefix}-${var.wls_security_list_name}"
 
   // allow outbound tcp traffic on all ports
   egress_security_rules {
@@ -68,8 +68,8 @@ resource "oci_core_security_list" "wls-security-list" {
       }
     }
   }
-  defined_tags  = var.defined_tags
-  freeform_tags = var.freeform_tags
+  defined_tags  = var.tags.defined_tags
+  freeform_tags = var.tags.freeform_tags
 }
 
 /*
@@ -82,13 +82,13 @@ resource "oci_core_security_list" "wls-security-list" {
 * ingress:
 *   Source <wls_subnet_cidr>, protocol TCP, Destination Port: ALL
 */
-resource "oci_core_security_list" "wls-internal-security-list" {
+resource "oci_core_security_list" "wls_internal_security_list" {
   count = var.use_existing_subnets ? 0 : 1
 
   #Required
   compartment_id = var.compartment_id
   vcn_id         = var.vcn_id
-  display_name   = "${var.service_name_prefix}-internal-security-list"
+  display_name   = "${var.resource_name_prefix}-internal-security-list"
 
   egress_security_rules {
     protocol    = "all"
@@ -102,8 +102,8 @@ resource "oci_core_security_list" "wls-internal-security-list" {
     source    = var.wls_subnet_cidr
     stateless = false
   }
-  defined_tags  = var.defined_tags
-  freeform_tags = var.freeform_tags
+  defined_tags  = var.tags.defined_tags
+  freeform_tags = var.tags.freeform_tags
 }
 
 /*
@@ -115,13 +115,13 @@ resource "oci_core_security_list" "wls-internal-security-list" {
 *     Source 0.0.0.0/0, protocol TCP, Destination Port: <wls_ms_ssl_port>
 *     Source 0.0.0.0/0, protocol TCP, Destination Port: <wls_ms_port>
 */
-resource "oci_core_security_list" "wls-ms-security-list" {
+resource "oci_core_security_list" "wls_ms_security_list" {
   count = var.use_existing_subnets ? 0 : 1
 
   #Required
   compartment_id = var.compartment_id
   vcn_id         = var.vcn_id
-  display_name   = "${var.service_name_prefix}-wls-ms-security-list"
+  display_name   = "${var.resource_name_prefix}-wls-ms-security-list"
 
   // allow public internet access to managed server secure content port
   dynamic "ingress_security_rules" {
@@ -160,8 +160,8 @@ resource "oci_core_security_list" "wls-ms-security-list" {
     }
   }
 
-  defined_tags  = var.defined_tags
-  freeform_tags = var.freeform_tags
+  defined_tags  = var.tags.defined_tags
+  freeform_tags = var..tags.freeform_tags
 }
 
 
@@ -177,13 +177,13 @@ resource "oci_core_security_list" "wls-ms-security-list" {
 *   ingress:
 *     Source 0.0.0.0/0, protocol TCP, Destination Port: 80 or 443
 */
-resource "oci_core_security_list" "lb-security-list" {
+resource "oci_core_security_list" "lb_security_list" {
   count = (var.add_load_balancer && var.use_existing_subnets == false) ? 1 : 0
 
   #Required
   compartment_id = var.compartment_id
   vcn_id         = var.vcn_id
-  display_name   = "${var.service_name_prefix}-lb-security-list"
+  display_name   = "${var.resource_name_prefix}-lb-security-list"
 
   // allow outbound tcp traffic on all ports
   egress_security_rules {
@@ -203,8 +203,8 @@ resource "oci_core_security_list" "lb-security-list" {
     }
   }
 
-  defined_tags  = var.defined_tags
-  freeform_tags = var.freeform_tags
+  defined_tags  = var.tags.defined_tags
+  freeform_tags = var.tags.freeform_tags
 }
 
 /*
@@ -217,10 +217,10 @@ resource "oci_core_security_list" "lb-security-list" {
 *   ingress:
 *     Source <bastion_subnet_cidr>, protocol TCP, Destination Port: ALL
 */
-resource "oci_core_security_list" "wls-bastion-security-list" {
+resource "oci_core_security_list" "wls_bastion_security_list" {
   count          = ! var.assign_backend_public_ip && ! var.use_existing_subnets && var.existing_bastion_instance_id == "" && var.is_bastion_instance_required ? 1 : 0
   compartment_id = var.compartment_id
-  display_name   = "${var.service_name_prefix}-wls-bastion-security-list"
+  display_name   = "${var.resource_name_prefix}-wls-bastion-security-list"
   vcn_id         = var.vcn_id
 
   egress_security_rules {
@@ -233,18 +233,18 @@ resource "oci_core_security_list" "wls-bastion-security-list" {
     source   = var.bastion_subnet_cidr
   }
 
-  defined_tags  = var.defined_tags
-  freeform_tags = var.freeform_tags
+  defined_tags  = var.tags.defined_tags
+  freeform_tags = var.tags.freeform_tags
 
 }
 
 /*
 * Create security rules for WLS private subnet with existing bastion private ip
 */
-resource "oci_core_security_list" "wls-existing-bastion-security-list" {
+resource "oci_core_security_list" "wls_existing_bastion_security_list" {
   count          = ! var.assign_backend_public_ip && ! var.use_existing_subnets && var.existing_bastion_instance_id != "" && var.is_bastion_instance_required ? 1 : 0
   compartment_id = var.compartment_id
-  display_name   = "${var.service_name_prefix}-wls-bastion-security-list"
+  display_name   = "${var.resource_name_prefix}-wls-bastion-security-list"
   vcn_id         = var.vcn_id
 
   egress_security_rules {
@@ -257,17 +257,17 @@ resource "oci_core_security_list" "wls-existing-bastion-security-list" {
     source   = format("%s/32", data.oci_core_instance.existing_bastion_instance[count.index].private_ip)
   }
 
-  defined_tags  = var.defined_tags
-  freeform_tags = var.freeform_tags
+  defined_tags  = var.tags.defined_tags
+  freeform_tags = var.tags.freeform_tags
 
 }
 
 # FSS security list
-resource "oci_core_security_list" "fss-security-list" {
+resource "oci_core_security_list" "fss_security_list" {
   count = var.add_fss && var.existing_mt_subnet_id == "" ? 1 : 0
 
   compartment_id = var.compartment_id
-  display_name   = "${var.service_name_prefix}-fss-seclist"
+  display_name   = "${var.resource_name_prefix}-fss-seclist"
   vcn_id         = var.vcn_id
 
   egress_security_rules {

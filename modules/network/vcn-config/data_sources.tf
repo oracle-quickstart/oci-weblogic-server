@@ -1,6 +1,3 @@
-/*
- * Copyright (c) 2019, 2020, Oracle and/or its affiliates. All rights reserved.
- */
 data "oci_core_vcns" "tf_vcns" {
   #Required
   compartment_id = var.compartment_id
