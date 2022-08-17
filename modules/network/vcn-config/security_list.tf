@@ -161,7 +161,7 @@ resource "oci_core_security_list" "wls_ms_security_list" {
   }
 
   defined_tags  = var.tags.defined_tags
-  freeform_tags = var..tags.freeform_tags
+  freeform_tags = var.tags.freeform_tags
 }
 
 
