@@ -1,3 +1,6 @@
+# Copyright (c) 2022, Oracle and/or its affiliates.
+# Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
+
 /*
 * Creates a new security lists for the specified VCN.
 * Also see: https://www.terraform.io/docs/providers/oci/r/core_security_list.html
@@ -136,8 +139,8 @@ resource "oci_core_security_list" "wls_ms_security_list" {
 
       tcp_options {
         # SSL offloading happens at LB level. LB should be able to reach on MS HTTP port.
-        min = var.add_load_balancer ? var.wls_ms_port : var.wls_ms_ssl_port
-        max = var.add_load_balancer ? var.wls_ms_port : var.wls_ms_ssl_port
+        min = var.add_load_balancer ? var.wls_ms_extern_port : var.wls_ms_extern_ssl_port
+        max = var.add_load_balancer ? var.wls_ms_extern_port : var.wls_ms_extern_ssl_port
       }
     }
   }
@@ -154,8 +157,8 @@ resource "oci_core_security_list" "wls_ms_security_list" {
       stateless = false
 
       tcp_options {
-        min = var.is_idcs_selected ? var.idcs_cloudgate_port : var.wls_ms_ssl_port
-        max = var.is_idcs_selected ? var.idcs_cloudgate_port : var.wls_ms_ssl_port
+        min = var.is_idcs_selected ? var.idcs_cloudgate_port : var.wls_ms_extern_ssl_port
+        max = var.is_idcs_selected ? var.idcs_cloudgate_port : var.wls_ms_extern_ssl_port
       }
     }
   }

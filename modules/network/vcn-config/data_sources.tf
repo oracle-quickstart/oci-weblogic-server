@@ -1,3 +1,6 @@
+# Copyright (c) 2022, Oracle and/or its affiliates.
+# Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
+
 data "oci_core_vcns" "tf_vcns" {
   #Required
   compartment_id = var.compartment_id
@@ -12,7 +15,7 @@ data "oci_core_vcns" "tf_vcns" {
 data "oci_core_internet_gateways" "tf_internet_gateways" {
   #Required
   compartment_id = var.compartment_id
-  vcn_id         = var.existing_vcn_id==""?var.vcn_id:var.existing_vcn_id
+  vcn_id         = var.vcn_id
 }
 
 
@@ -21,7 +24,7 @@ data "oci_core_nat_gateways" "tf_nat_gateways" {
   compartment_id = var.compartment_id
 
   #Optional
-  vcn_id = var.existing_vcn_id==""?var.vcn_id:var.existing_vcn_id
+  vcn_id = var.vcn_id
 }
 
 locals {
@@ -34,7 +37,7 @@ data "oci_core_service_gateways" "tf_service_gateways" {
   compartment_id = var.compartment_id
 
   #Optional
-  vcn_id = var.existing_vcn_id==""?var.vcn_id:var.existing_vcn_id
+  vcn_id = var.vcn_id
 }
 
 

@@ -1,3 +1,6 @@
+# Copyright (c) 2022, Oracle and/or its affiliates.
+# Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
+
 /*
 * Creates a new route table rules for the specified VCN.
 * Also see:
@@ -17,11 +20,8 @@
 * default route table in the VCN. This will not impact the behavior if VCN peering is not used.
 */
 resource "oci_core_default_route_table" "wls_default_route_table1" {
-  count = (var.wls_vcn_name=="" || var.use_existing_subnets)?0:1
+  count = var.use_existing_subnets ? 0:1
 
-  //  compartment_id  = "${var.compartment_id}"
-  //  vcn_id          = "${var.vcn_id}"
-  //  display_name    = "${var.route_table_name}"
   manage_default_resource_id = lookup(data.oci_core_vcns.tf_vcns.virtual_networks[0],"default_route_table_id")
 
   route_rules {
@@ -40,7 +40,7 @@ resource "oci_core_default_route_table" "wls_default_route_table1" {
 * It uses the existing internet gateway id
 */
 resource "oci_core_route_table" "wls_route_table2" {
-  count          = (var.wls_vcn_name=="" && var.use_existing_subnets==false) && !var.is_vcn_peering ?1:0
+  count          = (var.use_existing_subnets==false) && !var.is_vcn_peering ?1:0
   compartment_id = var.compartment_id
   vcn_id         = var.vcn_id
   display_name   = "${var.resource_name_prefix}-${var.route_table_name}"
@@ -58,7 +58,7 @@ resource "oci_core_route_table" "wls_route_table2" {
 * Creates route table for private subnet using nat (only for idcs) and service gateway
 */
 resource "oci_core_route_table" "wls_gateway_route_table_newvcn" {
-  count          = !var.assign_backend_public_ip && var.wls_vcn_name!="" && !var.is_vcn_peering ?1:0
+  count          = !var.assign_backend_public_ip && !var.use_existing_subnets && !var.is_vcn_peering ?1:0
   compartment_id = var.compartment_id
   vcn_id         = var.vcn_id
   display_name   = "${var.resource_name_prefix}-${var.route_table_name}"
@@ -74,7 +74,7 @@ resource "oci_core_route_table" "wls_gateway_route_table_newvcn" {
   }
 
   dynamic "route_rules" {
-    for_each = list(1)
+    for_each = tolist([1])
 
     content {
       destination       = lookup(data.oci_core_services.tf_services.services[0], "cidr_block")
@@ -83,12 +83,12 @@ resource "oci_core_route_table" "wls_gateway_route_table_newvcn" {
     }
   }
 
-  defined_tags = var.defined_tags
-  freeform_tags = var.freeform_tags
+  defined_tags = var.tags.defined_tags
+  freeform_tags = var.tags.freeform_tags
 }
 
 resource "oci_core_route_table" "wls_gateway_route_table_existingvcn" {
-  count = !var.assign_backend_public_ip && var.existing_vcn_id !="" && !var.use_existing_subnets && !var.is_vcn_peering ? 1: 0
+  count = !var.assign_backend_public_ip && var.vcn_id !="" && !var.use_existing_subnets && !var.is_vcn_peering ? 1: 0
   compartment_id = var.compartment_id
   vcn_id         = var.vcn_id
   display_name   = "${var.resource_name_prefix}-${var.route_table_name}"
@@ -104,7 +104,7 @@ resource "oci_core_route_table" "wls_gateway_route_table_existingvcn" {
   }
 
   dynamic "route_rules" {
-    for_each = list(1)
+    for_each = tolist([1])
 
     content {
       destination       = lookup(data.oci_core_services.tf_services.services[0], "cidr_block")

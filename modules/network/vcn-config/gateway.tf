@@ -1,3 +1,6 @@
+# Copyright (c) 2022, Oracle and/or its affiliates.
+# Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
+
 /*
 * Creates a new internet gateway and service-gateway(private subnet) for the specified VCN.
 * Note:If existing vcn has to be used, then it has to have precreated internet gateway
@@ -8,7 +11,7 @@
 
 
 resource "oci_core_internet_gateway" "wls_internet_gateway" {
-  count          = (var.wls_vcn_name=="" || var.use_existing_subnets)?0:1
+  count          = var.use_existing_subnets?0:1
   compartment_id = var.compartment_id
   display_name   = "${var.resource_name_prefix}-internet-gateway"
   vcn_id         = var.vcn_id

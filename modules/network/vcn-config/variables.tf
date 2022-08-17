@@ -1,3 +1,6 @@
+# Copyright (c) 2022, Oracle and/or its affiliates.
+# Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
+
 variable "compartment_id" {
   type        = string
   description = "The OCID of the compartment where the vcn config will be created"
@@ -15,17 +18,12 @@ variable "internet_gateway_destination" {
 
 variable "vcn_id" {
   type        = string
-  description = "The OCID of the VCN the route table belongs to"
+  description = "The OCID of the new VCN or existing VCN"
 }
 
 variable "wls_vcn_name" {
   type        = string
   description = "A user-friendly name of the VCN"
-}
-
-variable "existing_vcn_id" {
-  type        = string
-  description = "The OCID of the existing VCN"
 }
 
 variable "add_load_balancer" {
@@ -89,27 +87,27 @@ variable "lb_subnet_2_cidr" {
 }
 
 // Optional params
-variable "wls_admin_port" {
+variable "wls_extern_admin_port" {
   type        = number
-  description = "The administration server port for T3 protocol"
+  description = "The administration server port on which to access the administration console"
   default     = 7001
 }
 
-variable "wls_admin_ssl_port" {
+variable "wls_extern_ssl_admin_port" {
   type        = number
-  description = "The administration server port for T3s protocol"
+  description = "The administration server SSL port on which to access the administration console"
   default     = 7002
 }
 
-variable "wls_ms_port" {
+variable "wls_ms_extern_port" {
   type        = number
-  description = "The managed server port for T3 protocol"
+  description = "The managed server port on which to send application traffic"
   default     = 7003
 }
 
-variable "wls_ms_ssl_port" {
+variable "wls_ms_extern_ssl_port" {
   type        = number
-  description = "The managed server port for T3s protocol"
+  description = "The managed server SSL port on which to send application traffic"
   default     = 7004
 }
 
