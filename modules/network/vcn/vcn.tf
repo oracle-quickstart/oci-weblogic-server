@@ -1,8 +1,7 @@
+# Copyright (c) 2022, Oracle and/or its affiliates.
+# Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
+
 resource "oci_core_virtual_network" "wls_vcn" {
-  // If vcn_name is provided and existing subnets are not used then we create VCN regardless of existing vcn_id value.
-  // So vcn_name has preference.
-  // If user wants to use existing vcn_id, then don't provide vcn_name and new VCN won't be created.
-  count = var.vcn_name !="" ? 1:0
 
   cidr_block     = var.wls_vcn_cidr
   dns_label      = format("%svcn",substr((var.resource_name_prefix), 0, 10))
