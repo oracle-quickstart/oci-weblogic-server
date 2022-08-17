@@ -1,3 +1,6 @@
+# Copyright (c) 2022, Oracle and/or its affiliates.
+# Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
+
 module "middleware-volume" {
   source = "../volume"
   bv_params = { for x in range(var.num_vm_instances) : "${var.resource_name_prefix}-mw-block-${x}" => {

@@ -1,3 +1,6 @@
+# Copyright (c) 2022, Oracle and/or its affiliates.
+# Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
+
 output "instance_private_ips" {
   value       = [for b in oci_core_instance.these : b.private_ip]
   description = "The private IP of each compute instance"

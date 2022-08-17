@@ -1,3 +1,6 @@
+# Copyright (c) 2022, Oracle and/or its affiliates.
+# Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
+
 variable "tenancy_id" {
   type        = string
   description = "The OCID of the tenancy where the dynamic group and policy will be created"

@@ -1,3 +1,6 @@
+# Copyright (c) 2022, Oracle and/or its affiliates.
+# Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
+
 output "wlsc_oci_policy_id" {
   value       = oci_identity_policy.wlsc_oci_policy.id
   description = "The OCID of the policy created for the WebLogic for OCI instance"
