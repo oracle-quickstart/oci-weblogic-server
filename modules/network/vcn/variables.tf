@@ -1,3 +1,6 @@
+# Copyright (c) 2022, Oracle and/or its affiliates.
+# Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
+
 variable "compartment_id" {
   type        = string
   description = "The OCID of the compartment where the VCN will be created"
@@ -23,12 +26,6 @@ variable "wls_vcn_cidr" {
   type        = string
   description = "The IPv4 CIDR block that will be assigned for the VCN"
   default     = ""
-}
-
-variable "use_existing_subnets" {
-  type        = bool
-  description = "Set to true if the existing subnets are used to create VCN"
-  default     = false
 }
 
 variable "tags" {
