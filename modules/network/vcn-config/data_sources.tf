@@ -28,8 +28,8 @@ data "oci_core_nat_gateways" "tf_nat_gateways" {
 }
 
 locals {
-  num_nat_gws = length(data.oci_core_nat_gateways.tf_nat_gateways.nat_gateways)
-  nat_gw_exists = local.num_nat_gws == 0 ? false: true
+  num_nat_gws   = length(data.oci_core_nat_gateways.tf_nat_gateways.nat_gateways)
+  nat_gw_exists = local.num_nat_gws == 0 ? false : true
 }
 
 data "oci_core_service_gateways" "tf_service_gateways" {
@@ -50,7 +50,7 @@ data "oci_core_services" "tf_services" {
 }
 
 data "oci_core_instance" "existing_bastion_instance" {
-  count = var.is_bastion_instance_required && var.existing_bastion_instance_id != "" ? 1: 0
+  count = var.is_bastion_instance_required && var.existing_bastion_instance_id != "" ? 1 : 0
 
   instance_id = var.existing_bastion_instance_id
 }

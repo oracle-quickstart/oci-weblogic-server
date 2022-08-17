@@ -221,7 +221,7 @@ resource "oci_core_security_list" "lb_security_list" {
 *     Source <bastion_subnet_cidr>, protocol TCP, Destination Port: ALL
 */
 resource "oci_core_security_list" "wls_bastion_security_list" {
-  count          = ! var.assign_backend_public_ip && ! var.use_existing_subnets && var.existing_bastion_instance_id == "" && var.is_bastion_instance_required ? 1 : 0
+  count          = !var.assign_backend_public_ip && !var.use_existing_subnets && var.existing_bastion_instance_id == "" && var.is_bastion_instance_required ? 1 : 0
   compartment_id = var.compartment_id
   display_name   = "${var.resource_name_prefix}-wls-bastion-security-list"
   vcn_id         = var.vcn_id
@@ -245,7 +245,7 @@ resource "oci_core_security_list" "wls_bastion_security_list" {
 * Create security rules for WLS private subnet with existing bastion private ip
 */
 resource "oci_core_security_list" "wls_existing_bastion_security_list" {
-  count          = ! var.assign_backend_public_ip && ! var.use_existing_subnets && var.existing_bastion_instance_id != "" && var.is_bastion_instance_required ? 1 : 0
+  count          = !var.assign_backend_public_ip && !var.use_existing_subnets && var.existing_bastion_instance_id != "" && var.is_bastion_instance_required ? 1 : 0
   compartment_id = var.compartment_id
   display_name   = "${var.resource_name_prefix}-wls-bastion-security-list"
   vcn_id         = var.vcn_id

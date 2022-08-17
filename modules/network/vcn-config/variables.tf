@@ -35,7 +35,7 @@ variable "add_load_balancer" {
 // Optional params
 
 variable "dhcp_options_name" {
-  default = "dhcpOptions"
+  default     = "dhcpOptions"
   description = "A user-friendly name of the DHCP options in a VCN"
 }
 
@@ -136,18 +136,18 @@ variable "assign_backend_public_ip" {
 
 variable "use_regional_subnets" {
   type        = bool
-  description = "Set to true if regional subnets to be used" 
+  description = "Set to true if regional subnets to be used"
   default     = false
 }
 
 variable "wls_bastion_security_list_name" {
-  type        = string 
+  type        = string
   description = "A user-friendly name of the bastion instance seclist"
   default     = "wls-bastion-security-list"
 }
 
 variable "bastion_subnet_cidr" {
-  type        = string 
+  type        = string
   description = "The CIDR value of the bastion subnet"
   default     = ""
 }
@@ -186,19 +186,19 @@ variable "is_vcn_peering" {
 
 variable "tags" {
   type = object({
-    defined_tags    = map(any),
-    freeform_tags   = map(any),
+    defined_tags  = map(any),
+    freeform_tags = map(any),
   })
   description = "Defined tags and freeform tags to be added to the VCN config"
   default = {
-    defined_tags    = {},
-    freeform_tags   = {},
+    defined_tags  = {},
+    freeform_tags = {},
   }
 }
 
 variable "appdb_vcn_peering" {
   type        = bool
-  description = "Set to true if you want appdb VCN peering" 
+  description = "Set to true if you want appdb VCN peering"
   default     = false
 }
 

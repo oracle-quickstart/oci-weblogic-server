@@ -12,7 +12,7 @@
 */
 
 resource "oci_core_dhcp_options" "wls_dhcp_options1" {
-  count          = var.is_vcn_peering || var.appdb_vcn_peering ? 0 : (var.use_existing_subnets?0:1)
+  count          = var.is_vcn_peering || var.appdb_vcn_peering ? 0 : (var.use_existing_subnets ? 0 : 1)
   compartment_id = var.compartment_id
   vcn_id         = var.vcn_id
   display_name   = "${var.resource_name_prefix}-${var.dhcp_options_name}"
@@ -23,6 +23,6 @@ resource "oci_core_dhcp_options" "wls_dhcp_options1" {
     server_type = "VcnLocalPlusInternet"
   }
 
-  defined_tags = var.tags.defined_tags
+  defined_tags  = var.tags.defined_tags
   freeform_tags = var.tags.freeform_tags
 }
