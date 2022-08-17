@@ -51,5 +51,17 @@ variable "wls_admin_password_id" {
 }
 
 
-
-
+variable "atp_db" {
+  type = object({
+    is_atp         = bool
+    compartment_id = string
+    password_id    = string
+  })
+  description = <<-EOT
+  atp_db = {
+    is_atp: "Indicates if an ATP database is used to store the schemas of a JRF WebLogic domain"
+    compartment_id: "The OCID of the compartment where the ATP database is located"
+    password_id: "The OCID of the vault secret with the password of the database"
+  }
+  EOT
+}

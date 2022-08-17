@@ -60,5 +60,5 @@ variable "tf_script_version" {
 variable "instance_shape" {
   type        = string
   description = "The OCI VM shape for WebLogic VM instances"
-  default = "VM.Standard.E4.Flex"
+  default     = "VM.Standard.E4.Flex"
 }

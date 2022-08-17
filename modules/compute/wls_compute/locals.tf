@@ -13,4 +13,7 @@ locals {
 
   opc_key    = module.compute-keygen.opc_keys
   oracle_key = module.compute-keygen.oracle_keys
+
+  is_atp_db = trimspace(var.jrf_parameters.atp_db_parameters.atp_db_id) != ""
+  apply_JRF = local.is_atp_db
 }

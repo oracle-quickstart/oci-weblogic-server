@@ -77,21 +77,34 @@ module "wls-instances" {
       data_vol_mount_point = lookup(var.volume_map[1], "volume_mount_point")
       data_vol_device      = lookup(var.volume_map[1], "device")
 
-      deploy_sample_app = var.deploy_sample_app
-      domain_dir        = var.domain_dir
-      logs_dir          = var.logs_dir
-      #apply_JRF                          = local.is_apply_JRF
+      deploy_sample_app                  = var.deploy_sample_app
+      domain_dir                         = var.domain_dir
+      logs_dir                           = var.logs_dir
       status_check_timeout_duration_secs = var.status_check_timeout_duration_secs
       allow_manual_domain_extension      = var.allow_manual_domain_extension
       load_balancer_id                   = var.load_balancer_id
       add_loadbalancer                   = var.add_loadbalancer
       is_lb_private                      = var.is_lb_private
 
-      # TODO (robesanc): These variables are hardcoded to allow non-JRF scenarios for now
-      is_atp_db           = "false"
-      appdb_password_ocid = ""
-      apply_JRF           = "false"
+
+      apply_JRF        = local.apply_JRF
+      db_name          = local.apply_JRF ? data.oci_database_autonomous_database.atp_db[0].db_name : ""
+      db_user          = var.jrf_parameters.db_user
+      db_password_ocid = var.jrf_parameters.db_password_id
+      db_existing_vcn_add_seclist = var.db_existing_vcn_add_seclist
+
+      rcu_component_list = var.wls_version_to_rcu_component_list_map[var.wls_version]
+
+      is_atp_db             = local.is_atp_db
+      atp_db_id             = var.jrf_parameters.atp_db_parameters.atp_db_id
+      atp_db_level          = var.jrf_parameters.atp_db_parameters.atp_db_level
+      is_atp_dedicated      = local.apply_JRF ? lookup(data.oci_database_autonomous_database.atp_db[0], "is_dedicated") : false
+      atp_private_end_point = element(coalescelist(data.oci_database_autonomous_database.atp_db.*.private_endpoint, [""]), 0)
+      atp_nsg_id            = local.is_atp_db ? data.template_file.atp_nsg_id[0].rendered : ""
+
+      # TODO (robesanc): These variables are hardcoded to allow creating instances without app db
       is_atp_app_db       = "false"
+      appdb_password_ocid = ""
 
     }
 

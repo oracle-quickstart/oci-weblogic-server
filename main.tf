@@ -27,6 +27,7 @@ module "policies" {
     defined_tags  = local.defined_tags
     freeform_tags = local.free_form_tags
   }
+  atp_db = local.atp_db
 }
 
 module "bastion" {
@@ -96,16 +97,29 @@ module "compute" {
   wls_admin_user          = var.wls_admin_user
   wls_domain_name         = format("%s_domain", local.service_name_prefix)
   wls_server_startup_args = var.wls_server_startup_args
+  wls_existing_vcn_id     = var.wls_existing_vcn_id
   wls_vcn_cidr            = var.wls_vcn_cidr
   wls_version             = var.wls_version
   wls_edition             = var.wls_edition
   num_vm_instances        = var.wls_node_count
   resource_name_prefix    = var.service_name
+
+  db_existing_vcn_add_seclist = var.ocidb_existing_vcn_add_seclist
+  jrf_parameters = {
+    db_user        = local.db_user
+    db_password_id = local.db_password
+    atp_db_parameters = {
+      atp_db_id    = var.atp_db_id
+      atp_db_level = var.atp_db_level
+    }
+  }
+
   tags = {
     defined_tags    = local.defined_tags
     freeform_tags   = local.free_form_tags
     dg_defined_tags = local.dg_defined_tags
   }
+
 }
 
 module load-balancer-backends {
