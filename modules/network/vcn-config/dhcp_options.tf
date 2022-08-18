@@ -11,8 +11,7 @@
 *   https://www.terraform.io/docs/providers/oci/guides/managing_default_resources.html
 */
 
-resource "oci_core_dhcp_options" "wls_dhcp_options1" {
-  count          = var.is_vcn_peering || var.appdb_vcn_peering ? 0 : (var.use_existing_subnets ? 0 : 1)
+resource "oci_core_dhcp_options" "wls_dhcp_options" {
   compartment_id = var.compartment_id
   vcn_id         = var.vcn_id
   display_name   = "${var.resource_name_prefix}-${var.dhcp_options_name}"

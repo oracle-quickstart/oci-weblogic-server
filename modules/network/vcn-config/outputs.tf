@@ -35,19 +35,19 @@ output "fss_security_list_id" {
 /* Route tables*/
 
 output "route_table_id" {
-  description = "OCID of route table with internet gateway. "
-  value       = concat(coalescelist(oci_core_default_route_table.wls_default_route_table1.*.id, oci_core_route_table.wls_route_table2.*.id, tolist([""])), tolist([""]))
+  description = "ocid of route table with internet gateway. "
+  value       = compact(concat(oci_core_route_table.wls_route_table.*.id, tolist([""])))
 }
 
 output "service_gateway_route_table_id" {
   description = "OCID of route table with service gateway. "
-  value       = element(coalescelist(oci_core_route_table.wls_gateway_route_table_newvcn.*.id, oci_core_route_table.wls_gateway_route_table_existingvcn.*.id, tolist([""])), 0)
+  value       = element(coalescelist(oci_core_route_table.wls_gateway_route_table_vcn.*.id, tolist([""])), 0)
 }
 
 /* DHCP OPTIONS */
 output "dhcp_options_id" {
   description = "OCID of DHCP options. "
-  value       = element(coalescelist(oci_core_dhcp_options.wls_dhcp_options1.*.id, tolist([""])), 0)
+  value       = element(coalescelist(oci_core_dhcp_options.wls_dhcp_options.*.id, tolist([""])), 0)
 }
 
 /* Gateways */
@@ -58,10 +58,10 @@ output "wls_internet_gateway_id" {
 
 output "wls_service_gateway_services_id" {
   description = "OCID of service gateway"
-  value       = join("", oci_core_service_gateway.wls_service_gateway_newvcn.*.id)
+  value       = join("", oci_core_service_gateway.wls_service_gateway_vcn.*.id)
 }
 
 output "wls_nat_gateway_services_id" {
   description = "OCID of nat gateway"
-  value       = join("", oci_core_nat_gateway.wls_nat_gateway_newvcn.*.id)
+  value       = join("", oci_core_nat_gateway.wls_nat_gateway_vcn.*.id)
 }

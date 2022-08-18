@@ -117,12 +117,6 @@ variable "wls_security_list_name" {
   default     = "wls-security-list"
 }
 
-variable "use_existing_subnets" {
-  type        = bool
-  description = "Set to true if the exsiting subnets are used to create VCN config"
-  default     = false
-}
-
 variable "resource_name_prefix" {
   type        = string
   description = "Prefix which will be used to create VCN config display name"
@@ -166,16 +160,6 @@ variable "existing_bastion_instance_id" {
 variable "is_single_ad_region" {
   type        = bool
   description = "Set to true if you want single AD region"
-}
-
-variable "is_idcs_selected" {
-  type        = bool
-  description = "Set to true if you want IDCS to be assigned to the VCN"
-}
-
-variable "idcs_cloudgate_port" {
-  type        = number
-  description = "IDCS cloudgate port when IDCS is set to true"
 }
 
 variable "is_vcn_peering" {

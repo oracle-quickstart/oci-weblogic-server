@@ -30,8 +30,6 @@ locals {
 *   Source <WLS Subnet CIDR>, protocol TCP, Destination Port: ALL
 */
 resource "oci_core_security_list" "wls_security_list" {
-  count = var.use_existing_subnets ? 0 : 1
-
   #Required
   compartment_id = var.compartment_id
   vcn_id         = var.vcn_id
@@ -66,8 +64,8 @@ resource "oci_core_security_list" "wls_security_list" {
       stateless = false
 
       tcp_options {
-        min = var.wls_ssl_admin_port
-        max = var.wls_ssl_admin_port
+        min = var.wls_extern_ssl_admin_port
+        max = var.wls_extern_ssl_admin_port
       }
     }
   }
@@ -86,8 +84,6 @@ resource "oci_core_security_list" "wls_security_list" {
 *   Source <wls_subnet_cidr>, protocol TCP, Destination Port: ALL
 */
 resource "oci_core_security_list" "wls_internal_security_list" {
-  count = var.use_existing_subnets ? 0 : 1
-
   #Required
   compartment_id = var.compartment_id
   vcn_id         = var.vcn_id
@@ -119,8 +115,6 @@ resource "oci_core_security_list" "wls_internal_security_list" {
 *     Source 0.0.0.0/0, protocol TCP, Destination Port: <wls_ms_port>
 */
 resource "oci_core_security_list" "wls_ms_security_list" {
-  count = var.use_existing_subnets ? 0 : 1
-
   #Required
   compartment_id = var.compartment_id
   vcn_id         = var.vcn_id
@@ -157,8 +151,8 @@ resource "oci_core_security_list" "wls_ms_security_list" {
       stateless = false
 
       tcp_options {
-        min = var.is_idcs_selected ? var.idcs_cloudgate_port : var.wls_ms_extern_ssl_port
-        max = var.is_idcs_selected ? var.idcs_cloudgate_port : var.wls_ms_extern_ssl_port
+        min = var.wls_ms_extern_ssl_port
+        max = var.wls_ms_extern_ssl_port
       }
     }
   }
@@ -181,7 +175,7 @@ resource "oci_core_security_list" "wls_ms_security_list" {
 *     Source 0.0.0.0/0, protocol TCP, Destination Port: 80 or 443
 */
 resource "oci_core_security_list" "lb_security_list" {
-  count = (var.add_load_balancer && var.use_existing_subnets == false) ? 1 : 0
+  count = (var.add_load_balancer) ? 1 : 0
 
   #Required
   compartment_id = var.compartment_id
@@ -221,7 +215,7 @@ resource "oci_core_security_list" "lb_security_list" {
 *     Source <bastion_subnet_cidr>, protocol TCP, Destination Port: ALL
 */
 resource "oci_core_security_list" "wls_bastion_security_list" {
-  count          = !var.assign_backend_public_ip && !var.use_existing_subnets && var.existing_bastion_instance_id == "" && var.is_bastion_instance_required ? 1 : 0
+  count          = var.existing_bastion_instance_id == "" && var.is_bastion_instance_required ? 1 : 0
   compartment_id = var.compartment_id
   display_name   = "${var.resource_name_prefix}-wls-bastion-security-list"
   vcn_id         = var.vcn_id
@@ -245,7 +239,7 @@ resource "oci_core_security_list" "wls_bastion_security_list" {
 * Create security rules for WLS private subnet with existing bastion private ip
 */
 resource "oci_core_security_list" "wls_existing_bastion_security_list" {
-  count          = !var.assign_backend_public_ip && !var.use_existing_subnets && var.existing_bastion_instance_id != "" && var.is_bastion_instance_required ? 1 : 0
+  count          = var.existing_bastion_instance_id != "" && var.is_bastion_instance_required ? 1 : 0
   compartment_id = var.compartment_id
   display_name   = "${var.resource_name_prefix}-wls-bastion-security-list"
   vcn_id         = var.vcn_id
