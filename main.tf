@@ -1,3 +1,5 @@
+# Copyright (c) 2022, Oracle and/or its affiliates.
+# Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 module "system-tags" {
   source         = "./modules/resource-tags"
@@ -48,6 +50,18 @@ module "bastion" {
   is_bastion_with_reserved_public_ip = var.is_bastion_with_reserved_public_ip
 }
 
+module "validators" {
+  source                     = "./modules/validators"
+  original_service_name      = var.service_name
+
+  wls_ms_port                = var.wls_ms_extern_port
+  wls_ms_ssl_port            = var.wls_ms_extern_ssl_port
+  wls_extern_admin_port      = var.wls_extern_admin_port
+  wls_extern_ssl_admin_port  = var.wls_extern_ssl_admin_port
+  wls_admin_port_source_cidr = var.wls_admin_port_source_cidr
+  wls_expose_admin_port      = var.wls_expose_admin_port
+}
+
 module load-balancer {
   source = "./modules/lb/loadbalancer"
   count  = (var.add_load_balancer && var.existing_load_balancer_id == "") ? 1 : 0
@@ -78,6 +92,7 @@ module "compute" {
   compartment_id         = var.compartment_id
   instance_image_id      = var.instance_image_id
   instance_shape         = var.instance_shape
+  wls_ocpu_count         = var.wls_ocpu_count
   network_compartment_id = var.network_compartment_id
   subnet_id              = var.wls_subnet_id
   wls_subnet_id          = var.wls_subnet_id

@@ -1,3 +1,5 @@
+# Copyright (c) 2022, Oracle and/or its affiliates.
+# Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 variable "tenancy_id" {
   type        = string
@@ -97,6 +99,7 @@ variable "is_lb_private" {
   type        = bool
   description = "Set to true if a load balancer was created as part of the WebLogic for OCI stack and is private. Set to false if a load balancer was created as part of the WebLogic for OCI stack and is public"
 }
+
 variable "load_balancer_id" {
   type        = string
   description = "The OCID of the load balancer that was created as part of the WebLogic for OCI stack"

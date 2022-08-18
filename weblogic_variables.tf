@@ -1,3 +1,6 @@
+# Copyright (c) 2022, Oracle and/or its affiliates.
+# Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
+
 variable "wls_version" {
   type        = string
   description = "The WebLogic version to be installed for this stack. Accepted values are: 12.2.1.4, 14.1.1.0"
@@ -28,13 +31,20 @@ variable "wls_admin_user" {
   type        = string
   default     = "weblogic"
   description = "Name of WebLogic administration user"
+  validation {
+    condition     = replace(var.wls_admin_user, "/^[a-zA-Z][a-zA-Z0-9]{7,127}/", "0") == "0"
+    error_message = "The value for wls_admin_user provided should be alphanumeric and length should be between 8 and 128 characters."
+  }
 }
 
 variable "wls_admin_password_id" {
   type        = string
   description = "The OCID of the vault secret with the password for WebLogic administration user"
+  validation {
+    condition     = length(regexall("^ocid1.vaultsecret.", var.wls_admin_password_id)) > 0
+    error_message = "The value for wls_admin_password_id should start with \"ocid1.vaultsecret.\"."
+  }
 }
-
 
 variable "wls_14c_jdk_version" {
   type        = string
@@ -46,6 +56,17 @@ variable "wls_14c_jdk_version" {
   }
 }
 
+variable "wls_expose_admin_port" {
+  type = bool
+  default = false
+  description = "[WARNING] Selecting this option will expose the console to the internet if the default 0.0.0.0/0 CIDR is used. You should change the CIDR range below to allow access to a trusted IP range."
+}
+
+variable "wls_admin_port_source_cidr" {
+  type = string
+  default = "0.0.0.0/0"
+  description = "Create a security list to allow access to the WebLogic Administration Console port to the source CIDR range. [WARNING] Keeping the default 0.0.0.0/0 CIDR will expose the console to the internet. You should change the CIDR range to allow access to a trusted IP range."
+}
 
 variable "wls_server_startup_args" {
   type        = string
@@ -57,18 +78,41 @@ variable "wls_extern_ssl_admin_port" {
   type        = number
   default     = 7002
   description = "The administration server SSL port on which to access the administration console"
+  validation {
+    condition     = var.wls_extern_ssl_admin_port > 0
+    error_message = "The value for wls_extern_ssl_admin_port should to be greater than 0."
+  }
 }
 
 variable "wls_ms_extern_port" {
   type        = number
   description = "The managed server port on which to send application traffic"
   default     = 7003
+  validation {
+    condition     = var.wls_ms_extern_port > 0
+    error_message = "The value for wls_ms_extern_port should to be greater than 0."
+  }
 }
 
 variable "wls_ms_extern_ssl_port" {
-  type        = string
-  default     = "7004"
+  type        = number
+  default     = 7004
   description = "The managed server SSL port on which to send application traffic"
+  validation {
+    condition     = var.wls_ms_extern_ssl_port > 0
+    error_message = "The value for wls_ms_extern_ssl_port should to be greater than 0."
+  }
+}
+
+# Port for channel Extern on Admin Server
+variable "wls_extern_admin_port" {
+  type    = number
+  default = 7001
+  description = "weblogic console port"
+  validation {
+    condition     = var.wls_extern_admin_port > 0
+    error_message = "The value for wls_extern_admin_port should to be greater than 0."
+  }
 }
 
 variable "deploy_sample_app" {
