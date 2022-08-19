@@ -201,3 +201,8 @@ variable "vcn_cidr" {
   type        = string
   description = "The range of IP addresses that a packet originating from the instance can go to"
 }
+
+variable "wls_ms_content_port" {
+  type        = number
+  description = "The managed server SSL port  or idcs cloudgate port which allows public internet traffic"
+}

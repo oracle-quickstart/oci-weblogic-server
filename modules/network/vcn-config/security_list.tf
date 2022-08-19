@@ -151,8 +151,8 @@ resource "oci_core_security_list" "wls_ms_security_list" {
       stateless = false
 
       tcp_options {
-        min = var.wls_ms_extern_ssl_port
-        max = var.wls_ms_extern_ssl_port
+        min = var.wls_ms_content_port
+        max = var.wls_ms_content_port
       }
     }
   }
