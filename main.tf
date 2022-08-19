@@ -99,6 +99,7 @@ module "compute" {
   wls_server_startup_args = var.wls_server_startup_args
   wls_existing_vcn_id     = var.wls_existing_vcn_id
   wls_vcn_cidr            = var.wls_vcn_cidr
+  wls_subnet_cidr         = "" # TODO add variable to set this when support for new VCN and subnet is added
   wls_version             = var.wls_version
   wls_edition             = var.wls_edition
   num_vm_instances        = var.wls_node_count
@@ -119,7 +120,6 @@ module "compute" {
     freeform_tags   = local.free_form_tags
     dg_defined_tags = local.dg_defined_tags
   }
-
 }
 
 module load-balancer-backends {

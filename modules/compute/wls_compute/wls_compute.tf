@@ -62,6 +62,9 @@ module "wls-instances" {
       wls_existing_vcn_id                = var.wls_existing_vcn_id
       wls_subnet_ocid                    = var.subnet_id
       wls_vcn_cidr                       = var.wls_vcn_cidr
+      network_compartment_id             = var.network_compartment_id
+      wls_subnet_cidr                    = local.wls_subnet_cidr
+
       wls_edition                        = var.wls_edition
 
       user_data            = data.template_cloudinit_config.config.rendered
