@@ -70,6 +70,11 @@ variable "wls_vcn_cidr" {
   description = "The CIDR of the VCN where the subnet the compute instance will be created is located"
 }
 
+variable "wls_subnet_cidr" {
+  type = string
+  description = "The CIDR for the new subnet where the compute instance will be created. Ignored if wls_subnet_id is not empty"
+}
+
 variable "wls_subnet_id" {
   type        = string
   description = "The OCID of the existing subnet where the compute instance will be created. Provide a blank value if a new subnet was created as part of the WebLogic for OCI stack"
@@ -234,7 +239,7 @@ variable "tags" {
 variable "mode" {
   type        = string
   description = "Mode of provisioning. Accepted values: PROD, DEV"
-  default = "PROD"
+  default     = "PROD"
   validation {
     condition     = contains(["PROD", "DEV"], var.mode)
     error_message = "Allowed values for mode are PROD, DEV."

@@ -13,4 +13,9 @@ locals {
 
   opc_key    = module.compute-keygen.opc_keys
   oracle_key = module.compute-keygen.oracle_keys
+
+  is_atp_db = trimspace(var.jrf_parameters.atp_db_parameters.atp_db_id) != ""
+  apply_JRF = local.is_atp_db
+
+  wls_subnet_cidr    = (var.wls_subnet_id == "") ? var.wls_subnet_cidr : data.oci_core_subnet.wls_subnet[0].cidr_block
 }

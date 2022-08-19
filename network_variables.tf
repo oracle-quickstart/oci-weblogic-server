@@ -7,6 +7,12 @@ variable "network_compartment_id" {
   default     = ""
 }
 
+variable "wls_existing_vcn_id" {
+  type        = string
+  description = "The OCID of the existing VCN where the WebLogic servers and other resources will be created. If not specified, a new VCN is created"
+  default     = ""
+}
+
 variable "wls_vcn_cidr" {
   type        = string
   description = "The CIDR of the VCN where the compute instance will be created"
