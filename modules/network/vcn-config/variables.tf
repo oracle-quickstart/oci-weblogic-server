@@ -122,12 +122,6 @@ variable "resource_name_prefix" {
   description = "Prefix which will be used to create VCN config display name"
 }
 
-variable "assign_backend_public_ip" {
-  type        = bool
-  description = "Set to true if loadbalancer backened needs to be assigned public ip"
-  default     = true
-}
-
 variable "use_regional_subnets" {
   type        = bool
   description = "Set to true if regional subnets to be used"
