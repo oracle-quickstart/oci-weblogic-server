@@ -52,8 +52,7 @@ module "bastion" {
 
 module "validators" {
   source                     = "./modules/validators"
-  original_service_name      = var.service_name
-
+  service_name               = var.service_name
   wls_ms_port                = var.wls_ms_extern_port
   wls_ms_ssl_port            = var.wls_ms_extern_ssl_port
   wls_extern_admin_port      = var.wls_extern_admin_port
