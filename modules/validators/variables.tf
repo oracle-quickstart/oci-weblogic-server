@@ -3,7 +3,7 @@
 
 variable original_service_name {
   type        = string
-  description = "prefix for stack resources"
+  description = "Prefix for stack resources"
 }
 
 variable wls_ms_port {

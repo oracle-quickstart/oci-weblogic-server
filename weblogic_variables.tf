@@ -29,8 +29,8 @@ variable "wls_node_count" {
 
 variable "wls_admin_user" {
   type        = string
-  default     = "weblogic"
   description = "Name of WebLogic administration user"
+  default     = "weblogic"
   validation {
     condition     = replace(var.wls_admin_user, "/^[a-zA-Z][a-zA-Z0-9]{7,127}/", "0") == "0"
     error_message = "The value for wls_admin_user provided should be alphanumeric and length should be between 8 and 128 characters."
@@ -58,14 +58,14 @@ variable "wls_14c_jdk_version" {
 
 variable "wls_expose_admin_port" {
   type = bool
-  default = false
   description = "[WARNING] Selecting this option will expose the console to the internet if the default 0.0.0.0/0 CIDR is used. You should change the CIDR range below to allow access to a trusted IP range."
+  default = false
 }
 
 variable "wls_admin_port_source_cidr" {
   type = string
-  default = "0.0.0.0/0"
   description = "Create a security list to allow access to the WebLogic Administration Console port to the source CIDR range. [WARNING] Keeping the default 0.0.0.0/0 CIDR will expose the console to the internet. You should change the CIDR range to allow access to a trusted IP range."
+  default = "0.0.0.0/0"
 }
 
 variable "wls_server_startup_args" {
@@ -76,8 +76,8 @@ variable "wls_server_startup_args" {
 
 variable "wls_extern_ssl_admin_port" {
   type        = number
-  default     = 7002
   description = "The administration server SSL port on which to access the administration console"
+  default     = 7002
   validation {
     condition     = var.wls_extern_ssl_admin_port > 0
     error_message = "The value for wls_extern_ssl_admin_port should be greater than 0."
@@ -96,8 +96,8 @@ variable "wls_ms_extern_port" {
 
 variable "wls_ms_extern_ssl_port" {
   type        = number
-  default     = 7004
   description = "The managed server SSL port on which to send application traffic"
+  default     = 7004
   validation {
     condition     = var.wls_ms_extern_ssl_port > 0
     error_message = "The value for wls_ms_extern_ssl_port should be greater than 0."
@@ -107,8 +107,8 @@ variable "wls_ms_extern_ssl_port" {
 # Port for channel Extern on Admin Server
 variable "wls_extern_admin_port" {
   type    = number
+  description = "Weblogic console port"
   default = 7001
-  description = "weblogic console port"
   validation {
     condition     = var.wls_extern_admin_port > 0
     error_message = "The value for wls_extern_admin_port should be greater than 0."

@@ -179,7 +179,7 @@ variable "wls_version" {
   description = "The WebLogic version to be installed in this instance. Accepted values are: 12.2.1.4, 14.1.1.0"
   validation {
     condition     = contains(["12.2.1.4", "14.1.1.0"], var.wls_version)
-    error_message = "Allowed values for wls_version are 12.2.1.4, 14.1.1.0."
+    error_message = "WebLogic Versions 12.2.1.4 and 14.1.1.0 are the only versions supported."
   }
 }
 
@@ -188,7 +188,7 @@ variable "wls_14c_jdk_version" {
   description = "JDK version to use when installing WebLogic 14c. Ignored when WebLogic version is not 14c. Allowed values: jdk8, jdk11"
   validation {
     condition     = var.wls_14c_jdk_version == "" || contains(["jdk8", "jdk11"], var.wls_14c_jdk_version)
-    error_message = "Allowed values for wls_14c_jdk_version are jdk8, jdk11."
+    error_message = "Only jdk8 and jdk11 are supported with WebLogic version 14.1.1.0."
   }
 }
 
