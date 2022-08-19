@@ -63,7 +63,7 @@ variable "wls_extern_admin_port" {
   default     = 7001
   validation {
     condition     = var.wls_extern_admin_port > 0
-    error_message = "The value for wls_extern_admin_port should to be greater than 0."
+    error_message = "The value for wls_extern_admin_port should be greater than 0."
   }
 }
 
@@ -73,7 +73,7 @@ variable "wls_extern_ssl_admin_port" {
   default     = 7002
   validation {
     condition     = var.wls_extern_ssl_admin_port > 0
-    error_message = "The value for wls_extern_ssl_admin_port should to be greater than 0."
+    error_message = "The value for wls_extern_ssl_admin_port should be greater than 0."
   }
 }
 
@@ -83,7 +83,7 @@ variable "wls_ms_extern_port" {
   default     = 7003
   validation {
     condition     = var.wls_ms_extern_port > 0
-    error_message = "The value for wls_ms_extern_port should to be greater than 0."
+    error_message = "The value for wls_ms_extern_port should be greater than 0."
   }
 }
 
@@ -93,7 +93,7 @@ variable "wls_ms_extern_ssl_port" {
   default     = 7004
   validation {
     condition     = var.wls_ms_extern_ssl_port > 0
-    error_message = "The value for wls_ms_extern_ssl_port should to be greater than 0."
+    error_message = "The value for wls_ms_extern_ssl_port should be greater than 0."
   }
 }
 
@@ -103,7 +103,7 @@ variable "wls_admin_port" {
   default     = 9071
   validation {
     condition     = var.wls_admin_port > 0
-    error_message = "The value for wls_admin_port should to be greater than 0."
+    error_message = "The value for wls_admin_port should be greater than 0."
   }
 }
 
@@ -113,7 +113,7 @@ variable "wls_admin_ssl_port" {
   default     = 9072
   validation {
     condition     = var.wls_admin_ssl_port > 0
-    error_message = "The value for wls_admin_ssl_port should to be greater than 0."
+    error_message = "The value for wls_admin_ssl_port should be greater than 0."
   }
 }
 
@@ -123,7 +123,7 @@ variable "wls_ms_port" {
   default     = 9073
   validation {
     condition     = var.wls_ms_port > 0
-    error_message = "The value for wls_ms_port should to be greater than 0."
+    error_message = "The value for wls_ms_port should be greater than 0."
   }
 }
 
@@ -133,7 +133,7 @@ variable "wls_ms_ssl_port" {
   default     = 9074
   validation {
     condition     = var.wls_ms_ssl_port > 0
-    error_message = "The value for wls_ms_ssl_port should to be greater than 0."
+    error_message = "The value for wls_ms_ssl_port should be greater than 0."
   }
 }
 
@@ -143,7 +143,7 @@ variable "wls_cluster_mc_port" {
   default     = 5555
   validation {
     condition     = var.wls_cluster_mc_port > 0
-    error_message = "The value for wls_cluster_mc_port should to be greater than 0."
+    error_message = "The value for wls_cluster_mc_port should be greater than 0."
   }
 }
 
@@ -153,7 +153,7 @@ variable "wls_nm_port" {
   default     = 5556
   validation {
     condition     = var.wls_nm_port > 0
-    error_message = "The value for wls_nm_port should to be greater than 0."
+    error_message = "The value for wls_nm_port should be greater than 0."
   }
 }
 

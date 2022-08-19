@@ -80,7 +80,7 @@ variable "wls_extern_ssl_admin_port" {
   description = "The administration server SSL port on which to access the administration console"
   validation {
     condition     = var.wls_extern_ssl_admin_port > 0
-    error_message = "The value for wls_extern_ssl_admin_port should to be greater than 0."
+    error_message = "The value for wls_extern_ssl_admin_port should be greater than 0."
   }
 }
 
@@ -90,7 +90,7 @@ variable "wls_ms_extern_port" {
   default     = 7003
   validation {
     condition     = var.wls_ms_extern_port > 0
-    error_message = "The value for wls_ms_extern_port should to be greater than 0."
+    error_message = "The value for wls_ms_extern_port should be greater than 0."
   }
 }
 
@@ -100,7 +100,7 @@ variable "wls_ms_extern_ssl_port" {
   description = "The managed server SSL port on which to send application traffic"
   validation {
     condition     = var.wls_ms_extern_ssl_port > 0
-    error_message = "The value for wls_ms_extern_ssl_port should to be greater than 0."
+    error_message = "The value for wls_ms_extern_ssl_port should be greater than 0."
   }
 }
 
@@ -111,7 +111,7 @@ variable "wls_extern_admin_port" {
   description = "weblogic console port"
   validation {
     condition     = var.wls_extern_admin_port > 0
-    error_message = "The value for wls_extern_admin_port should to be greater than 0."
+    error_message = "The value for wls_extern_admin_port should be greater than 0."
   }
 }
 
