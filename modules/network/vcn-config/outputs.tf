@@ -35,13 +35,13 @@ output "fss_security_list_id" {
 /* Route tables*/
 
 output "route_table_id" {
-  description = "ocid of route table with internet gateway. "
+  description = "OCID of route table with internet gateway. "
   value       = compact(concat(oci_core_route_table.wls_route_table.*.id, tolist([""])))
 }
 
 output "service_gateway_route_table_id" {
   description = "OCID of route table with service gateway. "
-  value       = element(coalescelist(oci_core_route_table.wls_gateway_route_table_vcn.*.id, tolist([""])), 0)
+  value       = element(coalescelist(oci_core_route_table.wls_gateway_route_table.*.id, tolist([""])), 0)
 }
 
 /* DHCP OPTIONS */
@@ -58,10 +58,10 @@ output "wls_internet_gateway_id" {
 
 output "wls_service_gateway_services_id" {
   description = "OCID of service gateway"
-  value       = join("", oci_core_service_gateway.wls_service_gateway_vcn.*.id)
+  value       = join("", oci_core_service_gateway.wls_service_gateway.*.id)
 }
 
 output "wls_nat_gateway_services_id" {
   description = "OCID of nat gateway"
-  value       = join("", oci_core_nat_gateway.wls_nat_gateway_vcn.*.id)
+  value       = join("", oci_core_nat_gateway.wls_nat_gateway.*.id)
 }

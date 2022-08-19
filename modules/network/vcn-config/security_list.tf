@@ -1,34 +1,7 @@
 # Copyright (c) 2022, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
-/*
-* Creates a new security lists for the specified VCN.
-* Also see: https://www.terraform.io/docs/providers/oci/r/core_security_list.html
-*/
 
-locals {
-  port_for_ingress_lb_security_list = 443
-  lb_destination_cidr               = var.is_lb_private ? var.bastion_subnet_cidr : "0.0.0.0/0"
-
-  #if LB is requested and regional or single ad region, source: single lb subnet cidr
-  #if LB is requested and non regional,  source: primary and secondary lb subnet cidrs
-  #if no lb open it to anywhere,  source:"0.0.0.0/0"
-  wls_ms_source_cidrs         = var.add_load_balancer ? ((var.use_regional_subnets || var.is_single_ad_region) ? [var.lb_subnet_1_cidr] : [var.lb_subnet_1_cidr, var.lb_subnet_2_cidr]) : ["0.0.0.0/0"]
-  wls_admin_port_source_cidrs = var.wls_expose_admin_port ? [var.wls_admin_port_source_cidr] : []
-}
-
-/*
-* Create security rules for WLS ssh and admin ports
-* Usage: Weblogic subnet or bastion subnet
-*
-* Creates following secrules:
-* egress:
-*   destination 0.0.0.0/0, protocol all
-* ingress:
-*   Source 0.0.0.0/0, protocol TCP, Destination Port: 22 <ssh port>
-*   Source 0.0.0.0/0, protocol TCP, Destination Port: <wls_ssl_admin_port>
-*   Source <WLS Subnet CIDR>, protocol TCP, Destination Port: ALL
-*/
 resource "oci_core_security_list" "wls_security_list" {
   #Required
   compartment_id = var.compartment_id
@@ -71,18 +44,11 @@ resource "oci_core_security_list" "wls_security_list" {
   }
   defined_tags  = var.tags.defined_tags
   freeform_tags = var.tags.freeform_tags
+  lifecycle {
+    ignore_changes = [defined_tags, freeform_tags]
+  }
 }
 
-/*
-* Create security rules for WLS VM-VM access
-* Usage: Weblogic subnet
-*
-* Creates following secrules:
-* egress:
-*   destination 0.0.0.0/0, protocol all
-* ingress:
-*   Source <wls_subnet_cidr>, protocol TCP, Destination Port: ALL
-*/
 resource "oci_core_security_list" "wls_internal_security_list" {
   #Required
   compartment_id = var.compartment_id
@@ -103,17 +69,11 @@ resource "oci_core_security_list" "wls_internal_security_list" {
   }
   defined_tags  = var.tags.defined_tags
   freeform_tags = var.tags.freeform_tags
+  lifecycle {
+    ignore_changes = [defined_tags, freeform_tags]
+  }
 }
 
-/*
-* Create security rules for WLS Managed servers, if LB is not requested
-* Usage: Weblogic subnet or bastion subnet
-*
-* Creates following secrules:
-*   ingress:
-*     Source 0.0.0.0/0, protocol TCP, Destination Port: <wls_ms_ssl_port>
-*     Source 0.0.0.0/0, protocol TCP, Destination Port: <wls_ms_port>
-*/
 resource "oci_core_security_list" "wls_ms_security_list" {
   #Required
   compartment_id = var.compartment_id
@@ -159,21 +119,11 @@ resource "oci_core_security_list" "wls_ms_security_list" {
 
   defined_tags  = var.tags.defined_tags
   freeform_tags = var.tags.freeform_tags
+  lifecycle {
+    ignore_changes = [defined_tags, freeform_tags]
+  }
 }
 
-
-
-
-/*
-* Create security rules for LB
-* Usage: Weblogic subnet or bastion subnet
-*
-* Creates following secrules:
-*   egress:
-*     destination 0.0.0.0/0, protocol all
-*   ingress:
-*     Source 0.0.0.0/0, protocol TCP, Destination Port: 80 or 443
-*/
 resource "oci_core_security_list" "lb_security_list" {
   count = (var.add_load_balancer) ? 1 : 0
 
@@ -202,6 +152,9 @@ resource "oci_core_security_list" "lb_security_list" {
 
   defined_tags  = var.tags.defined_tags
   freeform_tags = var.tags.freeform_tags
+  lifecycle {
+    ignore_changes = [defined_tags, freeform_tags]
+  }
 }
 
 /*
@@ -232,7 +185,9 @@ resource "oci_core_security_list" "wls_bastion_security_list" {
 
   defined_tags  = var.tags.defined_tags
   freeform_tags = var.tags.freeform_tags
-
+  lifecycle {
+    ignore_changes = [defined_tags, freeform_tags]
+  }
 }
 
 /*
@@ -256,7 +211,9 @@ resource "oci_core_security_list" "wls_existing_bastion_security_list" {
 
   defined_tags  = var.tags.defined_tags
   freeform_tags = var.tags.freeform_tags
-
+  lifecycle {
+    ignore_changes = [defined_tags, freeform_tags]
+  }
 }
 
 # FSS security list

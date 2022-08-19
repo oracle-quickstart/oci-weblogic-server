@@ -21,11 +21,6 @@ variable "vcn_id" {
   description = "The OCID of the new VCN or existing VCN"
 }
 
-variable "wls_vcn_name" {
-  type        = string
-  description = "A user-friendly name of the VCN"
-}
-
 variable "add_load_balancer" {
   type        = bool
   description = "Set to true if ypu want loadbalancer"
@@ -35,8 +30,10 @@ variable "add_load_balancer" {
 // Optional params
 
 variable "dhcp_options_name" {
-  default     = "dhcpOptions"
+  type        = string
   description = "A user-friendly name of the DHCP options in a VCN"
+  default     = "dhcpOptions"
+
 }
 
 variable "route_table_name" {
@@ -53,6 +50,7 @@ variable "is_lb_private" {
 variable "wls_expose_admin_port" {
   type        = bool
   description = "Set to true if you want to export wls admin port"
+  default     = false
 }
 
 variable "wls_admin_port_source_cidr" {
@@ -137,7 +135,6 @@ variable "wls_bastion_security_list_name" {
 variable "bastion_subnet_cidr" {
   type        = string
   description = "The CIDR value of the bastion subnet"
-  default     = ""
 }
 
 variable "is_bastion_instance_required" {
@@ -199,4 +196,9 @@ variable "vcn_cidr" {
 variable "wls_ms_content_port" {
   type        = number
   description = "The managed server SSL port  or idcs cloudgate port which allows public internet traffic"
+}
+
+variable "wls_ms_source_cidrs" {
+  type        = list(any)
+  description = "The Weblogic managed servers source CIDR values"
 }
