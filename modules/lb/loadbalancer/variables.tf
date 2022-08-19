@@ -1,3 +1,5 @@
+# Copyright (c) 2022, Oracle and/or its affiliates.
+# Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 variable "compartment_id" {
   type        = string
@@ -42,7 +44,6 @@ variable "lb_reserved_public_ip_id" {
     condition     = length(var.lb_reserved_public_ip_id) == 0 || length(var.lb_reserved_public_ip_id) == 1
     error_message = "The lb reserved public ip id value should be zero or one."
   }
-  
 }
 
 variable "lb_subnet_2_id" {
@@ -60,7 +61,7 @@ variable "tags" {
     defined_tags  = map(any),
     freeform_tags = map(any)
   })
-  description = "Defined tags and freeform tags to be added to the company instance"
+  description = "Defined tags and freeform tags to be added to the load balancer"
   default = {
     defined_tags  = {},
     freeform_tags = {}

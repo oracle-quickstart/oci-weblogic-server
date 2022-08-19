@@ -1,3 +1,5 @@
+# Copyright (c) 2022, Oracle and/or its affiliates.
+# Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 output "wls_loadbalancer_id" {
   value       = oci_load_balancer_load_balancer.wls_loadbalancer.id

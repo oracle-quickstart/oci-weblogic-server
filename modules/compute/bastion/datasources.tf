@@ -1,3 +1,6 @@
+# Copyright (c) 2022, Oracle and/or its affiliates.
+# Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
+
 # Gets a list of Availability Domains in the tenancy
 data "oci_identity_availability_domains" "ADs" {
   compartment_id = var.tenancy_id

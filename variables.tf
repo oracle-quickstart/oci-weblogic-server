@@ -1,3 +1,5 @@
+# Copyright (c) 2022, Oracle and/or its affiliates.
+# Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 variable "tenancy_id" {
   type        = string
@@ -59,4 +61,10 @@ variable "instance_shape" {
   type        = string
   description = "The OCI VM shape for WebLogic VM instances"
   default = "VM.Standard.E4.Flex"
+}
+
+variable "wls_ocpu_count" {
+  type = number
+  description = "OCPU count for Weblogic instance"
+  default = 1
 }

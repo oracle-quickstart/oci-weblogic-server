@@ -1,3 +1,6 @@
+# Copyright (c) 2022, Oracle and/or its affiliates.
+# Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
+
 variable "network_compartment_id" {
   type        = string
   description = "The OCID of the compartment for network resources. Leave it blank to use the the same compartment for both compute and network resources"
