@@ -10,4 +10,7 @@ resource "oci_core_virtual_network" "wls_vcn" {
 
   defined_tags = var.tags.defined_tags
   freeform_tags = var.tags.freeform_tags
+  lifecycle {
+    ignore_changes = [defined_tags, freeform_tags]
+  }
 }
