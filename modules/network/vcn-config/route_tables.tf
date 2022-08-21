@@ -1,10 +1,8 @@
 # Copyright (c) 2022, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
-
-/**
-* Use this routetable if the internet gateway exists
-* It uses the existing internet gateway id
+/*
+* Creates route table for internet gateway
 */
 resource "oci_core_route_table" "wls_route_table" {
   compartment_id = var.compartment_id
