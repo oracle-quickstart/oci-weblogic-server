@@ -18,7 +18,6 @@ variable "availability_domain" {
 variable "dns_label" {
   type = string
   description = "A DNS label for the subnet, used in conjunction with the VNIC's hostname and VCN's DNS label to form a fully qualified domain name (FQDN) for each VNIC within this subnet"
-  default = "wlsdnssubnet"
 }
 
 variable "vcn_id" {
@@ -49,32 +48,12 @@ variable "cidr_block" {
 variable "subnet_name" {
   type = string
   description = "A user-friendly subnet name"
-  default = "wls-subnet"
 }
 
 variable "is_vcn_peered" {
   type = bool
   description = "Set to true if you need VCN peering"
   default = false
-}
-
-variable "prohibit_public_ip" {
-  type = bool
-  description = "Whether VNICs within this subnet can have public IP addresses"
-  default = false
-}
-
-//if existing subnet is used
-variable "subnet_id" {
-  type = string
-  description = "The OCID of the existing subnet"
-  default = ""
-}
-
-variable "use_regional_subnet" {
-  type = bool
-  description = "Set to true if regional subnet is used"
-  default = true
 }
 
 variable "tags" {
