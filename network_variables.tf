@@ -97,3 +97,9 @@ variable "lb_subnet_2_id" {
   description = "The OCID of a regional or AD-specific subnet for secondary load balancer"
   default     = ""
 }
+
+variable "use_existing_subnets" {
+  type        = bool
+  description = "Set to true if the exsiting subnets are used to create VCN config"
+  default     = false
+}
