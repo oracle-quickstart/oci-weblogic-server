@@ -50,12 +50,6 @@ variable "subnet_name" {
   description = "A user-friendly subnet name"
 }
 
-variable "is_vcn_peered" {
-  type = bool
-  description = "Set to true if you need VCN peering"
-  default = false
-}
-
 variable "tags" {
   type = object({
     defined_tags    = map(any),
