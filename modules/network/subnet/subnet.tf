@@ -7,7 +7,7 @@ locals {
 
 data "oci_core_vcns" "wls_vcn" {
   #Required
-  compartment_id = var.compartment_ocid
+  compartment_id = var.compartment_id
 
   #Optional
   filter {
@@ -21,7 +21,7 @@ resource "oci_core_subnet" "wls-subnet" {
   cidr_block                 = var.cidr_block
   display_name               = var.use_regional_subnet? var.subnet_name: format("%s-%s", var.subnet_name,var.availability_domain)
   dns_label                  = local.dns_label
-  compartment_id             = var.compartment_ocid
+  compartment_id             = var.compartment_id
   vcn_id                     = var.vcn_id
   security_list_ids          = var.security_list_ids
   # Dont attach the route table for peered vcn here. It will be done in VCN peering module after LPG is created.
