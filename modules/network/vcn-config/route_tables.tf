@@ -20,7 +20,7 @@ resource "oci_core_route_table" "wls_route_table" {
 
   defined_tags  = var.tags.defined_tags
   freeform_tags = var.tags.freeform_tags
-  ifecycle {
+  lifecycle {
     ignore_changes = [defined_tags, freeform_tags]
   }
 }
@@ -53,7 +53,7 @@ resource "oci_core_route_table" "wls_gateway_route_table" {
 
   defined_tags  = var.tags.defined_tags
   freeform_tags = var.tags.freeform_tags
-  ifecycle {
+  lifecycle {
     ignore_changes = [defined_tags, freeform_tags]
   }
 }
