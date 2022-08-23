@@ -195,7 +195,7 @@ variable "log_level" {
 
 variable "deploy_sample_app" {
   type        = bool
-  description = "Set to true of you want to have a sample application deployed to the WebLogic domain after creating it, to validate the domain was started successfully. This option is ignored for Standard Edition"
+  description = "Set to true if you want to have a sample application deployed to the WebLogic domain after creating it, to validate the domain was started successfully. This option is ignored for Standard Edition"
   default     = true
 }
 

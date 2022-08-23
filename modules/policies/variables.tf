@@ -77,10 +77,10 @@ variable "add_loadbalancer" {
 
 variable "is_idcs_selected" {
   type        = bool
-  description = "Indicates that idcs has to be provisioned"
+  description = "Indicates that Oracle Identity Cloud Service has to be provisioned"
 }
 
 variable "idcs_client_secret_id" {
   type        = string
-  description = "The OCID of the vault secret containing the password of the idcs client secret"
+  description = "The OCID of the vault secret containing the confidential application password in IDCS"
 }
