@@ -36,6 +36,41 @@ variable "wls_expose_admin_port" {
   description = "[WARNING] Selecting this option will expose the console to the internet if the default 0.0.0.0/0 CIDR is used. You should change the CIDR range below to allow access to a trusted IP range."
 }
 
+variable "add_load_balancer" {
+  type        = bool
+  description = "Set to true to add a load balancer"
+}
+
+variable is_idcs_selected {
+  type = bool
+  description = "Indicates that idcs has to be provisioned"
+}
+
+variable idcs_host {
+  type        = string
+  description = "Value for idcs host"
+}
+
+variable idcs_tenant {
+  type        = string
+  description = "Value for idcs tenant"
+}
+
+variable idcs_client_id {
+  type        = string
+  description = "Value for idcs client id"
+}
+
+variable idcs_client_secret_id {
+  type        = string
+  description = "The OCID of the vault secret containing the password for for idcs client secret"
+}
+
+variable idcs_cloudgate_port {
+  type        = number
+  description = "Value for idcs cloud gate port"
+}
+
 
 
 

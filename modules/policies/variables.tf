@@ -50,7 +50,6 @@ variable "wls_admin_password_id" {
   description = "The OCID of the vault secret containing the password for the WebLogic administration user"
 }
 
-
 variable "atp_db" {
   type = object({
     is_atp         = bool
@@ -64,4 +63,24 @@ variable "atp_db" {
     password_id: "The OCID of the vault secret with the password of the database"
   }
   EOT
+}
+
+variable "network_compartment_id" {
+  type        = string
+  description = "The OCID of the compartment where the network resources (e.g. VCN, subnet, load balancer) are located"
+}
+
+variable "add_loadbalancer" {
+  type        = bool
+  description = "Set to true if a load balancer was created as part of the WebLogic for OCI stack"
+}
+
+variable is_idcs_selected {
+  type = bool
+  description = "Indicates that idcs has to be provisioned"
+}
+
+variable idcs_client_secret_id {
+  type        = string
+  description = "The OCID of the vault secret containing the password for for idcs client secret"
 }

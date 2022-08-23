@@ -97,7 +97,7 @@ variable "network_compartment_id" {
 
 variable "add_loadbalancer" {
   type        = bool
-  description = "Set to true of a load balancer was created as part of the WebLogic for OCI stack"
+  description = "Set to true if a load balancer was created as part of the WebLogic for OCI stack"
 }
 
 variable "is_lb_private" {

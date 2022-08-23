@@ -13,13 +13,14 @@ module "system-tags" {
 }
 
 module "policies" {
-  source                = "./modules/policies"
-  count                 = var.create_policies ? 1 : 0
-  compartment_id        = var.compartment_id
-  dynamic_group_rule    = local.dynamic_group_rule
-  resource_name_prefix  = local.service_name_prefix
-  tenancy_id            = var.tenancy_id
-  wls_admin_password_id = var.wls_admin_password_id
+  source                 = "./modules/policies"
+  count                  = var.create_policies ? 1 : 0
+  compartment_id         = var.compartment_id
+  network_compartment_id = local.network_compartment_id
+  dynamic_group_rule     = local.dynamic_group_rule
+  resource_name_prefix   = local.service_name_prefix
+  tenancy_id             = var.tenancy_id
+  wls_admin_password_id  = var.wls_admin_password_id
   providers = {
     oci = oci.home
   }
@@ -28,6 +29,9 @@ module "policies" {
     freeform_tags = local.free_form_tags
   }
   atp_db = local.atp_db
+  add_loadbalancer      = var.add_load_balancer
+  is_idcs_selected      = var.is_idcs_selected
+  idcs_client_secret_id = var.idcs_client_secret_id
 }
 
 module "bastion" {
@@ -60,6 +64,14 @@ module "validators" {
   wls_extern_ssl_admin_port  = var.wls_extern_ssl_admin_port
   wls_admin_port_source_cidr = var.wls_admin_port_source_cidr
   wls_expose_admin_port      = var.wls_expose_admin_port
+
+  add_load_balancer          = var.add_load_balancer
+  is_idcs_selected           = var.is_idcs_selected
+  idcs_host                  = var.idcs_host
+  idcs_tenant                = var.idcs_tenant
+  idcs_client_id             = var.idcs_client_id
+  idcs_client_secret_id      = var.idcs_client_secret_id
+  idcs_cloudgate_port        = var.idcs_cloudgate_port
 }
 
 module load-balancer {
@@ -79,8 +91,6 @@ module load-balancer {
     freeform_tags = local.free_form_tags
   }
 }
-
-
 
 module "compute" {
   source                 = "./modules/compute/wls_compute"
@@ -116,6 +126,17 @@ module "compute" {
   wls_edition             = var.wls_edition
   num_vm_instances        = var.wls_node_count
   resource_name_prefix    = var.service_name
+
+  is_idcs_selected        = var.is_idcs_selected
+  idcs_host               = var.idcs_host
+  idcs_port               = var.idcs_port
+  idcs_tenant             = var.idcs_tenant
+  idcs_client_id          = var.idcs_client_id
+  idcs_cloudgate_port     = var.idcs_cloudgate_port
+  idcs_app_prefix         = local.service_name_prefix
+  idcs_client_secret_id   = var.idcs_client_secret_id
+
+  lbip = local.lb_ip
 
   db_existing_vcn_add_seclist = var.ocidb_existing_vcn_add_seclist
   jrf_parameters = {
