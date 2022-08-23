@@ -75,12 +75,12 @@ variable "add_loadbalancer" {
   description = "Set to true if a load balancer was created as part of the WebLogic for OCI stack"
 }
 
-variable is_idcs_selected {
-  type = bool
+variable "is_idcs_selected" {
+  type        = bool
   description = "Indicates that idcs has to be provisioned"
 }
 
-variable idcs_client_secret_id {
+variable "idcs_client_secret_id" {
   type        = string
   description = "The OCID of the vault secret containing the password for for idcs client secret"
 }
