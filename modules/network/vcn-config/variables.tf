@@ -23,7 +23,7 @@ variable "vcn_id" {
 
 variable "add_load_balancer" {
   type        = bool
-  description = "Set to true if ypu want loadbalancer"
+  description = "Set to true if you want loadbalancer"
   default     = false
 }
 
