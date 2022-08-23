@@ -19,19 +19,29 @@ locals {
   defined_tags       = var.service_tags.definedTags
   free_form_tags     = length(var.service_tags.freeformTags) > 0 ? var.service_tags.freeformTags : module.system-tags.system_tag_value
 
-  db_user     = local.is_atp_db ? "ADMIN" : ""
-  db_password = local.is_atp_db ? var.atp_db_password_id : ""
-  is_atp_db   = trimspace(var.atp_db_id) != ""
+  db_user        = local.is_atp_db ? "ADMIN" : local.is_oci_db ? var.oci_db_user : ""
+  db_password_id = local.is_atp_db ? var.atp_db_password_id : local.is_oci_db ? var.oci_db_password_id : ""
+  is_atp_db      = trimspace(var.atp_db_id) != ""
   atp_db = {
     is_atp         = local.is_atp_db
     compartment_id = var.atp_db_compartment_id
     password_id    = var.atp_db_password_id
   }
+  oci_db = {
+    password_id              = var.oci_db_password_id
+    network_compartment_id   = local.oci_db_network_compartment_id
+    existing_vcn_id          = var.oci_db_existing_vcn_id
+    existing_vcn_add_seclist = local.is_oci_db ? var.ocidb_existing_vcn_add_seclist : false
+  }
+
+  is_oci_db                     = trimspace(var.oci_db_dbsystem_id) == "" ? false : true
+  oci_db_compartment_id         = var.oci_db_compartment_id == "" ? local.network_compartment_id : var.oci_db_compartment_id
+  oci_db_network_compartment_id = local.is_oci_db && var.oci_db_network_compartment_id == "" ? var.oci_db_compartment_id : var.oci_db_network_compartment_id
 
   # Locals used by outputs
   bastion_public_ip = element(coalescelist(module.bastion[*].public_ip, data.oci_core_instance.existing_bastion_instance.*.public_ip, [""]), 0)
-  requires_JRF      = local.is_atp_db
-  prov_type         = local.requires_JRF ? local.is_atp_db ? "(JRF with ATP DB)" : "" : "(Non JRF)"
+  requires_JRF      = local.is_oci_db || local.is_atp_db
+  prov_type         = local.requires_JRF ? local.is_atp_db ? "(JRF with ATP DB)" : "(JRF with OCI DB)" : "(Non JRF)"
   edition_map = zipmap(
     ["SE", "EE", "SUITE"],
     ["Standard Edition", "Enterprise Edition", "Suite Edition"],
@@ -91,4 +101,9 @@ locals {
   use_regional_subnet = (var.use_regional_subnet && var.subnet_span == "Regional Subnet")
   vcn_id              = var.wls_existing_vcn_id == "" ? module.network-vcn[0].vcn_id : var.wls_existing_vcn_id
 
+  fmw_console_app_url = local.requires_JRF ? format(
+    "https://%s:%s/em",
+    local.admin_ip_address,
+    var.wls_extern_ssl_admin_port,
+  ) : ""
 }

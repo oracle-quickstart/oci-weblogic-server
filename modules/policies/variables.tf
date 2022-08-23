@@ -19,6 +19,33 @@ variable "compartment_id" {
   }
 }
 
+variable "network_compartment_id" {
+  type = string
+  description = "The OCID of the compartment where the network resources like VCN are located"
+  validation {
+    condition     = length(regexall("^ocid1.compartment.*$", var.network_compartment_id)) > 0
+    error_message = "The value for network_compartment_id should start with \"ocid1.compartment.\"."
+  }
+}
+
+variable "vcn_id" {
+  type = string
+  description = "The OCID of the VCN where the WebLogic VMs are located"
+  validation {
+    condition     = length(regexall("^ocid1.vcn.*$", var.vcn_id)) > 0
+    error_message = "The value for vcn_id should start with \"ocid1.vcn.\"."
+  }
+}
+
+variable "wls_existing_vcn_id" {
+  type = string
+  description = "The OCID of the VCN where the WebLogic VMs are located. Should be blank if the VCN is created with the stack."
+  validation {
+    condition     = var.wls_existing_vcn_id == "" || length(regexall("^ocid1.vcn.*$", var.wls_existing_vcn_id)) > 0
+    error_message = "The value for wls_existing_vcn_id should be blank or start with \"ocid1.vcn.\"."
+  }
+}
+
 variable "resource_name_prefix" {
   type        = string
   description = "Prefix used to name resources created by this module"
@@ -61,6 +88,23 @@ variable "atp_db" {
     is_atp: "Indicates if an ATP database is used to store the schemas of a JRF WebLogic domain"
     compartment_id: "The OCID of the compartment where the ATP database is located"
     password_id: "The OCID of the vault secret with the password of the database"
+  }
+  EOT
+}
+
+variable "oci_db" {
+  type = object({
+    password_id = string
+    network_compartment_id = string
+    existing_vcn_id = string
+    existing_vcn_add_seclist = bool
+  })
+  description = <<-EOT
+  oci_db = {
+    password_id: "The OCID of the vault secret with the password of the database"
+    network_compartment_id: "The OCID of the compartment in which the DB System VCN is found"
+    existing_vcn_id: "The OCID of the DB system VCN"
+    existing_vcn_add_seclist: "Set to true to add a security list to the database subnet (for OCI DB) when using existing VCN that allows connections from the WebLogic Server subnet"
   }
   EOT
 }
