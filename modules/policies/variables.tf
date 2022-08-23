@@ -82,5 +82,5 @@ variable "is_idcs_selected" {
 
 variable "idcs_client_secret_id" {
   type        = string
-  description = "The OCID of the vault secret containing the password for for idcs client secret"
+  description = "The OCID of the vault secret containing the password of the idcs client secret"
 }
