@@ -16,7 +16,6 @@ module "policies" {
   source                 = "./modules/policies"
   count                  = var.create_policies ? 1 : 0
   compartment_id         = var.compartment_id
-  network_compartment_id = local.network_compartment_id
   dynamic_group_rule     = local.dynamic_group_rule
   resource_name_prefix   = local.service_name_prefix
   tenancy_id             = var.tenancy_id
@@ -29,7 +28,6 @@ module "policies" {
     freeform_tags = local.free_form_tags
   }
   atp_db = local.atp_db
-  add_loadbalancer      = var.add_load_balancer
   is_idcs_selected      = var.is_idcs_selected
   idcs_client_secret_id = var.idcs_client_secret_id
 }

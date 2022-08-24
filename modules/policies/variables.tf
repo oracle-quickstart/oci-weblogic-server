@@ -65,16 +65,6 @@ variable "atp_db" {
   EOT
 }
 
-variable "network_compartment_id" {
-  type        = string
-  description = "The OCID of the compartment where the network resources (e.g. VCN, subnet, load balancer) are located"
-}
-
-variable "add_loadbalancer" {
-  type        = bool
-  description = "Set to true to add a load balancer"
-}
-
 variable "is_idcs_selected" {
   type        = bool
   description = "Indicates that Oracle Identity Cloud Service (IDCS) is used to authenticate user. If not selected, WebLogic Server uses the local identity store."
