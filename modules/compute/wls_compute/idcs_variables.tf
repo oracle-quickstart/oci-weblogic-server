@@ -43,7 +43,7 @@ variable "idcs_app_prefix" {
 
 variable "idcs_artifacts_file" {
   type        = string
-  description = "Path to the file to store information of the IDCS applications created during provisioning. Used in scenarios like scale out, mount."
+  description = "Path to the file to store information of the IDCS applications created during provisioning. Used in scenarios like scale out, among others."
   default     = "/u01/data/.idcs_artifacts.txt"
 }
 
