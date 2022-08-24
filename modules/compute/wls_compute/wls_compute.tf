@@ -92,9 +92,9 @@ module "wls-instances" {
       is_idcs_selected                    = var.is_idcs_selected
       idcs_host                           = var.idcs_host
       idcs_port                           = var.idcs_port
-      is_idcs_internal                    = var.is_idcs_internal
-      is_idcs_untrusted                   = var.is_idcs_untrusted
-      idcs_ip                             = var.idcs_ip
+      is_idcs_internal                    = "false"
+      is_idcs_untrusted                   = false
+      idcs_ip                             = ""
       idcs_tenant                         = var.idcs_tenant
       idcs_client_id                      = var.idcs_client_id
       idcs_client_secret_ocid             = var.idcs_client_secret_id

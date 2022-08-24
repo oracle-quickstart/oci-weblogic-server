@@ -93,16 +93,3 @@ variable "lbip" {
   type        = string
   description = "Load balancer IP. Added to the IDCS applications created during provisioning."
 }
-
-variable "is_idcs_internal" {
-  default = "false"
-}
-
-variable "is_idcs_untrusted" {
-  type    = bool
-  default = false
-}
-
-variable "idcs_ip" {
-  default = ""
-}

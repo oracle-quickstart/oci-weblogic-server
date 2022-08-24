@@ -16,9 +16,7 @@ locals {
   # This policy with "use autonomous-transaction-processing-family" verb is needed to download ATP db wallet
   atp_policy_statement2     = (var.atp_db.is_atp && var.atp_db.compartment_id != "") ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to use autonomous-transaction-processing-family in compartment id ${var.atp_db.compartment_id}" : ""
 
-  lb_policy_statement      = var.add_loadbalancer ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to use load-balancers in compartment id ${var.network_compartment_id}" : ""
-
-  service_statements = compact([local.core_policy_statement1, local.core_policy_statement2, local.core_policy_statement3, local.secrets_policy_statement1, local.secrets_policy_statement2, local.atp_policy_statement1, local.atp_policy_statement2, local.lb_policy_statement])
+  service_statements = compact([local.core_policy_statement1, local.core_policy_statement2, local.core_policy_statement3, local.secrets_policy_statement1, local.secrets_policy_statement2, local.atp_policy_statement1, local.atp_policy_statement2])
 
   #TODO: When other categories with more statements are added here, concat them with service_statements
   policy_statements = concat(local.service_statements, [])
