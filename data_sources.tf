@@ -55,7 +55,6 @@ data "oci_load_balancer_load_balancers" "existing_load_balancers_data_source" {
 }
 
 data "oci_core_nat_gateways" "nat_gateways" {
-  count = var.wls_existing_vcn_id=="" ? 1 : 0
   #Required
   compartment_id = var.compartment_id
 
@@ -64,7 +63,6 @@ data "oci_core_nat_gateways" "nat_gateways" {
 }
 
 data "oci_core_service_gateways" "service_gateways" {
-  count = var.wls_existing_vcn_id=="" ? 1 : 0
   #Required
   compartment_id = var.compartment_id
 
