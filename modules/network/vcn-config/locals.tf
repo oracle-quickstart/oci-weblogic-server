@@ -6,4 +6,7 @@ locals {
   lb_destination_cidr               = var.is_lb_private ? var.bastion_subnet_cidr : "0.0.0.0/0"
   wls_ms_source_cidrs         = var.wls_ms_source_cidrs
   wls_admin_port_source_cidrs = var.wls_expose_admin_port ? [var.wls_admin_port_source_cidr] : []
+  num_nat_gws = length(var.num_nat_gateways)
+  nat_gw_exists = local.num_nat_gws == 0 ? false : true
 }
+

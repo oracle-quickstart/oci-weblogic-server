@@ -1,8 +1,16 @@
 # Copyright (c) 2022, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
+output "virtual_cloud_network_id" {
+  value = module.network-vcn.*.vcn_id
+}
+
 output "virtual_cloud_network_cidr" {
-  value = var.wls_vcn_cidr
+  value = module.network-vcn.*.vcn_cidr
+}
+
+output "Is_VCN_Peered" {
+  value = local.is_vcn_peering
 }
 
 output "load_balancer_subnets_id" {

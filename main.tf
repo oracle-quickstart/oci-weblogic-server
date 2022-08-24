@@ -12,6 +12,57 @@ module "system-tags" {
   }
 }
 
+module "network-vcn" {
+  source                = "./modules/network/vcn"
+  count                 = local.use_existing_subnets || var.wls_existing_vcn_id != "" ? 0 : 1
+  compartment_id        = local.network_compartment_id
+  vcn_name              = var.wls_vcn_name
+  wls_vcn_cidr          = var.wls_vcn_cidr
+  resource_name_prefix  = local.service_name_prefix
+  tags = {
+    defined_tags  = local.defined_tags
+    freeform_tags = local.free_form_tags
+  }
+}
+
+module "network-vcn-config" {
+  source = "./modules/network/vcn-config"
+  count                 = local.use_existing_subnets ? 0 : 1
+  compartment_id = local.network_compartment_id
+
+  //vcn id if new is created
+  vcn_id = local.vcn_id
+
+  wls_extern_ssl_admin_port         = var.wls_extern_ssl_admin_port
+  wls_ms_extern_port                = var.wls_ms_extern_port
+  wls_ms_extern_ssl_port            = var.wls_ms_extern_ssl_port
+  wls_extern_admin_port             = var.wls_extern_admin_port
+  wls_expose_admin_port             = var.wls_expose_admin_port
+  wls_admin_port_source_cidr        = var.wls_admin_port_source_cidr
+  wls_ms_content_port               = var.is_idcs_selected ? var.idcs_cloudgate_port : var.wls_ms_extern_ssl_port
+
+  wls_security_list_name       = !var.assign_weblogic_public_ip ? "bastion-security-list" : "wls-security-list"
+  wls_subnet_cidr              = local.wls_subnet_cidr
+  wls_ms_source_cidrs          = var.add_load_balancer ? ((local.use_regional_subnet || local.is_single_ad_region) ? [local.lb_subnet_2_subnet_cidr] : [local.lb_subnet_1_subnet_cidr, local.lb_subnet_2_subnet_cidr]) : ["0.0.0.0/0"]
+  add_load_balancer            = var.add_load_balancer
+  resource_name_prefix         = local.service_name_prefix
+  bastion_subnet_cidr          = local.bastion_subnet_cidr
+  is_lb_private                = var.is_lb_private
+  is_bastion_instance_required = var.is_bastion_instance_required
+  existing_bastion_instance_id = var.existing_bastion_instance_id
+  vcn_cidr                     = element(concat( module.network-vcn.*.vcn_cidr, tolist([""])),0)
+  existing_mt_subnet_id        = var.mount_target_subnet_id
+  service_gateway_ids          = data.oci_core_service_gateways.service_gateways.*.id
+  nat_gateway_ids              = data.oci_core_nat_gateways.nat_gateways.*.id
+  num_nat_gateways             = data.oci_core_nat_gateways.nat_gateways.*.nat_gateways
+  create_nat_gateway           = var.is_idcs_selected
+
+  tags = {
+    defined_tags  = local.defined_tags
+    freeform_tags = local.free_form_tags
+  }
+}
+
 module "policies" {
   source                = "./modules/policies"
   count                 = var.create_policies ? 1 : 0
@@ -79,8 +130,6 @@ module load-balancer {
     freeform_tags = local.free_form_tags
   }
 }
-
-
 
 module "compute" {
   source                 = "./modules/compute/wls_compute"
@@ -163,3 +212,4 @@ module "provisioners" {
   bastion_host_private_key     = ! var.is_bastion_instance_required ? "" : var.existing_bastion_instance_id == "" ? module.bastion[0].bastion_private_ssh_key : file(var.bastion_ssh_private_key)
   is_bastion_instance_required = var.is_bastion_instance_required
 }
+

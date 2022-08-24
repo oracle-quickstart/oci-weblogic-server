@@ -18,6 +18,12 @@ variable "wls_vcn_cidr" {
   description = "The CIDR of the VCN where the compute instance will be created"
 }
 
+variable "wls_vcn_name" {
+  type        = string
+  description = "Name of new virtual cloud network"
+  default     = ""
+}
+
 variable "use_regional_subnet" {
   type        = bool
   description = "Indicates use of regional subnets (preferred) instead of AD specific subnets"
@@ -102,4 +108,60 @@ variable "use_existing_subnets" {
   type        = bool
   description = "Set to true if the exsiting subnets are used to create VCN config"
   default     = false
+}
+
+variable "mount_target_subnet_id" {
+  type        = string
+  description = "OCID for existing subnet for mount target"
+  default     = ""
+}
+
+variable "lb_subnet_1_name" {
+  type        = string
+  description = "OCID for loadbalancer subnet"
+  default     = "lb-sbnet-1"
+}
+
+variable "lb_subnet_2_name" {
+  type        = string
+  description = "OCID for loadbalancer subnet"
+  default     = "lb-sbnet-2"
+}
+
+variable "lb_subnet_1_cidr" {
+  type        = string
+  description = "CIDR for loadbalancer subnet"
+  default     = ""
+}
+
+variable "lb_subnet_2_cidr" {
+  type        = string
+  description = "CIDR for loadbalancer subnet"
+  default     = ""
+}
+
+variable "wls_subnet_cidr" {
+  type        = string
+  description = "CIDR for weblogic subnet"
+  default     = ""
+}
+
+variable "bastion_subnet_cidr" {
+  type        = string
+  description = "CIDR for bastion subnet"
+  default     = ""
+}
+
+# Used in UI instead of use_regional_subnet
+variable "subnet_span" {
+  type        = string
+  description = "subnet type to be used"
+  default     = "Regional Subnet"
+}
+
+# Used in UI instead of assign_weblogic_public_ip
+variable "subnet_type" {
+  type        = string
+  description = "Private subnet or public subnet"
+  default     = "Use Private Subnet"
 }

@@ -74,16 +74,6 @@ variable "wls_subnet_cidr" {
   description = "The CIDR value of the wls subnet"
 }
 
-variable "lb_subnet_1_cidr" {
-  type        = string
-  description = "The CIDR value of the loadbalancer subnet 1"
-}
-
-variable "lb_subnet_2_cidr" {
-  type        = string
-  description = "The CIDR value of the loadbalancer subnet 2"
-}
-
 // Optional params
 variable "wls_extern_admin_port" {
   type        = number
@@ -120,12 +110,6 @@ variable "resource_name_prefix" {
   description = "Prefix which will be used to create VCN config display name"
 }
 
-variable "use_regional_subnets" {
-  type        = bool
-  description = "Set to true if regional subnets to be used"
-  default     = false
-}
-
 variable "wls_bastion_security_list_name" {
   type        = string
   description = "A user-friendly name of the bastion instance seclist"
@@ -148,11 +132,6 @@ variable "existing_bastion_instance_id" {
   description = "An OCID of the existing bastion instance to connect to the compute instance"
 }
 
-variable "is_single_ad_region" {
-  type        = bool
-  description = "Set to true if you want single AD region"
-}
-
 variable "is_vcn_peering" {
   type        = bool
   description = "Set to true if you want VCN peering"
@@ -169,12 +148,6 @@ variable "tags" {
     defined_tags  = {},
     freeform_tags = {},
   }
-}
-
-variable "appdb_vcn_peering" {
-  type        = bool
-  description = "Set to true if you want appdb VCN peering"
-  default     = false
 }
 
 variable "existing_mt_subnet_id" {
@@ -201,4 +174,24 @@ variable "wls_ms_content_port" {
 variable "wls_ms_source_cidrs" {
   type        = list(any)
   description = "The Weblogic managed servers source CIDR values"
+}
+
+variable "service_gateway_ids" {
+  type        = list(any)
+  description = "The service gateway OCID values"
+}
+
+variable "nat_gateway_ids" {
+  type        = list(any)
+  description = "The nat gateway OCID values"
+}
+
+variable "num_nat_gateways" {
+  type        = list(any)
+  description = "The number of nat gateways"
+}
+
+variable "create_nat_gateway" {
+  type        = bool
+  description = "Set to true if nat gateway needs to be created"
 }
