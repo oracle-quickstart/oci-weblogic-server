@@ -38,7 +38,7 @@ variable "idcs_cloudgate_port" {
 
 variable "idcs_app_prefix" {
   type        = string
-  description = "Prefix added to the name of the confidential and enterprise applications created in IDCS during stack provisioning"
+  description = "This is the prefix added to the name of the confidential and enterprise applications created in IDCS during stack provisioning"
 }
 
 variable "idcs_artifacts_file" {
