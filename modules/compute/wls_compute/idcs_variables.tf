@@ -2,8 +2,8 @@
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 variable "is_idcs_selected" {
-  type = bool
-  description = "Indicates that Oracle Identity Cloud Service has to be provisioned"
+  type        = bool
+  description = "Indicates that Oracle Identity Cloud Service (IDCS) is used to authenticate user. If not selected, WebLogic Server uses the local identity store."
 }
 
 variable "idcs_host" {
@@ -36,41 +36,63 @@ variable "idcs_cloudgate_port" {
   description = "The listen port for the Identity Cloud Service App Gateway, which authenticates requests and redirects them to WebLogic Server"
 }
 
-variable "idcs_app_prefix" {}
+variable "idcs_app_prefix" {
+  type        = string
+  description = "Prefix added to the name of the confidential and enterprise applications created in IDCS during stack provisioning"
+}
 
 variable "idcs_artifacts_file" {
-  default = "/u01/data/.idcs_artifacts.txt"
+  type        = string
+  description = "Path to the file to store information of the IDCS applications created during provisioning. Used in scenarios like scale out, mount."
+  default     = "/u01/data/.idcs_artifacts.txt"
 }
 
 variable "idcs_conf_app_info_file" {
-  default = "/tmp/.idcs_conf_app_info.txt"
+  type        = string
+  description = "Path to the file to store information of IDCS confidential application created during provisioning. Used when configuring WebLogic authenticator during provisioning."
+  default     = "/tmp/.idcs_conf_app_info.txt"
 }
 
 variable "idcs_ent_app_info_file" {
-  default = "/tmp/.idcs_ent_app_info.txt"
+  type        = string
+  description = "Path to the file to store information of IDCS enterprise application created during provisioning"
+  default     = "/tmp/.idcs_ent_app_info.txt"
 }
 
 variable "idcs_cloudgate_info_file" {
-  default = "/tmp/.idcs_cloudgate_info.txt"
+  type        = string
+  description = "Path to the file to store information of IDCS cloudgate created during provisioning."
+  default     = "/tmp/.idcs_cloudgate_info.txt"
 }
 
 variable "idcs_cloudgate_config_file" {
-  default = "/u01/data/cloudgate_config/appgateway-env"
+  type        = string
+  description = "Path to the file to store information about the IDCS enterprise application used by the IDCS cloudgate container"
+  default     = "/u01/data/cloudgate_config/appgateway-env"
 }
 
 variable "idcs_cloudgate_docker_image_tar" {
-  default = "/u01/zips/jcs/app_gateway_docker/21.2.2/app-gateway-docker-image.tar.gz"
+  type        = string
+  description = "Path of the binary file with the container image to run IDCS cloudgate container in the WebLogic VM"
+  default     = "/u01/zips/jcs/app_gateway_docker/21.2.2/app-gateway-docker-image.tar.gz"
 }
 
 variable "idcs_cloudgate_docker_image_version" {
-  default = "21.2.2-2105050509"
+  type        = string
+  description = "Version of the container image to run IDCS cloudgate container in the WebLogic VM"
+  default     = "21.2.2-2105050509"
 }
 
 variable "idcs_cloudgate_docker_image_name" {
-  default = "idcs/idcs-appgateway"
+  type        = string
+  description = "Name of the container image to run IDCS cloudgate container in the WebLogic VM"
+  default     = "idcs/idcs-appgateway"
 }
 
-variable "lbip" {}
+variable "lbip" {
+  type        = string
+  description = "Load balancer IP. Added to the IDCS applications created during provisioning."
+}
 
 variable "is_idcs_internal" {
   default = "false"

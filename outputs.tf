@@ -63,7 +63,7 @@ output "sample_application_url" {
   value = local.sample_app_url
 }
 
-output "Sample_Application_protected_by_IDCS" {
+output "sample_application_protected_by_idcs" {
   value = local.sample_idcs_app_url
 }
 

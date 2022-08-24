@@ -3,7 +3,7 @@
 
 variable "is_idcs_selected" {
   type        = bool
-  description = "Indicates that Oracle Identity Cloud Service (IDCS) has to be provisioned. If not selected, WebLogic Server uses the local identity store."
+  description = "Indicates that Oracle Identity Cloud Service (IDCS) is used to authenticate user. If not selected, WebLogic Server uses the local identity store."
   default     = false
 }
 
