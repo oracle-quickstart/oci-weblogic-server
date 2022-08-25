@@ -9,7 +9,7 @@ output "virtual_cloud_network_cidr" {
   value = module.network-vcn.*.vcn_cidr
 }
 
-output "Is_VCN_Peered" {
+output "is_vcn_peered" {
   value = local.is_vcn_peering
 }
 

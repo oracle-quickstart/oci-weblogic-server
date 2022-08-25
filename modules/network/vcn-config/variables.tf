@@ -21,12 +21,6 @@ variable "vcn_id" {
   description = "The OCID of the new VCN or existing VCN"
 }
 
-variable "add_load_balancer" {
-  type        = bool
-  description = "Set to true if ypu want loadbalancer"
-  default     = false
-}
-
 // Optional params
 
 variable "dhcp_options_name" {
@@ -40,11 +34,6 @@ variable "route_table_name" {
   type        = string
   description = "A user-friendly name of the route table"
   default     = "routetable"
-}
-
-variable "is_lb_private" {
-  type        = bool
-  description = "Set to true if you want private loadbalancer"
 }
 
 variable "wls_expose_admin_port" {
@@ -85,18 +74,6 @@ variable "wls_extern_ssl_admin_port" {
   type        = number
   description = "The administration server SSL port on which to access the administration console"
   default     = 7002
-}
-
-variable "wls_ms_extern_port" {
-  type        = number
-  description = "The managed server port on which to send application traffic"
-  default     = 7003
-}
-
-variable "wls_ms_extern_ssl_port" {
-  type        = number
-  description = "The managed server SSL port on which to send application traffic"
-  default     = 7004
 }
 
 variable "wls_security_list_name" {
@@ -186,12 +163,31 @@ variable "nat_gateway_ids" {
   description = "The nat gateway OCID values"
 }
 
-variable "num_nat_gateways" {
-  type        = list(any)
-  description = "The number of nat gateways"
-}
-
 variable "create_nat_gateway" {
   type        = bool
   description = "Set to true if nat gateway needs to be created"
 }
+
+variable "lb_destination_cidr" {
+  type        = string
+  description = "Set to bastion subnet cidr if loadbalancer is set to private"
+}
+
+variable "create_lb_sec_list" {
+  type        = bool
+  description = "Set to true if add load balancer is true"
+}
+
+variable "load_balancer_min_value" {
+  type        = number
+  description = "The managed server port or the managed server SSL port on which to send application traffic"
+  default     = 7003
+}
+
+variable "load_balancer_max_value" {
+  type        = number
+  description = "The managed server port or the managed server SSL port on which to send application traffic"
+  default     = 7004
+}
+
+

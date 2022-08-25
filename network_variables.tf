@@ -165,3 +165,9 @@ variable "subnet_type" {
   description = "Private subnet or public subnet"
   default     = "Use Private Subnet"
 }
+
+variable "wls_subnet_name" {
+  type        = string
+  description = "A user-friendly subnet name"
+  default     = "wl-subnet"
+}

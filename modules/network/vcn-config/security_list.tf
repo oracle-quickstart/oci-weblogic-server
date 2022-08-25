@@ -84,7 +84,7 @@ resource "oci_core_security_list" "wls_ms_security_list" {
   dynamic "ingress_security_rules" {
     # stateful ingress for OKE access to worker nodes on port 22 from the 6 source CIDR blocks: rules 5-11
     iterator = cidr_iterator
-    for_each = local.wls_ms_source_cidrs
+    for_each = var.wls_ms_source_cidrs
 
     content {
       protocol  = "6" // tcp
@@ -93,8 +93,8 @@ resource "oci_core_security_list" "wls_ms_security_list" {
 
       tcp_options {
         # SSL offloading happens at LB level. LB should be able to reach on MS HTTP port.
-        min = var.add_load_balancer ? var.wls_ms_extern_port : var.wls_ms_extern_ssl_port
-        max = var.add_load_balancer ? var.wls_ms_extern_port : var.wls_ms_extern_ssl_port
+        min = var.load_balancer_min_value
+        max = var.load_balancer_max_value
       }
     }
   }
@@ -103,7 +103,7 @@ resource "oci_core_security_list" "wls_ms_security_list" {
   dynamic "ingress_security_rules" {
     # stateful ingress for OKE access to worker nodes on port 22 from the 6 source CIDR blocks: rules 5-11
     iterator = cidr_iterator
-    for_each = local.wls_ms_source_cidrs
+    for_each = var.wls_ms_source_cidrs
 
     content {
       protocol  = "6" // tcp
@@ -125,7 +125,7 @@ resource "oci_core_security_list" "wls_ms_security_list" {
 }
 
 resource "oci_core_security_list" "lb_security_list" {
-  count = (var.add_load_balancer) ? 1 : 0
+  count = var.create_lb_sec_list ? 1 : 0
 
   #Required
   compartment_id = var.compartment_id
@@ -141,7 +141,7 @@ resource "oci_core_security_list" "lb_security_list" {
   // allow public internet access to http port
   ingress_security_rules {
     protocol  = "6" // tcp
-    source    = local.lb_destination_cidr
+    source    = var.lb_destination_cidr
     stateless = false
 
     tcp_options {

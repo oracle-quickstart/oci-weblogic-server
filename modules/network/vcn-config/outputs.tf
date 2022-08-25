@@ -4,17 +4,17 @@
 /* Security list ids*/
 output "wls_security_list_id" {
   description = "OCID of security list for WLS or bastion subnet. "
-  value       = compact(concat(oci_core_security_list.wls_security_list.*.id, tolist([""])))
+  value       = oci_core_security_list.wls_security_list.id
 }
 
 output "wls_internal_security_list_id" {
   description = "OCID of security list for WLS public subnet. "
-  value       = compact(concat(oci_core_security_list.wls_internal_security_list.*.id, tolist([""])))
+  value       = oci_core_security_list.wls_internal_security_list.id
 }
 
 output "wls_ms_security_list_id" {
   description = "OCID of security list for WLS or bastion subnet. "
-  value       = compact(concat(oci_core_security_list.wls_ms_security_list.*.id, tolist([""])))
+  value       = oci_core_security_list.wls_ms_security_list.id
 }
 
 output "lb_security_list_id" {
@@ -36,24 +36,24 @@ output "fss_security_list_id" {
 
 output "route_table_id" {
   description = "OCID of route table with internet gateway. "
-  value       = compact(concat(oci_core_route_table.wls_route_table.*.id, tolist([""])))
+  value       = oci_core_route_table.wls_route_table.id
 }
 
 output "service_gateway_route_table_id" {
   description = "OCID of route table with service gateway. "
-  value       = element(coalescelist(oci_core_route_table.wls_gateway_route_table.*.id, tolist([""])), 0)
+  value       = oci_core_route_table.wls_gateway_route_table.id
 }
 
 /* DHCP OPTIONS */
 output "dhcp_options_id" {
   description = "OCID of DHCP options. "
-  value       = element(coalescelist(oci_core_dhcp_options.wls_dhcp_options.*.id, tolist([""])), 0)
+  value       = oci_core_dhcp_options.wls_dhcp_options.id
 }
 
 /* Gateways */
 output "wls_internet_gateway_id" {
   description = "OCID of internet gateway"
-  value       = join("", oci_core_internet_gateway.wls_internet_gateway.*.id)
+  value       = oci_core_internet_gateway.wls_internet_gateway.id
 }
 
 output "wls_service_gateway_services_id" {

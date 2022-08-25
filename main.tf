@@ -34,8 +34,6 @@ module "network-vcn-config" {
   vcn_id = local.vcn_id
 
   wls_extern_ssl_admin_port         = var.wls_extern_ssl_admin_port
-  wls_ms_extern_port                = var.wls_ms_extern_port
-  wls_ms_extern_ssl_port            = var.wls_ms_extern_ssl_port
   wls_extern_admin_port             = var.wls_extern_admin_port
   wls_expose_admin_port             = var.wls_expose_admin_port
   wls_admin_port_source_cidr        = var.wls_admin_port_source_cidr
@@ -44,18 +42,19 @@ module "network-vcn-config" {
   wls_security_list_name       = !var.assign_weblogic_public_ip ? "bastion-security-list" : "wls-security-list"
   wls_subnet_cidr              = local.wls_subnet_cidr
   wls_ms_source_cidrs          = var.add_load_balancer ? ((local.use_regional_subnet || local.is_single_ad_region) ? [local.lb_subnet_2_subnet_cidr] : [local.lb_subnet_1_subnet_cidr, local.lb_subnet_2_subnet_cidr]) : ["0.0.0.0/0"]
-  add_load_balancer            = var.add_load_balancer
+  load_balancer_min_value      = var.add_load_balancer ? var.wls_ms_extern_port : var.wls_ms_extern_ssl_port
+  load_balancer_max_value      = var.add_load_balancer ? var.wls_ms_extern_port : var.wls_ms_extern_ssl_port
+  create_lb_sec_list           = var.add_load_balancer
   resource_name_prefix         = local.service_name_prefix
   bastion_subnet_cidr          = local.bastion_subnet_cidr
-  is_lb_private                = var.is_lb_private
   is_bastion_instance_required = var.is_bastion_instance_required
   existing_bastion_instance_id = var.existing_bastion_instance_id
   vcn_cidr                     = element(concat( module.network-vcn.*.vcn_cidr, tolist([""])),0)
   existing_mt_subnet_id        = var.mount_target_subnet_id
-  service_gateway_ids          = data.oci_core_service_gateways.service_gateways.*.id
-  nat_gateway_ids              = data.oci_core_nat_gateways.nat_gateways.*.id
-  num_nat_gateways             = data.oci_core_nat_gateways.nat_gateways.*.nat_gateways
+  service_gateway_ids          = data.oci_core_service_gateways.service_gateways.service_gateways.*.id
+  nat_gateway_ids              = data.oci_core_nat_gateways.nat_gateways.nat_gateways.*.id
   create_nat_gateway           = var.is_idcs_selected
+  lb_destination_cidr          = var.is_lb_private ? var.bastion_subnet_cidr : "0.0.0.0/0"
 
   tags = {
     defined_tags  = local.defined_tags
@@ -79,6 +78,27 @@ module "policies" {
     freeform_tags = local.free_form_tags
   }
   atp_db = local.atp_db
+}
+
+module "bastion" {
+  source              = "./modules/compute/bastion"
+  count               = (var.is_bastion_instance_required && var.existing_bastion_instance_id == "") ? 1 : 0
+  availability_domain = local.bastion_availability_domain
+  bastion_subnet_id   = var.bastion_subnet_id # TODO : implement case where a new subnet is created
+  compartment_id      = var.compartment_id
+  instance_image_id   = var.use_baselinux_marketplace_image ? var.mp_baselinux_instance_image_id : var.bastion_instance_image_id
+  instance_shape      = var.bastion_instance_shape
+  region              = var.region
+  ssh_public_key      = var.ssh_public_key
+  tenancy_id          = var.tenancy_id
+  use_existing_subnet = var.bastion_subnet_id != ""
+  vm_count            = var.wls_node_count
+  instance_name       = "${local.service_name_prefix}-bastion-instance"
+  tags = {
+    defined_tags  = local.defined_tags
+    freeform_tags = local.free_form_tags
+  }
+  is_bastion_with_reserved_public_ip = var.is_bastion_with_reserved_public_ip
 }
 
 module "bastion" {
@@ -135,7 +155,7 @@ module "compute" {
   source                 = "./modules/compute/wls_compute"
   add_loadbalancer       = var.add_load_balancer
   is_lb_private          = var.is_lb_private
-  load_balancer_id       = var.add_load_balancer ? (var.existing_load_balancer_id != "" ? var.existing_load_balancer_id : element(coalescelist(module.load-balancer[*].wls_loadbalancer_id, [""]), 0)) : ""
+  load_balancer_id       = var.add_load_balancer ? (var.existing_load_balancer_id != "" ? var.existing_load_balancer_id : element(coalescelist(module.load-balancer[*].wls_loadbalancer_id, [""]), 0)) : ""     
   assign_public_ip       = var.assign_weblogic_public_ip
   availability_domain    = local.wls_availability_domain
   compartment_id         = var.compartment_id
@@ -147,7 +167,7 @@ module "compute" {
   wls_subnet_id          = var.wls_subnet_id
   region                 = var.region
   ssh_public_key         = var.ssh_public_key
-
+  
   tenancy_id              = var.tenancy_id
   tf_script_version       = var.tf_script_version
   use_regional_subnet     = var.use_regional_subnet
@@ -165,7 +185,7 @@ module "compute" {
   wls_edition             = var.wls_edition
   num_vm_instances        = var.wls_node_count
   resource_name_prefix    = var.service_name
-
+  
   db_existing_vcn_add_seclist = var.ocidb_existing_vcn_add_seclist
   jrf_parameters = {
     db_user        = local.db_user
@@ -173,15 +193,15 @@ module "compute" {
     atp_db_parameters = {
       atp_db_id    = var.atp_db_id
       atp_db_level = var.atp_db_level
-    }
-  }
-
+    } 
+  } 
+  
   tags = {
     defined_tags    = local.defined_tags
     freeform_tags   = local.free_form_tags
     dg_defined_tags = local.dg_defined_tags
-  }
-}
+  } 
+} 
 
 module load-balancer-backends {
   source = "./modules/lb/backends"
