@@ -16,12 +16,6 @@ variable "vcn_name" {
   default     = "wls-vcn"
 }
 
-variable "vcn_id" {
-  type        = string
-  description = "The OCID of the existing VCN"
-  default     = ""
-}
-
 variable "wls_vcn_cidr" {
   type        = string
   description = "The IPv4 CIDR block that will be assigned for the VCN"

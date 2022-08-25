@@ -14,13 +14,13 @@ resource "oci_core_internet_gateway" "wls_internet_gateway" {
 }
 
 resource "oci_core_service_gateway" "wls_service_gateway" {
-  count = length(data.oci_core_service_gateways.tf_service_gateways.service_gateways.*.id) >0 ? 0:1
+  count = length(var.existing_service_gateway_ids ) > 0 ? 0:1
   #Required
   compartment_id = var.compartment_id
   vcn_id         = var.vcn_id
   services {
     #Required
-    service_id = lookup(data.oci_core_services.tf_services.services[0], "id")
+    service_id = lookup(data.oci_core_services.services.services[0], "id")
   }
   display_name  = "${var.resource_name_prefix}-service-gateway"
   defined_tags  = var.tags.defined_tags
@@ -32,7 +32,7 @@ resource "oci_core_service_gateway" "wls_service_gateway" {
 
 # Create nat gateway for private subnet with IDCS
 resource "oci_core_nat_gateway" "wls_nat_gateway" {
-  count = length(data.oci_core_nat_gateways.tf_nat_gateways.nat_gateways.*.id) >0 ? 0:1
+  count = !var.create_nat_gateway || length(var.existing_nat_gateway_ids) > 0 ? 0 : 1
 
   #Required
   compartment_id = var.compartment_id

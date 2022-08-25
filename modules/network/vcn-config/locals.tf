@@ -3,7 +3,7 @@
 
 locals {
   port_for_ingress_lb_security_list = 443
-  lb_destination_cidr               = var.is_lb_private ? var.bastion_subnet_cidr : "0.0.0.0/0"
-  wls_ms_source_cidrs         = var.wls_ms_source_cidrs
   wls_admin_port_source_cidrs = var.wls_expose_admin_port ? [var.wls_admin_port_source_cidr] : []
+  nat_gw_exists = length(var.existing_nat_gateway_ids) == 0 ? false : true
 }
+

@@ -21,12 +21,6 @@ variable "vcn_id" {
   description = "The OCID of the new VCN or existing VCN"
 }
 
-variable "add_load_balancer" {
-  type        = bool
-  description = "Set to true if you want loadbalancer"
-  default     = false
-}
-
 // Optional params
 
 variable "dhcp_options_name" {
@@ -40,11 +34,6 @@ variable "route_table_name" {
   type        = string
   description = "A user-friendly name of the route table"
   default     = "routetable"
-}
-
-variable "is_lb_private" {
-  type        = bool
-  description = "Set to true if you want private loadbalancer"
 }
 
 variable "wls_expose_admin_port" {
@@ -74,16 +63,6 @@ variable "wls_subnet_cidr" {
   description = "The CIDR value of the wls subnet"
 }
 
-variable "lb_subnet_1_cidr" {
-  type        = string
-  description = "The CIDR value of the loadbalancer subnet 1"
-}
-
-variable "lb_subnet_2_cidr" {
-  type        = string
-  description = "The CIDR value of the loadbalancer subnet 2"
-}
-
 // Optional params
 variable "wls_extern_admin_port" {
   type        = number
@@ -97,18 +76,6 @@ variable "wls_extern_ssl_admin_port" {
   default     = 7002
 }
 
-variable "wls_ms_extern_port" {
-  type        = number
-  description = "The managed server port on which to send application traffic"
-  default     = 7003
-}
-
-variable "wls_ms_extern_ssl_port" {
-  type        = number
-  description = "The managed server SSL port on which to send application traffic"
-  default     = 7004
-}
-
 variable "wls_security_list_name" {
   type        = string
   description = "A user-friendly name of the compute instance seclist"
@@ -118,12 +85,6 @@ variable "wls_security_list_name" {
 variable "resource_name_prefix" {
   type        = string
   description = "Prefix which will be used to create VCN config display name"
-}
-
-variable "use_regional_subnets" {
-  type        = bool
-  description = "Set to true if regional subnets to be used"
-  default     = false
 }
 
 variable "wls_bastion_security_list_name" {
@@ -148,11 +109,6 @@ variable "existing_bastion_instance_id" {
   description = "An OCID of the existing bastion instance to connect to the compute instance"
 }
 
-variable "is_single_ad_region" {
-  type        = bool
-  description = "Set to true if you want single AD region"
-}
-
 variable "is_vcn_peering" {
   type        = bool
   description = "Set to true if you want VCN peering"
@@ -169,12 +125,6 @@ variable "tags" {
     defined_tags  = {},
     freeform_tags = {},
   }
-}
-
-variable "appdb_vcn_peering" {
-  type        = bool
-  description = "Set to true if you want appdb VCN peering"
-  default     = false
 }
 
 variable "existing_mt_subnet_id" {
@@ -202,3 +152,44 @@ variable "wls_ms_source_cidrs" {
   type        = list(any)
   description = "The Weblogic managed servers source CIDR values"
 }
+
+variable "existing_service_gateway_ids" {
+  type        = list(any)
+  description = "The service gateway OCID value if existing vcn is used"
+  default     = list()
+}
+
+variable "existing_nat_gateway_ids" {
+  type        = list(any)
+  description = "The nat gateway OCID values"
+}
+
+variable "create_nat_gateway" {
+  type        = bool
+  description = "Set to true if nat gateway needs to be created"
+  default     = false
+}
+
+variable "lb_destination_cidr" {
+  type        = string
+  description = "Set to bastion subnet cidr if loadbalancer is set to private"
+}
+
+variable "create_lb_sec_list" {
+  type        = bool
+  description = "Set to true if add load balancer is true"
+}
+
+variable "load_balancer_min_value" {
+  type        = number
+  description = "The managed server port or the managed server SSL port on which to send application traffic"
+  default     = 7003
+}
+
+variable "load_balancer_max_value" {
+  type        = number
+  description = "The managed server port or the managed server SSL port on which to send application traffic"
+  default     = 7004
+}
+
+

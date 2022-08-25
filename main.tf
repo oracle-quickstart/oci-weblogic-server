@@ -12,6 +12,123 @@ module "system-tags" {
   }
 }
 
+module "network-vcn" {
+  source               = "./modules/network/vcn"
+  count                = var.wls_existing_vcn_id != "" ? 0 : 1
+  compartment_id       = local.network_compartment_id
+  vcn_name             = var.wls_vcn_name
+  wls_vcn_cidr         = var.wls_vcn_cidr
+  resource_name_prefix = local.service_name_prefix
+  tags = {
+    defined_tags  = local.defined_tags
+    freeform_tags = local.free_form_tags
+  }
+}
+
+module "network-vcn-config" {
+  source         = "./modules/network/vcn-config"
+  count          = local.use_existing_subnets ? 0 : 1
+  compartment_id = local.network_compartment_id
+
+  //vcn id if new is created
+  vcn_id = local.vcn_id
+
+  wls_extern_ssl_admin_port  = var.wls_extern_ssl_admin_port
+  wls_extern_admin_port      = var.wls_extern_admin_port
+  wls_expose_admin_port      = var.wls_expose_admin_port
+  wls_admin_port_source_cidr = var.wls_admin_port_source_cidr
+  wls_ms_content_port        = var.is_idcs_selected ? var.idcs_cloudgate_port : var.wls_ms_extern_ssl_port
+
+  wls_security_list_name       = !var.assign_weblogic_public_ip ? "bastion-security-list" : "wls-security-list"
+  wls_subnet_cidr              = local.wls_subnet_cidr
+  wls_ms_source_cidrs          = var.add_load_balancer ? ((local.use_regional_subnet || local.is_single_ad_region) ? [local.lb_subnet_2_subnet_cidr] : [local.lb_subnet_1_subnet_cidr, local.lb_subnet_2_subnet_cidr]) : ["0.0.0.0/0"]
+  load_balancer_min_value      = var.add_load_balancer ? var.wls_ms_extern_port : var.wls_ms_extern_ssl_port
+  load_balancer_max_value      = var.add_load_balancer ? var.wls_ms_extern_port : var.wls_ms_extern_ssl_port
+  create_lb_sec_list           = var.add_load_balancer
+  resource_name_prefix         = local.service_name_prefix
+  bastion_subnet_cidr          = local.bastion_subnet_cidr
+  is_bastion_instance_required = var.is_bastion_instance_required
+  existing_bastion_instance_id = var.existing_bastion_instance_id
+  vcn_cidr                     = element(concat(module.network-vcn.*.vcn_cidr, tolist([""])), 0)
+  existing_mt_subnet_id        = var.mount_target_subnet_id
+  existing_service_gateway_ids = data.oci_core_service_gateways.service_gateways.service_gateways.*.id
+  existing_nat_gateway_ids     = data.oci_core_nat_gateways.nat_gateways.nat_gateways.*.id
+  create_nat_gateway           = var.is_idcs_selected && length(data.oci_core_nat_gateways.nat_gateways.*.id) == 0
+  lb_destination_cidr          = var.is_lb_private ? var.bastion_subnet_cidr : "0.0.0.0/0"
+
+  tags = {
+    defined_tags  = local.defined_tags
+    freeform_tags = local.free_form_tags
+  }
+}
+
+/* Create primary subnet for Load balancer only */
+module "network-lb-subnet-1" {
+  source            = "./modules/network/subnet"
+  count             = local.add_existing_load_balancer ? 0 : var.add_load_balancer && var.lb_subnet_1_id == "" ? 1 : 0
+  compartment_id    = local.network_compartment_id
+  vcn_id            = local.vcn_id
+  security_list_ids = module.network-vcn-config[0].lb_security_list_id
+  dhcp_options_id   = module.network-vcn-config[0].dhcp_options_id
+  route_table_id    = module.network-vcn-config[0].route_table_id
+
+  subnet_name = "${local.service_name_prefix}-${local.lb_subnet_1_name}"
+  #Note: limit for dns label is 15 chars
+  dns_label = format("%s-%s", local.lb_subnet_1_name, substr(strrev(var.service_name), 0, 7))
+  //cidr_block          = local.lb_subnet_1_subnet_cidr
+  cidr_block = "10.0.3.0/24"
+
+  tags = {
+    defined_tags  = local.defined_tags
+    freeform_tags = local.free_form_tags
+  }
+}
+
+/* Create secondary subnet for wls and lb backend */
+module "network-lb-subnet-2" {
+  source            = "./modules/network/subnet"
+  count             = local.add_existing_load_balancer ? 0 : var.add_load_balancer && local.lb_subnet_2_id == "" && !var.is_lb_private && !local.use_regional_subnet && !local.is_single_ad_region ? 1 : 0
+  compartment_id    = local.network_compartment_id
+  vcn_id            = local.vcn_id
+  security_list_ids = module.network-vcn-config[0].lb_security_list_id
+  dhcp_options_id   = module.network-vcn-config[0].dhcp_options_id
+  route_table_id    = module.network-vcn-config[0].route_table_id
+  subnet_name       = "${local.service_name_prefix}-${local.lb_subnet_2_name}"
+  #Note: limit for dns label is 15 chars
+  dns_label  = format("%s-%s", local.lb_subnet_2_name, substr(strrev(var.service_name), 0, 7))
+  cidr_block = local.lb_subnet_2_subnet_cidr
+
+  tags = {
+    defined_tags  = local.defined_tags
+    freeform_tags = local.free_form_tags
+  }
+
+}
+
+/* Create back end subnet for bastion subnet */
+module "network-bastion-subnet" {
+  source         = "./modules/network/subnet"
+  count          = !local.assign_weblogic_public_ip && var.bastion_subnet_id == "" && var.is_bastion_instance_required && var.existing_bastion_instance_id == "" ? 1 : 0
+  compartment_id = local.network_compartment_id
+  vcn_id         = local.vcn_id
+  security_list_ids = compact(
+    concat(
+      [module.network-vcn-config[0].wls_security_list_id],
+      [module.network-vcn-config[0].wls_ms_security_list_id],
+    ),
+  )
+  dhcp_options_id = module.network-vcn-config[0].dhcp_options_id
+  route_table_id  = module.network-vcn-config[0].route_table_id
+  subnet_name     = "${local.service_name_prefix}-${var.bastion_subnet_name}"
+  dns_label       = "${var.bastion_subnet_name}-${substr(uuid(), -7, -1)}"
+  cidr_block      = local.bastion_subnet_cidr
+
+  tags = {
+    defined_tags  = local.defined_tags
+    freeform_tags = local.free_form_tags
+  }
+}
+
 module "policies" {
   source                = "./modules/policies"
   count                 = var.create_policies ? 1 : 0
@@ -51,6 +168,58 @@ module "bastion" {
     freeform_tags = local.free_form_tags
   }
   is_bastion_with_reserved_public_ip = var.is_bastion_with_reserved_public_ip
+}
+
+
+/* Create back end  private subnet for wls */
+module "network-wls-private-subnet" {
+  source         = "./modules/network/subnet"
+  count          = !local.assign_weblogic_public_ip && var.wls_subnet_id == "" ? 1 : 0
+  compartment_id = local.network_compartment_id
+  vcn_id         = local.vcn_id
+  security_list_ids = compact(
+    concat(
+      module.network-vcn-config[0].wls_bastion_security_list_id,
+      [module.network-vcn-config[0].wls_internal_security_list_id],
+      [module.network-vcn-config[0].wls_ms_security_list_id]
+    ),
+  )
+  dhcp_options_id = module.network-vcn-config[0].dhcp_options_id
+  route_table_id  = module.network-vcn-config[0].service_gateway_route_table_id
+  subnet_name     = "${local.service_name_prefix}-${var.wls_subnet_name}"
+  dns_label       = format("%s-%s", var.wls_subnet_name, substr(strrev(var.service_name), 0, 7))
+  cidr_block      = local.wls_subnet_cidr
+
+  tags = {
+    defined_tags  = local.defined_tags
+    freeform_tags = local.free_form_tags
+  }
+}
+
+/* Create back end  public subnet for wls */
+module "network-wls-public-subnet" {
+  source         = "./modules/network/subnet"
+  count          = local.assign_weblogic_public_ip && var.wls_subnet_id == "" ? 1 : 0
+  compartment_id = local.network_compartment_id
+  vcn_id         = local.vcn_id
+  security_list_ids = compact(
+    concat(
+      [module.network-vcn-config[0].wls_security_list_id],
+      [module.network-vcn-config[0].wls_ms_security_list_id],
+      [module.network-vcn-config[0].wls_internal_security_list_id]
+    ),
+  )
+
+  dhcp_options_id = module.network-vcn-config[0].dhcp_options_id
+  route_table_id  = module.network-vcn-config[0].route_table_id
+  subnet_name     = "${local.service_name_prefix}-${var.wls_subnet_name}"
+  dns_label       = format("%s-%s", var.wls_subnet_name, substr(strrev(var.service_name), 0, 7))
+  cidr_block      = local.wls_subnet_cidr
+
+  tags = {
+    defined_tags  = local.defined_tags
+    freeform_tags = local.free_form_tags
+  }
 }
 
 module "validators" {
@@ -182,3 +351,4 @@ module "provisioners" {
   bastion_host_private_key     = !var.is_bastion_instance_required ? "" : var.existing_bastion_instance_id == "" ? module.bastion[0].bastion_private_ssh_key : file(var.bastion_ssh_private_key)
   is_bastion_instance_required = var.is_bastion_instance_required
 }
+

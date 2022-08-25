@@ -10,11 +10,6 @@ variable "compartment_id" {
   }
 }
 
-variable "availability_domain" {
-  type        = string
-  description = "The availability domain where the subnet will be created"
-}
-
 variable "dns_label" {
   type = string
   description = "A DNS label for the subnet, used in conjunction with the VNIC's hostname and VCN's DNS label to form a fully qualified domain name (FQDN) for each VNIC within this subnet"
