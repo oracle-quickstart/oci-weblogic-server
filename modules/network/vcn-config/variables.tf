@@ -153,12 +153,13 @@ variable "wls_ms_source_cidrs" {
   description = "The Weblogic managed servers source CIDR values"
 }
 
-variable "service_gateway_ids" {
+variable "existing_service_gateway_ids" {
   type        = list(any)
-  description = "The service gateway OCID values"
+  description = "The service gateway OCID value if existing vcn is used"
+  default     = list()
 }
 
-variable "nat_gateway_ids" {
+variable "existing_nat_gateway_ids" {
   type        = list(any)
   description = "The nat gateway OCID values"
 }
@@ -166,6 +167,7 @@ variable "nat_gateway_ids" {
 variable "create_nat_gateway" {
   type        = bool
   description = "Set to true if nat gateway needs to be created"
+  default     = false
 }
 
 variable "lb_destination_cidr" {

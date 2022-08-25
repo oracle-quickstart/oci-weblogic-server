@@ -40,7 +40,12 @@ variable "bastion_subnet_id" {
   type        = string
   description = "The OCID of the subnet for the bastion instance"
   default     = ""
+}
 
+variable "bastion_subnet_name" {
+  type        = string
+  description = "A user-friendly bastion subnet name"
+  default     = "bsubnet"
 }
 
 variable "wls_availability_domain_name" {
@@ -162,7 +167,7 @@ variable "subnet_span" {
 # Used in UI instead of assign_weblogic_public_ip
 variable "subnet_type" {
   type        = string
-  description = "Private subnet or public subnet"
+  description = "Private subnet or Public subnet type"
   default     = "Use Private Subnet"
 }
 

@@ -57,15 +57,15 @@ variable "wls_14c_jdk_version" {
 }
 
 variable "wls_expose_admin_port" {
-  type = bool
+  type        = bool
   description = "[WARNING] Selecting this option will expose the console to the internet if the default 0.0.0.0/0 CIDR is used. You should change the CIDR range below to allow access to a trusted IP range."
-  default = false
+  default     = false
 }
 
 variable "wls_admin_port_source_cidr" {
-  type = string
+  type        = string
   description = "Create a security list to allow access to the WebLogic Administration Console port to the source CIDR range. [WARNING] Keeping the default 0.0.0.0/0 CIDR will expose the console to the internet. You should change the CIDR range to allow access to a trusted IP range."
-  default = "0.0.0.0/0"
+  default     = "0.0.0.0/0"
 }
 
 variable "wls_server_startup_args" {
@@ -106,9 +106,9 @@ variable "wls_ms_extern_ssl_port" {
 
 # Port for channel Extern on Admin Server
 variable "wls_extern_admin_port" {
-  type    = number
+  type        = number
   description = "Weblogic console port"
-  default = 7001
+  default     = 7001
   validation {
     condition     = var.wls_extern_admin_port > 0
     error_message = "The value for wls_extern_admin_port should be greater than 0."

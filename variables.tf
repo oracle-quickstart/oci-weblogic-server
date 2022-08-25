@@ -64,7 +64,7 @@ variable "instance_shape" {
 }
 
 variable "wls_ocpu_count" {
-  type = number
+  type        = number
   description = "OCPU count for Weblogic instance"
-  default = 1
+  default     = 1
 }

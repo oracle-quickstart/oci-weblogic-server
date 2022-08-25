@@ -4,7 +4,6 @@
 locals {
   port_for_ingress_lb_security_list = 443
   wls_admin_port_source_cidrs = var.wls_expose_admin_port ? [var.wls_admin_port_source_cidr] : []
-  num_nat_gws = length(var.nat_gateway_ids)
-  nat_gw_exists = local.num_nat_gws == 0 ? false : true
+  nat_gw_exists = length(var.existing_nat_gateway_ids) == 0 ? false : true
 }
 

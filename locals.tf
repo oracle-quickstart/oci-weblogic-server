@@ -44,11 +44,16 @@ locals {
   valid_existing_lb          = length(local.existing_lb_object_as_list) == 1
   add_existing_load_balancer = var.add_load_balancer && var.existing_load_balancer_id != "" && local.valid_existing_lb
 
-  new_lb_subnet_2_id = var.is_lb_private ? "" : var.lb_subnet_2_id
-  lb_subnet_2_id = local.add_existing_load_balancer ? local.existing_lb_subnet_2_id : local.new_lb_subnet_2_id
+  existing_lb_subnet_2_id = local.add_existing_load_balancer ? (var.is_lb_private ? "" : (length(local.existing_lb_object_as_list[0].subnet_ids) > 1 ? local.existing_lb_object_as_list[0].subnet_ids[1] : "")) : ""
+  new_lb_subnet_2_id      = var.is_lb_private ? "" : var.lb_subnet_2_id
+  lb_subnet_2_id          = local.add_existing_load_balancer ? local.existing_lb_subnet_2_id : local.new_lb_subnet_2_id
 
-  lb_id                      = local.add_existing_load_balancer ? var.existing_load_balancer_id : local.new_lb_id
-  lb_ip                      = local.add_existing_load_balancer ? local.existing_lb_ip : local.new_lb_ip
+  lb_subnet_1_name = var.is_lb_private ? "lbprist1" : "lbpubst1"
+  lb_subnet_2_name = var.is_lb_private ? "lbprist2" : "lbpubst2"
+
+
+  lb_id = local.add_existing_load_balancer ? var.existing_load_balancer_id : local.new_lb_id
+  lb_ip = local.add_existing_load_balancer ? local.existing_lb_ip : local.new_lb_ip
 
   admin_ip_address      = var.assign_weblogic_public_ip ? module.compute.instance_public_ips[0] : module.compute.instance_private_ips[0]
   admin_console_app_url = format("https://%s:%s/console", local.admin_ip_address, var.wls_extern_ssl_admin_port)
@@ -57,7 +62,7 @@ locals {
   sample_app_url_wls_ip = var.deploy_sample_app ? format("https://%s:%s/sample-app", local.admin_ip_address, var.wls_ms_extern_ssl_port) : ""
   sample_app_url        = var.wls_edition != "SE" ? (var.deploy_sample_app && var.add_load_balancer ? local.sample_app_url_lb_ip : local.sample_app_url_wls_ip) : ""
 
-  async_prov_mode = ! var.is_bastion_instance_required ? "Asynchronous provisioning is enabled. Connect to each compute instance and confirm that the file /u01/data/domains/${format("%s_domain", local.service_name_prefix)}/provisioningCompletedMarker exists. Details are found in the file /u01/logs/provisioning.log." : ""
+  async_prov_mode = !var.is_bastion_instance_required ? "Asynchronous provisioning is enabled. Connect to each compute instance and confirm that the file /u01/data/domains/${format("%s_domain", local.service_name_prefix)}/provisioningCompletedMarker exists. Details are found in the file /u01/logs/provisioning.log." : ""
 
   jdk_labels  = { jdk7 = "JDK 7", jdk8 = "JDK 8", jdk11 = "JDK 11" }
   jdk_version = var.wls_version == "14.1.1.0" ? local.jdk_labels[var.wls_14c_jdk_version] : (var.wls_version == "11.1.1.7" ? local.jdk_labels["jdk7"] : local.jdk_labels["jdk8"])
@@ -67,17 +72,18 @@ locals {
   ssh_proxyjump_access = var.assign_weblogic_public_ip ? "" : format("ssh -i <privateKey> -o ProxyCommand=\"ssh -i <privateKey> -W %s -p 22 opc@%s\" -p 22 %s", "%h:%p", local.bastion_public_ip, "opc@<wls_vm_private_ip>")
   ssh_dp_fwd           = var.assign_weblogic_public_ip ? "" : format("ssh -i <privatekey> -C -D <local-port> opc@%s", local.bastion_public_ip)
 
-  use_existing_subnets = var.wls_subnet_id == "" && var.lb_subnet_1_id == "" && var.lb_subnet_2_id == "" ? false : true
-  is_vcn_peering        = false
-  bastion_subnet_cidr      = var.bastion_subnet_cidr == "" && var.wls_vcn_name != "" && ! local.assign_weblogic_public_ip ? local.is_vcn_peering ? "11.0.1.0/24" : "10.0.1.0/24" : var.bastion_subnet_cidr
-  wls_subnet_cidr          = var.wls_subnet_cidr == "" && var.wls_vcn_name != "" ? local.is_vcn_peering ? "11.0.2.0/24" : "10.0.2.0/24" : var.wls_subnet_cidr
-  lb_subnet_1_subnet_cidr  = var.lb_subnet_1_cidr == "" && var.wls_vcn_name != "" ? local.is_vcn_peering ? "11.0.3.0/24" : "10.0.3.0/24" : var.lb_subnet_1_cidr
-  lb_subnet_2_subnet_cidr  = var.lb_subnet_2_cidr == "" && var.wls_vcn_name != "" ? local.is_vcn_peering ? "11.0.4.0/24" : "10.0.4.0/24" : var.lb_subnet_2_cidr
+  use_existing_subnets      = var.wls_subnet_id == "" && var.lb_subnet_1_id == "" && var.lb_subnet_2_id == "" ? false : true
+  is_vcn_peering            = false
+  assign_weblogic_public_ip = var.assign_weblogic_public_ip || var.subnet_type == "Use Public Subnet" ? true : false
+  bastion_subnet_cidr       = var.bastion_subnet_cidr == "" && var.wls_vcn_name != "" && !local.assign_weblogic_public_ip ? local.is_vcn_peering ? "11.0.1.0/24" : "10.0.1.0/24" : var.bastion_subnet_cidr
+  wls_subnet_cidr           = var.wls_subnet_cidr == "" && var.wls_vcn_name != "" ? local.is_vcn_peering ? "11.0.2.0/24" : "10.0.2.0/24" : var.wls_subnet_cidr
+  lb_subnet_1_subnet_cidr   = var.lb_subnet_1_cidr == "" && var.wls_vcn_name != "" ? local.is_vcn_peering ? "11.0.3.0/24" : "10.0.3.0/24" : var.lb_subnet_1_cidr
+  lb_subnet_2_subnet_cidr   = var.lb_subnet_2_cidr == "" && var.wls_vcn_name != "" ? local.is_vcn_peering ? "11.0.4.0/24" : "10.0.4.0/24" : var.lb_subnet_2_cidr
   num_ads = length(
     data.oci_identity_availability_domains.ADs.availability_domains,
   )
   is_single_ad_region = local.num_ads == 1 ? true : false
-  use_regional_subnet    = (var.use_regional_subnet && var.subnet_span == "Regional Subnet")
-  vcn_id = var.wls_existing_vcn_id=="" ? module.network-vcn[0].vcn_id : var.wls_existing_vcn_id
+  use_regional_subnet = (var.use_regional_subnet && var.subnet_span == "Regional Subnet")
+  vcn_id              = var.wls_existing_vcn_id == "" ? module.network-vcn[0].vcn_id : var.wls_existing_vcn_id
 
 }

@@ -2,11 +2,11 @@
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 output "virtual_cloud_network_id" {
-  value = module.network-vcn.*.vcn_id
+  value = var.wls_existing_vcn_id != "" ? var.wls_existing_vcn_id : module.network-vcn[0].vcn_id
 }
 
 output "virtual_cloud_network_cidr" {
-  value = module.network-vcn.*.vcn_cidr
+  value = var.wls_existing_vcn_id != "" ? var.wls_vcn_cidr : module.network-vcn[0].vcn_cidr
 }
 
 output "is_vcn_peered" {

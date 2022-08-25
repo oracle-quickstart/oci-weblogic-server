@@ -12,7 +12,7 @@ data "oci_core_vcns" "vcns" {
   }
 }
 
-data "oci_core_internet_gateways" "internet_gateways" {
+data "oci_core_internet_gateways" "vcn_internet_gateways" {
   #Required
   compartment_id = var.compartment_id
   vcn_id         = var.vcn_id

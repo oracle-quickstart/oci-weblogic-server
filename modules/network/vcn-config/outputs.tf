@@ -14,7 +14,7 @@ output "wls_internal_security_list_id" {
 
 output "wls_ms_security_list_id" {
   description = "OCID of security list for WLS or bastion subnet. "
-  value       = oci_core_security_list.wls_ms_security_list.id
+  value         = oci_core_security_list.wls_ms_security_list.id
 }
 
 output "lb_security_list_id" {
