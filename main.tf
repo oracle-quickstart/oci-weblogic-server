@@ -27,7 +27,9 @@ module "policies" {
     defined_tags  = local.defined_tags
     freeform_tags = local.free_form_tags
   }
-  atp_db = local.atp_db
+  atp_db                = local.atp_db
+  is_idcs_selected      = var.is_idcs_selected
+  idcs_client_secret_id = var.idcs_client_secret_id
 }
 
 module "bastion" {
@@ -60,9 +62,17 @@ module "validators" {
   wls_extern_ssl_admin_port  = var.wls_extern_ssl_admin_port
   wls_admin_port_source_cidr = var.wls_admin_port_source_cidr
   wls_expose_admin_port      = var.wls_expose_admin_port
+
+  add_load_balancer     = var.add_load_balancer
+  is_idcs_selected      = var.is_idcs_selected
+  idcs_host             = var.idcs_host
+  idcs_tenant           = var.idcs_tenant
+  idcs_client_id        = var.idcs_client_id
+  idcs_client_secret_id = var.idcs_client_secret_id
+  idcs_cloudgate_port   = var.idcs_cloudgate_port
 }
 
-module load-balancer {
+module "load-balancer" {
   source = "./modules/lb/loadbalancer"
   count  = (var.add_load_balancer && var.existing_load_balancer_id == "") ? 1 : 0
 
@@ -79,8 +89,6 @@ module load-balancer {
     freeform_tags = local.free_form_tags
   }
 }
-
-
 
 module "compute" {
   source                 = "./modules/compute/wls_compute"
@@ -117,6 +125,17 @@ module "compute" {
   num_vm_instances        = var.wls_node_count
   resource_name_prefix    = var.service_name
 
+  is_idcs_selected      = var.is_idcs_selected
+  idcs_host             = var.idcs_host
+  idcs_port             = var.idcs_port
+  idcs_tenant           = var.idcs_tenant
+  idcs_client_id        = var.idcs_client_id
+  idcs_cloudgate_port   = var.idcs_cloudgate_port
+  idcs_app_prefix       = local.service_name_prefix
+  idcs_client_secret_id = var.idcs_client_secret_id
+
+  lbip = local.lb_ip
+
   db_existing_vcn_add_seclist = var.ocidb_existing_vcn_add_seclist
   jrf_parameters = {
     db_user        = local.db_user
@@ -134,7 +153,7 @@ module "compute" {
   }
 }
 
-module load-balancer-backends {
+module "load-balancer-backends" {
   source = "./modules/lb/backends"
   count  = var.add_load_balancer ? 1 : 0
 
@@ -159,7 +178,7 @@ module "provisioners" {
   num_vm_instances             = var.wls_node_count
   ssh_private_key              = module.compute.ssh_private_key_opc
   assign_public_ip             = var.assign_weblogic_public_ip
-  bastion_host                 = ! var.is_bastion_instance_required ? "" : var.existing_bastion_instance_id == "" ? module.bastion[0].public_ip : data.oci_core_instance.existing_bastion_instance[0].public_ip
-  bastion_host_private_key     = ! var.is_bastion_instance_required ? "" : var.existing_bastion_instance_id == "" ? module.bastion[0].bastion_private_ssh_key : file(var.bastion_ssh_private_key)
+  bastion_host                 = !var.is_bastion_instance_required ? "" : var.existing_bastion_instance_id == "" ? module.bastion[0].public_ip : data.oci_core_instance.existing_bastion_instance[0].public_ip
+  bastion_host_private_key     = !var.is_bastion_instance_required ? "" : var.existing_bastion_instance_id == "" ? module.bastion[0].bastion_private_ssh_key : file(var.bastion_ssh_private_key)
   is_bastion_instance_required = var.is_bastion_instance_required
 }

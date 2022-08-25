@@ -89,6 +89,26 @@ module "wls-instances" {
       add_loadbalancer                   = var.add_loadbalancer
       is_lb_private                      = var.is_lb_private
 
+      is_idcs_selected                    = var.is_idcs_selected
+      idcs_host                           = var.idcs_host
+      idcs_port                           = var.idcs_port
+      is_idcs_internal                    = "false"
+      is_idcs_untrusted                   = false
+      idcs_ip                             = ""
+      idcs_tenant                         = var.idcs_tenant
+      idcs_client_id                      = var.idcs_client_id
+      idcs_client_secret_ocid             = var.idcs_client_secret_id
+      idcs_app_prefix                     = var.idcs_app_prefix
+      idcs_cloudgate_port                 = var.idcs_cloudgate_port
+      idcs_artifacts_file                 = var.idcs_artifacts_file
+      idcs_conf_app_info_file             = var.idcs_conf_app_info_file
+      idcs_ent_app_info_file              = var.idcs_ent_app_info_file
+      idcs_cloudgate_info_file            = var.idcs_cloudgate_info_file
+      idcs_cloudgate_config_file          = var.idcs_cloudgate_config_file
+      lbip                                = var.lbip
+      idcs_cloudgate_docker_image_tar     = var.idcs_cloudgate_docker_image_tar
+      idcs_cloudgate_docker_image_version = var.idcs_cloudgate_docker_image_version
+      idcs_cloudgate_docker_image_name    = var.idcs_cloudgate_docker_image_name
 
       apply_JRF        = local.apply_JRF
       db_name          = local.apply_JRF ? data.oci_database_autonomous_database.atp_db[0].db_name : ""

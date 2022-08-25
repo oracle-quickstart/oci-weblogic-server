@@ -63,6 +63,10 @@ output "sample_application_url" {
   value = local.sample_app_url
 }
 
+output "sample_application_protected_by_idcs" {
+  value = local.sample_idcs_app_url
+}
+
 output "listing_version" {
   value = var.tf_script_version
 }
