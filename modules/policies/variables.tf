@@ -50,7 +50,6 @@ variable "wls_admin_password_id" {
   description = "The OCID of the vault secret containing the password for the WebLogic administration user"
 }
 
-
 variable "atp_db" {
   type = object({
     is_atp         = bool
@@ -64,4 +63,14 @@ variable "atp_db" {
     password_id: "The OCID of the vault secret with the password of the database"
   }
   EOT
+}
+
+variable "is_idcs_selected" {
+  type        = bool
+  description = "Indicates that Oracle Identity Cloud Service (IDCS) is used to authenticate user. If not selected, WebLogic Server uses the local identity store."
+}
+
+variable "idcs_client_secret_id" {
+  type        = string
+  description = "The OCID of the vault secret containing the confidential application password in IDCS"
 }
