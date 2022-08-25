@@ -223,6 +223,7 @@ module "network-wls-public-subnet" {
 
 module "validators" {
   source                     = "./modules/validators"
+
   service_name               = var.service_name
   wls_ms_port                = var.wls_ms_extern_port
   wls_ms_ssl_port            = var.wls_ms_extern_ssl_port
@@ -231,13 +232,35 @@ module "validators" {
   wls_admin_port_source_cidr = var.wls_admin_port_source_cidr
   wls_expose_admin_port      = var.wls_expose_admin_port
 
-  add_load_balancer     = var.add_load_balancer
+
   is_idcs_selected      = var.is_idcs_selected
   idcs_host             = var.idcs_host
   idcs_tenant           = var.idcs_tenant
   idcs_client_id        = var.idcs_client_id
   idcs_client_secret_id = var.idcs_client_secret_id
   idcs_cloudgate_port   = var.idcs_cloudgate_port
+
+  existing_vcn_id              = var.wls_existing_vcn_id
+  wls_subnet_cidr              = var.wls_subnet_cidr
+  lb_subnet_1_cidr             = var.lb_subnet_1_cidr
+  lb_subnet_2_cidr             = var.lb_subnet_2_cidr
+  bastion_subnet_cidr          = var.bastion_subnet_cidr
+  assign_public_ip             = local.assign_weblogic_public_ip
+  is_bastion_instance_required = var.is_bastion_instance_required
+  existing_bastion_instance_id = var.existing_bastion_instance_id
+  bastion_ssh_private_key      = var.bastion_ssh_private_key
+  add_load_balancer            = var.add_load_balancer
+  existing_load_balancer_id    = var.existing_load_balancer_id
+
+  wls_subnet_id                = var.wls_subnet_id
+  lb_subnet_1_id               = var.lb_subnet_1_id
+  lb_subnet_2_id               = ""
+  bastion_subnet_id            = var.bastion_subnet_id
+
+  vcn_name    = var.wls_vcn_name
+  use_regional_subnet = local.use_regional_subnet
+
+  is_lb_private                  = var.is_lb_private
 }
 
 module "load-balancer" {
