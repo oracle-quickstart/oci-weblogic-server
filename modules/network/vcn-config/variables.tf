@@ -156,7 +156,7 @@ variable "wls_ms_source_cidrs" {
 variable "existing_service_gateway_ids" {
   type        = list(any)
   description = "The service gateway OCID value if existing vcn is used"
-  default     = list()
+  default     = []
 }
 
 variable "existing_nat_gateway_ids" {
