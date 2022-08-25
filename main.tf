@@ -101,27 +101,6 @@ module "bastion" {
   is_bastion_with_reserved_public_ip = var.is_bastion_with_reserved_public_ip
 }
 
-module "bastion" {
-  source              = "./modules/compute/bastion"
-  count               = (var.is_bastion_instance_required && var.existing_bastion_instance_id == "") ? 1 : 0
-  availability_domain = local.bastion_availability_domain
-  bastion_subnet_id   = var.bastion_subnet_id # TODO : implement case where a new subnet is created
-  compartment_id      = var.compartment_id
-  instance_image_id   = var.use_baselinux_marketplace_image ? var.mp_baselinux_instance_image_id : var.bastion_instance_image_id
-  instance_shape      = var.bastion_instance_shape
-  region              = var.region
-  ssh_public_key      = var.ssh_public_key
-  tenancy_id          = var.tenancy_id
-  use_existing_subnet = var.bastion_subnet_id != ""
-  vm_count            = var.wls_node_count
-  instance_name       = "${local.service_name_prefix}-bastion-instance"
-  tags = {
-    defined_tags  = local.defined_tags
-    freeform_tags = local.free_form_tags
-  }
-  is_bastion_with_reserved_public_ip = var.is_bastion_with_reserved_public_ip
-}
-
 module "validators" {
   source                     = "./modules/validators"
   service_name               = var.service_name
