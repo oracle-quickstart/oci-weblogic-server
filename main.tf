@@ -75,8 +75,7 @@ module "network-lb-subnet-1" {
   subnet_name = "${local.service_name_prefix}-${local.lb_subnet_1_name}"
   #Note: limit for dns label is 15 chars
   dns_label = format("%s-%s", local.lb_subnet_1_name, substr(strrev(var.service_name), 0, 7))
-  //cidr_block          = local.lb_subnet_1_subnet_cidr
-  cidr_block = "10.0.3.0/24"
+  cidr_block          = local.lb_subnet_1_subnet_cidr
 
   tags = {
     defined_tags  = local.defined_tags
