@@ -19,8 +19,8 @@ locals {
   defined_tags       = var.service_tags.definedTags
   free_form_tags     = length(var.service_tags.freeformTags) > 0 ? var.service_tags.freeformTags : module.system-tags.system_tag_value
 
-  db_user        = local.is_atp_db ? "ADMIN" : local.is_oci_db ? var.oci_db_user : ""
-  db_password_id = local.is_atp_db ? var.atp_db_password_id : local.is_oci_db ? var.oci_db_password_id : ""
+  db_user        = local.is_atp_db ? "ADMIN" : var.oci_db_user
+  db_password_id = local.is_atp_db ? var.atp_db_password_id : var.oci_db_password_id
   is_atp_db      = trimspace(var.atp_db_id) != ""
   atp_db = {
     is_atp         = local.is_atp_db
@@ -40,7 +40,7 @@ locals {
 
   # Locals used by outputs
   bastion_public_ip = element(coalescelist(module.bastion[*].public_ip, data.oci_core_instance.existing_bastion_instance.*.public_ip, [""]), 0)
-  requires_JRF      = local.is_oci_db || local.is_atp_db
+  requires_JRF      = local.is_oci_db || local.is_atp_db || trimspace(var.oci_db_connection_string) != ""
   prov_type         = local.requires_JRF ? local.is_atp_db ? "(JRF with ATP DB)" : "(JRF with OCI DB)" : "(Non JRF)"
   edition_map = zipmap(
     ["SE", "EE", "SUITE"],
