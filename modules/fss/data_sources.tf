@@ -12,8 +12,7 @@ data "oci_file_storage_mount_targets" "mount_target" {
   #Required
   availability_domain = var.availability_domain
   compartment_id      = var.compartment_id
-
-  #Optional
+  
   export_set_id = data.oci_file_storage_exports.export[0].export_set_id
 }
 
