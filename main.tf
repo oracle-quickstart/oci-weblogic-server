@@ -74,8 +74,8 @@ module "network-lb-subnet-1" {
 
   subnet_name = "${local.service_name_prefix}-${local.lb_subnet_1_name}"
   #Note: limit for dns label is 15 chars
-  dns_label = format("%s-%s", local.lb_subnet_1_name, substr(strrev(var.service_name), 0, 7))
-  cidr_block          = local.lb_subnet_1_subnet_cidr
+  dns_label  = format("%s-%s", local.lb_subnet_1_name, substr(strrev(var.service_name), 0, 7))
+  cidr_block = local.lb_subnet_1_subnet_cidr
 
   tags = {
     defined_tags  = local.defined_tags
@@ -222,7 +222,7 @@ module "network-wls-public-subnet" {
 }
 
 module "validators" {
-  source                     = "./modules/validators"
+  source = "./modules/validators"
 
   service_name               = var.service_name
   wls_ms_port                = var.wls_ms_extern_port
@@ -252,15 +252,25 @@ module "validators" {
   add_load_balancer            = var.add_load_balancer
   existing_load_balancer_id    = var.existing_load_balancer_id
 
-  wls_subnet_id                = var.wls_subnet_id
-  lb_subnet_1_id               = var.lb_subnet_1_id
-  lb_subnet_2_id               = ""
-  bastion_subnet_id            = var.bastion_subnet_id
+  wls_subnet_id     = var.wls_subnet_id
+  lb_subnet_1_id    = var.lb_subnet_1_id
+  lb_subnet_2_id    = ""
+  bastion_subnet_id = var.bastion_subnet_id
 
-  vcn_name    = var.wls_vcn_name
+  vcn_name            = var.wls_vcn_name
   use_regional_subnet = local.use_regional_subnet
 
-  is_lb_private                  = var.is_lb_private
+  is_lb_private = var.is_lb_private
+}
+
+module "fss" {
+  source = "./modules/fss"
+  count  = (var.add_fss && var.add_existing_fss) ? 1 : 0
+
+  compartment_id          = var.fss_compartment_id
+  availability_domain     = var.fss_availability_domain
+  existing_fss_id         = var.existing_fss_id
+  existing_export_path_id = var.existing_export_path_id
 }
 
 module "load-balancer" {
@@ -326,6 +336,11 @@ module "compute" {
   idcs_client_secret_id = var.idcs_client_secret_id
 
   lbip = local.lb_ip
+
+  add_fss     = var.add_fss
+  mount_ip    = element(coalescelist(module.fss[*].nfs_mount_ip, [""]), 0)
+  mount_path  = var.mount_path
+  export_path = element(coalescelist(module.fss[*].nfs_export_path, [""]), 0)
 
   db_existing_vcn_add_seclist = var.ocidb_existing_vcn_add_seclist
   jrf_parameters = {

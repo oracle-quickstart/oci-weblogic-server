@@ -95,6 +95,10 @@ output "ssh_command_with_dynamic_port_forwarding" {
   value = local.ssh_dp_fwd
 }
 
+output "fss_system_id" {
+  value = module.fss[*].fss_id
+}
+
 output "resource_identifier_value" {
   value = compact(concat([module.system-tags.dg_tag_value], local.user_defined_tag_values))
 }

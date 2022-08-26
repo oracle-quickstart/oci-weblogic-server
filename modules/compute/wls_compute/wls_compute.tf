@@ -65,7 +65,7 @@ module "wls-instances" {
       network_compartment_id             = var.network_compartment_id
       wls_subnet_cidr                    = local.wls_subnet_cidr
 
-      wls_edition                        = var.wls_edition
+      wls_edition = var.wls_edition
 
       user_data            = data.template_cloudinit_config.config.rendered
       mode                 = var.mode
@@ -110,10 +110,10 @@ module "wls-instances" {
       idcs_cloudgate_docker_image_version = var.idcs_cloudgate_docker_image_version
       idcs_cloudgate_docker_image_name    = var.idcs_cloudgate_docker_image_name
 
-      apply_JRF        = local.apply_JRF
-      db_name          = local.apply_JRF ? data.oci_database_autonomous_database.atp_db[0].db_name : ""
-      db_user          = var.jrf_parameters.db_user
-      db_password_ocid = var.jrf_parameters.db_password_id
+      apply_JRF                   = local.apply_JRF
+      db_name                     = local.apply_JRF ? data.oci_database_autonomous_database.atp_db[0].db_name : ""
+      db_user                     = var.jrf_parameters.db_user
+      db_password_ocid            = var.jrf_parameters.db_password_id
       db_existing_vcn_add_seclist = var.db_existing_vcn_add_seclist
 
       rcu_component_list = var.wls_version_to_rcu_component_list_map[var.wls_version]
@@ -129,10 +129,15 @@ module "wls-instances" {
       is_atp_app_db       = "false"
       appdb_password_ocid = ""
 
+      mount_ip    = var.mount_ip
+      mount_path  = var.mount_path
+      export_path = var.export_path
+      add_fss     = var.add_fss
+
     }
 
     are_legacy_imds_endpoints_disabled = var.disable_legacy_metadata_endpoint
-    fault_domain                       = (length(local.ad_names) == 1 || ! var.use_regional_subnet) ? lookup(data.oci_identity_fault_domains.wls_fault_domains.fault_domains[(x + 1) % local.num_fault_domains], "name") : ""
+    fault_domain                       = (length(local.ad_names) == 1 || !var.use_regional_subnet) ? lookup(data.oci_identity_fault_domains.wls_fault_domains.fault_domains[(x + 1) % local.num_fault_domains], "name") : ""
 
     provisioning_timeout_mins = var.provisioning_timeout_mins
 
