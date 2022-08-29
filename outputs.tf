@@ -67,6 +67,10 @@ output "weblogic_server_administration_console" {
   value = local.admin_console_app_url
 }
 
+output "fusion_middleware_control_console" {
+  value = local.fmw_console_app_url
+}
+
 output "sample_application_url" {
   value = local.sample_app_url
 }

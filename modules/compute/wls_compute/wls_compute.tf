@@ -110,18 +110,42 @@ module "wls-instances" {
       idcs_cloudgate_docker_image_version = var.idcs_cloudgate_docker_image_version
       idcs_cloudgate_docker_image_name    = var.idcs_cloudgate_docker_image_name
 
+
       apply_JRF                   = local.apply_JRF
       db_name                     = local.apply_JRF ? data.oci_database_autonomous_database.atp_db[0].db_name : ""
+      # Common JRF DB parameters
+      apply_JRF                   = local.apply_JRF
+      db_name                     = local.is_atp_db ? data.oci_database_autonomous_database.atp_db[0].db_name : local.is_oci_db ? try(data.oci_database_database.ocidb_database[0].db_name, "") : ""
       db_user                     = var.jrf_parameters.db_user
       db_password_ocid            = var.jrf_parameters.db_password_id
       db_existing_vcn_add_seclist = var.db_existing_vcn_add_seclist
 
       rcu_component_list = var.wls_version_to_rcu_component_list_map[var.wls_version]
 
+      # OCI DB parameters for JRF
+      db_is_oci_db                 = local.is_oci_db
+      db_connect_string            = var.jrf_parameters.oci_db_parameters.oci_db_connection_string
+      db_hostname_prefix           = local.is_oci_db ? try(lookup(data.oci_database_db_systems.ocidb_db_systems[0].db_systems[0], "hostname"), "") : ""
+      db_host_domain               = local.is_oci_db ? try(lookup(data.oci_database_db_systems.ocidb_db_systems[0].db_systems[0], "domain"), "") : ""
+      db_shape                     = local.is_oci_db ? try(lookup(data.oci_database_db_systems.ocidb_db_systems[0].db_systems[0], "shape"), "") : ""
+      db_version                   = local.is_oci_db ? try(data.oci_database_db_home.ocidb_db_home[0].db_version, "") : ""
+      db_unique_name               = local.is_oci_db ? try(data.oci_database_database.ocidb_database[0].db_unique_name, "") : ""
+      pdb_name                     = var.jrf_parameters.oci_db_parameters.oci_db_pdb_service_name
+      db_node_count                = local.is_oci_db ? try(lookup(data.oci_database_db_systems.ocidb_db_systems[0].db_systems[0], "node_count"), "") : ""
+      db_port                      = var.jrf_parameters.oci_db_parameters.oci_db_port
+      db_storage_management        = local.is_oci_db ? local.db_storage_management : ""
+      db_subnet_id                 = local.is_oci_db ? try(lookup(data.oci_database_db_systems.ocidb_db_systems[0].db_systems[0], "subnet_id"), "") : ""
+      ocidb_network_compartment_id = var.jrf_parameters.oci_db_parameters.oci_db_network_compartment_id
+      ocidb_existing_vcn_id        = var.jrf_parameters.oci_db_parameters.oci_db_existing_vcn_id
+      # Optional Peering
+      db_scan_ip_list     = local.is_oci_db ? (var.disable_infra_db_vcn_peering ? local.infradb_scanip_list : "") : ""
+      db_host_private_ips = local.is_oci_db ? (var.disable_infra_db_vcn_peering ? local.infradb_private_ip_list : "") : ""
+
+      # ATP parameters for JRF
       is_atp_db             = local.is_atp_db
       atp_db_id             = var.jrf_parameters.atp_db_parameters.atp_db_id
       atp_db_level          = var.jrf_parameters.atp_db_parameters.atp_db_level
-      is_atp_dedicated      = local.apply_JRF ? lookup(data.oci_database_autonomous_database.atp_db[0], "is_dedicated") : false
+      is_atp_dedicated      = local.is_atp_db ? lookup(data.oci_database_autonomous_database.atp_db[0], "is_dedicated") : false
       atp_private_end_point = element(coalescelist(data.oci_database_autonomous_database.atp_db.*.private_endpoint, [""]), 0)
       atp_nsg_id            = local.is_atp_db ? data.template_file.atp_nsg_id[0].rendered : ""
 
