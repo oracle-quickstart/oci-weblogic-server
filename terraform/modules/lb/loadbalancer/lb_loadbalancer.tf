@@ -30,4 +30,7 @@ resource "oci_load_balancer_load_balancer" "wls_loadbalancer" {
     }
   }
 
+  lifecycle {
+    ignore_changes = [defined_tags, freeform_tags]
+  }
 }

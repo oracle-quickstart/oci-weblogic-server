@@ -38,6 +38,10 @@ resource "oci_core_instance" "wls-bastion-instance" {
   timeouts {
     create = "10m"
   }
+
+   lifecycle {
+    ignore_changes = [defined_tags, freeform_tags]
+  }
 }
 
 resource "oci_core_public_ip" "reserved_public_ip" {
@@ -50,4 +54,8 @@ resource "oci_core_public_ip" "reserved_public_ip" {
 
   defined_tags  = var.tags.defined_tags
   freeform_tags = var.tags.freeform_tags
+
+   lifecycle {
+    ignore_changes = [defined_tags, freeform_tags]
+  }
 }
