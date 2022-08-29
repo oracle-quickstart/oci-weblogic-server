@@ -6,7 +6,7 @@ variable "tenancy_id" {
   description = "The OCID of the tenancy where the dynamic group and policy will be created"
   validation {
     condition     = length(regexall("^ocid1.tenancy.*$", var.tenancy_id)) > 0
-    error_message = "The value for tenancy_id should start with \"ocid1.tenancy.\"."
+    error_message = "WLSC-ERROR: The value for tenancy_id should start with \"ocid1.tenancy.\"."
   }
 }
 
@@ -15,7 +15,7 @@ variable "compartment_id" {
   description = "The OCID of the compartment for the matching rule of dynamic group"
   validation {
     condition     = length(regexall("^ocid1.compartment.*$", var.compartment_id)) > 0
-    error_message = "The value for compartment_id should start with \"ocid1.compartment.\"."
+    error_message = "WLSC-ERROR: The value for compartment_id should start with \"ocid1.compartment.\"."
   }
 }
 
@@ -24,7 +24,7 @@ variable "network_compartment_id" {
   description = "The OCID of the compartment where the network resources like VCN are located"
   validation {
     condition     = length(regexall("^ocid1.compartment.*$", var.network_compartment_id)) > 0
-    error_message = "The value for network_compartment_id should start with \"ocid1.compartment.\"."
+    error_message = "WLSC-ERROR: The value for network_compartment_id should start with \"ocid1.compartment.\"."
   }
 }
 
@@ -33,7 +33,7 @@ variable "vcn_id" {
   description = "The OCID of the VCN where the WebLogic VMs are located"
   validation {
     condition     = length(regexall("^ocid1.vcn.*$", var.vcn_id)) > 0
-    error_message = "The value for vcn_id should start with \"ocid1.vcn.\"."
+    error_message = "WLSC-ERROR: The value for vcn_id should start with \"ocid1.vcn.\"."
   }
 }
 
@@ -42,7 +42,7 @@ variable "wls_existing_vcn_id" {
   description = "The OCID of the VCN where the WebLogic VMs are located. Should be blank if the VCN is created with the stack."
   validation {
     condition     = var.wls_existing_vcn_id == "" || length(regexall("^ocid1.vcn.*$", var.wls_existing_vcn_id)) > 0
-    error_message = "The value for wls_existing_vcn_id should be blank or start with \"ocid1.vcn.\"."
+    error_message = "WLSC-ERROR: The value for wls_existing_vcn_id should be blank or start with \"ocid1.vcn.\"."
   }
 }
 
@@ -51,7 +51,7 @@ variable "resource_name_prefix" {
   description = "Prefix used to name resources created by this module"
   validation {
     condition     = var.resource_name_prefix != ""
-    error_message = "The value for resource_name_prefix cannot be empty."
+    error_message = "WLSC-ERROR: The value for resource_name_prefix cannot be empty."
   }
 }
 

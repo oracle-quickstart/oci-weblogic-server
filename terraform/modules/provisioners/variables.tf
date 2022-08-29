@@ -22,7 +22,7 @@ variable "mode" {
   default     = "PROD"
   validation {
     condition     = contains(["DEV", "PROD"], var.mode)
-    error_message = "Allowed values for mode are DEV and PROD."
+    error_message = "WLSC-ERROR: Allowed values for mode are DEV and PROD."
   }
 }
 
