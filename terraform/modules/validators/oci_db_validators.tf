@@ -34,7 +34,7 @@ locals {
   missing_oci_db_database_id_msg      = "WLSC-ERROR: The value for [oci_db_database_id] is required."
   validate_missing_oci_db_database_id = local.missing_oci_db_database_id ? local.validators_msg_map[local.missing_oci_db_database_id_msg] : null
 
-  invalid_oci_db_password_msg = "WLSC-ERROR: The value for DB System Admin Password [db_password_ocid] is not valid. The value must begin with ocid1 followed by resource type, e.g. ocid1.vaultsecret."
+  invalid_oci_db_password_msg = "WLSC-ERROR: The value for DB System Admin Password [db_password_id] is not valid. The value must begin with ocid1 followed by resource type, e.g. ocid1.vaultsecret."
   validate_oci_db_password    = (var.is_oci_db || var.oci_db_connection_string != "") && var.db_password_id != "" ? length(regexall("^ocid1.vaultsecret.", var.db_password_id)) > 0 ? null : local.validators_msg_map[local.invalid_oci_db_password_msg] : null
 
   missing_oci_db_vcn_id_msg      = "WLSC-ERROR: The value for [oci_db_existing_vcn_id] is required."

@@ -223,3 +223,25 @@ variable "is_atp_db" {
   type    = bool
   description = "Set to true if a JRF with ATP DB is used"
 }
+
+variable "atp_db_id" {
+  type = string
+  description = "The OCID of the ATP database, if JRF with ATP is used"
+  validation {
+    condition     = var.atp_db_id == "" || length(regexall("^ocid1.autonomousdatabase.*$", var.atp_db_id)) > 0
+    error_message = "WLSC-ERROR: The value for atp_db_id should be blank or start with \"ocid1.autonomousdatabase.\"."
+  }
+}
+variable "atp_db_compartment_id" {
+  type = string
+  description = "The OCID of the compartment where the ATP database is located, if JRF with ATP is used"
+  validation {
+    condition     = var.atp_db_compartment_id == "" || length(regexall("^ocid1.compartment.*$", var.atp_db_compartment_id)) > 0
+    error_message = "WLSC-ERROR: The value for atp_db_compartment_id should be blank or start with \"ocid1.compartment.\"."
+  }
+}
+
+variable "atp_db_level" {
+  type = string
+  description = "The ATP database level. Allowed values are [low, tp, tpurgent]"
+}
