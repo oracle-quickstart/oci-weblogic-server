@@ -129,13 +129,14 @@ module "network-bastion-subnet" {
 }
 
 module "policies" {
-  source                = "./modules/policies"
-  count                 = var.create_policies ? 1 : 0
-  compartment_id        = var.compartment_id
-  dynamic_group_rule    = local.dynamic_group_rule
-  resource_name_prefix  = local.service_name_prefix
-  tenancy_id            = var.tenancy_id
-  wls_admin_password_id = var.wls_admin_password_id
+  source                 = "./modules/policies"
+  count                  = var.create_policies ? 1 : 0
+  compartment_id         = var.compartment_id
+  network_compartment_id = local.network_compartment_id
+  dynamic_group_rule     = local.dynamic_group_rule
+  resource_name_prefix   = local.service_name_prefix
+  tenancy_id             = var.tenancy_id
+  wls_admin_password_id  = var.wls_admin_password_id
   providers = {
     oci = oci.home
   }
@@ -144,6 +145,9 @@ module "policies" {
     freeform_tags = local.free_form_tags
   }
   atp_db                = local.atp_db
+  oci_db                = local.oci_db
+  vcn_id                = var.wls_existing_vcn_id # TODO: add condition to include new VCN when nwe VCN is supported
+  wls_existing_vcn_id   = var.wls_existing_vcn_id
   is_idcs_selected      = var.is_idcs_selected
   idcs_client_secret_id = var.idcs_client_secret_id
 }
@@ -231,6 +235,18 @@ module "validators" {
   wls_extern_ssl_admin_port  = var.wls_extern_ssl_admin_port
   wls_admin_port_source_cidr = var.wls_admin_port_source_cidr
   wls_expose_admin_port      = var.wls_expose_admin_port
+  wls_version                = var.wls_version
+
+  db_user                  = local.db_user
+  db_password_id           = local.db_password_id
+  is_oci_db                = local.is_oci_db
+  oci_db_compartment_id    = local.oci_db_compartment_id
+  oci_db_connection_string = var.oci_db_connection_string
+  oci_db_database_id       = var.oci_db_database_id
+  oci_db_dbsystem_id       = var.oci_db_dbsystem_id
+  oci_db_existing_vcn_id   = var.oci_db_existing_vcn_id
+  oci_db_pdb_service_name  = var.oci_db_pdb_service_name
+  is_atp_db                = local.is_atp_db
 
 
   is_idcs_selected      = var.is_idcs_selected
@@ -330,10 +346,20 @@ module "compute" {
   db_existing_vcn_add_seclist = var.ocidb_existing_vcn_add_seclist
   jrf_parameters = {
     db_user        = local.db_user
-    db_password_id = local.db_password
+    db_password_id = local.db_password_id
     atp_db_parameters = {
       atp_db_id    = var.atp_db_id
       atp_db_level = var.atp_db_level
+    }
+    oci_db_parameters = {
+      oci_db_connection_string      = var.oci_db_connection_string
+      oci_db_compartment_id         = local.oci_db_compartment_id
+      oci_db_dbsystem_id            = trimspace(var.oci_db_dbsystem_id)
+      oci_db_database_id            = var.oci_db_database_id
+      oci_db_pdb_service_name       = var.oci_db_pdb_service_name
+      oci_db_port                   = var.oci_db_port
+      oci_db_network_compartment_id = local.oci_db_network_compartment_id
+      oci_db_existing_vcn_id        = var.oci_db_existing_vcn_id
     }
   }
 
@@ -369,8 +395,8 @@ module "provisioners" {
   num_vm_instances             = var.wls_node_count
   ssh_private_key              = module.compute.ssh_private_key_opc
   assign_public_ip             = var.assign_weblogic_public_ip
-  bastion_host                 = !var.is_bastion_instance_required ? "" : var.existing_bastion_instance_id == "" ? module.bastion[0].public_ip : data.oci_core_instance.existing_bastion_instance[0].public_ip
-  bastion_host_private_key     = !var.is_bastion_instance_required ? "" : var.existing_bastion_instance_id == "" ? module.bastion[0].bastion_private_ssh_key : file(var.bastion_ssh_private_key)
+  bastion_host                 = ! var.is_bastion_instance_required ? "" : var.existing_bastion_instance_id == "" ? module.bastion[0].public_ip : data.oci_core_instance.existing_bastion_instance[0].public_ip
+  bastion_host_private_key     = ! var.is_bastion_instance_required ? "" : var.existing_bastion_instance_id == "" ? module.bastion[0].bastion_private_ssh_key : file(var.bastion_ssh_private_key)
   is_bastion_instance_required = var.is_bastion_instance_required
 }
 
