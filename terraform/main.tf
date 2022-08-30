@@ -74,8 +74,8 @@ module "network-lb-subnet-1" {
 
   subnet_name = "${local.service_name_prefix}-${local.lb_subnet_1_name}"
   #Note: limit for dns label is 15 chars
-  dns_label = format("%s-%s", local.lb_subnet_1_name, substr(strrev(var.service_name), 0, 7))
-  cidr_block          = local.lb_subnet_1_subnet_cidr
+  dns_label  = format("%s-%s", local.lb_subnet_1_name, substr(strrev(var.service_name), 0, 7))
+  cidr_block = local.lb_subnet_1_subnet_cidr
 
   tags = {
     defined_tags  = local.defined_tags
@@ -228,7 +228,7 @@ module "network-wls-public-subnet" {
 }
 
 module "validators" {
-  source                     = "./modules/validators"
+  source = "./modules/validators"
 
   service_name               = var.service_name
   wls_ms_port                = var.wls_ms_extern_port
@@ -270,15 +270,15 @@ module "validators" {
   add_load_balancer            = var.add_load_balancer
   existing_load_balancer_id    = var.existing_load_balancer_id
 
-  wls_subnet_id                = var.wls_subnet_id
-  lb_subnet_1_id               = var.lb_subnet_1_id
-  lb_subnet_2_id               = ""
-  bastion_subnet_id            = var.bastion_subnet_id
+  wls_subnet_id     = var.wls_subnet_id
+  lb_subnet_1_id    = var.lb_subnet_1_id
+  lb_subnet_2_id    = ""
+  bastion_subnet_id = var.bastion_subnet_id
 
-  vcn_name    = var.wls_vcn_name
+  vcn_name            = var.wls_vcn_name
   use_regional_subnet = local.use_regional_subnet
 
-  is_lb_private                  = var.is_lb_private
+  is_lb_private = var.is_lb_private
 
   create_policies    = var.create_policies
   use_oci_logging    = var.use_oci_logging
@@ -377,7 +377,7 @@ module "compute" {
     }
   }
 
-  log_group_id       = module.observability-common.log_group_id
+  log_group_id    = module.observability-common.log_group_id
   use_oci_logging = var.use_oci_logging
 
   tags = {
@@ -406,14 +406,14 @@ module "load-balancer-backends" {
 
 module "observability-logging" {
   source = "./modules/observability/logging"
-  count = var.use_oci_logging ? 1 : 0
+  count  = var.use_oci_logging ? 1 : 0
 
   compartment_id                        = var.compartment_id
   oci_managed_instances_principal_group = module.policies[*].oci_managed_instances_principal_group
   service_prefix_name                   = local.service_name_prefix
   create_policies                       = var.create_policies
   use_oci_logging                       = var.use_oci_logging
-  dynamic_group_ocid                    = ! var.create_policies && var.use_oci_logging ? var.dynamic_group_ocid : ""
+  dynamic_group_ocid                    = !var.create_policies && var.use_oci_logging ? var.dynamic_group_ocid : ""
   log_group_id                          = module.observability-common.log_group_id
 
   tags = {
@@ -430,8 +430,8 @@ module "provisioners" {
   num_vm_instances             = var.wls_node_count
   ssh_private_key              = module.compute.ssh_private_key_opc
   assign_public_ip             = var.assign_weblogic_public_ip
-  bastion_host                 = ! var.is_bastion_instance_required ? "" : var.existing_bastion_instance_id == "" ? module.bastion[0].public_ip : data.oci_core_instance.existing_bastion_instance[0].public_ip
-  bastion_host_private_key     = ! var.is_bastion_instance_required ? "" : var.existing_bastion_instance_id == "" ? module.bastion[0].bastion_private_ssh_key : file(var.bastion_ssh_private_key)
+  bastion_host                 = !var.is_bastion_instance_required ? "" : var.existing_bastion_instance_id == "" ? module.bastion[0].public_ip : data.oci_core_instance.existing_bastion_instance[0].public_ip
+  bastion_host_private_key     = !var.is_bastion_instance_required ? "" : var.existing_bastion_instance_id == "" ? module.bastion[0].bastion_private_ssh_key : file(var.bastion_ssh_private_key)
   is_bastion_instance_required = var.is_bastion_instance_required
 }
 
