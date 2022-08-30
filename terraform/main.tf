@@ -416,8 +416,10 @@ module "observability-logging" {
   dynamic_group_ocid                    = ! var.create_policies && var.use_oci_logging ? var.dynamic_group_ocid : ""
   log_group_id                          = module.observability-common.log_group_id
 
-  defined_tags  = local.defined_tags
-  freeform_tags = local.free_form_tags
+  tags = {
+    defined_tags  = local.defined_tags
+    freeform_tags = local.free_form_tags
+  }
 }
 
 module "provisioners" {

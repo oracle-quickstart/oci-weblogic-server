@@ -225,11 +225,16 @@ variable "is_atp_db" {
 }
 
 variable "create_policies" {
-  type = bool
+  type        = bool
+  description = "Set to true to create OCI IAM policies and dynamic groups required by the WebLogic for OCI stack"
 }
 
 variable "use_oci_logging" {
-  type = bool
+  type        = bool
+  description = "Enable logging service integration for WebLogic instances"
 }
 
-variable "dynamic_group_ocid" {}
+variable "dynamic_group_ocid" {
+  type        = string
+  description = "The dynamic group that contains the WebLogic instances from which logs will be exported to OCI Logging Service"
+}

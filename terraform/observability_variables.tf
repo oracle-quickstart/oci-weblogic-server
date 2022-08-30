@@ -3,12 +3,12 @@
 
 variable "use_oci_logging" {
   type = bool
+  description = "Enable logging service integration for WebLogic instances"
   default = false
-  description = "flag indicating that oci logging service is enabled"
 }
 
 variable "dynamic_group_ocid" {
   type        = string
+  description = "The dynamic group that contains the WebLogic instances from which logs will be exported to OCI Logging Service"
   default     = ""
-  description = "dynamic group ocid for oci logging agent configuration when create policies is not set"
 }

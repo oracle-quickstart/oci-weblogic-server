@@ -8,6 +8,6 @@ resource "oci_logging_log_group" "wlsc_log_group" {
   display_name   = format("%s_log_group", var.service_prefix_name)
   description    = "WebLogic for OCI logging group"
 
-  defined_tags   = var.defined_tags
-  freeform_tags  = var.freeform_tags
+  defined_tags  = var.tags.defined_tags
+  freeform_tags = var.tags.freeform_tags
 }

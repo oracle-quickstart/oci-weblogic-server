@@ -15,15 +15,14 @@ locals {
 }
 
 resource "oci_logging_log" "wlsc_log" {
-  #count = var.use_oci_logging ? 1 : 0
   #Required
   display_name = format("%s_log", var.service_prefix_name)
   log_group_id = var.log_group_id
   log_type     = var.log_log_type
   is_enabled   = var.use_oci_logging
 
-  defined_tags  = var.defined_tags
-  freeform_tags = var.freeform_tags
+  defined_tags  = var.tags.defined_tags
+  freeform_tags = var.tags.freeform_tags
 
   lifecycle {
     ignore_changes = all
@@ -31,23 +30,20 @@ resource "oci_logging_log" "wlsc_log" {
 }
 
 resource "oci_logging_unified_agent_configuration" "wlsc_unified_agent_configuration" {
-  #count = var.use_oci_logging ? 1 : 0
   #Required
   compartment_id = var.compartment_id
   is_enabled     = var.use_oci_logging
   description    = "WLS-OCI Stack Log Agent Configuration"
   display_name   = format("%s_agent_config", var.service_prefix_name)
 
-  defined_tags = var.defined_tags
-  freeform_tags = var.freeform_tags
-
+  defined_tags  = var.tags.defined_tags
+  freeform_tags = var.tags.freeform_tags
   service_configuration {
     #Required
     configuration_type = var.unified_agent_configuration_service_configuration_configuration_type
 
     destination {
       #Required
-      #log_object_id = oci_logging_log.wlsc_log[count.index].id
       log_object_id = oci_logging_log.wlsc_log.id
     }
     sources {
