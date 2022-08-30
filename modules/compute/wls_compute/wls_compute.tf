@@ -110,9 +110,6 @@ module "wls-instances" {
       idcs_cloudgate_docker_image_version = var.idcs_cloudgate_docker_image_version
       idcs_cloudgate_docker_image_name    = var.idcs_cloudgate_docker_image_name
 
-
-      apply_JRF                   = local.apply_JRF
-      db_name                     = local.apply_JRF ? data.oci_database_autonomous_database.atp_db[0].db_name : ""
       # Common JRF DB parameters
       apply_JRF                   = local.apply_JRF
       db_name                     = local.is_atp_db ? data.oci_database_autonomous_database.atp_db[0].db_name : local.is_oci_db ? try(data.oci_database_database.ocidb_database[0].db_name, "") : ""
