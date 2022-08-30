@@ -37,7 +37,7 @@ variable "wls_expose_admin_port" {
 }
 
 variable "wls_subnet_cidr" {
-  type = string
+  type        = string
   description = "CIDR for weblogic subnet"
 }
 
@@ -121,7 +121,7 @@ variable "lb_subnet_1_id" {
   description = "The OCID of a regional or AD-specific subnet for primary load balancer"
 }
 variable "wls_version" {
-  type = string
+  type        = string
   description = "The WebLogic version to be installed for this stack. Accepted values are: 12.2.1.4, 14.1.1.0"
   validation {
     condition     = contains(["12.2.1.4", "14.1.1.0"], var.wls_version)
@@ -140,25 +140,25 @@ variable "assign_public_ip" {
 }
 // Common DB params
 variable "db_user" {
-  type = string
+  type        = string
   description = "The user that will connect to the database to create the JRF schemas"
 }
 variable "db_password_id" {
-  type = string
+  type        = string
   description = "The OCID of the vault secret with the password of the database"
 }
 
 # OCI DB parameters
 variable "is_oci_db" {
-  type    = bool
+  type        = bool
   description = "Set to true if JRF with OCI DB is used"
 }
 variable "oci_db_connection_string" {
-  type = string
+  type        = string
   description = "Connection string to connect to the OCI database. Example: //<scan_hostname>.<host_domain_name>:<db_port>/<pdb_or_sid>.<Host Domain Name>. Specify either the connection string or the OCID of the DB"
 }
 variable "oci_db_compartment_id" {
-  type = string
+  type        = string
   description = "The OCID of the compartment where the OCI database is located, if JRF with OCI DB is used"
   validation {
     condition     = var.oci_db_compartment_id == "" || length(regexall("^ocid1.compartment.*$", var.oci_db_compartment_id)) > 0
@@ -166,7 +166,7 @@ variable "oci_db_compartment_id" {
   }
 }
 variable "oci_db_existing_vcn_id" {
-  type = string
+  type        = string
   description = "The OCID of the VCN of the OCI database, if JRF with OCI DB is used"
   validation {
     condition     = var.oci_db_existing_vcn_id == "" || length(regexall("^ocid1.vcn.*$", var.oci_db_existing_vcn_id)) > 0
@@ -174,7 +174,7 @@ variable "oci_db_existing_vcn_id" {
   }
 }
 variable "oci_db_dbsystem_id" {
-  type = string
+  type        = string
   description = "The OCID of the db system of the OCI database, if JRF with OCI DB is used"
   validation {
     condition     = var.oci_db_dbsystem_id == "" || length(regexall("^ocid1.dbsystem.*$", var.oci_db_dbsystem_id)) > 0
@@ -182,7 +182,7 @@ variable "oci_db_dbsystem_id" {
   }
 }
 variable "oci_db_database_id" {
-  type = string
+  type        = string
   description = "The OCID of the database, if JRF with OCI DB is used"
   validation {
     condition     = var.oci_db_database_id == "" || length(regexall("^ocid1.database.*$", var.oci_db_database_id)) > 0
@@ -190,7 +190,7 @@ variable "oci_db_database_id" {
   }
 }
 variable "oci_db_pdb_service_name" {
-  type = string
+  type        = string
   description = "The name of the pluggable database (PDB). Required for Oracle Database 12c or later"
 }
 variable "bastion_subnet_id" {
@@ -220,6 +220,32 @@ variable "is_lb_private" {
 
 # ATP parameters
 variable "is_atp_db" {
-  type    = bool
+  type        = bool
   description = "Set to true if a JRF with ATP DB is used"
+}
+
+variable "atp_db_id" {
+  type        = string
+  description = "The OCID of the ATP database, if JRF with ATP is used"
+  validation {
+    condition     = var.atp_db_id == "" || length(regexall("^ocid1.autonomousdatabase.*$", var.atp_db_id)) > 0
+    error_message = "WLSC-ERROR: The value for atp_db_id should be blank or start with \"ocid1.autonomousdatabase.\"."
+  }
+}
+variable "atp_db_compartment_id" {
+  type        = string
+  description = "The OCID of the compartment where the ATP database is located, if JRF with ATP is used"
+  validation {
+    condition     = var.atp_db_compartment_id == "" || length(regexall("^ocid1.compartment.*$", var.atp_db_compartment_id)) > 0
+    error_message = "WLSC-ERROR: The value for atp_db_compartment_id should be blank or start with \"ocid1.compartment.\"."
+  }
+}
+
+variable "atp_db_level" {
+  type        = string
+  description = "The ATP database level. Allowed values are [low, tp, tpurgent]"
+  validation {
+    condition     = contains(["low", "tp", "tpurgent"], var.atp_db_level)
+    error_message = "WLSC-ERROR: Invalid value for atp_db_level. Allowed values are low, tp and tpurgent."
+  }
 }
