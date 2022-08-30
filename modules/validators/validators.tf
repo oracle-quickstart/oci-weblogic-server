@@ -17,6 +17,9 @@ locals {
   invalid_multiple_infra_dbs = ((var.is_oci_db || var.oci_db_connection_string != "") && var.is_atp_db)
   both_vcn_param_non_ocidb   = ! var.is_oci_db ? (local.has_existing_vcn && local.has_vcn_name) : false
 
+  invalid_dynamic_group = (!var.create_policies && var.use_oci_logging) ? length(regexall("^ocid1.dynamicgroup.", var.dynamic_group_ocid)) == 0 : false
+
+
   # TODO Add the Validations as new modules are added
 
   service_name_prefix_msg      = "WLSC-ERROR: The [service_name] min length is 1 and max length is 16 characters. It can only contain letters or numbers and must begin with a letter. Invalid service name: [${var.service_name}]"
@@ -30,6 +33,13 @@ locals {
 
   jrf_14c_msg      = "WLSC-ERROR: JRF domain is not supported for FMW 14c version"
   validate_14c_jrf = local.invalid_14c_jrf ? local.validators_msg_map[local.jrf_14c_msg] : ""
+
+  missing_dynamic_group_oci_logging_enabled_create_policies_unset = "WLSC-ERROR: Dynamic Group ocid is required when enabling integration with OCI Logging Service with create policies unset "
+  validate_dynamic_group_oci_logging_enabled_create_policies_unset = !var.create_policies && var.use_oci_logging && var.dynamic_group_ocid == "" ? local.validators_msg_map[local.missing_dynamic_group_oci_logging_enabled_create_policies_unset] : null
+
+  invalid_dynamic_group_msg   = "WLSC-ERROR: The value for Dynamic Group [dynamic_group_ocid] is not valid. The value must begin with ocid1 followed by resource type, e.g. ocid1.dynamicgroup."
+  validate_dynamic_group_ocid = local.invalid_dynamic_group ? local.validators_msg_map[local.invalid_dynamic_group_msg] : null
+
 }
 
 

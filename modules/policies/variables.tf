@@ -118,3 +118,7 @@ variable "idcs_client_secret_id" {
   type        = string
   description = "The OCID of the vault secret containing the confidential application password in IDCS"
 }
+
+variable "use_oci_logging" {
+  type = bool
+}

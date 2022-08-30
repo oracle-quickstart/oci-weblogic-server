@@ -223,3 +223,13 @@ variable "is_atp_db" {
   type    = bool
   description = "Set to true if a JRF with ATP DB is used"
 }
+
+variable "create_policies" {
+  type = bool
+}
+
+variable "use_oci_logging" {
+  type = bool
+}
+
+variable "dynamic_group_ocid" {}

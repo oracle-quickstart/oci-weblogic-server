@@ -150,6 +150,9 @@ module "wls-instances" {
       is_atp_app_db       = "false"
       appdb_password_ocid = ""
 
+      log_group_id       = var.log_group_id
+      use_oci_logging = var.use_oci_logging
+
     }
 
     are_legacy_imds_endpoints_disabled = var.disable_legacy_metadata_endpoint

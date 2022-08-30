@@ -245,3 +245,9 @@ variable "mode" {
     error_message = "Allowed values for mode are PROD, DEV."
   }
 }
+
+variable "log_group_id" {}
+
+variable "use_oci_logging" {
+  type = bool
+}

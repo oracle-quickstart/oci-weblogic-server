@@ -24,7 +24,9 @@ locals {
   # This policy with "manage virtual-network-family" verb is needed to update security lists in the DB VCN when the DB VCN is different from the stack VCN
   oci_db_policy_statement3 = (var.oci_db.existing_vcn_add_seclist && var.oci_db.network_compartment_id != "" && var.oci_db.existing_vcn_id != local.network_vcn_id) ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to manage virtual-network-family in compartment id ${var.oci_db.network_compartment_id} where target.vcn.id = '${var.oci_db.existing_vcn_id}'" : ""
 
-  service_statements = compact([local.core_policy_statement1, local.core_policy_statement2, local.core_policy_statement3, local.network_policy_statement1, local.secrets_policy_statement1, local.secrets_policy_statement2, local.atp_policy_statement1, local.atp_policy_statement2, local.oci_db_policy_statement1, local.oci_db_policy_statement2])
+  logging_policy = var.use_oci_logging ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to use logging-family in compartment id ${var.compartment_id}" : ""
+
+  service_statements = compact([local.core_policy_statement1, local.core_policy_statement2, local.core_policy_statement3, local.network_policy_statement1, local.secrets_policy_statement1, local.secrets_policy_statement2, local.atp_policy_statement1, local.atp_policy_statement2, local.oci_db_policy_statement1, local.oci_db_policy_statement2, local.logging_policy])
 
   #TODO: When other categories with more statements are added here, concat them with service_statements
   policy_statements = concat(local.service_statements, [])
