@@ -25,7 +25,7 @@ variable "log_log_type" {
 
 variable "unified_agent_configuration_service_configuration_source_type" {
   type        = string
-  description = "Unified schema logging source type"
+  description = "Unified schema logging source type, whether LOG_TAIL or WINDOWS_EVENT_LOG"
   default     = "LOG_TAIL"
 }
 

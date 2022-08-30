@@ -46,6 +46,9 @@ locals {
     ["SE", "EE", "SUITE"],
     ["Standard Edition", "Enterprise Edition", "Suite Edition"],
   )
+  webLogic_agent_configuration_id = var.use_oci_logging ? module.observability-logging[0].agent_config_id : ""
+  webLogic_log_group_id           = var.use_oci_logging ? module.observability-common[0].log_group_id : ""
+  webLogic_log_id                 = var.use_oci_logging ? module.observability-logging[0].log_id : ""
 
   new_lb_ip                  = local.add_existing_load_balancer ? "" : element(element(coalescelist(module.load-balancer[*].wls_loadbalancer_ip_addresses, [""]), 0), 0)
   new_lb_id                  = element(concat(module.load-balancer[*].wls_loadbalancer_id, [""]), 0)

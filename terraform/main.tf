@@ -377,7 +377,7 @@ module "compute" {
     }
   }
 
-  log_group_id    = module.observability-common[0].log_group_id
+  log_group_id    = local.webLogic_log_group_id
   use_oci_logging = var.use_oci_logging
 
   tags = {
