@@ -6,7 +6,7 @@ variable "compartment_id" {
   description = "The OCID of the compartment where the resource tags will be created"
   validation {
     condition     = length(regexall("^ocid1.compartment.*$", var.compartment_id)) > 0
-    error_message = "The value for compartment_id should start with \"ocid1.compartment.\"."
+    error_message = "WLSC-ERROR: The value for compartment_id should start with \"ocid1.compartment.\"."
   }
 }
 
@@ -15,7 +15,7 @@ variable "service_name" {
   description = "Service name prefix to be added to the dynamic group"
   validation {
     condition     = var.service_name != ""
-    error_message = "The value for service_name cannot be empty."
+    error_message = "WLSC-ERROR: The value for service_name cannot be empty."
   }
 }
 

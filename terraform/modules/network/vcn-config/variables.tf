@@ -6,7 +6,7 @@ variable "compartment_id" {
   description = "The OCID of the compartment where the vcn config will be created"
   validation {
     condition     = length(regexall("^ocid1.compartment.*$", var.compartment_id)) > 0
-    error_message = "The value for compartment_id should start with \"ocid1.compartment.\"."
+    error_message = "WLSC-ERROR: The value for compartment_id should start with \"ocid1.compartment.\"."
   }
 }
 

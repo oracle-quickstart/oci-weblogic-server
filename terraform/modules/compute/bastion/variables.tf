@@ -6,7 +6,7 @@ variable "tenancy_id" {
   description = "The OCID of the tenancy where the bastion instance will be created"
   validation {
     condition     = length(regexall("^ocid1.tenancy.*$", var.tenancy_id)) > 0
-    error_message = "The value for tenancy_id should start with \"ocid1.tenancy.\"."
+    error_message = "WLSC-ERROR: The value for tenancy_id should start with \"ocid1.tenancy.\"."
   }
 }
 variable "availability_domain" {
@@ -19,7 +19,7 @@ variable "compartment_id" {
   description = "The OCID of the compartment where the bastion instance will be created"
   validation {
     condition     = length(regexall("^ocid1.compartment.*$", var.compartment_id)) > 0
-    error_message = "The value for compartment_id should start with \"ocid1.compartment.\"."
+    error_message = "WLSC-ERROR: The value for compartment_id should start with \"ocid1.compartment.\"."
   }
 }
 
@@ -33,7 +33,7 @@ variable "instance_shape" {
   description = "The shape of the bastion instance. For example: VM.Standard2.2"
   validation {
     condition     = var.instance_shape != ""
-    error_message = "The value for instance_shape cannot be empty."
+    error_message = "WLSC-ERROR: The value for instance_shape cannot be empty."
   }
 }
 
@@ -43,7 +43,7 @@ variable "ocpu_count" {
   default     = 1
   validation {
     condition     = var.ocpu_count > 0
-    error_message = "The value for ocpu_count must be greater than 0."
+    error_message = "WLSC-ERROR: The value for ocpu_count must be greater than 0."
   }
 }
 
@@ -57,7 +57,7 @@ variable "vm_count" {
   description = "Number of WebLogic VM nodes in the WebLogic for OCI instance associated to this bastion"
   validation {
     condition     = var.vm_count > 0
-    error_message = "The value for vm_count must be greater than 0."
+    error_message = "WLSC-ERROR: The value for vm_count must be greater than 0."
   }
 }
 
@@ -72,7 +72,7 @@ variable "bastion_subnet_id" {
   description = "The OCID of the subnet where the bastion compute will be created"
   validation {
     condition     = length(regexall("^ocid1.subnet.*$", var.bastion_subnet_id)) > 0
-    error_message = "The value for bastion_subnet_id should start with \"ocid1.subnet.\"."
+    error_message = "WLSC-ERROR: The value for bastion_subnet_id should start with \"ocid1.subnet.\"."
   }
 }
 
@@ -92,7 +92,7 @@ variable "instance_image_id" {
   description = "The OCID of the compute image used to create the bastion instance"
   validation {
     condition     = length(regexall("^ocid1.image.*$", var.instance_image_id)) > 0
-    error_message = "The value for instance_image_id should start with \"ocid1.image.\"."
+    error_message = "WLSC-ERROR: The value for instance_image_id should start with \"ocid1.image.\"."
   }
 }
 

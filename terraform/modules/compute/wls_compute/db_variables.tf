@@ -61,7 +61,7 @@ variable "jrf_parameters" {
   }
   validation {
     condition     = contains(["low", "tp", "tpurgent"], var.jrf_parameters.atp_db_parameters.atp_db_level)
-    error_message = "Invalid value for atp_db_parameters.atp_db_level. Allowed values are low, tp and tpurgent."
+    error_message = "WLSC-ERROR: Invalid value for atp_db_parameters.atp_db_level. Allowed values are low, tp and tpurgent."
   }
 }
 
