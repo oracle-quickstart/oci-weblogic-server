@@ -11,10 +11,10 @@ variable "service_prefix_name" {
   description = "Prefix for stack resources"
 }
 
-variable "create_log_group" {
-  type        = bool
-  description = "Creates log group if logging service integration for WebLogic instances is enabled"
-}
+#variable "create_log_group" {
+#  type        = bool
+#  description = "Creates log group if logging service integration for WebLogic instances is enabled"
+#}
 
 variable "tags" {
   type = object({

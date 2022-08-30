@@ -305,10 +305,10 @@ module "load-balancer" {
 
 module "observability-common" {
   source = "./modules/observability/common"
+  count  = var.use_oci_logging ? 1 : 0
 
   compartment_id      = var.compartment_id
   service_prefix_name = local.service_name_prefix
-  create_log_group    = var.use_oci_logging
 }
 
 module "compute" {
@@ -377,7 +377,7 @@ module "compute" {
     }
   }
 
-  log_group_id    = module.observability-common.log_group_id
+  log_group_id    = module.observability-common[0].log_group_id
   use_oci_logging = var.use_oci_logging
 
   tags = {
@@ -409,12 +409,12 @@ module "observability-logging" {
   count  = var.use_oci_logging ? 1 : 0
 
   compartment_id                        = var.compartment_id
-  oci_managed_instances_principal_group = module.policies[*].oci_managed_instances_principal_group
+  oci_managed_instances_principal_group = module.policies[0].oci_managed_instances_principal_group
   service_prefix_name                   = local.service_name_prefix
   create_policies                       = var.create_policies
   use_oci_logging                       = var.use_oci_logging
   dynamic_group_ocid                    = !var.create_policies && var.use_oci_logging ? var.dynamic_group_ocid : ""
-  log_group_id                          = module.observability-common.log_group_id
+  log_group_id                          = module.observability-common[0].log_group_id
 
   tags = {
     defined_tags  = local.defined_tags

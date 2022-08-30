@@ -151,7 +151,7 @@ module "wls-instances" {
       appdb_password_ocid = ""
 
       log_group_id       = var.log_group_id
-      use_oci_logging = var.use_oci_logging
+      use_oci_logging    = var.use_oci_logging
 
     }
 
