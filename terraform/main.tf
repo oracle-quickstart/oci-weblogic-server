@@ -249,7 +249,9 @@ module "validators" {
   oci_db_existing_vcn_id   = var.oci_db_existing_vcn_id
   oci_db_pdb_service_name  = var.oci_db_pdb_service_name
   is_atp_db                = local.is_atp_db
-
+  atp_db_id                = var.atp_db_id
+  atp_db_compartment_id    = var.atp_db_compartment_id
+  atp_db_level             = var.atp_db_level
 
   is_idcs_selected      = var.is_idcs_selected
   idcs_host             = var.idcs_host

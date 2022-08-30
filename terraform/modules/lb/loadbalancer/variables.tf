@@ -6,7 +6,7 @@ variable "compartment_id" {
   description = "The OCID of the compartment where the load balancer will be created"
   validation {
     condition     = length(regexall("^ocid1.compartment.*$", var.compartment_id)) > 0
-    error_message = "The value for compartment_id should start with \"ocid1.compartment.\"."
+    error_message = "WLSC-ERROR: The value for compartment_id should start with \"ocid1.compartment.\"."
   }
 }
 
@@ -42,7 +42,7 @@ variable "lb_reserved_public_ip_id" {
   default     = []
   validation {
     condition     = length(var.lb_reserved_public_ip_id) == 0 || length(var.lb_reserved_public_ip_id) == 1
-    error_message = "The lb reserved public ip id value should be zero or one."
+    error_message = "WLSC-ERROR: The lb reserved public ip id value should be zero or one."
   }
 }
 

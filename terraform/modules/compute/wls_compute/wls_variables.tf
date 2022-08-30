@@ -7,7 +7,7 @@ variable "wls_edition" {
   default     = "EE"
   validation {
     condition     = contains(["EE", "SE", "SUITE"], var.wls_edition)
-    error_message = "Allowed values for wls_edition are SE, EE and SUITE."
+    error_message = "WLSC-ERROR: Allowed values for wls_edition are SE, EE and SUITE."
   }
 }
 
@@ -16,7 +16,7 @@ variable "wls_admin_user" {
   description = "The name of the admin user that will be added to the WebLogic domain"
   validation {
     condition     = replace(var.wls_admin_user, "/^[a-zA-Z][a-zA-Z0-9]{7,127}/", "0") == "0"
-    error_message = "The value for wls_admin_user provided should be alphanumeric and length should be between 8 and 128 characters."
+    error_message = "WLSC-ERROR: The value for wls_admin_user provided should be alphanumeric and length should be between 8 and 128 characters."
   }
 }
 
@@ -25,7 +25,7 @@ variable "wls_admin_password_id" {
   description = "The OCID of the vault secret containing the password for the WebLogic administration user"
   validation {
     condition     = length(regexall("^ocid1.vaultsecret.", var.wls_admin_password_id)) > 0
-    error_message = "The value for wls_admin_password_id should start with \"ocid1.vaultsecret.\"."
+    error_message = "WLSC-ERROR: The value for wls_admin_password_id should start with \"ocid1.vaultsecret.\"."
   }
 }
 
@@ -63,7 +63,7 @@ variable "wls_extern_admin_port" {
   default     = 7001
   validation {
     condition     = var.wls_extern_admin_port > 0
-    error_message = "The value for wls_extern_admin_port should be greater than 0."
+    error_message = "WLSC-ERROR: The value for wls_extern_admin_port should be greater than 0."
   }
 }
 
@@ -73,7 +73,7 @@ variable "wls_extern_ssl_admin_port" {
   default     = 7002
   validation {
     condition     = var.wls_extern_ssl_admin_port > 0
-    error_message = "The value for wls_extern_ssl_admin_port should be greater than 0."
+    error_message = "WLSC-ERROR: The value for wls_extern_ssl_admin_port should be greater than 0."
   }
 }
 
@@ -83,7 +83,7 @@ variable "wls_ms_extern_port" {
   default     = 7003
   validation {
     condition     = var.wls_ms_extern_port > 0
-    error_message = "The value for wls_ms_extern_port should be greater than 0."
+    error_message = "WLSC-ERROR: The value for wls_ms_extern_port should be greater than 0."
   }
 }
 
@@ -93,7 +93,7 @@ variable "wls_ms_extern_ssl_port" {
   default     = 7004
   validation {
     condition     = var.wls_ms_extern_ssl_port > 0
-    error_message = "The value for wls_ms_extern_ssl_port should be greater than 0."
+    error_message = "WLSC-ERROR: The value for wls_ms_extern_ssl_port should be greater than 0."
   }
 }
 
@@ -103,7 +103,7 @@ variable "wls_admin_port" {
   default     = 9071
   validation {
     condition     = var.wls_admin_port > 0
-    error_message = "The value for wls_admin_port should be greater than 0."
+    error_message = "WLSC-ERROR: The value for wls_admin_port should be greater than 0."
   }
 }
 
@@ -113,7 +113,7 @@ variable "wls_admin_ssl_port" {
   default     = 9072
   validation {
     condition     = var.wls_admin_ssl_port > 0
-    error_message = "The value for wls_admin_ssl_port should be greater than 0."
+    error_message = "WLSC-ERROR: The value for wls_admin_ssl_port should be greater than 0."
   }
 }
 
@@ -123,7 +123,7 @@ variable "wls_ms_port" {
   default     = 9073
   validation {
     condition     = var.wls_ms_port > 0
-    error_message = "The value for wls_ms_port should be greater than 0."
+    error_message = "WLSC-ERROR: The value for wls_ms_port should be greater than 0."
   }
 }
 
@@ -133,7 +133,7 @@ variable "wls_ms_ssl_port" {
   default     = 9074
   validation {
     condition     = var.wls_ms_ssl_port > 0
-    error_message = "The value for wls_ms_ssl_port should be greater than 0."
+    error_message = "WLSC-ERROR: The value for wls_ms_ssl_port should be greater than 0."
   }
 }
 
@@ -143,7 +143,7 @@ variable "wls_cluster_mc_port" {
   default     = 5555
   validation {
     condition     = var.wls_cluster_mc_port > 0
-    error_message = "The value for wls_cluster_mc_port should be greater than 0."
+    error_message = "WLSC-ERROR: The value for wls_cluster_mc_port should be greater than 0."
   }
 }
 
@@ -153,7 +153,7 @@ variable "wls_nm_port" {
   default     = 5556
   validation {
     condition     = var.wls_nm_port > 0
-    error_message = "The value for wls_nm_port should be greater than 0."
+    error_message = "WLSC-ERROR: The value for wls_nm_port should be greater than 0."
   }
 }
 
@@ -179,7 +179,7 @@ variable "wls_version" {
   description = "The WebLogic version to be installed in this instance. Accepted values are: 12.2.1.4, 14.1.1.0"
   validation {
     condition     = contains(["12.2.1.4", "14.1.1.0"], var.wls_version)
-    error_message = "WebLogic Versions 12.2.1.4 and 14.1.1.0 are the only versions supported."
+    error_message = "WLSC-ERROR: WebLogic Versions 12.2.1.4 and 14.1.1.0 are the only versions supported."
   }
 }
 
@@ -188,7 +188,7 @@ variable "wls_14c_jdk_version" {
   description = "JDK version to use when installing WebLogic 14c. Ignored when WebLogic version is not 14c. Allowed values: jdk8, jdk11"
   validation {
     condition     = var.wls_14c_jdk_version == "" || contains(["jdk8", "jdk11"], var.wls_14c_jdk_version)
-    error_message = "Only jdk8 and jdk11 are supported with WebLogic version 14.1.1.0."
+    error_message = "WLSC-ERROR: Only jdk8 and jdk11 are supported with WebLogic version 14.1.1.0."
   }
 }
 
