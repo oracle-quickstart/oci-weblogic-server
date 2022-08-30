@@ -246,8 +246,12 @@ variable "mode" {
   }
 }
 
-variable "log_group_id" {}
+variable "log_group_id" {
+  type        = string
+  description = "The OCID of the Log group"
+}
 
 variable "use_oci_logging" {
-  type = bool
+  type        = bool
+  description = "Enable logging service integration for WebLogic instances"
 }
