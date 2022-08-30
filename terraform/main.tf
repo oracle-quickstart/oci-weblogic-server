@@ -411,7 +411,7 @@ module "observability-logging" {
   count  = var.use_oci_logging ? 1 : 0
 
   compartment_id                        = var.compartment_id
-  oci_managed_instances_principal_group = module.policies[0].oci_managed_instances_principal_group
+  oci_managed_instances_principal_group = local.oci_managed_instances_principal_group
   service_prefix_name                   = local.service_name_prefix
   create_policies                       = var.create_policies
   use_oci_logging                       = var.use_oci_logging

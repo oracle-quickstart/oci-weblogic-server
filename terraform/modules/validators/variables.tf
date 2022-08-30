@@ -263,3 +263,4 @@ variable "use_oci_logging" {
 variable "dynamic_group_ocid" {
   type        = string
   description = "The dynamic group that contains the WebLogic instances from which logs will be exported to OCI Logging Service"
+}
