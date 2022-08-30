@@ -281,7 +281,7 @@ module "validators" {
 
 module "fss" {
   source = "./modules/fss"
-  count  = (var.add_fss && var.add_existing_fss) ? 1 : 0
+  count  = var.add_fss ? 1 : 0
 
   compartment_id          = var.fss_compartment_id
   availability_domain     = var.fss_availability_domain

@@ -3,7 +3,7 @@
 
 variable "add_fss" {
   type        = bool
-  description = "Add file system storage to Weblogic Server instances"
+  description = "Add file system storage to WebLogic Server instances"
   default     = false
 }
 
@@ -39,6 +39,6 @@ variable "fss_compartment_id" {
 
 variable "add_existing_fss" {
   type        = bool
-  description = "Use the existing file system"
+  description = "Use an existing file system"
   default     = false
 }

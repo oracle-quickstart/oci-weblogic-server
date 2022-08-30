@@ -18,5 +18,5 @@ variable "export_path" {
 
 variable "add_fss" {
   type        = bool
-  description = "Add file system storage to Weblogic Server instances"
+  description = "Add file system storage to WebLogic Server instances"
 }
