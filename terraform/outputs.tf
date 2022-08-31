@@ -91,15 +91,15 @@ output "jdk_version" {
   value = local.jdk_version
 }
 
-output "webLogic_agent_configuration_id" {
+output "weblogic_agent_configuration_id" {
   value = element(concat(module.observability-logging[*].agent_config_id, [""]), 0)
 }
 
-output "webLogic_log_group_id" {
+output "weblogic_log_group_id" {
   value = element(concat(module.observability-common[*].log_group_id, [""]), 0)
 }
 
-output "webLogic_log_id" {
+output "weblogic_log_id" {
   value = element(concat(module.observability-logging[*].log_id, [""]), 0)
 }
 

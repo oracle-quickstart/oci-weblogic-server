@@ -60,7 +60,7 @@ resource "oci_logging_unified_agent_configuration" "wlsc_unified_agent_configura
   group_association {
 
     #Optional
-    group_list = var.create_policies ? [var.oci_managed_instances_principal_group] : [var.dynamic_group_ocid]
+    group_list = var.create_policies ? [var.oci_managed_instances_principal_group] : [var.dynamic_group_id]
   }
 
   lifecycle {

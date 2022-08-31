@@ -284,7 +284,7 @@ module "validators" {
 
   create_policies    = var.create_policies
   use_oci_logging    = var.use_oci_logging
-  dynamic_group_ocid = var.dynamic_group_ocid
+  dynamic_group_id   = var.dynamic_group_id
 }
 
 module "fss" {
@@ -430,7 +430,7 @@ module "observability-logging" {
   service_prefix_name                   = local.service_name_prefix
   create_policies                       = var.create_policies
   use_oci_logging                       = var.use_oci_logging
-  dynamic_group_ocid                    = var.dynamic_group_ocid
+  dynamic_group_id                      = var.dynamic_group_id
   log_group_id                          = module.observability-common[0].log_group_id
 
   tags = {

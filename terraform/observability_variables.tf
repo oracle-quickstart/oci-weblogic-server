@@ -7,7 +7,7 @@ variable "use_oci_logging" {
   default = false
 }
 
-variable "dynamic_group_ocid" {
+variable "dynamic_group_id" {
   type        = string
   description = "The dynamic group that contains the WebLogic instances from which logs will be exported to OCI Logging Service"
   default     = ""
