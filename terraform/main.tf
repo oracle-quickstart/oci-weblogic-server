@@ -292,7 +292,7 @@ module "fss" {
   resource_name_prefix       = var.service_name
   export_path                = local.export_path
   mountTarget_id             = var.use_existing_mountTarget ? data.oci_file_storage_mount_targets.mount_targets[0].mount_targets[0] : var.mountTarget_id 
-  subnet_id                  = var.use_existing_mountTarget && var.fss_subnet_cidr == "" ? var.element(module.network-fss-private-subnet.subnet_id, 0) : var.fss_subnet_cidr
+  subnet_id                  = var.use_existing_mountTarget && var.fss_subnet_id == "" ? var.element(module.network-fss-private-subnet.subnet_id, 0) : var.fss_subnet_id
   mountTarget_compartment_id = var.mountTarget_compartment_id == "" ? local.compartment_ocid : var.mountTarget_compartment_id
   fss_system_id = var.add_existing_fss ? var.existing_fss_id : oci_file_storage_file_system.file_system.id)
 
