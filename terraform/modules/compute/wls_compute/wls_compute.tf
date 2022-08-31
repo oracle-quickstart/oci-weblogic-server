@@ -150,10 +150,15 @@ module "wls-instances" {
       is_atp_app_db       = "false"
       appdb_password_ocid = ""
 
+      mount_ip    = var.mount_ip
+      mount_path  = var.mount_path
+      export_path = var.export_path
+      add_fss     = var.add_fss
+
     }
 
     are_legacy_imds_endpoints_disabled = var.disable_legacy_metadata_endpoint
-    fault_domain                       = (length(local.ad_names) == 1 || ! var.use_regional_subnet) ? lookup(data.oci_identity_fault_domains.wls_fault_domains.fault_domains[(x + 1) % local.num_fault_domains], "name") : ""
+    fault_domain                       = (length(local.ad_names) == 1 || !var.use_regional_subnet) ? lookup(data.oci_identity_fault_domains.wls_fault_domains.fault_domains[(x + 1) % local.num_fault_domains], "name") : ""
 
     provisioning_timeout_mins = var.provisioning_timeout_mins
 
