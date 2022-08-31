@@ -287,6 +287,16 @@ module "validators" {
   dynamic_group_ocid = var.dynamic_group_ocid
 }
 
+module "fss" {
+  source = "./modules/fss"
+  count  = var.add_fss ? 1 : 0
+
+  compartment_id          = var.fss_compartment_id
+  availability_domain     = var.fss_availability_domain
+  existing_fss_id         = var.existing_fss_id
+  existing_export_path_id = var.existing_export_path_id
+}
+
 module "load-balancer" {
   source = "./modules/lb/loadbalancer"
   count  = (var.add_load_balancer && var.existing_load_balancer_id == "") ? 1 : 0
@@ -358,6 +368,11 @@ module "compute" {
   idcs_client_secret_id = var.idcs_client_secret_id
 
   lbip = local.lb_ip
+
+  add_fss     = var.add_fss
+  mount_ip    = element(coalescelist(module.fss[*].nfs_mount_ip, [""]), 0)
+  mount_path  = var.mount_path
+  export_path = element(coalescelist(module.fss[*].nfs_export_path, [""]), 0)
 
   db_existing_vcn_add_seclist = var.ocidb_existing_vcn_add_seclist
   jrf_parameters = {

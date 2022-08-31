@@ -149,14 +149,19 @@ module "wls-instances" {
       # TODO (robesanc): These variables are hardcoded to allow creating instances without app db
       is_atp_app_db       = "false"
       appdb_password_ocid = ""
-
+      
       log_group_id       = var.log_group_id
       use_oci_logging    = var.use_oci_logging
+
+      mount_ip    = var.mount_ip
+      mount_path  = var.mount_path
+      export_path = var.export_path
+      add_fss     = var.add_fss
 
     }
 
     are_legacy_imds_endpoints_disabled = var.disable_legacy_metadata_endpoint
-    fault_domain                       = (length(local.ad_names) == 1 || ! var.use_regional_subnet) ? lookup(data.oci_identity_fault_domains.wls_fault_domains.fault_domains[(x + 1) % local.num_fault_domains], "name") : ""
+    fault_domain                       = (length(local.ad_names) == 1 || !var.use_regional_subnet) ? lookup(data.oci_identity_fault_domains.wls_fault_domains.fault_domains[(x + 1) % local.num_fault_domains], "name") : ""
 
     provisioning_timeout_mins = var.provisioning_timeout_mins
 
