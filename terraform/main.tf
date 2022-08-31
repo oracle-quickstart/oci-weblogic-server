@@ -285,10 +285,22 @@ module "fss" {
   source = "./modules/fss"
   count  = var.add_fss ? 1 : 0
 
-  compartment_id          = var.fss_compartment_id
-  availability_domain     = var.fss_availability_domain
-  existing_fss_id         = var.existing_fss_id
-  existing_export_path_id = var.existing_export_path_id
+  add_existing_fss           = var.add_existing_fss
+  compartment_id             = var.fss_compartment_id
+  availability_domain        = local.fss_availability_domain
+  vcn_id                     = module.network-vcn.VcnID
+  resource_name_prefix       = var.service_name
+  export_path                = local.export_path
+  mountTarget_id             = var.use_existing_mountTarget ? data.oci_file_storage_mount_targets.mount_targets[0].mount_targets[0] : var.mountTarget_id 
+  subnet_id                  = var.use_existing_mountTarget && var.fss_subnet_cidr == "" ? var.element(module.network-fss-private-subnet.subnet_id, 0) : var.fss_subnet_cidr
+  mountTarget_compartment_id = var.mountTarget_compartment_id == "" ? local.compartment_ocid : var.mountTarget_compartment_id
+  fss_system_id = var.add_existing_fss ? var.existing_fss_id : oci_file_storage_file_system.file_system.id)
+
+  tags = {
+    defined_tags  = local.defined_tags
+
+    freeform_tags = local.free_form_tags
+  }
 }
 
 module "load-balancer" {

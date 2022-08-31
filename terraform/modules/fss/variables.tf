@@ -4,6 +4,10 @@
 variable "compartment_id" {
   type        = string
   description = "The OCID of the compartment where the file system exists"
+  validation {
+    condition     = length(regexall("^ocid1.compartment.*$", var.compartment_id)) > 0
+    error_message = "WLSC-ERROR: The value for compartment_id should start with \"ocid1.compartment.\"."
+  }
 }
 
 variable "availability_domain" {
@@ -11,14 +15,47 @@ variable "availability_domain" {
   description = "The name of the availability domain where the file system and mount target exist"
 }
 
-variable "existing_fss_id" {
-  type        = string
-  description = "The OCID of your existing file system"
+variable "vcn_id" {
+  type = string
 }
 
-variable "existing_export_path_id" {
-  type        = string
-  description = "The OCID of the existing export path"
+variable "export_path" {
+  type = string
+  description = "Path used to access the associated file system."
 }
 
+variable "subnet_id" {
+  type = string
+  description = "The OCID of the subnet where the mount target exists"
+}
 
+variable "mountTarget_id" {
+  type = string
+  description = "The OCID of the mount target for File Shared System"
+}
+
+variable "mountTarget_compartment_id" {
+  type        = string
+  description = "The OCID of the compartment where the mount target exists"
+  validation {    
+    condition     = length(regexall("^ocid1.compartment.*$", var.compartment_id)) > 0
+    error_message = "WLSC-ERROR: The value for compartment_id should start with \"ocid1.compartment.\"."
+  }
+}
+
+variable "tags" {
+  type = object({
+    defined_tags    = map(any),
+    freeform_tags   = map(any),
+  })
+  description = "Defined tags and freeform tags to be added to the File Shared System resources"
+  default = {
+    defined_tags    = {},
+    freeform_tags   = {},
+  }
+}
+
+variable "resource_name_prefix" {
+  type        = string
+  description = "Prefix which will be used to create File Shared System resources"
+}
