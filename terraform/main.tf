@@ -415,7 +415,7 @@ module "observability-logging" {
   service_prefix_name                   = local.service_name_prefix
   create_policies                       = var.create_policies
   use_oci_logging                       = var.use_oci_logging
-  dynamic_group_ocid                    = !var.create_policies && var.use_oci_logging ? var.dynamic_group_ocid : ""
+  dynamic_group_ocid                    = var.dynamic_group_ocid
   log_group_id                          = module.observability-common[0].log_group_id
 
   tags = {
