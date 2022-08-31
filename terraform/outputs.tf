@@ -92,15 +92,15 @@ output "jdk_version" {
 }
 
 output "webLogic_agent_configuration_id" {
-  value = local.webLogic_agent_configuration_id
+  value = element(concat(module.observability-logging[*].agent_config_id, [""]), 0)
 }
 
 output "webLogic_log_group_id" {
-  value = local.webLogic_log_group_id
+  value = element(concat(module.observability-common[*].log_group_id, [""]), 0)
 }
 
 output "webLogic_log_id" {
-  value = local.webLogic_log_id
+  value = element(concat(module.observability-logging[*].log_id, [""]), 0)
 }
 
 output "ssh_command" {

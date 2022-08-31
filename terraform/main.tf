@@ -379,7 +379,7 @@ module "compute" {
     }
   }
 
-  log_group_id    = local.webLogic_log_group_id
+  log_group_id    = element(concat(module.observability-common[*].log_group_id, [""]), 0)
   use_oci_logging = var.use_oci_logging
 
   tags = {
@@ -411,7 +411,7 @@ module "observability-logging" {
   count  = var.use_oci_logging ? 1 : 0
 
   compartment_id                        = var.compartment_id
-  oci_managed_instances_principal_group = local.oci_managed_instances_principal_group
+  oci_managed_instances_principal_group = element(concat(module.policies[*].oci_managed_instances_principal_group, [""]), 0)
   service_prefix_name                   = local.service_name_prefix
   create_policies                       = var.create_policies
   use_oci_logging                       = var.use_oci_logging
