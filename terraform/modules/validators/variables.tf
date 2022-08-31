@@ -249,3 +249,18 @@ variable "atp_db_level" {
     error_message = "WLSC-ERROR: Invalid value for atp_db_level. Allowed values are low, tp and tpurgent."
   }
 }
+
+variable "create_policies" {
+  type        = bool
+  description = "Set to true to create OCI IAM policies and dynamic groups required by the WebLogic for OCI stack"
+}
+
+variable "use_oci_logging" {
+  type        = bool
+  description = "Enable logging service integration for WebLogic instances"
+}
+
+variable "dynamic_group_id" {
+  type        = string
+  description = "The dynamic group that contains the WebLogic instances from which logs will be exported to OCI Logging Service"
+}

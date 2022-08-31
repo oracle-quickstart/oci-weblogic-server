@@ -149,6 +149,9 @@ module "wls-instances" {
       # TODO (robesanc): These variables are hardcoded to allow creating instances without app db
       is_atp_app_db       = "false"
       appdb_password_ocid = ""
+      
+      log_group_id       = var.log_group_id
+      use_oci_logging    = var.use_oci_logging
 
       mount_ip    = var.mount_ip
       mount_path  = var.mount_path

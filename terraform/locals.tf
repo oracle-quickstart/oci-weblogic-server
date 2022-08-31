@@ -46,7 +46,7 @@ locals {
     ["SE", "EE", "SUITE"],
     ["Standard Edition", "Enterprise Edition", "Suite Edition"],
   )
-
+  
   new_lb_ip                  = local.add_existing_load_balancer ? "" : element(element(coalescelist(module.load-balancer[*].wls_loadbalancer_ip_addresses, [""]), 0), 0)
   new_lb_id                  = element(concat(module.load-balancer[*].wls_loadbalancer_id, [""]), 0)
   existing_lb_ip             = local.add_existing_load_balancer ? local.existing_lb_object_as_list[0].ip_addresses[0] : ""

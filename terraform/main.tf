@@ -150,7 +150,9 @@ module "policies" {
   wls_existing_vcn_id   = var.wls_existing_vcn_id
   is_idcs_selected      = var.is_idcs_selected
   idcs_client_secret_id = var.idcs_client_secret_id
+  use_oci_logging       = var.use_oci_logging
 }
+
 
 module "bastion" {
   source              = "./modules/compute/bastion"
@@ -279,6 +281,10 @@ module "validators" {
   use_regional_subnet = local.use_regional_subnet
 
   is_lb_private = var.is_lb_private
+
+  create_policies    = var.create_policies
+  use_oci_logging    = var.use_oci_logging
+  dynamic_group_id   = var.dynamic_group_id
 }
 
 module "fss" {
@@ -307,6 +313,14 @@ module "load-balancer" {
     defined_tags  = local.defined_tags
     freeform_tags = local.free_form_tags
   }
+}
+
+module "observability-common" {
+  source = "./modules/observability/common"
+  count  = var.use_oci_logging ? 1 : 0
+
+  compartment_id      = var.compartment_id
+  service_prefix_name = local.service_name_prefix
 }
 
 module "compute" {
@@ -380,6 +394,9 @@ module "compute" {
     }
   }
 
+  log_group_id    = element(concat(module.observability-common[*].log_group_id, [""]), 0)
+  use_oci_logging = var.use_oci_logging
+
   tags = {
     defined_tags    = local.defined_tags
     freeform_tags   = local.free_form_tags
@@ -404,6 +421,24 @@ module "load-balancer-backends" {
   }*/
 }
 
+module "observability-logging" {
+  source = "./modules/observability/logging"
+  count  = var.use_oci_logging ? 1 : 0
+
+  compartment_id                        = var.compartment_id
+  oci_managed_instances_principal_group = element(concat(module.policies[*].oci_managed_instances_principal_group, [""]), 0)
+  service_prefix_name                   = local.service_name_prefix
+  create_policies                       = var.create_policies
+  use_oci_logging                       = var.use_oci_logging
+  dynamic_group_id                      = var.dynamic_group_id
+  log_group_id                          = module.observability-common[0].log_group_id
+
+  tags = {
+    defined_tags  = local.defined_tags
+    freeform_tags = local.free_form_tags
+  }
+}
+
 module "provisioners" {
   source = "./modules/provisioners"
 
@@ -412,8 +447,8 @@ module "provisioners" {
   num_vm_instances             = var.wls_node_count
   ssh_private_key              = module.compute.ssh_private_key_opc
   assign_public_ip             = var.assign_weblogic_public_ip
-  bastion_host                 = ! var.is_bastion_instance_required ? "" : var.existing_bastion_instance_id == "" ? module.bastion[0].public_ip : data.oci_core_instance.existing_bastion_instance[0].public_ip
-  bastion_host_private_key     = ! var.is_bastion_instance_required ? "" : var.existing_bastion_instance_id == "" ? module.bastion[0].bastion_private_ssh_key : file(var.bastion_ssh_private_key)
+  bastion_host                 = !var.is_bastion_instance_required ? "" : var.existing_bastion_instance_id == "" ? module.bastion[0].public_ip : data.oci_core_instance.existing_bastion_instance[0].public_ip
+  bastion_host_private_key     = !var.is_bastion_instance_required ? "" : var.existing_bastion_instance_id == "" ? module.bastion[0].bastion_private_ssh_key : file(var.bastion_ssh_private_key)
   is_bastion_instance_required = var.is_bastion_instance_required
 }
 
