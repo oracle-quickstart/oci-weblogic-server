@@ -18,7 +18,7 @@ output "nfs_mount_ip" {
 }
 
 output "nfs_export_path" {
-  value = oci_file_storage_export.mount_export.*.path
+  value = oci_file_storage_export.mount_export.path
 }
 
 
