@@ -41,6 +41,6 @@ variable "apm_agent_installer_path" {
 
 variable "apm_agent_path" {
   type        = string
-  description = "The APM Java Agent will be installed under this directory"
+  description = "Directory where the APM Java Agent will be installed"
   default     = "/u01/APM"
 }
