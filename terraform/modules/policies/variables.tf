@@ -123,3 +123,13 @@ variable "use_oci_logging" {
   type        = bool
   description = "Enable logging service integration for WebLogic instances"
 }
+
+variable "use_apm_service" {
+  type        = bool
+  description = "Indicates if Application Performance Monitoring integration is enabled"
+}
+
+variable "apm_domain_compartment_id" {
+  type        = string
+  description = "The OCID of the compartment of the APM domain"
+}

@@ -106,4 +106,6 @@ locals {
     local.admin_ip_address,
     var.wls_extern_ssl_admin_port,
   ) : ""
+
+  apm_domain_compartment_id = var.use_apm_service ? lookup(data.oci_apm_apm_domain.apm_domain[0], "compartment_id"): ""
 }
