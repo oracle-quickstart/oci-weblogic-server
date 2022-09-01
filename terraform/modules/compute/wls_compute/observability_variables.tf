@@ -34,11 +34,13 @@ variable "apm_private_data_key_name" {
 }
 
 variable "apm_agent_installer_path" {
+  type        = string
   description = "Absolute path of the APM Java Agent installer jar file"
   default     = "/u01/zips/jcs/APM-AGENT/1.3.1940/apm-java-agent-installer.jar"
 }
 
 variable "apm_agent_path" {
+  type        = string
   description = "The APM Java Agent will be installed under this directory"
   default     = "/u01/APM"
 }
