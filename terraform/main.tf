@@ -318,7 +318,8 @@ module "fss" {
   count  = var.existing_fss_id == "" ? 1 : 0
 
   compartment_id        = var.fss_compartment_id
-  availability_domain   = var.fss_availability_domain
+  availability_domain   = var.use_regional_subnet ? var.fss_availability_domain : data.oci_core_subnet.mount_target_subnet[0].availability_domain
+
   vcn_id                = local.vcn_id
   resource_name_prefix  = var.service_name
   export_path           = local.export_path
