@@ -13,6 +13,22 @@ output "is_vcn_peered" {
   value = local.is_vcn_peering
 }
 
+output "fss_system_id" {
+  value = var.existing_fss_id != "" ? var.existing_fss_id : module.fss[0].fss_id
+}
+
+output "mount_target_id" {
+  value = var.mountTarget_id != "" ? var.mountTarget_id : module.fss[0].mountTarget_id
+}
+
+output "mount_ip" {
+  value = join("", data.oci_core_private_ip.mount_target_private_ip.*.ip_address)
+}
+
+output "export_path" {
+  value = var.existing_export_path_id != "" ? var.existing_export_path_id : module.fss[0].export_path
+}
+
 output "load_balancer_subnets_id" {
   value = compact(
     concat(
@@ -97,10 +113,6 @@ output "ssh_command" {
 
 output "ssh_command_with_dynamic_port_forwarding" {
   value = local.ssh_dp_fwd
-}
-
-output "fss_system_id" {
-  value = module.fss[*].fss_id
 }
 
 output "resource_identifier_value" {

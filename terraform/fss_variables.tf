@@ -42,3 +42,21 @@ variable "add_existing_fss" {
   description = "Use an existing file system"
   default     = false
 }
+
+variable "mountTarget_id" {
+  type        = string
+  description = "The OCID of the mount target for File Shared System"
+  default     = ""
+}
+
+variable "mountTarget_compartment_id" {
+  type        = string
+  description = "The OCID of the compartment where the mount target exists"
+  default     = ""
+}
+
+variable "add_existing_mountTarget" {
+  type        = bool
+  description = "Add existing mount target to instances"
+  default     = false
+}

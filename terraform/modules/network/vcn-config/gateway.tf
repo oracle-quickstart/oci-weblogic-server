@@ -32,7 +32,7 @@ resource "oci_core_service_gateway" "wls_service_gateway" {
 
 # Create nat gateway for private subnet with IDCS
 resource "oci_core_nat_gateway" "wls_nat_gateway" {
-  count = !var.create_nat_gateway || length(var.existing_nat_gateway_ids) > 0 ? 0 : 1
+  count = !var.create_nat_gateway ? 0 : 1
 
   #Required
   compartment_id = var.compartment_id

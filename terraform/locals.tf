@@ -6,6 +6,7 @@ locals {
 
   home_region = lookup(data.oci_identity_regions.home_region.regions[0], "name")
   ad_names    = compact(data.template_file.ad_names.*.rendered)
+  export_path = format("/%s", var.service_name)
 
   bastion_availability_domain = var.bastion_subnet_id != "" ? (var.use_regional_subnet ? var.wls_availability_domain_name != "" ? var.wls_availability_domain_name : local.ad_names[0] : data.oci_core_subnet.bastion_subnet[0].availability_domain) : (var.use_regional_subnet ? var.wls_availability_domain_name != "" ? var.wls_availability_domain_name : local.ad_names[0] : var.wls_availability_domain_name)
   wls_availability_domain     = var.use_regional_subnet ? (var.wls_availability_domain_name == "" ? local.ad_names[0] : var.wls_availability_domain_name) : (var.wls_subnet_id == "" ? var.wls_availability_domain_name : data.oci_core_subnet.wls_subnet[0].availability_domain)
@@ -71,7 +72,7 @@ locals {
   sample_app_url_lb_ip  = var.deploy_sample_app && var.add_load_balancer ? format("%s://%s/sample-app", local.sample_app_protocol, local.lb_ip) : ""
   sample_app_url_wls_ip = var.deploy_sample_app ? format("https://%s:%s/sample-app", local.admin_ip_address, var.wls_ms_extern_ssl_port) : ""
   sample_app_url        = var.wls_edition != "SE" ? (var.deploy_sample_app && var.add_load_balancer ? local.sample_app_url_lb_ip : local.sample_app_url_wls_ip) : ""
-  sample_idcs_app_url   = var.deploy_sample_app && var.add_load_balancer && var.is_idcs_selected ? format(
+  sample_idcs_app_url = var.deploy_sample_app && var.add_load_balancer && var.is_idcs_selected ? format(
     "%s://%s/__protected/idcs-sample-app",
     local.sample_app_protocol,
     local.lb_ip,
@@ -94,6 +95,8 @@ locals {
   wls_subnet_cidr           = var.wls_subnet_cidr == "" && var.wls_vcn_name != "" ? local.is_vcn_peering ? "11.0.2.0/24" : "10.0.2.0/24" : var.wls_subnet_cidr
   lb_subnet_1_subnet_cidr   = var.lb_subnet_1_cidr == "" && var.wls_vcn_name != "" ? local.is_vcn_peering ? "11.0.3.0/24" : "10.0.3.0/24" : var.lb_subnet_1_cidr
   lb_subnet_2_subnet_cidr   = var.lb_subnet_2_cidr == "" && var.wls_vcn_name != "" ? local.is_vcn_peering ? "11.0.4.0/24" : "10.0.4.0/24" : var.lb_subnet_2_cidr
+  mountTarget_subnet_cidr   = var.mountTarget_subnet_cidr == "" && var.wls_vcn_name != "" ? local.is_vcn_peering ? "11.0.5.0/24" : "10.0.5.0/24" : var.mountTarget_subnet_cidr
+
   num_ads = length(
     data.oci_identity_availability_domains.ADs.availability_domains,
   )

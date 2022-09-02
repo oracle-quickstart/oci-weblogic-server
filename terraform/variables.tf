@@ -46,25 +46,3 @@ variable "service_tags" {
   description = "Tags to be applied to all resources that support tag created by the WebLogic for OCI stack"
   default     = { freeformTags = {}, definedTags = {} }
 }
-
-variable "instance_image_id" {
-  type        = string
-  description = "The OCID of the compute image used to create the WebLogic compute instances"
-}
-
-variable "tf_script_version" {
-  type        = string
-  description = "The version of the provisioning scripts located in the OCI image used to create the WebLogic compute instances"
-}
-
-variable "instance_shape" {
-  type        = string
-  description = "The OCI VM shape for WebLogic VM instances"
-  default     = "VM.Standard.E4.Flex"
-}
-
-variable "wls_ocpu_count" {
-  type        = number
-  description = "OCPU count for Weblogic instance"
-  default     = 1
-}

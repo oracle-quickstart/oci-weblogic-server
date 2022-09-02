@@ -50,17 +50,19 @@ module "network-vcn-config" {
   is_bastion_instance_required = var.is_bastion_instance_required
   existing_bastion_instance_id = var.existing_bastion_instance_id
   vcn_cidr                     = element(concat(module.network-vcn.*.vcn_cidr, tolist([""])), 0)
-  existing_mt_subnet_id        = var.mount_target_subnet_id
-  existing_service_gateway_ids = data.oci_core_service_gateways.service_gateways.service_gateways.*.id
-  existing_nat_gateway_ids     = data.oci_core_nat_gateways.nat_gateways.nat_gateways.*.id
+  existing_mt_subnet_id        = var.mountTarget_subnet_id
+  existing_service_gateway_ids = var.wls_vcn_name == "" ? [] : data.oci_core_service_gateways.service_gateways.service_gateways.*.id
+  existing_nat_gateway_ids     = var.wls_vcn_name == "" ? [] : data.oci_core_nat_gateways.nat_gateways.nat_gateways.*.id
   create_nat_gateway           = var.is_idcs_selected && length(data.oci_core_nat_gateways.nat_gateways.*.id) == 0
   lb_destination_cidr          = var.is_lb_private ? var.bastion_subnet_cidr : "0.0.0.0/0"
+  add_fss                      = var.add_fss
 
   tags = {
     defined_tags  = local.defined_tags
     freeform_tags = local.free_form_tags
   }
 }
+
 
 /* Create primary subnet for Load balancer only */
 module "network-lb-subnet-1" {
@@ -225,6 +227,26 @@ module "network-wls-public-subnet" {
   }
 }
 
+/* Create private subnet for FSS */
+module "network-mount-target-private-subnet" {
+  source            = "./modules/network/subnet"
+  count             = var.add_existing_mountTarget ? 0 : (var.add_fss && var.mountTarget_subnet_id == "" ? 1 : 0)
+  compartment_id    = local.network_compartment_id
+  vcn_id            = local.vcn_id
+  security_list_ids = module.network-vcn-config[0].fss_security_list_id
+
+  dhcp_options_id = module.network-vcn-config[0].dhcp_options_id
+  route_table_id  = module.network-vcn-config[0].service_gateway_route_table_id
+  subnet_name     = "${local.service_name_prefix}-mt-subnet"
+  dns_label       = format("%s-%s", "mt-sbn", substr(strrev(var.service_name), 0, 7))
+  cidr_block      = local.mountTarget_subnet_cidr
+
+  tags = {
+    defined_tags  = local.defined_tags
+    freeform_tags = local.free_form_tags
+  }
+}
+
 module "validators" {
   source = "./modules/validators"
 
@@ -279,26 +301,32 @@ module "validators" {
   use_regional_subnet = local.use_regional_subnet
 
   is_lb_private = var.is_lb_private
+
+  add_fss                         = var.add_fss
+  fss_availability_domain         = (var.add_existing_fss && var.add_existing_mountTarget) ? data.oci_file_storage_file_systems.file_systems[0].file_systems[0].availability_domain : ""
+  mount_target_subnet_id          = var.mountTarget_subnet_id
+  mount_target_subnet_cidr        = local.mountTarget_subnet_cidr
+  mountTarget_compartment_id      = var.mountTarget_compartment_id
+  mountTarget_id                  = var.mountTarget_id
+  existing_fss_id                 = var.existing_fss_id
+  mountTarget_availability_domain = var.add_existing_mountTarget ? data.oci_file_storage_mount_targets.mount_targets[0].mount_targets[0].availability_domain : ""
+  fss_compartment_id              = var.fss_compartment_id
 }
 
 module "fss" {
   source = "./modules/fss"
-  count  = var.add_fss ? 1 : 0
+  count  = var.existing_fss_id == "" ? 1 : 0
 
-  add_existing_fss           = var.add_existing_fss
-  compartment_id             = var.fss_compartment_id
-  availability_domain        = local.fss_availability_domain
-  vcn_id                     = module.network-vcn.VcnID
-  resource_name_prefix       = var.service_name
-  export_path                = local.export_path
-  mountTarget_id             = var.use_existing_mountTarget ? data.oci_file_storage_mount_targets.mount_targets[0].mount_targets[0] : var.mountTarget_id 
-  subnet_id                  = var.use_existing_mountTarget && var.fss_subnet_id == "" ? var.element(module.network-fss-private-subnet.subnet_id, 0) : var.fss_subnet_id
-  mountTarget_compartment_id = var.mountTarget_compartment_id == "" ? local.compartment_ocid : var.mountTarget_compartment_id
-  fss_system_id = var.add_existing_fss ? var.existing_fss_id : oci_file_storage_file_system.file_system.id)
+  compartment_id        = var.fss_compartment_id
+  availability_domain   = var.fss_availability_domain
+  vcn_id                = local.vcn_id
+  resource_name_prefix  = var.service_name
+  export_path           = local.export_path
+  mountTarget_id        = var.mountTarget_id
+  mountTarget_subnet_id = var.use_existing_subnets ? var.mountTarget_subnet_id : module.network-mount-target-private-subnet[0].subnet_id
 
   tags = {
     defined_tags  = local.defined_tags
-
     freeform_tags = local.free_form_tags
   }
 }
@@ -368,9 +396,9 @@ module "compute" {
   lbip = local.lb_ip
 
   add_fss     = var.add_fss
-  mount_ip    = element(coalescelist(module.fss[*].nfs_mount_ip, [""]), 0)
+  mount_ip    = element(coalescelist(module.fss[*].mount_ip, [""]), 0)
   mount_path  = var.mount_path
-  export_path = element(coalescelist(module.fss[*].nfs_export_path, [""]), 0)
+  export_path = element(coalescelist(module.fss[*].export_path, [""]), 0)
 
   db_existing_vcn_add_seclist = var.ocidb_existing_vcn_add_seclist
   jrf_parameters = {
@@ -424,8 +452,8 @@ module "provisioners" {
   num_vm_instances             = var.wls_node_count
   ssh_private_key              = module.compute.ssh_private_key_opc
   assign_public_ip             = var.assign_weblogic_public_ip
-  bastion_host                 = ! var.is_bastion_instance_required ? "" : var.existing_bastion_instance_id == "" ? module.bastion[0].public_ip : data.oci_core_instance.existing_bastion_instance[0].public_ip
-  bastion_host_private_key     = ! var.is_bastion_instance_required ? "" : var.existing_bastion_instance_id == "" ? module.bastion[0].bastion_private_ssh_key : file(var.bastion_ssh_private_key)
+  bastion_host                 = !var.is_bastion_instance_required ? "" : var.existing_bastion_instance_id == "" ? module.bastion[0].public_ip : data.oci_core_instance.existing_bastion_instance[0].public_ip
+  bastion_host_private_key     = !var.is_bastion_instance_required ? "" : var.existing_bastion_instance_id == "" ? module.bastion[0].bastion_private_ssh_key : file(var.bastion_ssh_private_key)
   is_bastion_instance_required = var.is_bastion_instance_required
 }
 

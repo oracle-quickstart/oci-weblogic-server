@@ -17,6 +17,7 @@ variable "availability_domain" {
 
 variable "vcn_id" {
   type = string
+  description = "The name of the availability domain where the file system and mount target exist"
 }
 
 variable "export_path" {
@@ -24,7 +25,7 @@ variable "export_path" {
   description = "Path used to access the associated file system."
 }
 
-variable "subnet_id" {
+variable "mountTarget_subnet_id" {
   type = string
   description = "The OCID of the subnet where the mount target exists"
 }
@@ -32,15 +33,6 @@ variable "subnet_id" {
 variable "mountTarget_id" {
   type = string
   description = "The OCID of the mount target for File Shared System"
-}
-
-variable "mountTarget_compartment_id" {
-  type        = string
-  description = "The OCID of the compartment where the mount target exists"
-  validation {    
-    condition     = length(regexall("^ocid1.compartment.*$", var.compartment_id)) > 0
-    error_message = "WLSC-ERROR: The value for compartment_id should start with \"ocid1.compartment.\"."
-  }
 }
 
 variable "tags" {

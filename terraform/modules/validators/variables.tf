@@ -249,3 +249,58 @@ variable "atp_db_level" {
     error_message = "WLSC-ERROR: Invalid value for atp_db_level. Allowed values are low, tp and tpurgent."
   }
 }
+
+variable "add_fss" {
+  type        = bool
+  description = "Add file system storage to WebLogic Server instances"
+  default     = false
+}
+
+variable "fss_compartment_id" {
+  type        = string
+  description = "The OCID of the compartment where the file system exists"
+  default     = ""
+}
+
+variable "fss_availability_domain" {
+  type        = string
+  description = "The name of the availability domain where the file system and mount target exists"
+  default     = ""
+}
+
+variable "existing_fss_id" {
+  type        = string
+  description = "The OCID of your existing file system"
+  default     = ""
+}
+
+variable "mountTarget_subnet_id" {
+  type = string
+  description = "The OCID of the subnet where the mount target exists"
+}
+
+variable "mountTarget_id" {
+  type = string
+  description = "The OCID of the mount target for File Shared System"
+}
+
+variable "mountTarget_compartment_id" {
+  type        = string
+  description = "The OCID of the compartment where the mount target exists"
+  validation {    
+    condition     = length(regexall("^ocid1.compartment.*$", var.mountTarget_compartment_id)) > 0
+    error_message = "WLSC-ERROR: The value for mountTarget_compartment_id should start with \"ocid1.compartment.\"."
+  }
+}
+
+variable "mountTarget_subnet_cidr" {
+  type        = string
+  description = "CIDR value of  the subnet to be used for FSS mount target"
+  default     = ""
+}
+
+variable "mountTarget_availability_domain" {
+  type        = string
+  description = "The name of the availability domain where the mount target exists"
+  default     = ""
+}

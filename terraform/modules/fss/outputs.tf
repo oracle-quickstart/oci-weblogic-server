@@ -10,15 +10,9 @@ output "mount_export_id" {
 }
 
 output "fss_id" {
-  value = var.fss_system_id
+  value = oci_file_storage_file_system.file_system.id
 }
 
-output "nfs_mount_ip" {
-  value = join("", data.oci_core_private_ip.mount_target_private_ip.*.ip_address)
-}
-
-output "nfs_export_path" {
+output "export_path" {
   value = oci_file_storage_export.mount_export.path
 }
-
-

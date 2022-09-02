@@ -130,6 +130,7 @@ variable "tags" {
 variable "existing_mt_subnet_id" {
   type        = string
   description = "The OCID of the exisitng mount target subnet id"
+  default     = ""
 }
 
 variable "add_fss" {
