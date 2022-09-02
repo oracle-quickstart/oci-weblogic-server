@@ -158,6 +158,12 @@ module "wls-instances" {
       export_path = var.export_path
       add_fss     = var.add_fss
 
+      use_apm_service           = var.use_apm_service
+      apm_domain_compartment_id = var.apm_domain_compartment_id
+      apm_domain_id             = var.apm_domain_id
+      apm_private_data_key_name = var.apm_private_data_key_name
+      apm_agent_installer_path  = var.apm_agent_installer_path
+      apm_agent_path            = var.apm_agent_path
     }
 
     are_legacy_imds_endpoints_disabled = var.disable_legacy_metadata_endpoint

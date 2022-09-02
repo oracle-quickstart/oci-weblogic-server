@@ -69,3 +69,10 @@ data "oci_core_service_gateways" "service_gateways" {
   #Optional
   vcn_id = local.vcn_id
 }
+
+data "oci_apm_apm_domain" "apm_domain" {
+  count = var.use_apm_service ? 1 : 0
+
+  #Required
+  apm_domain_id = var.apm_domain_id
+}

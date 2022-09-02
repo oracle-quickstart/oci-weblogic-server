@@ -144,13 +144,15 @@ module "policies" {
     defined_tags  = local.defined_tags
     freeform_tags = local.free_form_tags
   }
-  atp_db                = local.atp_db
-  oci_db                = local.oci_db
-  vcn_id                = var.wls_existing_vcn_id # TODO: add condition to include new VCN when nwe VCN is supported
-  wls_existing_vcn_id   = var.wls_existing_vcn_id
-  is_idcs_selected      = var.is_idcs_selected
-  idcs_client_secret_id = var.idcs_client_secret_id
-  use_oci_logging       = var.use_oci_logging
+  atp_db                    = local.atp_db
+  oci_db                    = local.oci_db
+  vcn_id                    = var.wls_existing_vcn_id # TODO: add condition to include new VCN when nwe VCN is supported
+  wls_existing_vcn_id       = var.wls_existing_vcn_id
+  is_idcs_selected          = var.is_idcs_selected
+  idcs_client_secret_id     = var.idcs_client_secret_id
+  use_oci_logging           = var.use_oci_logging
+  use_apm_service           = var.use_apm_service
+  apm_domain_compartment_id = local.apm_domain_compartment_id
 }
 
 
@@ -285,6 +287,10 @@ module "validators" {
   create_policies    = var.create_policies
   use_oci_logging    = var.use_oci_logging
   dynamic_group_id   = var.dynamic_group_id
+
+  use_apm_service           = var.use_apm_service
+  apm_domain_id             = var.apm_domain_id
+  apm_private_data_key_name = var.apm_private_data_key_name
 }
 
 module "fss" {
@@ -396,6 +402,11 @@ module "compute" {
 
   log_group_id    = element(concat(module.observability-common[*].log_group_id, [""]), 0)
   use_oci_logging = var.use_oci_logging
+
+  use_apm_service           = var.use_apm_service
+  apm_domain_compartment_id = local.apm_domain_compartment_id
+  apm_domain_id             = var.apm_domain_id
+  apm_private_data_key_name = var.apm_private_data_key_name
 
   tags = {
     defined_tags    = local.defined_tags

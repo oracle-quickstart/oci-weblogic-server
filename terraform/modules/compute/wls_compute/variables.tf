@@ -245,13 +245,3 @@ variable "mode" {
     error_message = "WLSC-ERROR: Allowed values for mode are PROD, DEV."
   }
 }
-
-variable "log_group_id" {
-  type        = string
-  description = "The OCID of the Log group"
-}
-
-variable "use_oci_logging" {
-  type        = bool
-  description = "Enable logging service integration for WebLogic instances"
-}
