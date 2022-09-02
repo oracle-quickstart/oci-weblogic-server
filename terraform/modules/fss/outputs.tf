@@ -16,3 +16,7 @@ output "fss_id" {
 output "export_path" {
   value = oci_file_storage_export.mount_export.path
 }
+
+output "mount_ip" {
+  value = data.oci_file_storage_mount_targets.new_mount_target[0].mount_targets[0].private_ip_ids[0]
+}

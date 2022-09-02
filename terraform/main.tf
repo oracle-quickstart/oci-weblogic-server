@@ -302,27 +302,27 @@ module "validators" {
 
   is_lb_private = var.is_lb_private
 
-  add_fss                         = var.add_fss
-  fss_availability_domain         = (var.add_existing_fss && var.add_existing_mount_target) ? data.oci_file_storage_file_systems.file_systems[0].file_systems[0].availability_domain : ""
-  mount_target_subnet_id          = var.mount_target_subnet_id
-  mount_target_subnet_cidr        = local.mount_target_subnet_cidr
+  add_fss                          = var.add_fss
+  fss_availability_domain          = (var.add_existing_fss && var.add_existing_mount_target) ? data.oci_file_storage_file_systems.file_systems[0].file_systems[0].availability_domain : ""
+  mount_target_subnet_id           = var.mount_target_subnet_id
+  mount_target_subnet_cidr         = local.mount_target_subnet_cidr
   mount_target_compartment_id      = var.mount_target_compartment_id
   mount_target_id                  = var.mount_target_id
-  existing_fss_id                 = var.existing_fss_id
+  existing_fss_id                  = var.existing_fss_id
   mount_target_availability_domain = var.add_existing_mount_target ? data.oci_file_storage_mount_targets.mount_targets[0].mount_targets[0].availability_domain : ""
-  fss_compartment_id              = var.fss_compartment_id
+  fss_compartment_id               = var.fss_compartment_id
 }
 
 module "fss" {
   source = "./modules/fss"
   count  = var.existing_fss_id == "" ? 1 : 0
 
-  compartment_id        = var.fss_compartment_id
-  availability_domain   = var.use_regional_subnet ? var.fss_availability_domain : data.oci_core_subnet.mount_target_subnet[0].availability_domain
+  compartment_id      = var.fss_compartment_id
+  availability_domain = var.use_regional_subnet ? var.fss_availability_domain : data.oci_core_subnet.mount_target_subnet[0].availability_domain
 
-  vcn_id                = local.vcn_id
-  resource_name_prefix  = var.service_name
-  export_path           = local.export_path
+  vcn_id                 = local.vcn_id
+  resource_name_prefix   = var.service_name
+  export_path            = local.export_path
   mount_target_id        = var.mount_target_id
   mount_target_subnet_id = var.use_existing_subnets ? var.mount_target_subnet_id : module.network-mount-target-private-subnet[0].subnet_id
 

@@ -88,7 +88,7 @@ data "oci_file_storage_mount_targets" "mount_target_by_export_set" {
 }
 
 data "oci_core_private_ip" "mount_target_private_ip" {
-  count = var.add_fss ? 1 : 0
+  count = var.existing_fss_id != "" ? 1 : 0
   #Required
   private_ip_id = data.oci_file_storage_mount_targets.mount_target_by_export_set[0].mount_targets[0].private_ip_ids[0]
 }
