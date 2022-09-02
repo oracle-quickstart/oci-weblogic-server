@@ -50,7 +50,7 @@ module "network-vcn-config" {
   is_bastion_instance_required = var.is_bastion_instance_required
   existing_bastion_instance_id = var.existing_bastion_instance_id
   vcn_cidr                     = element(concat(module.network-vcn.*.vcn_cidr, tolist([""])), 0)
-  existing_mt_subnet_id        = var.mountTarget_subnet_id
+  existing_mt_subnet_id        = var.mount_target_subnet_id
   existing_service_gateway_ids = var.wls_vcn_name == "" ? [] : data.oci_core_service_gateways.service_gateways.service_gateways.*.id
   existing_nat_gateway_ids     = var.wls_vcn_name == "" ? [] : data.oci_core_nat_gateways.nat_gateways.nat_gateways.*.id
   create_nat_gateway           = var.is_idcs_selected && length(data.oci_core_nat_gateways.nat_gateways.*.id) == 0
@@ -230,7 +230,7 @@ module "network-wls-public-subnet" {
 /* Create private subnet for FSS */
 module "network-mount-target-private-subnet" {
   source            = "./modules/network/subnet"
-  count             = var.add_existing_mountTarget ? 0 : (var.add_fss && var.mountTarget_subnet_id == "" ? 1 : 0)
+  count             = var.add_existing_mount_target ? 0 : (var.add_fss && var.mount_target_subnet_id == "" ? 1 : 0)
   compartment_id    = local.network_compartment_id
   vcn_id            = local.vcn_id
   security_list_ids = module.network-vcn-config[0].fss_security_list_id
@@ -239,7 +239,7 @@ module "network-mount-target-private-subnet" {
   route_table_id  = module.network-vcn-config[0].service_gateway_route_table_id
   subnet_name     = "${local.service_name_prefix}-mt-subnet"
   dns_label       = format("%s-%s", "mt-sbn", substr(strrev(var.service_name), 0, 7))
-  cidr_block      = local.mountTarget_subnet_cidr
+  cidr_block      = local.mount_target_subnet_cidr
 
   tags = {
     defined_tags  = local.defined_tags
@@ -303,13 +303,13 @@ module "validators" {
   is_lb_private = var.is_lb_private
 
   add_fss                         = var.add_fss
-  fss_availability_domain         = (var.add_existing_fss && var.add_existing_mountTarget) ? data.oci_file_storage_file_systems.file_systems[0].file_systems[0].availability_domain : ""
-  mount_target_subnet_id          = var.mountTarget_subnet_id
-  mount_target_subnet_cidr        = local.mountTarget_subnet_cidr
-  mountTarget_compartment_id      = var.mountTarget_compartment_id
-  mountTarget_id                  = var.mountTarget_id
+  fss_availability_domain         = (var.add_existing_fss && var.add_existing_mount_target) ? data.oci_file_storage_file_systems.file_systems[0].file_systems[0].availability_domain : ""
+  mount_target_subnet_id          = var.mount_target_subnet_id
+  mount_target_subnet_cidr        = local.mount_target_subnet_cidr
+  mount_target_compartment_id      = var.mount_target_compartment_id
+  mount_target_id                  = var.mount_target_id
   existing_fss_id                 = var.existing_fss_id
-  mountTarget_availability_domain = var.add_existing_mountTarget ? data.oci_file_storage_mount_targets.mount_targets[0].mount_targets[0].availability_domain : ""
+  mount_target_availability_domain = var.add_existing_mount_target ? data.oci_file_storage_mount_targets.mount_targets[0].mount_targets[0].availability_domain : ""
   fss_compartment_id              = var.fss_compartment_id
 }
 
@@ -322,8 +322,8 @@ module "fss" {
   vcn_id                = local.vcn_id
   resource_name_prefix  = var.service_name
   export_path           = local.export_path
-  mountTarget_id        = var.mountTarget_id
-  mountTarget_subnet_id = var.use_existing_subnets ? var.mountTarget_subnet_id : module.network-mount-target-private-subnet[0].subnet_id
+  mount_target_id        = var.mount_target_id
+  mount_target_subnet_id = var.use_existing_subnets ? var.mount_target_subnet_id : module.network-mount-target-private-subnet[0].subnet_id
 
   tags = {
     defined_tags  = local.defined_tags

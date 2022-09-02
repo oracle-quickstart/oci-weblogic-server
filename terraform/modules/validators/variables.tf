@@ -274,32 +274,32 @@ variable "existing_fss_id" {
   default     = ""
 }
 
-variable "mountTarget_subnet_id" {
+variable "mount_target_subnet_id" {
   type = string
   description = "The OCID of the subnet where the mount target exists"
 }
 
-variable "mountTarget_id" {
+variable "mount_target_id" {
   type = string
   description = "The OCID of the mount target for File Shared System"
 }
 
-variable "mountTarget_compartment_id" {
+variable "mount_target_compartment_id" {
   type        = string
   description = "The OCID of the compartment where the mount target exists"
   validation {    
-    condition     = length(regexall("^ocid1.compartment.*$", var.mountTarget_compartment_id)) > 0
-    error_message = "WLSC-ERROR: The value for mountTarget_compartment_id should start with \"ocid1.compartment.\"."
+    condition     = length(regexall("^ocid1.compartment.*$", var.mount_target_compartment_id)) > 0
+    error_message = "WLSC-ERROR: The value for mount_target_compartment_id should start with \"ocid1.compartment.\"."
   }
 }
 
-variable "mountTarget_subnet_cidr" {
+variable "mount_target_subnet_cidr" {
   type        = string
   description = "CIDR value of  the subnet to be used for FSS mount target"
   default     = ""
 }
 
-variable "mountTarget_availability_domain" {
+variable "mount_target_availability_domain" {
   type        = string
   description = "The name of the availability domain where the mount target exists"
   default     = ""

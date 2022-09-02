@@ -3,12 +3,12 @@
 
 resource "oci_file_storage_mount_target" "mount_target" {
 
-  count = var.mountTarget_id == "" ? 1 : 0
+  count = var.mount_target_id == "" ? 1 : 0
 
   #Required
   availability_domain = var.availability_domain
   compartment_id      = var.compartment_id
-  subnet_id           = var.mountTarget_subnet_id
+  subnet_id           = var.mount_target_subnet_id
 
   display_name   = "${var.resource_name_prefix}-mntTarget"
   hostname_label = "${var.resource_name_prefix}-mntTarget"

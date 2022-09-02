@@ -116,13 +116,13 @@ variable "use_existing_subnets" {
   default     = false
 }
 
-variable "mountTarget_subnet_id" {
+variable "mount_target_subnet_id" {
   type        = string
   description = "OCID for existing subnet for mount target"
   default     = ""
 }
 
-variable "mountTarget_subnet_cidr" {
+variable "mount_target_subnet_cidr" {
   type        = string
   description = "CIDR value of  the subnet to be used for FSS mount target"
   default     = ""

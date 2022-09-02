@@ -47,10 +47,10 @@ data "oci_core_service_gateways" "service_gateways" {
 }
 
 data "oci_core_subnet" "mount_target_subnet" {
-  count = var.mountTarget_subnet_id == "" ? 0 : 1
+  count = var.mount_target_subnet_id == "" ? 0 : 1
 
   #Required
-  subnet_id = var.mountTarget_subnet_id
+  subnet_id = var.mount_target_subnet_id
 }
 
 data "oci_file_storage_file_systems" "file_systems" {
@@ -64,13 +64,13 @@ data "oci_file_storage_file_systems" "file_systems" {
 }
 
 data "oci_file_storage_mount_targets" "mount_targets" {
-  count = var.mountTarget_id != "" ? 1 : 0
+  count = var.mount_target_id != "" ? 1 : 0
 
   #Required
   availability_domain = var.fss_availability_domain
-  compartment_id      = var.mountTarget_compartment_id
+  compartment_id      = var.mount_target_compartment_id
 
-  id = var.mountTarget_id
+  id = var.mount_target_id
 }
 
 
@@ -88,7 +88,7 @@ data "oci_file_storage_mount_targets" "mount_target" {
 }
 
 data "oci_core_private_ip" "mount_target_private_ip" {
-  count = var.existing_fss_id != "" ? 1 : 0
+  count = var.add_fss ? 1 : 0
   #Required
   private_ip_id = data.oci_file_storage_mount_targets.mount_target[0].mount_targets[0].private_ip_ids[0]
 }

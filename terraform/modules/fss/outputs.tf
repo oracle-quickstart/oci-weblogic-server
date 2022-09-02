@@ -1,7 +1,7 @@
 # Copyright (c) 2022, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
-output "mountTarget_id" {
+output "mount_target_id" {
   value = local.mount_target_id[0]
 }
 

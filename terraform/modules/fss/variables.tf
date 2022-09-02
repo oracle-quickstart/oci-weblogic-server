@@ -25,12 +25,12 @@ variable "export_path" {
   description = "Path used to access the associated file system."
 }
 
-variable "mountTarget_subnet_id" {
+variable "mount_target_subnet_id" {
   type = string
   description = "The OCID of the subnet where the mount target exists"
 }
 
-variable "mountTarget_id" {
+variable "mount_target_id" {
   type = string
   description = "The OCID of the mount target for File Shared System"
 }

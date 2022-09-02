@@ -18,11 +18,7 @@ output "fss_system_id" {
 }
 
 output "mount_target_id" {
-  value = var.mountTarget_id != "" ? var.mountTarget_id : module.fss[0].mountTarget_id
-}
-
-output "mount_ip" {
-  value = join("", data.oci_core_private_ip.mount_target_private_ip.*.ip_address)
+  value = var.mount_target_id != "" ? var.mount_target_id : module.fss[0].mount_target_id
 }
 
 output "export_path" {
