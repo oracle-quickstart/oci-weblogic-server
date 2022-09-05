@@ -14,15 +14,11 @@ output "is_vcn_peered" {
 }
 
 output "fss_system_id" {
-  value = var.existing_fss_id != "" ? var.existing_fss_id : module.fss[0].fss_id
+  value = var.existing_fss_id != "" ? var.existing_fss_id : (var.add_fss ? module.fss[0].fss_id : "")
 }
 
 output "mount_target_id" {
-  value = var.mount_target_id != "" ? var.mount_target_id : module.fss[0].mount_target_id
-}
-
-output "export_path" {
-  value = var.existing_export_path_id != "" ? var.existing_export_path_id : module.fss[0].export_path
+  value = var.mount_target_id != "" ? var.mount_target_id : (var.add_fss ? module.fss[0].mount_target_id : "")
 }
 
 output "load_balancer_subnets_id" {
@@ -101,6 +97,18 @@ output "provisioning_status" {
 
 output "jdk_version" {
   value = local.jdk_version
+}
+
+output "weblogic_agent_configuration_id" {
+  value = element(concat(module.observability-logging[*].agent_config_id, [""]), 0)
+}
+
+output "weblogic_log_group_id" {
+  value = element(concat(module.observability-common[*].log_group_id, [""]), 0)
+}
+
+output "weblogic_log_id" {
+  value = element(concat(module.observability-logging[*].log_id, [""]), 0)
 }
 
 output "ssh_command" {

@@ -12,6 +12,12 @@ data "oci_identity_tenancy" "tenancy" {
   tenancy_id = var.tenancy_id
 }
 
+data "oci_core_instance" "existing_bastion_instance" {
+  count = var.existing_bastion_instance_id != "" ? 1 : 0
+
+  instance_id = var.existing_bastion_instance_id
+}
+
 data "oci_core_subnet" "wls_subnet" {
   count     = var.wls_subnet_id == "" ? 0 : 1
   subnet_id = var.wls_subnet_id
@@ -22,8 +28,26 @@ data "oci_core_subnet" "bastion_subnet" {
   subnet_id = var.bastion_subnet_id
 }
 
+data "template_file" "ad_names" {
+  count    = length(data.oci_identity_availability_domains.ADs.availability_domains)
+  template = (length(regexall("^.*Flex", var.instance_shape)) > 0 || length(regexall("^BM.*", var.instance_shape)) > 0 || (tonumber(lookup(data.oci_limits_limit_values.compute_shape_service_limits[count.index].limit_values[0], "value")) > 0)) ? lookup(data.oci_identity_availability_domains.ADs.availability_domains[count.index], "name") : ""
+}
+
 data "oci_identity_availability_domains" "ADs" {
   compartment_id = var.tenancy_id
+}
+
+data "oci_limits_limit_values" "compute_shape_service_limits" {
+  count = length(data.oci_identity_availability_domains.ADs.availability_domains)
+  #Required
+  compartment_id = var.tenancy_id
+  service_name   = "compute"
+
+  #Optional
+  availability_domain = lookup(data.oci_identity_availability_domains.ADs.availability_domains[count.index], "name")
+  #format of name field -vm-standard2-2-count
+  #ignore flex shapes
+  name = length(regexall("^.*Flex", var.instance_shape)) > 0 || length(regexall("^BM.*", var.instance_shape)) > 0 ? "" : format("%s-count", replace(var.instance_shape, ".", "-"))
 }
 
 data "oci_load_balancer_load_balancers" "existing_load_balancers_data_source" {
@@ -91,4 +115,11 @@ data "oci_core_private_ip" "mount_target_private_ip" {
   count = var.existing_fss_id != "" ? 1 : 0
   #Required
   private_ip_id = data.oci_file_storage_mount_targets.mount_target_by_export_set[0].mount_targets[0].private_ip_ids[0]
+}
+
+data "oci_apm_apm_domain" "apm_domain" {
+  count = var.use_apm_service ? 1 : 0
+
+  #Required
+  apm_domain_id = var.apm_domain_id
 }

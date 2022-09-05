@@ -129,7 +129,7 @@ variable "tags" {
 
 variable "existing_mt_subnet_id" {
   type        = string
-  description = "The OCID of the exisitng mount target subnet id"
+  description = "The OCID of the existing mount target subnet id"
   default     = ""
 }
 
@@ -168,6 +168,12 @@ variable "existing_nat_gateway_ids" {
 variable "create_nat_gateway" {
   type        = bool
   description = "Set to true if nat gateway needs to be created"
+  default     = false
+}
+
+variable "create_service_gateway" {
+  type        = bool
+  description = "Set to true if service gateway needs to be created"
   default     = false
 }
 

@@ -104,6 +104,7 @@ variable "idcs_cloudgate_port" {
 variable "wls_subnet_id" {
   type        = string
   description = "The OCID of the subnet for the WebLogic instances. Leave it blank if a new subnet will be created by the stack"
+  default     = ""
 }
 
 variable "add_load_balancer" {
@@ -125,7 +126,7 @@ variable "wls_version" {
   description = "The WebLogic version to be installed for this stack. Accepted values are: 12.2.1.4, 14.1.1.0"
   validation {
     condition     = contains(["12.2.1.4", "14.1.1.0"], var.wls_version)
-    error_message = "Allowed values for wls_version are 12.2.1.4, 14.1.1.0."
+    error_message = "WLSC-ERROR: Allowed values for wls_version are 12.2.1.4, 14.1.1.0."
   }
 }
 
@@ -162,7 +163,7 @@ variable "oci_db_compartment_id" {
   description = "The OCID of the compartment where the OCI database is located, if JRF with OCI DB is used"
   validation {
     condition     = var.oci_db_compartment_id == "" || length(regexall("^ocid1.compartment.*$", var.oci_db_compartment_id)) > 0
-    error_message = "The value for oci_db_compartment_id should be blank or start with \"ocid1.compartment.\"."
+    error_message = "WLSC-ERROR: The value for oci_db_compartment_id should be blank or start with \"ocid1.compartment.\"."
   }
 }
 variable "oci_db_existing_vcn_id" {
@@ -170,7 +171,7 @@ variable "oci_db_existing_vcn_id" {
   description = "The OCID of the VCN of the OCI database, if JRF with OCI DB is used"
   validation {
     condition     = var.oci_db_existing_vcn_id == "" || length(regexall("^ocid1.vcn.*$", var.oci_db_existing_vcn_id)) > 0
-    error_message = "The value for oci_db_existing_vcn_id should be blank or start with \"ocid1.vcn.\"."
+    error_message = "WLSC-ERROR: The value for oci_db_existing_vcn_id should be blank or start with \"ocid1.vcn.\"."
   }
 }
 variable "oci_db_dbsystem_id" {
@@ -178,7 +179,7 @@ variable "oci_db_dbsystem_id" {
   description = "The OCID of the db system of the OCI database, if JRF with OCI DB is used"
   validation {
     condition     = var.oci_db_dbsystem_id == "" || length(regexall("^ocid1.dbsystem.*$", var.oci_db_dbsystem_id)) > 0
-    error_message = "The value for oci_db_dbsystem_id should be blank or start with \"ocid1.dbsystem.\"."
+    error_message = "WLSC-ERROR: The value for oci_db_dbsystem_id should be blank or start with \"ocid1.dbsystem.\"."
   }
 }
 variable "oci_db_database_id" {
@@ -186,7 +187,7 @@ variable "oci_db_database_id" {
   description = "The OCID of the database, if JRF with OCI DB is used"
   validation {
     condition     = var.oci_db_database_id == "" || length(regexall("^ocid1.database.*$", var.oci_db_database_id)) > 0
-    error_message = "The value for oci_db_database_id should be blank or start with \"ocid1.database.\"."
+    error_message = "WLSC-ERROR: The value for oci_db_database_id should be blank or start with \"ocid1.database.\"."
   }
 }
 variable "oci_db_pdb_service_name" {
@@ -272,16 +273,29 @@ variable "existing_fss_id" {
   type        = string
   description = "The OCID of your existing file system"
   default     = ""
+  validation {
+    condition     = var.existing_fss_id == "" || length(regexall("^ocid1.filesystem.*$", var.existing_fss_id)) > 0
+    error_message = "WLSC-ERROR: The value for existing_fss_id should be blank or start with \"ocid1.filesystem.\"."
+  }
 }
 
 variable "mount_target_subnet_id" {
   type = string
   description = "The OCID of the subnet where the mount target exists"
+  validation {
+    condition     = var.mount_target_subnet_id == "" || length(regexall("^ocid1.subnet.*$", var.mount_target_subnet_id)) > 0
+    error_message = "WLSC-ERROR: The value for mount_target_subnet_id should be blank or start with \"ocid1.subnet.\"."
+  }
 }
 
 variable "mount_target_id" {
   type = string
   description = "The OCID of the mount target for File Shared System"
+  default     = ""
+  validation {    
+    condition     = var.mount_target_id == "" || length(regexall("^ocid1.mounttarget.*$", var.mount_target_id)) > 0
+    error_message = "WLSC-ERROR: The value for mount_target_id should be blank or start with \"ocid1.mounttarget.\"."
+  }
 }
 
 variable "mount_target_compartment_id" {
@@ -303,4 +317,34 @@ variable "mount_target_availability_domain" {
   type        = string
   description = "The name of the availability domain where the mount target exists"
   default     = ""
+}
+
+variable "create_policies" {
+  type        = bool
+  description = "Set to true to create OCI IAM policies and dynamic groups required by the WebLogic for OCI stack"
+}
+
+variable "use_oci_logging" {
+  type        = bool
+  description = "Enable logging service integration for WebLogic instances"
+}
+
+variable "dynamic_group_id" {
+  type        = string
+  description = "The dynamic group that contains the WebLogic instances from which logs will be exported to OCI Logging Service"
+}
+
+variable "use_apm_service" {
+  type        = bool
+  description = "Indicates if Application Performance Monitoring integration is enabled"
+}
+
+variable "apm_domain_id" {
+  type        = string
+  description = "The OCID of the Application Performance Monitoring domain used by WebLogic instances"
+}
+
+variable "apm_private_data_key_name" {
+  type        = string
+  description = "The name of the private data key used by this instance to push metrics to the Application Performance Monitoring domain"
 }

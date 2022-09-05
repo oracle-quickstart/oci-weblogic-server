@@ -20,7 +20,7 @@ variable "compartment_id" {
 }
 
 variable "network_compartment_id" {
-  type = string
+  type        = string
   description = "The OCID of the compartment where the network resources like VCN are located"
   validation {
     condition     = length(regexall("^ocid1.compartment.*$", var.network_compartment_id)) > 0
@@ -29,7 +29,7 @@ variable "network_compartment_id" {
 }
 
 variable "vcn_id" {
-  type = string
+  type        = string
   description = "The OCID of the VCN where the WebLogic VMs are located"
   validation {
     condition     = length(regexall("^ocid1.vcn.*$", var.vcn_id)) > 0
@@ -38,7 +38,7 @@ variable "vcn_id" {
 }
 
 variable "wls_existing_vcn_id" {
-  type = string
+  type        = string
   description = "The OCID of the VCN where the WebLogic VMs are located. Should be blank if the VCN is created with the stack."
   validation {
     condition     = var.wls_existing_vcn_id == "" || length(regexall("^ocid1.vcn.*$", var.wls_existing_vcn_id)) > 0
@@ -94,9 +94,9 @@ variable "atp_db" {
 
 variable "oci_db" {
   type = object({
-    password_id = string
-    network_compartment_id = string
-    existing_vcn_id = string
+    password_id              = string
+    network_compartment_id   = string
+    existing_vcn_id          = string
     existing_vcn_add_seclist = bool
   })
   description = <<-EOT
@@ -117,4 +117,19 @@ variable "is_idcs_selected" {
 variable "idcs_client_secret_id" {
   type        = string
   description = "The OCID of the vault secret containing the confidential application password in IDCS"
+}
+
+variable "use_oci_logging" {
+  type        = bool
+  description = "Enable logging service integration for WebLogic instances"
+}
+
+variable "use_apm_service" {
+  type        = bool
+  description = "Indicates if Application Performance Monitoring integration is enabled"
+}
+
+variable "apm_domain_compartment_id" {
+  type        = string
+  description = "The OCID of the compartment of the APM domain"
 }

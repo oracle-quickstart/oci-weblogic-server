@@ -17,7 +17,7 @@ variable "availability_domain" {
 
 variable "vcn_id" {
   type = string
-  description = "The name of the availability domain where the file system and mount target exist"
+  description = "The OCID of the VCN  where the file system and mount target will be created"
 }
 
 variable "export_path" {

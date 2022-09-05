@@ -149,12 +149,21 @@ module "wls-instances" {
       # TODO (robesanc): These variables are hardcoded to allow creating instances without app db
       is_atp_app_db       = "false"
       appdb_password_ocid = ""
+      
+      log_group_id       = var.log_group_id
+      use_oci_logging    = var.use_oci_logging
 
       mount_ip    = var.mount_ip
       mount_path  = var.mount_path
       export_path = var.export_path
       add_fss     = var.add_fss
 
+      use_apm_service           = var.use_apm_service
+      apm_domain_compartment_id = var.apm_domain_compartment_id
+      apm_domain_id             = var.apm_domain_id
+      apm_private_data_key_name = var.apm_private_data_key_name
+      apm_agent_installer_path  = var.apm_agent_installer_path
+      apm_agent_path            = var.apm_agent_path
     }
 
     are_legacy_imds_endpoints_disabled = var.disable_legacy_metadata_endpoint
