@@ -418,11 +418,10 @@ module "compute" {
 
   lbip = local.lb_ip
 
-  add_fss = var.add_fss
-  //mount_ip    = element(coalescelist(module.fss[*].mount_ip, [""]), 0)
-  mount_ip    = element(coalescelist([""], [""]), 0)
+  add_fss     = var.add_fss
+  mount_ip    = module.fss[0].mount_ip
   mount_path  = var.mount_path
-  export_path = element(coalescelist(module.fss[*].export_path, [""]), 0)
+  export_path = var.existing_export_path_id != "" ? data.oci_file_storage_exports.export[0].exports[0].path : module.fss[0].export_path
 
   db_existing_vcn_add_seclist = var.ocidb_existing_vcn_add_seclist
   jrf_parameters = {

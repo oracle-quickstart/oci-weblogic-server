@@ -132,8 +132,5 @@ locals {
   missing_existing_bastion_host_private_subnet_msg      = "WLSC-ERROR: Support existing bastion host for provisioning WLS in private subnet is enabled in CLI only. Provide all required parameters [ is_bastion_instance_required, existing_bastion_instance_id, bastion_ssh_private_key ]."
   validate_missing_existing_bastion_host_private_subnet = (local.invalid_bastion_private_key) ? local.validators_msg_map[local.missing_existing_bastion_host_private_subnet_msg] : null
 
-  invalid_mount_target_id_msg   = "WLSC-ERROR: The value for existing mount target is not valid. The value must begin with ocid1 followed by resource type, e.g. ocid1.filesystem."
-  validate_mount_target_ocid = local. ? local.validators_msg_map[local.invalid_dynamic_group_msg] : null
-
 }
 

@@ -17,6 +17,6 @@ output "export_path" {
   value = oci_file_storage_export.mount_export.path
 }
 
-//output "mount_ip" {
-//  value = join("",data.oci_file_storage_mount_targets.new_mount_target[0].mount_targets[0].private_ip_ids[0])
-//}
+output "mount_ip" {
+  value = join("", data.oci_core_private_ip.mount_target_private_ip.*.ip_address)
+}
