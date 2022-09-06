@@ -329,6 +329,38 @@ module "observability-common" {
   service_prefix_name = local.service_name_prefix
 }
 
+module "baselinux-image-subscription" {
+  source = "./modules/image-subscription"
+  count =  local.use_baselinux_marketplace_image ? 1 : 0
+
+  compartment_id                 = local.compartment_id
+  mp_listing_id                    = var.mp_baselinux_listing_id
+  instance_image_id                = var.mp_baselinux_instance_image_id
+  mp_listing_resource_version      = var.mp_baselinux_listing_resource_version
+}
+
+module "image-subscription" {
+  source = "./modules/image-subscription"
+  count = var.use_marketplace_image ? 1 : 0
+
+  compartment_id               = local.compartment_id
+  mp_listing_id                  = var.mp_listing_id
+  instance_image_id              = var.instance_image_id
+  mp_listing_resource_version    = var.mp_listing_resource_version
+  use_marketplace_image          = var.use_marketplace_image
+}
+
+module "ucm-image-subscription" {
+  source = "./modules/image-subscription"
+  count = var.use_marketplace_image ? 1 : 0
+
+  compartment_id               = local.compartment_id
+  mp_listing_id                  = var.mp_ucm_listing_id
+  instance_image_id              = var.mp_ucm_instance_image_id
+  mp_listing_resource_version    = var.mp_ucm_listing_resource_version
+  use_marketplace_image          = var.use_marketplace_image
+}
+
 module "compute" {
   source                 = "./modules/compute/wls_compute"
   add_loadbalancer       = var.add_load_balancer
@@ -462,4 +494,3 @@ module "provisioners" {
   bastion_host_private_key     = !var.is_bastion_instance_required ? "" : var.existing_bastion_instance_id == "" ? module.bastion[0].bastion_private_ssh_key : file(var.bastion_ssh_private_key)
   is_bastion_instance_required = var.is_bastion_instance_required
 }
-
