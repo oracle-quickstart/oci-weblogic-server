@@ -149,7 +149,7 @@ module "policies" {
   }
   atp_db                    = local.atp_db
   oci_db                    = local.oci_db
-  vcn_id                    = local.vcn_id
+  vcn_id                    = module.network-vcn[0].vcn_id
   wls_existing_vcn_id       = var.wls_existing_vcn_id
   is_idcs_selected          = var.is_idcs_selected
   idcs_client_secret_id     = var.idcs_client_secret_id
@@ -335,6 +335,7 @@ module "fss" {
   availability_domain = var.use_regional_subnet ? var.fss_availability_domain : data.oci_core_subnet.mount_target_subnet[0].availability_domain
 
   vcn_id                 = local.vcn_id
+  vcn_cidr               = var.wls_vcn_cidr != "" ? var.wls_vcn_cidr : data.oci_core_vcn.wls_vcn[0].cidr_block
   resource_name_prefix   = var.service_name
   export_path            = local.export_path
   mount_target_id        = var.mount_target_id

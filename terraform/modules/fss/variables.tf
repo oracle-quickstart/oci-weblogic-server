@@ -20,6 +20,11 @@ variable "vcn_id" {
   description = "The OCID of the VCN  where the file system and mount target will be created"
 }
 
+variable "vcn_cidr" {
+  type = string
+  description = "The CIDR value of the VCN  where the file system and mount target will be created"
+}
+
 variable "export_path" {
   type = string
   description = "Path used to access the associated file system."

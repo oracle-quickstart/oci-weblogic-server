@@ -123,3 +123,9 @@ data "oci_apm_apm_domain" "apm_domain" {
   #Required
   apm_domain_id = var.apm_domain_id
 }
+
+data "oci_core_vcn" "wls_vcn" {
+  count = var.wls_existing_vcn_id != "" ? 1 : 0
+  #Required
+  vcn_id = var.wls_existing_vcn_id
+}

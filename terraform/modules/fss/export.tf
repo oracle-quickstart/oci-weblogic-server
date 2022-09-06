@@ -11,7 +11,7 @@ resource "oci_file_storage_export" "mount_export" {
   #Optional
   export_options {
     #Required
-    source = local.vcn_cidr
+    source = var.vcn_cidr
 
     access          = "READ_WRITE"
     identity_squash = "NONE"
