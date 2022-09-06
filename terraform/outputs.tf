@@ -13,6 +13,14 @@ output "is_vcn_peered" {
   value = local.is_vcn_peering
 }
 
+output "fss_system_id" {
+  value = var.existing_fss_id != "" ? var.existing_fss_id : (var.add_fss ? module.fss[0].fss_id : "")
+}
+
+output "mount_target_id" {
+  value = var.mount_target_id != "" ? var.mount_target_id : (var.add_fss ? module.fss[0].mount_target_id : "")
+}
+
 output "load_balancer_subnets_id" {
   value = compact(
     concat(
@@ -109,10 +117,6 @@ output "ssh_command" {
 
 output "ssh_command_with_dynamic_port_forwarding" {
   value = local.ssh_dp_fwd
-}
-
-output "fss_system_id" {
-  value = module.fss[*].fss_id
 }
 
 output "resource_identifier_value" {

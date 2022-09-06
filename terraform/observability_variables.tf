@@ -2,9 +2,9 @@
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 variable "use_oci_logging" {
-  type = bool
+  type        = bool
   description = "Enable logging service integration for WebLogic instances"
-  default = false
+  default     = false
 }
 
 variable "dynamic_group_id" {

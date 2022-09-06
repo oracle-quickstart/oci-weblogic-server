@@ -14,7 +14,7 @@ resource "oci_core_internet_gateway" "wls_internet_gateway" {
 }
 
 resource "oci_core_service_gateway" "wls_service_gateway" {
-  count = length(var.existing_service_gateway_ids ) > 0 ? 0:1
+  count = ! var.create_service_gateway ? 0 : 1
   #Required
   compartment_id = var.compartment_id
   vcn_id         = var.vcn_id
@@ -32,7 +32,7 @@ resource "oci_core_service_gateway" "wls_service_gateway" {
 
 # Create nat gateway for private subnet with IDCS
 resource "oci_core_nat_gateway" "wls_nat_gateway" {
-  count = !var.create_nat_gateway || length(var.existing_nat_gateway_ids) > 0 ? 0 : 1
+  count = !var.create_nat_gateway ? 0 : 1
 
   #Required
   compartment_id = var.compartment_id

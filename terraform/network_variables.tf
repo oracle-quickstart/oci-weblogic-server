@@ -16,6 +16,7 @@ variable "wls_existing_vcn_id" {
 variable "wls_vcn_cidr" {
   type        = string
   description = "The CIDR of the VCN where the compute instance will be created"
+  default     = ""
 }
 
 variable "wls_vcn_name" {
@@ -118,6 +119,12 @@ variable "use_existing_subnets" {
 variable "mount_target_subnet_id" {
   type        = string
   description = "OCID for existing subnet for mount target"
+  default     = ""
+}
+
+variable "mount_target_subnet_cidr" {
+  type        = string
+  description = "CIDR value of  the subnet to be used for FSS mount target"
   default     = ""
 }
 
