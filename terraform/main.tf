@@ -284,13 +284,14 @@ module "validators" {
 
   is_lb_private = var.is_lb_private
 
-  create_policies    = var.create_policies
-  use_oci_logging    = var.use_oci_logging
-  dynamic_group_id   = var.dynamic_group_id
+  create_policies  = var.create_policies
+  use_oci_logging  = var.use_oci_logging
+  dynamic_group_id = var.dynamic_group_id
 
   use_apm_service           = var.use_apm_service
   apm_domain_id             = var.apm_domain_id
   apm_private_data_key_name = var.apm_private_data_key_name
+
 }
 
 module "fss" {
@@ -331,34 +332,29 @@ module "observability-common" {
 
 module "baselinux-image-subscription" {
   source = "./modules/image-subscription"
-  count =  local.use_baselinux_marketplace_image ? 1 : 0
+  count  = local.use_baselinux_marketplace_image ? 1 : 0
 
-  compartment_id                 = local.compartment_id
-  mp_listing_id                    = var.mp_baselinux_listing_id
-  instance_image_id                = var.mp_baselinux_instance_image_id
-  mp_listing_resource_version      = var.mp_baselinux_listing_resource_version
+  compartment_id              = var.compartment_id
+  mp_listing_id               = var.mp_baselinux_listing_id
+  mp_listing_resource_version = var.mp_baselinux_listing_resource_version
 }
 
 module "image-subscription" {
   source = "./modules/image-subscription"
-  count = var.use_marketplace_image ? 1 : 0
+  count  = var.use_marketplace_image ? 1 : 0
 
-  compartment_id               = local.compartment_id
-  mp_listing_id                  = var.mp_listing_id
-  instance_image_id              = var.instance_image_id
-  mp_listing_resource_version    = var.mp_listing_resource_version
-  use_marketplace_image          = var.use_marketplace_image
+  compartment_id              = var.compartment_id
+  mp_listing_id               = var.mp_listing_id
+  mp_listing_resource_version = var.mp_listing_resource_version
 }
 
 module "ucm-image-subscription" {
   source = "./modules/image-subscription"
-  count = var.use_marketplace_image ? 1 : 0
+  count  = var.use_marketplace_image ? 1 : 0
 
-  compartment_id               = local.compartment_id
-  mp_listing_id                  = var.mp_ucm_listing_id
-  instance_image_id              = var.mp_ucm_instance_image_id
-  mp_listing_resource_version    = var.mp_ucm_listing_resource_version
-  use_marketplace_image          = var.use_marketplace_image
+  compartment_id              = var.compartment_id
+  mp_listing_id               = var.mp_ucm_listing_id
+  mp_listing_resource_version = var.mp_ucm_listing_resource_version
 }
 
 module "compute" {

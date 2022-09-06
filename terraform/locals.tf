@@ -46,8 +46,9 @@ locals {
     ["SE", "EE", "SUITE"],
     ["Standard Edition", "Enterprise Edition", "Suite Edition"],
   )
-  
-  new_lb_ip                  = local.add_existing_load_balancer ? "" : element(element(coalescelist(module.load-balancer[*].wls_loadbalancer_ip_addresses, [""]), 0), 0)
+
+  //new_lb_ip                  = local.add_existing_load_balancer ? "" : element(element(coalescelist(module.load-balancer[*].wls_loadbalancer_ip_addresses, [""]), 0), 0)
+  new_lb_ip                  = ""
   new_lb_id                  = element(concat(module.load-balancer[*].wls_loadbalancer_id, [""]), 0)
   existing_lb_ip             = local.add_existing_load_balancer ? local.existing_lb_object_as_list[0].ip_addresses[0] : ""
   existing_lb_object_as_list = [for lb in data.oci_load_balancer_load_balancers.existing_load_balancers_data_source.load_balancers[*] : lb if lb.id == var.existing_load_balancer_id]
@@ -71,7 +72,7 @@ locals {
   sample_app_url_lb_ip  = var.deploy_sample_app && var.add_load_balancer ? format("%s://%s/sample-app", local.sample_app_protocol, local.lb_ip) : ""
   sample_app_url_wls_ip = var.deploy_sample_app ? format("https://%s:%s/sample-app", local.admin_ip_address, var.wls_ms_extern_ssl_port) : ""
   sample_app_url        = var.wls_edition != "SE" ? (var.deploy_sample_app && var.add_load_balancer ? local.sample_app_url_lb_ip : local.sample_app_url_wls_ip) : ""
-  sample_idcs_app_url   = var.deploy_sample_app && var.add_load_balancer && var.is_idcs_selected ? format(
+  sample_idcs_app_url = var.deploy_sample_app && var.add_load_balancer && var.is_idcs_selected ? format(
     "%s://%s/__protected/idcs-sample-app",
     local.sample_app_protocol,
     local.lb_ip,
@@ -107,7 +108,7 @@ locals {
     var.wls_extern_ssl_admin_port,
   ) : ""
 
-  apm_domain_compartment_id = var.use_apm_service ? lookup(data.oci_apm_apm_domain.apm_domain[0], "compartment_id"): ""
+  apm_domain_compartment_id = var.use_apm_service ? lookup(data.oci_apm_apm_domain.apm_domain[0], "compartment_id") : ""
 
-  use_baselinux_marketplace_image            = (!local.assign_weblogic_public_ip && var.is_bastion_instance_required) || local.is_vcn_peering ? var.use_baselinux_marketplace_image : false
+  use_baselinux_marketplace_image = (!local.assign_weblogic_public_ip && var.is_bastion_instance_required) || local.is_vcn_peering ? var.use_baselinux_marketplace_image : false
 }
