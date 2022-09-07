@@ -375,11 +375,11 @@ module "observability-common" {
 
 module "observability-autoscaling" {
   source = "./modules/observability/autoscaling"
+  count  = var.use_autoscaling ? 1 : 0
 
-  compartment_id        = local.compartment_ocid
+  compartment_id        = var.compartment_id
   metric_compartment_id = local.apm_domain_compartment_id
   service_prefix_name   = local.service_name_prefix
-  use_autoscaling       = local.use_autoscaling
   subscription_endpoint = var.notification_email
   alarm_severity        = var.alarm_severity
   min_threshold_percent = var.min_threshold_percent
@@ -387,13 +387,13 @@ module "observability-autoscaling" {
   min_threshold_counter = var.min_threshold_counter
   max_threshold_counter = var.max_threshold_counter
   wls_metric            = var.wls_metric
-  wls_subnet_id         = local.assign_weblogic_public_ip ? element(module.network-wls-public-subnet.subnet_id, 0) : element(module.network-wls-private-subnet.subnet_id, 0)
+  wls_subnet_id              = local.assign_weblogic_public_ip ? (var.wls_subnet_id != "" ? var.wls_subnet_id : element(concat(module.network-wls-public-subnet[*].subnet_id, [""]), 0)) : (var.wls_subnet_id != "" ? var.wls_subnet_id : element(concat(module.network-wls-private-subnet[*].subnet_id, [""]), 0))
   wls_node_count        = var.wls_node_count
   tenancy_id          = var.tenancy_id
 
   fn_application_name = local.fn_application_name
   fn_repo_name        = local.fn_repo_name
-  log_group_id        = module.observability-common.log_group_id
+  log_group_id        = element(concat(module.observability-common[*].log_group_id, [""]), 0)
   create_policies     = var.create_policies
 
   tags = {

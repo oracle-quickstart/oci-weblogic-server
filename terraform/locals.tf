@@ -124,5 +124,4 @@ locals {
   fn_application_name = format("%s_autoscaling_function_application", local.service_name_prefix)
 
   apm_domain_compartment_id = var.use_apm_service ? lookup(data.oci_apm_apm_domain.apm_domain[0], "compartment_id"): ""
-  use_autoscaling = var.use_autoscaling ? "Metric" : "None"
 }
