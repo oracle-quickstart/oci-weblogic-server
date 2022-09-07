@@ -280,7 +280,7 @@ variable "existing_fss_id" {
 }
 
 variable "mount_target_subnet_id" {
-  type = string
+  type        = string
   description = "The OCID of the subnet where the mount target exists"
   validation {
     condition     = var.mount_target_subnet_id == "" || length(regexall("^ocid1.subnet.*$", var.mount_target_subnet_id)) > 0
@@ -289,10 +289,10 @@ variable "mount_target_subnet_id" {
 }
 
 variable "mount_target_id" {
-  type = string
+  type        = string
   description = "The OCID of the mount target for File Shared System"
   default     = ""
-  validation {    
+  validation {
     condition     = var.mount_target_id == "" || length(regexall("^ocid1.mounttarget.*$", var.mount_target_id)) > 0
     error_message = "WLSC-ERROR: The value for mount_target_id should be blank or start with \"ocid1.mounttarget.\"."
   }
@@ -301,7 +301,7 @@ variable "mount_target_id" {
 variable "mount_target_compartment_id" {
   type        = string
   description = "The OCID of the compartment where the mount target exists"
-  validation {    
+  validation {
     condition     = var.mount_target_compartment_id == "" || length(regexall("^ocid1.compartment.*$", var.mount_target_compartment_id)) > 0
     error_message = "WLSC-ERROR: The value for mount_target_compartment_id should be blank or start with \"ocid1.compartment.\"."
   }

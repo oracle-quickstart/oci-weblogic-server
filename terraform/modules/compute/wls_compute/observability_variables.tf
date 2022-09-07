@@ -44,3 +44,48 @@ variable "apm_agent_path" {
   description = "Directory where the APM Java Agent will be installed"
   default     = "/u01/APM"
 }
+
+variable "ocir_user" {
+  type        = string
+  description = "User for Oracle Cloud Infrastructure Registry login"
+  default     = ""
+}
+
+variable "ocir_url" {
+  type        = string
+  description = "URL for Oracle Cloud Infrastructure Registry"
+  default     = ""
+}
+
+variable "ocir_auth_token_id" {
+  type        = string
+  description = "Secrets Oracle Cloud ID (OCID) for Oracle Cloud Infrastructure Registry authorization token"
+  default     = ""
+}
+
+variable "fn_application_id" {
+  type = string
+  description = "The OCID of the function application"
+}
+
+variable "fn_repo_path" {
+  type = string
+  description = "The path of the function repository"
+}
+
+variable "use_autoscaling" {
+  type = string
+  // Possible values are None, Metric
+  description = "Set the autoscaling values to None or Metric"
+  default     = "None"
+}
+
+variable "scalein_notification_topic_id" {
+  type = string
+  description = "The OCID of the notification topic for scale in operation"
+}
+
+variable "scaleout_notification_topic_id" {
+  type = string
+  description = "The OCID of the notification topic for scale out operation"
+}

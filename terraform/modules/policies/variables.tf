@@ -28,6 +28,15 @@ variable "network_compartment_id" {
   }
 }
 
+variable "fss_compartment_id" {
+  type        = string
+  description = "The OCID of the compartment where the FSS resources are located"
+  validation {
+    condition     = length(regexall("^ocid1.compartment.*$", var.fss_compartment_id)) > 0
+    error_message = "WLSC-ERROR: The value for fss_compartment_id should start with \"ocid1.compartment.\"."
+  }
+}
+
 variable "vcn_id" {
   type        = string
   description = "The OCID of the VCN where the WebLogic VMs are located"
@@ -132,4 +141,17 @@ variable "use_apm_service" {
 variable "apm_domain_compartment_id" {
   type        = string
   description = "The OCID of the compartment of the APM domain"
+}
+
+variable "add_fss" {
+  type        = bool
+  description = "Add file system storage to WebLogic Server instances"
+  default     = false
+}
+
+variable "use_autoscaling" {
+  type = string
+  // Possible values are None, Metric
+  description = "Set the autoscaling values to None or Metric"
+  default     = "None"
 }

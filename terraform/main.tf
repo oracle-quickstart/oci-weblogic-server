@@ -156,6 +156,9 @@ module "policies" {
   use_oci_logging           = var.use_oci_logging
   use_apm_service           = var.use_apm_service
   apm_domain_compartment_id = local.apm_domain_compartment_id
+  use_autoscaling           = local.use_autoscaling
+  add_fss                   = var.add_fss
+  fss_compartment_id        = var.mount_target_compartment_id == "" ? var.compartment_id : var.mount_target_compartment_id
 }
 
 
@@ -330,6 +333,14 @@ module "validators" {
   apm_domain_id             = var.apm_domain_id
   apm_private_data_key_name = var.apm_private_data_key_name
 
+  use_autoscaling       = local.use_autoscaling
+  wls_metric            = var.wls_metric
+  ocir_auth_token_id    = var.ocir_auth_token_id
+  max_threshold_counter = var.max_threshold_counter
+  max_threshold_percent = var.max_threshold_percent
+  min_threshold_counter = var.min_threshold_counter
+  min_threshold_percent = var.min_threshold_percent
+
 }
 
 module "fss" {
@@ -385,6 +396,7 @@ module "observability-autoscaling" {
   compartment_id        = var.compartment_id
   metric_compartment_id = local.apm_domain_compartment_id
   service_prefix_name   = local.service_name_prefix
+  use_autoscaling       = local.use_autoscaling
   subscription_endpoint = var.notification_email
   alarm_severity        = var.alarm_severity
   min_threshold_percent = var.min_threshold_percent
@@ -486,6 +498,16 @@ module "compute" {
   apm_domain_compartment_id = local.apm_domain_compartment_id
   apm_domain_id             = var.apm_domain_id
   apm_private_data_key_name = var.apm_private_data_key_name
+
+  scalein_notification_topic_id  = element(concat(module.observability-autoscaling[*].scalein_notification_topic_id, [""]), 0)
+  scaleout_notification_topic_id = element(concat(module.observability-autoscaling[*].scaleout_notification_topic_id, [""]), 0)
+
+  ocir_auth_token_id = var.ocir_auth_token_id
+  ocir_url           = local.ocir_region_url
+  ocir_user          = local.ocir_user
+  fn_repo_path       = local.fn_repo_path
+  fn_application_id  = element(concat(module.observability-autoscaling[*].autoscaling_function_application_id, [""]), 0)
+  use_autoscaling    = local.use_autoscaling
 
   use_marketplace_image       = var.use_marketplace_image
   mp_listing_id               = var.listing_id

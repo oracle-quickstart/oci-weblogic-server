@@ -7,6 +7,8 @@ locals {
   home_region = lookup(data.oci_identity_regions.home_region.regions[0], "name")
   ad_names    = compact(data.template_file.ad_names.*.rendered)
   export_path = format("/%s", var.service_name)
+  vm_instance_image_id = var.terms_and_conditions ? var.ucm_instance_image_id : var.instance_image_id
+
 
   bastion_availability_domain = var.bastion_subnet_id != "" ? (var.use_regional_subnet ? var.wls_availability_domain_name != "" ? var.wls_availability_domain_name : local.ad_names[0] : data.oci_core_subnet.bastion_subnet[0].availability_domain) : (var.use_regional_subnet ? var.wls_availability_domain_name != "" ? var.wls_availability_domain_name : local.ad_names[0] : var.wls_availability_domain_name)
   wls_availability_domain     = var.use_regional_subnet ? (var.wls_availability_domain_name == "" ? local.ad_names[0] : var.wls_availability_domain_name) : (var.wls_subnet_id == "" ? var.wls_availability_domain_name : data.oci_core_subnet.wls_subnet[0].availability_domain)
@@ -123,5 +125,5 @@ locals {
   fn_repo_path        = "${format("%s/%s/%s", local.ocir_region_url, local.ocir_namespace, local.fn_repo_name)}"
   fn_application_name = format("%s_autoscaling_function_application", local.service_name_prefix)
 
-  apm_domain_compartment_id = var.use_apm_service ? lookup(data.oci_apm_apm_domain.apm_domain[0], "compartment_id"): ""
+  use_autoscaling = var.use_autoscaling ? "Metric" : "None"
 }
