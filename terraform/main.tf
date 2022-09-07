@@ -430,7 +430,7 @@ module "compute" {
   wls_domain_name         = format("%s_domain", local.service_name_prefix)
   wls_server_startup_args = var.wls_server_startup_args
   wls_existing_vcn_id     = var.wls_existing_vcn_id
-  wls_vcn_cidr            = module.network-vcn[0].vcn_cidr
+  wls_vcn_cidr            = var.wls_vcn_cidr != "" ? var.wls_vcn_cidr : module.network-vcn[0].vcn_cidr
   wls_version             = var.wls_version
   wls_edition             = var.wls_edition
   num_vm_instances        = var.wls_node_count
