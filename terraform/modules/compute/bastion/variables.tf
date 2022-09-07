@@ -118,3 +118,19 @@ variable "tags" {
     freeform_tags = {}
   }
 }
+
+variable "mp_listing_id" {
+  type = string
+  description = "marketplace listing id"
+}
+
+variable "mp_listing_resource_version" {
+  type = string
+  description = "marketplace listing resource version"
+}
+
+variable "use_bastion_marketplace_image" {
+  type        = bool
+  description = "Set to true to use marketplace image for bastion instance. Set to false to provide your own image using bastion_image_id"
+  default     = true
+}

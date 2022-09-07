@@ -16,7 +16,7 @@ variable "wls_existing_vcn_id" {
 variable "wls_vcn_cidr" {
   type        = string
   description = "The CIDR of the VCN where the compute instance will be created"
-  default     = ""
+  default     = "10.0.0.0/16"
 }
 
 variable "wls_vcn_name" {
@@ -143,25 +143,25 @@ variable "lb_subnet_2_name" {
 variable "lb_subnet_1_cidr" {
   type        = string
   description = "CIDR for loadbalancer subnet"
-  default     = ""
+  default     = "10.0.4.0/16"
 }
 
 variable "lb_subnet_2_cidr" {
   type        = string
   description = "CIDR for loadbalancer subnet"
-  default     = ""
+  default     = "10.0.5.0/16"
 }
 
 variable "wls_subnet_cidr" {
   type        = string
   description = "CIDR for weblogic subnet"
-  default     = ""
+  default     = "10.0.3.0/16"
 }
 
 variable "bastion_subnet_cidr" {
   type        = string
   description = "CIDR for bastion subnet"
-  default     = ""
+  default     = "10.0.6.0/16"
 }
 
 # Used in UI instead of use_regional_subnet

@@ -18,23 +18,6 @@ variable "bastion_instance_shape" {
   default     = "VM.Standard2.1"
 }
 
-variable "use_baselinux_marketplace_image" {
-  type        = bool
-  description = "Set to true to use marketplace image for bastion instance. Set to false to provide your own image using bastion_instance_image_id"
-  default     = true
-}
-
-variable "mp_baselinux_instance_image_id" {
-  type        = string
-  description = "The OCID of the marketplace image used to create bastion compute instance"
-}
-
-variable "bastion_instance_image_id" {
-  type        = string
-  description = "The OCID of the image to be used to create a bastion VM instance"
-  default     = ""
-}
-
 variable "bastion_ssh_private_key" {
   type        = string
   description = "Private ssh key for existing bastion instance"
