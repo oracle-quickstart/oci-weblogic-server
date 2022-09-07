@@ -111,4 +111,18 @@ locals {
   ) : ""
 
   apm_domain_compartment_id = var.use_apm_service ? lookup(data.oci_apm_apm_domain.apm_domain[0], "compartment_id") : ""
+
+  ocir_namespace = data.oci_objectstorage_namespace.object_namespace.namespace
+
+  ocir_user           = "${format("%s/%s", local.ocir_namespace, var.ocir_user)}"
+  region_keys         = data.oci_identity_regions.all_regions.regions.*.key
+  region_names        = data.oci_identity_regions.all_regions.regions.*.name
+  ocir_region         = var.ocir_region == "" ? lower(element(local.region_keys, index(local.region_names, lower(var.region)))) : var.ocir_region
+  ocir_region_url     = "${format("%s.ocir.io", local.ocir_region)}"
+  fn_repo_name        = format("%s_autoscaling_function_repo", lower(local.service_name_prefix))
+  fn_repo_path        = "${format("%s/%s/%s", local.ocir_region_url, local.ocir_namespace, local.fn_repo_name)}"
+  fn_application_name = format("%s_autoscaling_function_application", local.service_name_prefix)
+
+  apm_domain_compartment_id = var.use_apm_service ? lookup(data.oci_apm_apm_domain.apm_domain[0], "compartment_id"): ""
+  use_autoscaling = var.use_autoscaling ? "Metric" : "None"
 }

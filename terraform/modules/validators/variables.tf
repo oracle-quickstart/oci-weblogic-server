@@ -348,3 +348,27 @@ variable "apm_private_data_key_name" {
   type        = string
   description = "The name of the private data key used by this instance to push metrics to the Application Performance Monitoring domain"
 }
+
+variable "use_autoscaling" {
+  type        = string
+  description = "Indicating that autoscaling is enabled"
+}
+
+variable "wls_metric" {
+  type        = string
+  description = "Metric to use for triggering scaling actions"
+}
+
+variable "min_threshold_percent" {
+}
+
+variable "max_threshold_percent" {
+}
+
+variable "min_threshold_counter" {
+}
+
+variable "max_threshold_counter" {
+}
+
+variable "ocir_auth_token_id" {}

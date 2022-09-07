@@ -373,6 +373,36 @@ module "observability-common" {
   service_prefix_name = local.service_name_prefix
 }
 
+module "observability-autoscaling" {
+  source = "./modules/observability/autoscaling"
+
+  compartment_id        = local.compartment_ocid
+  metric_compartment_id = local.apm_domain_compartment_id
+  service_prefix_name   = local.service_name_prefix
+  use_autoscaling       = local.use_autoscaling
+  subscription_endpoint = var.notification_email
+  alarm_severity        = var.alarm_severity
+  min_threshold_percent = var.min_threshold_percent
+  max_threshold_percent = var.max_threshold_percent
+  min_threshold_counter = var.min_threshold_counter
+  max_threshold_counter = var.max_threshold_counter
+  wls_metric            = var.wls_metric
+  wls_subnet_id         = local.assign_weblogic_public_ip ? element(module.network-wls-public-subnet.subnet_id, 0) : element(module.network-wls-private-subnet.subnet_id, 0)
+  wls_node_count        = var.wls_node_count
+  tenancy_id          = var.tenancy_id
+
+  fn_application_name = local.fn_application_name
+  fn_repo_name        = local.fn_repo_name
+  log_group_id        = module.observability-common.log_group_id
+  create_policies     = var.create_policies
+
+  tags = {
+    defined_tags    = local.defined_tags
+    freeform_tags   = local.free_form_tags
+  }
+}
+
+
 module "compute" {
   source                 = "./modules/compute/wls_compute"
   add_loadbalancer       = var.add_load_balancer
