@@ -149,7 +149,7 @@ module "policies" {
   }
   atp_db                    = local.atp_db
   oci_db                    = local.oci_db
-  vcn_id                    = module.network-vcn[0].vcn_id
+  vcn_id                    = element(concat(module.network-vcn[*].vcn_id, [""]), 0)
   wls_existing_vcn_id       = var.wls_existing_vcn_id
   is_idcs_selected          = var.is_idcs_selected
   idcs_client_secret_id     = var.idcs_client_secret_id
@@ -166,7 +166,7 @@ module "bastion" {
   bastion_subnet_id   = var.bastion_subnet_id != "" ? var.bastion_subnet_id : module.network-bastion-subnet[0].subnet_id
 
   compartment_id      = var.compartment_id
-  instance_image_id   = var.use_bastion_marketplace_image ? var.bastion_image_id : var.local_bastion_image_id
+  instance_image_id   = var.bastion_image_id
   instance_shape      = var.bastion_instance_shape
   region              = var.region
   ssh_public_key      = var.ssh_public_key
@@ -179,6 +179,10 @@ module "bastion" {
     freeform_tags = local.free_form_tags
   }
   is_bastion_with_reserved_public_ip = var.is_bastion_with_reserved_public_ip
+
+  use_bastion_marketplace_image       = var.use_bastion_marketplace_image
+  mp_listing_id               = var.bastion_listing_id
+  mp_listing_resource_version = var.bastion_listing_resource_version
 }
 
 
@@ -374,33 +378,6 @@ module "observability-common" {
   service_prefix_name = local.service_name_prefix
 }
 
-module "bastion-image-subscription" {
-  source = "./modules/image-subscription"
-  count  = local.use_bastion_marketplace_image ? 1 : 0
-
-  compartment_id              = var.compartment_id
-  mp_listing_id               = var.bastion_listing_id
-  mp_listing_resource_version = var.bastion_listing_resource_version
-}
-
-module "image-subscription" {
-  source = "./modules/image-subscription"
-  count  = var.use_marketplace_image ? 1 : 0
-
-  compartment_id              = var.compartment_id
-  mp_listing_id               = var.listing_id
-  mp_listing_resource_version = var.listing_resource_version
-}
-
-module "ucm-image-subscription" {
-  source = "./modules/image-subscription"
-  count  = var.use_marketplace_image ? 1 : 0
-
-  compartment_id              = var.compartment_id
-  mp_listing_id               = var.ucm_listing_id
-  mp_listing_resource_version = var.ucm_listing_resource_version
-}
-
 module "compute" {
   source                 = "./modules/compute/wls_compute"
   add_loadbalancer       = var.add_load_balancer
@@ -414,7 +391,7 @@ module "compute" {
   wls_ocpu_count         = var.wls_ocpu_count
   network_compartment_id = var.network_compartment_id
   wls_subnet_cidr        = local.wls_subnet_cidr
-  subnet_id              = local.assign_weblogic_public_ip ? module.network-wls-public-subnet[0].subnet_id : module.network-wls-private-subnet[0].subnet_id
+  subnet_id              = local.assign_weblogic_public_ip ? (var.wls_subnet_id != "" ? var.wls_subnet_id : element(concat(module.network-wls-public-subnet[*].subnet_id, [""]), 0)) : (var.wls_subnet_id != "" ? var.wls_subnet_id : element(concat(module.network-wls-private-subnet[*].subnet_id, [""]), 0))
   wls_subnet_id          = var.wls_subnet_id
   region                 = var.region
   ssh_public_key         = var.ssh_public_key
@@ -448,9 +425,9 @@ module "compute" {
   lbip = local.lb_ip
 
   add_fss     = var.add_fss
-  mount_ip    = module.fss[0].mount_ip
+  mount_ip    = element(concat(module.fss[*].mount_ip, [""]), 0)
   mount_path  = var.mount_path
-  export_path = var.existing_export_path_id != "" ? data.oci_file_storage_exports.export[0].exports[0].path : module.fss[0].export_path
+  export_path = var.existing_export_path_id != "" ? element(concat(data.oci_file_storage_exports.export[*].exports[0].path, [""]), 0) : element(concat(module.fss[*].export_path, [""]), 0)
 
   db_existing_vcn_add_seclist = var.ocidb_existing_vcn_add_seclist
   jrf_parameters = {
@@ -479,6 +456,10 @@ module "compute" {
   apm_domain_compartment_id = local.apm_domain_compartment_id
   apm_domain_id             = var.apm_domain_id
   apm_private_data_key_name = var.apm_private_data_key_name
+
+  use_marketplace_image       = var.use_marketplace_image
+  mp_listing_id               = var.listing_id
+  mp_listing_resource_version = var.listing_resource_version
 
   tags = {
     defined_tags    = local.defined_tags

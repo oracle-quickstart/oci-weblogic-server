@@ -111,6 +111,4 @@ locals {
   ) : ""
 
   apm_domain_compartment_id = var.use_apm_service ? lookup(data.oci_apm_apm_domain.apm_domain[0], "compartment_id") : ""
-
-  use_bastion_marketplace_image = (!local.assign_weblogic_public_ip && var.is_bastion_instance_required) || local.is_vcn_peering ? var.use_bastion_marketplace_image : false
 }
