@@ -21,17 +21,3 @@ resource "oci_core_app_catalog_subscription" "mp_image_subscription" {
     create = "20m"
   }
 }
-
-# Gets the partner image subscription
-data "oci_core_app_catalog_subscriptions" "mp_image_subscription" {
-  #Required
-  compartment_id = var.compartment_id
-
-  #Optional
-  listing_id = var.mp_listing_id
-
-  filter {
-    name = "listing_resource_version"
-    values = [var.mp_listing_resource_version]
-  }
-}

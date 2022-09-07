@@ -18,12 +18,6 @@ variable "bastion_instance_shape" {
   default     = "VM.Standard2.1"
 }
 
-variable "bastion_instance_image_id" {
-  type        = string
-  description = "The OCID of the image to be used to create a bastion VM instance"
-  default     = ""
-}
-
 variable "bastion_ssh_private_key" {
   type        = string
   description = "Private ssh key for existing bastion instance"

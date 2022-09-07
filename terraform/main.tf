@@ -162,7 +162,7 @@ module "bastion" {
   availability_domain = local.bastion_availability_domain
   bastion_subnet_id   = var.bastion_subnet_id # TODO : implement case where a new subnet is created
   compartment_id      = var.compartment_id
-  instance_image_id   = var.use_baselinux_marketplace_image ? var.mp_baselinux_instance_image_id : var.bastion_instance_image_id
+  instance_image_id   = var.bastion_image_id
   instance_shape      = var.bastion_instance_shape
   region              = var.region
   ssh_public_key      = var.ssh_public_key
@@ -330,13 +330,13 @@ module "observability-common" {
   service_prefix_name = local.service_name_prefix
 }
 
-module "baselinux-image-subscription" {
+module "bastion-image-subscription" {
   source = "./modules/image-subscription"
-  count  = local.use_baselinux_marketplace_image ? 1 : 0
+  count  = local.use_bastion_marketplace_image ? 1 : 0
 
   compartment_id              = var.compartment_id
-  mp_listing_id               = var.mp_baselinux_listing_id
-  mp_listing_resource_version = var.mp_baselinux_listing_resource_version
+  mp_listing_id               = var.bastion_listing_id
+  mp_listing_resource_version = var.bastion_listing_resource_version
 }
 
 module "image-subscription" {
@@ -344,8 +344,8 @@ module "image-subscription" {
   count  = var.use_marketplace_image ? 1 : 0
 
   compartment_id              = var.compartment_id
-  mp_listing_id               = var.mp_listing_id
-  mp_listing_resource_version = var.mp_listing_resource_version
+  mp_listing_id               = var.listing_id
+  mp_listing_resource_version = var.listing_resource_version
 }
 
 module "ucm-image-subscription" {
@@ -353,8 +353,8 @@ module "ucm-image-subscription" {
   count  = var.use_marketplace_image ? 1 : 0
 
   compartment_id              = var.compartment_id
-  mp_listing_id               = var.mp_ucm_listing_id
-  mp_listing_resource_version = var.mp_ucm_listing_resource_version
+  mp_listing_id               = var.ucm_listing_id
+  mp_listing_resource_version = var.ucm_listing_resource_version
 }
 
 module "compute" {
