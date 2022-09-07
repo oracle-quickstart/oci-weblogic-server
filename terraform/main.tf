@@ -391,7 +391,7 @@ module "compute" {
   wls_ocpu_count         = var.wls_ocpu_count
   network_compartment_id = var.network_compartment_id
   wls_subnet_cidr        = local.wls_subnet_cidr
-  subnet_id = var.wls_subnet_id != "" ? var.wls_subnet_id : local.assign_weblogic_public_ip ? element(concat(module.network-wls-public-subnet[*].subnet_id, [""]), 0) : element(concat(module.network-wls-private-subnet[*].subnet_id, [""]), 0)
+  subnet_id              = var.wls_subnet_id != "" ? var.wls_subnet_id : local.assign_weblogic_public_ip ? element(concat(module.network-wls-public-subnet[*].subnet_id, [""]), 0) : element(concat(module.network-wls-private-subnet[*].subnet_id, [""]), 0)
   wls_subnet_id          = var.wls_subnet_id
   region                 = var.region
   ssh_public_key         = var.ssh_public_key
