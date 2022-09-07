@@ -14,6 +14,12 @@ variable "bastion_image_id" {
   default     = ""
 }
 
+variable "local_bastion_image_id" {
+  type        = string
+  description = "The OCID of the bastion image"
+  default     = ""
+}
+
 variable "bastion_listing_id" {
   type        = string
   description = "The OCID of the marketplace bastion image listing"

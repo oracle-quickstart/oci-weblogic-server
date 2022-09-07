@@ -70,9 +70,62 @@ data "oci_core_service_gateways" "service_gateways" {
   vcn_id = local.vcn_id
 }
 
+data "oci_core_subnet" "mount_target_subnet" {
+  count = var.mount_target_subnet_id == "" ? 0 : 1
+
+  #Required
+  subnet_id = var.mount_target_subnet_id
+}
+
+data "oci_file_storage_file_systems" "file_systems" {
+  count = var.existing_fss_id != "" ? 1 : 0
+
+  #Required
+  availability_domain = var.fss_availability_domain
+  compartment_id      = var.fss_compartment_id
+
+  id = var.existing_fss_id
+}
+
+data "oci_file_storage_mount_targets" "mount_targets" {
+  count = var.mount_target_id != "" ? 1 : 0
+
+  #Required
+  availability_domain = var.fss_availability_domain
+  compartment_id      = var.mount_target_compartment_id
+
+  id = var.mount_target_id
+}
+
+
+data "oci_file_storage_exports" "export" {
+  count = var.existing_fss_id != "" ? 1 : 0
+  id    = var.existing_export_path_id
+}
+
+data "oci_file_storage_mount_targets" "mount_target_by_export_set" {
+  count = var.existing_fss_id != "" ? 1 : 0
+  #Required
+  availability_domain = var.fss_availability_domain
+  compartment_id      = var.compartment_id
+  export_set_id       = data.oci_file_storage_exports.export[0].export_set_id
+}
+
+data "oci_core_private_ip" "mount_target_private_ip" {
+  count = var.existing_fss_id != "" ? 1 : 0
+  #Required
+  private_ip_id = data.oci_file_storage_mount_targets.mount_target_by_export_set[0].mount_targets[0].private_ip_ids[0]
+}
+
 data "oci_apm_apm_domain" "apm_domain" {
   count = var.use_apm_service ? 1 : 0
 
   #Required
   apm_domain_id = var.apm_domain_id
+}
+
+data "oci_core_vcn" "wls_vcn" {
+  count = var.wls_existing_vcn_id != "" ? 1 : 0
+  #Required
+  vcn_id = var.wls_existing_vcn_id
 }

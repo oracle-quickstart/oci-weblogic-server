@@ -122,6 +122,12 @@ variable "mount_target_subnet_id" {
   default     = ""
 }
 
+variable "mount_target_subnet_cidr" {
+  type        = string
+  description = "CIDR value of  the subnet to be used for FSS mount target"
+  default     = ""
+}
+
 variable "lb_subnet_1_name" {
   type        = string
   description = "OCID for loadbalancer subnet"

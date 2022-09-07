@@ -51,16 +51,19 @@ module "network-vcn-config" {
   existing_bastion_instance_id = var.existing_bastion_instance_id
   vcn_cidr                     = element(concat(module.network-vcn.*.vcn_cidr, tolist([""])), 0)
   existing_mt_subnet_id        = var.mount_target_subnet_id
-  existing_service_gateway_ids = data.oci_core_service_gateways.service_gateways.service_gateways.*.id
-  existing_nat_gateway_ids     = data.oci_core_nat_gateways.nat_gateways.nat_gateways.*.id
+  existing_service_gateway_ids = var.wls_vcn_name == "" ? [] : data.oci_core_service_gateways.service_gateways.service_gateways.*.id
+  existing_nat_gateway_ids     = var.wls_vcn_name == "" ? [] : data.oci_core_nat_gateways.nat_gateways.nat_gateways.*.id
   create_nat_gateway           = var.is_idcs_selected && length(data.oci_core_nat_gateways.nat_gateways.*.id) == 0
+  create_service_gateway       = length(data.oci_core_nat_gateways.nat_gateways.*.id) > 0
   lb_destination_cidr          = var.is_lb_private ? var.bastion_subnet_cidr : "0.0.0.0/0"
+  add_fss                      = var.add_fss
 
   tags = {
     defined_tags  = local.defined_tags
     freeform_tags = local.free_form_tags
   }
 }
+
 
 /* Create primary subnet for Load balancer only */
 module "network-lb-subnet-1" {
@@ -146,7 +149,7 @@ module "policies" {
   }
   atp_db                    = local.atp_db
   oci_db                    = local.oci_db
-  vcn_id                    = var.wls_existing_vcn_id # TODO: add condition to include new VCN when nwe VCN is supported
+  vcn_id                    = module.network-vcn[0].vcn_id
   wls_existing_vcn_id       = var.wls_existing_vcn_id
   is_idcs_selected          = var.is_idcs_selected
   idcs_client_secret_id     = var.idcs_client_secret_id
@@ -160,9 +163,10 @@ module "bastion" {
   source              = "./modules/compute/bastion"
   count               = (var.is_bastion_instance_required && var.existing_bastion_instance_id == "") ? 1 : 0
   availability_domain = local.bastion_availability_domain
-  bastion_subnet_id   = var.bastion_subnet_id # TODO : implement case where a new subnet is created
+  bastion_subnet_id   = var.bastion_subnet_id != "" ? var.bastion_subnet_id : module.network-bastion-subnet[0].subnet_id
+
   compartment_id      = var.compartment_id
-  instance_image_id   = var.bastion_image_id
+  instance_image_id   = var.use_bastion_marketplace_image ? var.bastion_image_id : var.local_bastion_image_id
   instance_shape      = var.bastion_instance_shape
   region              = var.region
   ssh_public_key      = var.ssh_public_key
@@ -229,6 +233,26 @@ module "network-wls-public-subnet" {
   }
 }
 
+/* Create private subnet for FSS */
+module "network-mount-target-private-subnet" {
+  source            = "./modules/network/subnet"
+  count             = var.add_existing_mount_target ? 0 : (var.add_fss && var.mount_target_subnet_id == "" ? 1 : 0)
+  compartment_id    = local.network_compartment_id
+  vcn_id            = local.vcn_id
+  security_list_ids = module.network-vcn-config[0].fss_security_list_id
+
+  dhcp_options_id = module.network-vcn-config[0].dhcp_options_id
+  route_table_id  = module.network-vcn-config[0].service_gateway_route_table_id
+  subnet_name     = "${local.service_name_prefix}-mt-subnet"
+  dns_label       = format("%s-%s", "mt-sbn", substr(strrev(var.service_name), 0, 7))
+  cidr_block      = local.mount_target_subnet_cidr
+
+  tags = {
+    defined_tags  = local.defined_tags
+    freeform_tags = local.free_form_tags
+  }
+}
+
 module "validators" {
   source = "./modules/validators"
 
@@ -284,6 +308,16 @@ module "validators" {
 
   is_lb_private = var.is_lb_private
 
+  add_fss                          = var.add_fss
+  fss_availability_domain          = (var.add_existing_fss && var.add_existing_mount_target) ? data.oci_file_storage_file_systems.file_systems[0].file_systems[0].availability_domain : ""
+  mount_target_subnet_id           = var.mount_target_subnet_id
+  mount_target_subnet_cidr         = local.mount_target_subnet_cidr
+  mount_target_compartment_id      = var.mount_target_compartment_id
+  mount_target_id                  = var.mount_target_id
+  existing_fss_id                  = var.existing_fss_id
+  mount_target_availability_domain = var.add_existing_mount_target ? data.oci_file_storage_mount_targets.mount_targets[0].mount_targets[0].availability_domain : ""
+  fss_compartment_id               = var.fss_compartment_id
+
   create_policies  = var.create_policies
   use_oci_logging  = var.use_oci_logging
   dynamic_group_id = var.dynamic_group_id
@@ -296,12 +330,22 @@ module "validators" {
 
 module "fss" {
   source = "./modules/fss"
-  count  = var.add_fss ? 1 : 0
+  count  = var.existing_fss_id == "" && var.add_fss ? 1 : 0
 
-  compartment_id          = var.fss_compartment_id
-  availability_domain     = var.fss_availability_domain
-  existing_fss_id         = var.existing_fss_id
-  existing_export_path_id = var.existing_export_path_id
+  compartment_id      = var.fss_compartment_id
+  availability_domain = var.use_regional_subnet ? var.fss_availability_domain : data.oci_core_subnet.mount_target_subnet[0].availability_domain
+
+  vcn_id                 = local.vcn_id
+  vcn_cidr               = var.wls_vcn_cidr != "" ? var.wls_vcn_cidr : data.oci_core_vcn.wls_vcn[0].cidr_block
+  resource_name_prefix   = var.service_name
+  export_path            = local.export_path
+  mount_target_id        = var.mount_target_id
+  mount_target_subnet_id = var.use_existing_subnets ? var.mount_target_subnet_id : module.network-mount-target-private-subnet[0].subnet_id
+
+  tags = {
+    defined_tags  = local.defined_tags
+    freeform_tags = local.free_form_tags
+  }
 }
 
 module "load-balancer" {
@@ -369,7 +413,8 @@ module "compute" {
   instance_shape         = var.instance_shape
   wls_ocpu_count         = var.wls_ocpu_count
   network_compartment_id = var.network_compartment_id
-  subnet_id              = var.wls_subnet_id
+  wls_subnet_cidr        = local.wls_subnet_cidr
+  subnet_id              = local.assign_weblogic_public_ip ? module.network-wls-public-subnet[0].subnet_id : module.network-wls-private-subnet[0].subnet_id
   wls_subnet_id          = var.wls_subnet_id
   region                 = var.region
   ssh_public_key         = var.ssh_public_key
@@ -385,8 +430,7 @@ module "compute" {
   wls_domain_name         = format("%s_domain", local.service_name_prefix)
   wls_server_startup_args = var.wls_server_startup_args
   wls_existing_vcn_id     = var.wls_existing_vcn_id
-  wls_vcn_cidr            = var.wls_vcn_cidr
-  wls_subnet_cidr         = "" # TODO add variable to set this when support for new VCN and subnet is added
+  wls_vcn_cidr            = module.network-vcn[0].vcn_cidr
   wls_version             = var.wls_version
   wls_edition             = var.wls_edition
   num_vm_instances        = var.wls_node_count
@@ -404,9 +448,9 @@ module "compute" {
   lbip = local.lb_ip
 
   add_fss     = var.add_fss
-  mount_ip    = element(coalescelist(module.fss[*].nfs_mount_ip, [""]), 0)
+  mount_ip    = module.fss[0].mount_ip
   mount_path  = var.mount_path
-  export_path = element(coalescelist(module.fss[*].nfs_export_path, [""]), 0)
+  export_path = var.existing_export_path_id != "" ? data.oci_file_storage_exports.export[0].exports[0].path : module.fss[0].export_path
 
   db_existing_vcn_add_seclist = var.ocidb_existing_vcn_add_seclist
   jrf_parameters = {
