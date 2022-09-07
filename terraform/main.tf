@@ -180,9 +180,9 @@ module "bastion" {
   }
   is_bastion_with_reserved_public_ip = var.is_bastion_with_reserved_public_ip
 
-  use_bastion_marketplace_image       = var.use_bastion_marketplace_image
-  mp_listing_id               = var.bastion_listing_id
-  mp_listing_resource_version = var.bastion_listing_resource_version
+  use_bastion_marketplace_image = var.use_bastion_marketplace_image
+  mp_listing_id                 = var.bastion_listing_id
+  mp_listing_resource_version   = var.bastion_listing_resource_version
 }
 
 
