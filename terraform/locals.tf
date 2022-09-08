@@ -4,9 +4,9 @@
 locals {
   service_name_prefix = replace(var.service_name, "/[^a-zA-Z0-9]/", "")
 
-  home_region = lookup(data.oci_identity_regions.home_region.regions[0], "name")
-  ad_names    = compact(data.template_file.ad_names.*.rendered)
-  export_path = format("/%s", var.service_name)
+  home_region          = lookup(data.oci_identity_regions.home_region.regions[0], "name")
+  ad_names             = compact(data.template_file.ad_names.*.rendered)
+  export_path          = format("/%s", var.service_name)
   vm_instance_image_id = var.terms_and_conditions ? var.ucm_instance_image_id : var.instance_image_id
 
 
@@ -52,7 +52,7 @@ locals {
 
   //TODO: Below statement is not working so temp fix to un block for now.
   //new_lb_ip                  = local.add_existing_load_balancer ? "" : element(element(coalescelist(module.load-balancer[0].wls_loadbalancer_ip_addresses, [""]), 0), 0)
-  new_lb_ip = ""
+  new_lb_ip                  = ""
   new_lb_id                  = element(concat(module.load-balancer[*].wls_loadbalancer_id, [""]), 0)
   existing_lb_ip             = local.add_existing_load_balancer ? local.existing_lb_object_as_list[0].ip_addresses[0] : ""
   existing_lb_object_as_list = [for lb in data.oci_load_balancer_load_balancers.existing_load_balancers_data_source.load_balancers[*] : lb if lb.id == var.existing_load_balancer_id]
@@ -118,13 +118,13 @@ locals {
 
   ocir_namespace = data.oci_objectstorage_namespace.object_namespace.namespace
 
-  ocir_user           = "${format("%s/%s", local.ocir_namespace, var.ocir_user)}"
+  ocir_user           = format("%s/%s", local.ocir_namespace, var.ocir_user)
   region_keys         = data.oci_identity_regions.all_regions.regions.*.key
   region_names        = data.oci_identity_regions.all_regions.regions.*.name
   ocir_region         = var.ocir_region == "" ? lower(element(local.region_keys, index(local.region_names, lower(var.region)))) : var.ocir_region
-  ocir_region_url     = "${format("%s.ocir.io", local.ocir_region)}"
+  ocir_region_url     = format("%s.ocir.io", local.ocir_region)
   fn_repo_name        = format("%s_autoscaling_function_repo", lower(local.service_name_prefix))
-  fn_repo_path        = "${format("%s/%s/%s", local.ocir_region_url, local.ocir_namespace, local.fn_repo_name)}"
+  fn_repo_path        = format("%s/%s/%s", local.ocir_region_url, local.ocir_namespace, local.fn_repo_name)
   fn_application_name = format("%s_autoscaling_function_application", local.service_name_prefix)
 
   use_autoscaling = var.use_autoscaling ? "Metric" : "None"

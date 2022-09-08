@@ -69,7 +69,7 @@ variable "ocir_auth_token_id" {
 }
 
 variable "terms_and_conditions" {
-  type = bool
-  default = false
+  type        = bool
+  default     = false
   description = "Terms and conditions for user to accept Oracle WebLogic Server Enterprise Edition UCM or Oracle WebLogic Suite UCM license agreement"
 }

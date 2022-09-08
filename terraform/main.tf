@@ -159,7 +159,7 @@ module "policies" {
   use_autoscaling           = local.use_autoscaling
   add_fss                   = var.add_fss
   fss_compartment_id        = var.mount_target_compartment_id == "" ? var.compartment_id : var.mount_target_compartment_id
-  add_load_balancer          = var.add_load_balancer
+  add_load_balancer         = var.add_load_balancer
 }
 
 
@@ -373,8 +373,8 @@ module "load-balancer" {
   lb_max_bandwidth         = var.lb_max_bandwidth
   lb_min_bandwidth         = var.lb_min_bandwidth
   lb_name                  = "${local.service_name_prefix}-lb"
-  lb_subnet_1_id          = var.lb_subnet_1_id != "" ? [var.lb_subnet_1_id] : [module.network-lb-subnet-1[0].subnet_id]
-  lb_subnet_2_id          = var.lb_subnet_2_id != "" ? [var.lb_subnet_2_id] : element(concat([module.network-lb-subnet-2[*].subnet_id], [""]), 0)
+  lb_subnet_1_id           = var.lb_subnet_1_id != "" ? [var.lb_subnet_1_id] : [module.network-lb-subnet-1[0].subnet_id]
+  lb_subnet_2_id           = var.lb_subnet_2_id != "" ? [var.lb_subnet_2_id] : element(concat([module.network-lb-subnet-2[*].subnet_id], [""]), 0)
 
   tags = {
     defined_tags  = local.defined_tags
@@ -405,9 +405,9 @@ module "observability-autoscaling" {
   min_threshold_counter = var.min_threshold_counter
   max_threshold_counter = var.max_threshold_counter
   wls_metric            = var.wls_metric
-  wls_subnet_id              = var.wls_subnet_id != "" ? var.wls_subnet_id : local.assign_weblogic_public_ip ? element(concat(module.network-wls-public-subnet[*].subnet_id, [""]), 0) : element(concat(module.network-wls-private-subnet[*].subnet_id, [""]), 0)
+  wls_subnet_id         = var.wls_subnet_id != "" ? var.wls_subnet_id : local.assign_weblogic_public_ip ? element(concat(module.network-wls-public-subnet[*].subnet_id, [""]), 0) : element(concat(module.network-wls-private-subnet[*].subnet_id, [""]), 0)
   wls_node_count        = var.wls_node_count
-  tenancy_id          = var.tenancy_id
+  tenancy_id            = var.tenancy_id
 
   fn_application_name = local.fn_application_name
   fn_repo_name        = local.fn_repo_name
@@ -415,8 +415,8 @@ module "observability-autoscaling" {
   create_policies     = var.create_policies
 
   tags = {
-    defined_tags    = local.defined_tags
-    freeform_tags   = local.free_form_tags
+    defined_tags  = local.defined_tags
+    freeform_tags = local.free_form_tags
   }
 }
 
@@ -500,7 +500,6 @@ module "compute" {
   apm_domain_id             = var.apm_domain_id
   apm_private_data_key_name = var.apm_private_data_key_name
 
-<<<<<<< HEAD
   scalein_notification_topic_id  = element(concat(module.observability-autoscaling[*].scalein_notification_topic_id, [""]), 0)
   scaleout_notification_topic_id = element(concat(module.observability-autoscaling[*].scaleout_notification_topic_id, [""]), 0)
 
@@ -511,8 +510,6 @@ module "compute" {
   fn_application_id  = element(concat(module.observability-autoscaling[*].autoscaling_function_application_id, [""]), 0)
   use_autoscaling    = local.use_autoscaling
 
-=======
->>>>>>> master
   use_marketplace_image       = var.use_marketplace_image
   mp_listing_id               = var.listing_id
   mp_listing_resource_version = var.listing_resource_version
