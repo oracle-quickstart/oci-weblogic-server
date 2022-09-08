@@ -6,7 +6,7 @@ locals {
   invalid_use_autoscaling_value_msg = "WLSC-ERROR: The value for use_autoscaling=[${var.use_autoscaling}] is not valid. The permissible values are [None, Metric]"
   validate_use_autoscaling_value    = local.invalid_use_autoscaling_value ? local.validators_msg_map[local.invalid_use_autoscaling_value_msg] : null
 
-  invalid_wls_metric                  = var.use_autoscaling == "Metric" ? !contains(list("CPU Load", "Used Heap Percent", "Stuck Threads", "Queue Length"), var.wls_metric) : false
+  invalid_wls_metric                  = var.use_autoscaling == "Metric" ? !contains(tolist(["CPU Load", "Used Heap Percent", "Stuck Threads", "Queue Length"]), var.wls_metric) : false
   invalid_wls_metric_msg              = "WLSC-ERROR: The value for wls_metric=[${var.wls_metric}] is not valid. The permissible values are [CPU Load, Used Heap Percent, Stuck Threads, Queue Length]"
   validate_wls_metric_for_autoscaling = local.invalid_wls_metric ? local.validators_msg_map[local.invalid_wls_metric_msg] : null
 
