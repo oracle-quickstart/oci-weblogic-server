@@ -341,7 +341,6 @@ module "validators" {
   max_threshold_percent = var.max_threshold_percent
   min_threshold_counter = var.min_threshold_counter
   min_threshold_percent = var.min_threshold_percent
-
 }
 
 module "fss" {
@@ -501,6 +500,7 @@ module "compute" {
   apm_domain_id             = var.apm_domain_id
   apm_private_data_key_name = var.apm_private_data_key_name
 
+<<<<<<< HEAD
   scalein_notification_topic_id  = element(concat(module.observability-autoscaling[*].scalein_notification_topic_id, [""]), 0)
   scaleout_notification_topic_id = element(concat(module.observability-autoscaling[*].scaleout_notification_topic_id, [""]), 0)
 
@@ -511,6 +511,8 @@ module "compute" {
   fn_application_id  = element(concat(module.observability-autoscaling[*].autoscaling_function_application_id, [""]), 0)
   use_autoscaling    = local.use_autoscaling
 
+=======
+>>>>>>> master
   use_marketplace_image       = var.use_marketplace_image
   mp_listing_id               = var.listing_id
   mp_listing_resource_version = var.listing_resource_version
