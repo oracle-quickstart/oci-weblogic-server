@@ -15,7 +15,7 @@ resource "oci_logging_log" "wlsc_autoscaling_log" {
     source {
       #Required
       category    = "invoke"
-      resource    =  oci_functions_application.wlsc_autoscaling_function_application[count.index].id
+      resource    =  oci_functions_application.wlsc_autoscaling_function_application.id
       service     = "functions"
       source_type = "OCISERVICE"
     }

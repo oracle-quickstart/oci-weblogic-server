@@ -7,7 +7,7 @@ resource "oci_monitoring_alarm" "wlsc_scaleout_monitoring_alarm" {
   #Required
   compartment_id        = var.compartment_id
   body                  = local.alarm_body[format("%s ScaleOut", var.wls_metric)]
-  destinations          = formatlist(oci_ons_notification_topic.wlsc_scaleout_notification_topic[count.index].id)
+  destinations          = formatlist(oci_ons_notification_topic.wlsc_scaleout_notification_topic.id)
   display_name          = format("%s_scaleout_monitoring_alarm", var.service_prefix_name)
   is_enabled            = var.create_policies
   metric_compartment_id = var.metric_compartment_id
@@ -34,7 +34,7 @@ resource "oci_monitoring_alarm" "wlsc_scalein_monitoring_alarm" {
   #Required
   compartment_id        = var.compartment_id
   body                  = local.alarm_body[format("%s ScaleOut", var.wls_metric)]
-  destinations          = formatlist(oci_ons_notification_topic.wlsc_scalein_notification_topic[count.index].id)
+  destinations          = formatlist(oci_ons_notification_topic.wlsc_scalein_notification_topic.id)
   display_name          = format("%s_scalein_monitoring_alarm", var.service_prefix_name)
   is_enabled            = var.create_policies
   metric_compartment_id = var.metric_compartment_id
