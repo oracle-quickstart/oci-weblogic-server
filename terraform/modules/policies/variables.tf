@@ -32,8 +32,8 @@ variable "vcn_id" {
   type        = string
   description = "The OCID of the VCN where the WebLogic VMs are located"
   validation {
-    condition     = length(regexall("^ocid1.vcn.*$", var.vcn_id)) > 0
-    error_message = "WLSC-ERROR: The value for vcn_id should start with \"ocid1.vcn.\"."
+    condition     = var.vcn_id == "" || length(regexall("^ocid1.vcn.*$", var.vcn_id)) > 0
+    error_message = "WLSC-ERROR: The value for vcn_id should be blank or start with \"ocid1.vcn.\"."
   }
 }
 

@@ -245,3 +245,19 @@ variable "mode" {
     error_message = "WLSC-ERROR: Allowed values for mode are PROD, DEV."
   }
 }
+
+variable "mp_listing_id" {
+  type = string
+  description = "marketplace listing id"
+}
+
+variable "mp_listing_resource_version" {
+  type = string
+  description = "marketplace listing resource version"
+}
+
+variable "use_marketplace_image" {
+  type        = bool
+  description = "Set to true if the image subscription is used for provisioning"
+  default     = true
+}
