@@ -4,19 +4,13 @@
 
 variable "use_bastion_marketplace_image" {
   type        = bool
-  description = "Set to true to use marketplace image for bastion instance. Set to false to provide your own image using bastion_image_id"
+  description = "Set to true if using a marketplace image, to create the marketplace subscriptions"
   default     = true
 }
 
 variable "bastion_image_id" {
   type        = string
   description = "The OCID of the marketplace bastion image"
-  default     = ""
-}
-
-variable "local_bastion_image_id" {
-  type        = string
-  description = "The OCID of the bastion image"
   default     = ""
 }
 
