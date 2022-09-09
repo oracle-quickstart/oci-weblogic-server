@@ -74,10 +74,9 @@ variable "fn_repo_path" {
 }
 
 variable "use_autoscaling" {
-  type = string
-  // Possible values are None, Metric
-  description = "Set the autoscaling values to None or Metric"
-  default     = "None"
+  type        = bool
+  description = "Indicating that autoscaling is enabled"
+  default     = false
 }
 
 variable "scalein_notification_topic_id" {

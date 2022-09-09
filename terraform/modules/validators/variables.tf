@@ -350,8 +350,9 @@ variable "apm_private_data_key_name" {
 }
 
 variable "use_autoscaling" {
-  type        = string
+  type        = bool
   description = "Indicating that autoscaling is enabled"
+  default     = false
 }
 
 variable "wls_metric" {
@@ -360,15 +361,31 @@ variable "wls_metric" {
 }
 
 variable "min_threshold_percent" {
+  type        = number
+  description = "Minimum threshold in percentage for the metric"
+  default     = 0
 }
 
 variable "max_threshold_percent" {
+  type        = number
+  description = "Maximum threshold in percentage for the metric"
+  default     = 0
 }
 
 variable "min_threshold_counter" {
+  type        = number
+  description = "Minimum threshold count for the metric"
+  default     = 0
 }
 
 variable "max_threshold_counter" {
+  type        = number
+  description = "Maximum threshold count for the metric"
+  default     = 0
 }
 
-variable "ocir_auth_token_id" {}
+variable "ocir_auth_token_id" {
+  type        = string
+  description = "Secrets Oracle Cloud ID (OCID) for Oracle Cloud Infrastructure Registry authorization token"
+  default     = ""
+}

@@ -508,7 +508,7 @@ module "compute" {
   ocir_user          = local.ocir_user
   fn_repo_path       = local.fn_repo_path
   fn_application_id  = element(concat(module.observability-autoscaling[*].autoscaling_function_application_id, [""]), 0)
-  use_autoscaling    = var.use_autoscaling ? "Metric" : "None"
+  use_autoscaling    = var.use_autoscaling
 
   use_marketplace_image       = var.use_marketplace_image
   mp_listing_id               = var.listing_id

@@ -187,6 +187,7 @@ module "wls-instances" {
       apm_private_data_key_name = var.apm_private_data_key_name
       apm_agent_installer_path  = var.apm_agent_installer_path
       apm_agent_path            = var.apm_agent_path
+      use_autoscaling           = var.use_autoscaling ? "Metric" : "None"
     }
 
     are_legacy_imds_endpoints_disabled = var.disable_legacy_metadata_endpoint
