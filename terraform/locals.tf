@@ -111,4 +111,6 @@ locals {
   ) : ""
 
   apm_domain_compartment_id = var.use_apm_service ? lookup(data.oci_apm_apm_domain.apm_domain[0], "compartment_id") : ""
+
+  compute_nsg_ids = concat(module.network-compute-admin-nsg[*].nsg_id, module.network-compute-managed-nsg[*].nsg_id)
 }

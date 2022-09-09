@@ -67,3 +67,8 @@ variable "tags" {
     freeform_tags = {}
   }
 }
+
+variable "lb_nsg_id" {
+  type        = list(any)
+  description = "The list of NSG OCIDs associated with the load balancer"
+}

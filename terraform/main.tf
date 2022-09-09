@@ -64,6 +64,71 @@ module "network-vcn-config" {
   }
 }
 
+module "network-lb-nsg" {
+  source            = "./modules/network/nsg"
+  count             = local.add_existing_load_balancer ? 0 : var.add_load_balancer && var.lb_subnet_1_id == "" ? 1 : 0
+  compartment_id    = local.network_compartment_id
+  vcn_id            = local.vcn_id
+
+  nsg_name = "${local.service_name_prefix}-lb-nsg"
+
+  tags = {
+    defined_tags  = local.defined_tags
+    freeform_tags = local.free_form_tags
+  }
+}
+
+module "network-bastion-nsg" {
+  source          = "./modules/network/nsg"
+  count           = !local.assign_weblogic_public_ip && var.bastion_subnet_id == "" && var.is_bastion_instance_required && var.existing_bastion_instance_id == "" ? 1 : 0
+  compartment_id  = local.network_compartment_id
+  vcn_id          = local.vcn_id
+  nsg_name        = "${local.service_name_prefix}-bastion-nsg"
+
+  tags = {
+    defined_tags  = local.defined_tags
+    freeform_tags = local.free_form_tags
+  }
+}
+
+module "network-mount-target-nsg" {
+  source         = "./modules/network/nsg"
+  count          = var.add_existing_mount_target ? 0 : (var.add_fss && var.mount_target_subnet_id == "" ? 1 : 0)
+  compartment_id = var.fss_compartment_id
+  vcn_id         = local.vcn_id
+  nsg_name       = "${local.service_name_prefix}-mount-target-nsg"
+
+  tags = {
+    defined_tags  = local.defined_tags
+    freeform_tags = local.free_form_tags
+  }
+}
+
+module "network-compute-admin-nsg" {
+  source          = "./modules/network/nsg"
+  count           = var.wls_subnet_cidr != "" ?  1 : 0
+  compartment_id  = local.network_compartment_id
+  vcn_id          = local.vcn_id
+  nsg_name        = "${local.service_name_prefix}-admin-nsg"
+
+  tags = {
+    defined_tags  = local.defined_tags
+    freeform_tags = local.free_form_tags
+  }
+}
+
+module "network-compute-managed-nsg" {
+  source          = "./modules/network/nsg"
+  count           = var.wls_subnet_cidr != "" ?  1 : 0
+  compartment_id  = local.network_compartment_id
+  vcn_id          = local.vcn_id
+  nsg_name        = "${local.service_name_prefix}-managed-nsg"
+
+  tags = {
+    defined_tags  = local.defined_tags
+    freeform_tags = local.free_form_tags
+  }
+}
 
 /* Create primary subnet for Load balancer only */
 module "network-lb-subnet-1" {
@@ -179,6 +244,7 @@ module "bastion" {
     freeform_tags = local.free_form_tags
   }
   is_bastion_with_reserved_public_ip = var.is_bastion_with_reserved_public_ip
+  bastion_nsg_id = element(module.network-bastion-nsg[*].nsg_id, 0)
 }
 
 
@@ -340,7 +406,7 @@ module "fss" {
   export_path            = local.export_path
   mount_target_id        = var.mount_target_id
   mount_target_subnet_id = var.use_existing_subnets ? var.mount_target_subnet_id : module.network-mount-target-private-subnet[0].subnet_id
-
+  mount_target_nsg_id    = element(module.network-mount-target-nsg[*].nsg_id, 0)
   tags = {
     defined_tags  = local.defined_tags
     freeform_tags = local.free_form_tags
@@ -354,6 +420,7 @@ module "load-balancer" {
   compartment_id           = local.network_compartment_id
   lb_reserved_public_ip_id = compact([var.lb_reserved_public_ip_id])
   is_lb_private            = var.is_lb_private
+  lb_nsg_id                = element(module.network-lb-nsg[*].nsg_id, 0)
   lb_max_bandwidth         = var.lb_max_bandwidth
   lb_min_bandwidth         = var.lb_min_bandwidth
   lb_name                  = "${local.service_name_prefix}-lb"
@@ -390,6 +457,7 @@ module "compute" {
   wls_subnet_id          = var.wls_subnet_id
   region                 = var.region
   ssh_public_key         = var.ssh_public_key
+  compute_nsg_ids        = local.compute_nsg_ids
 
   tenancy_id              = var.tenancy_id
   tf_script_version       = var.tf_script_version

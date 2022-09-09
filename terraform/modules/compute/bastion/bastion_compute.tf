@@ -16,6 +16,7 @@ resource "oci_core_instance" "wls-bastion-instance" {
     subnet_id              = var.bastion_subnet_id
     assign_public_ip       = var.is_bastion_with_reserved_public_ip ? false : true
     skip_source_dest_check = true
+    nsg_ids                = var.bastion_nsg_id
   }
 
   shape_config {

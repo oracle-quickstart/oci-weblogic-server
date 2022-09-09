@@ -107,6 +107,11 @@ variable "disable_legacy_metadata_endpoint" {
   default     = true
 }
 
+variable "bastion_nsg_id" {
+  type        = list(any)
+  description = "The list of NSG OCIDs associated with the bastion compute"
+}
+
 variable "tags" {
   type = object({
     defined_tags  = map(any),
