@@ -124,10 +124,3 @@ variable "create_policies" {
   type    = bool
   description = "Set to true if the policies need to be created"
 }
-
-variable "use_autoscaling" {
-  type = string
-  // Possible values are None, Metric
-  description = "Set the autoscaling values to None or Metric"
-  default     = "None"
-}

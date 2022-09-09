@@ -2,7 +2,6 @@
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 resource "oci_monitoring_alarm" "wlsc_scaleout_monitoring_alarm" {
-  count = length(oci_ons_notification_topic.wlsc_scaleout_notification_topic) > 0 ? 1 : 0
 
   #Required
   compartment_id        = var.compartment_id
@@ -29,7 +28,6 @@ resource "oci_monitoring_alarm" "wlsc_scaleout_monitoring_alarm" {
 }
 
 resource "oci_monitoring_alarm" "wlsc_scalein_monitoring_alarm" {
-  count = length(oci_ons_notification_topic.wlsc_scalein_notification_topic) > 0 ? 1 : 0
 
   #Required
   compartment_id        = var.compartment_id

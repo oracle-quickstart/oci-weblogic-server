@@ -156,7 +156,7 @@ module "policies" {
   use_oci_logging           = var.use_oci_logging
   use_apm_service           = var.use_apm_service
   apm_domain_compartment_id = local.apm_domain_compartment_id
-  use_autoscaling           = local.use_autoscaling
+  use_autoscaling           = var.use_autoscaling
   add_fss                   = var.add_fss
   fss_compartment_id        = var.mount_target_compartment_id == "" ? var.compartment_id : var.mount_target_compartment_id
   add_load_balancer         = var.add_load_balancer
@@ -334,7 +334,7 @@ module "validators" {
   apm_domain_id             = var.apm_domain_id
   apm_private_data_key_name = var.apm_private_data_key_name
 
-  use_autoscaling       = local.use_autoscaling
+  use_autoscaling       = var.use_autoscaling
   wls_metric            = var.wls_metric
   ocir_auth_token_id    = var.ocir_auth_token_id
   max_threshold_counter = var.max_threshold_counter
@@ -397,7 +397,6 @@ module "observability-autoscaling" {
   compartment_id        = var.compartment_id
   metric_compartment_id = local.apm_domain_compartment_id
   service_prefix_name   = local.service_name_prefix
-  use_autoscaling       = local.use_autoscaling
   subscription_endpoint = var.notification_email
   alarm_severity        = var.alarm_severity
   min_threshold_percent = var.min_threshold_percent
@@ -405,7 +404,7 @@ module "observability-autoscaling" {
   min_threshold_counter = var.min_threshold_counter
   max_threshold_counter = var.max_threshold_counter
   wls_metric            = var.wls_metric
-  wls_subnet_id         = var.wls_subnet_id != "" ? var.wls_subnet_id : local.assign_weblogic_public_ip ? element(concat(module.network-wls-public-subnet[*].subnet_id, [""]), 0) : element(concat(module.network-wls-private-subnet[*].subnet_id, [""]), 0)
+  wls_subnet_id         = element(compact(coalescelist([var.wls_subnet_id], module.network-wls-public-subnet[*].subnet_id, module.network-wls-private-subnet[*].subnet_id)), 0)
   wls_node_count        = var.wls_node_count
   tenancy_id            = var.tenancy_id
 
@@ -434,7 +433,7 @@ module "compute" {
   wls_ocpu_count         = var.wls_ocpu_count
   network_compartment_id = var.network_compartment_id
   wls_subnet_cidr        = local.wls_subnet_cidr
-  subnet_id              = var.wls_subnet_id != "" ? var.wls_subnet_id : local.assign_weblogic_public_ip ? element(concat(module.network-wls-public-subnet[*].subnet_id, [""]), 0) : element(concat(module.network-wls-private-subnet[*].subnet_id, [""]), 0)
+  subnet_id              = element(compact(coalescelist([var.wls_subnet_id], module.network-wls-public-subnet[*].subnet_id, module.network-wls-private-subnet[*].subnet_id)), 0)
   wls_subnet_id          = var.wls_subnet_id
   region                 = var.region
   ssh_public_key         = var.ssh_public_key
@@ -508,7 +507,7 @@ module "compute" {
   ocir_user          = local.ocir_user
   fn_repo_path       = local.fn_repo_path
   fn_application_id  = element(concat(module.observability-autoscaling[*].autoscaling_function_application_id, [""]), 0)
-  use_autoscaling    = local.use_autoscaling
+  use_autoscaling    = var.use_autoscaling
 
   use_marketplace_image       = var.use_marketplace_image
   mp_listing_id               = var.listing_id

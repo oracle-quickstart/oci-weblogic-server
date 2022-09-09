@@ -2,8 +2,7 @@
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 variable "use_autoscaling" {
-  type = bool
-  // Possible values are None, Metric
+  type        = bool
   description = "Indicating that autoscaling is enabled"
   default     = false
 }
@@ -46,7 +45,7 @@ variable "max_threshold_counter" {
 
 variable "wls_metric" {
   type        = string
-  description = "Metric to use for triggering scaling actions. Default is metrics-based autoscaling"
+  description = "Metric to use for triggering scaling actions. Default is CPU Load"
   default     = "CPU Load"
 }
 
@@ -66,10 +65,4 @@ variable "ocir_auth_token_id" {
   type        = string
   description = "Secrets Oracle Cloud ID (OCID) for Oracle Cloud Infrastructure Registry authorization token"
   default     = ""
-}
-
-variable "terms_and_conditions" {
-  type        = bool
-  default     = false
-  description = "Terms and conditions for user to accept Oracle WebLogic Server Enterprise Edition UCM or Oracle WebLogic Suite UCM license agreement"
 }
