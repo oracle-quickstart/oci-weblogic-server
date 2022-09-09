@@ -214,7 +214,7 @@ module "policies" {
   }
   atp_db                    = local.atp_db
   oci_db                    = local.oci_db
-  vcn_id                    = module.network-vcn[0].vcn_id
+  vcn_id                    = element(concat(module.network-vcn[*].vcn_id, [""]), 0)
   wls_existing_vcn_id       = var.wls_existing_vcn_id
   is_idcs_selected          = var.is_idcs_selected
   idcs_client_secret_id     = var.idcs_client_secret_id
@@ -231,7 +231,7 @@ module "bastion" {
   bastion_subnet_id   = var.bastion_subnet_id != "" ? var.bastion_subnet_id : module.network-bastion-subnet[0].subnet_id
 
   compartment_id      = var.compartment_id
-  instance_image_id   = var.use_baselinux_marketplace_image ? var.mp_baselinux_instance_image_id : var.bastion_instance_image_id
+  instance_image_id   = var.bastion_image_id
   instance_shape      = var.bastion_instance_shape
   region              = var.region
   ssh_public_key      = var.ssh_public_key
@@ -245,6 +245,10 @@ module "bastion" {
   }
   is_bastion_with_reserved_public_ip = var.is_bastion_with_reserved_public_ip
   bastion_nsg_id = element(module.network-bastion-nsg[*].nsg_id, 0)
+
+  use_bastion_marketplace_image = var.use_bastion_marketplace_image
+  mp_listing_id                 = var.bastion_listing_id
+  mp_listing_resource_version   = var.bastion_listing_resource_version
 }
 
 
@@ -453,7 +457,7 @@ module "compute" {
   wls_ocpu_count         = var.wls_ocpu_count
   network_compartment_id = var.network_compartment_id
   wls_subnet_cidr        = local.wls_subnet_cidr
-  subnet_id              = local.assign_weblogic_public_ip ? module.network-wls-public-subnet[0].subnet_id : module.network-wls-private-subnet[0].subnet_id
+  subnet_id              = var.wls_subnet_id != "" ? var.wls_subnet_id : local.assign_weblogic_public_ip ? element(concat(module.network-wls-public-subnet[*].subnet_id, [""]), 0) : element(concat(module.network-wls-private-subnet[*].subnet_id, [""]), 0)
   wls_subnet_id          = var.wls_subnet_id
   region                 = var.region
   ssh_public_key         = var.ssh_public_key
@@ -470,7 +474,7 @@ module "compute" {
   wls_domain_name         = format("%s_domain", local.service_name_prefix)
   wls_server_startup_args = var.wls_server_startup_args
   wls_existing_vcn_id     = var.wls_existing_vcn_id
-  wls_vcn_cidr            = module.network-vcn[0].vcn_cidr
+  wls_vcn_cidr            = var.wls_vcn_cidr != "" ? var.wls_vcn_cidr : module.network-vcn[0].vcn_cidr
   wls_version             = var.wls_version
   wls_edition             = var.wls_edition
   num_vm_instances        = var.wls_node_count
@@ -488,9 +492,9 @@ module "compute" {
   lbip = local.lb_ip
 
   add_fss     = var.add_fss
-  mount_ip    = module.fss[0].mount_ip
+  mount_ip    = element(concat(module.fss[*].mount_ip, [""]), 0)
   mount_path  = var.mount_path
-  export_path = var.existing_export_path_id != "" ? data.oci_file_storage_exports.export[0].exports[0].path : module.fss[0].export_path
+  export_path = var.existing_export_path_id != "" ? element(concat(data.oci_file_storage_exports.export[*].exports[0].path, [""]), 0) : element(concat(module.fss[*].export_path, [""]), 0)
 
   db_existing_vcn_add_seclist = var.ocidb_existing_vcn_add_seclist
   jrf_parameters = {
@@ -519,6 +523,10 @@ module "compute" {
   apm_domain_compartment_id = local.apm_domain_compartment_id
   apm_domain_id             = var.apm_domain_id
   apm_private_data_key_name = var.apm_private_data_key_name
+
+  use_marketplace_image       = var.use_marketplace_image
+  mp_listing_id               = var.listing_id
+  mp_listing_resource_version = var.listing_resource_version
 
   tags = {
     defined_tags    = local.defined_tags
@@ -574,4 +582,3 @@ module "provisioners" {
   bastion_host_private_key     = !var.is_bastion_instance_required ? "" : var.existing_bastion_instance_id == "" ? module.bastion[0].bastion_private_ssh_key : file(var.bastion_ssh_private_key)
   is_bastion_instance_required = var.is_bastion_instance_required
 }
-

@@ -47,11 +47,6 @@ variable "service_tags" {
   default     = { freeformTags = {}, definedTags = {} }
 }
 
-variable "instance_image_id" {
-  type        = string
-  description = "The OCID of the compute image used to create the WebLogic compute instances"
-}
-
 variable "tf_script_version" {
   type        = string
   description = "The version of the provisioning scripts located in the OCI image used to create the WebLogic compute instances"
