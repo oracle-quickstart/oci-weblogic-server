@@ -404,7 +404,7 @@ module "observability-autoscaling" {
   min_threshold_counter = var.min_threshold_counter
   max_threshold_counter = var.max_threshold_counter
   wls_metric            = var.wls_metric
-  wls_subnet_id         = element(compact(coalescelist([var.wls_subnet_id], module.network-wls-public-subnet[*].subnet_id, module.network-wls-private-subnet[*].subnet_id)), 0)
+  wls_subnet_id         = var.wls_subnet_id != "" ? var.wls_subnet_id : local.assign_weblogic_public_ip ? element(concat(module.network-wls-public-subnet[*].subnet_id, [""]), 0) : element(concat(module.network-wls-private-subnet[*].subnet_id, [""]), 0)
   wls_node_count        = var.wls_node_count
   tenancy_id            = var.tenancy_id
 
@@ -412,6 +412,7 @@ module "observability-autoscaling" {
   fn_repo_name        = local.fn_repo_name
   log_group_id        = element(concat(module.observability-common[*].log_group_id, [""]), 0)
   create_policies     = var.create_policies
+  use_oci_logging     = var.use_oci_logging
 
   tags = {
     defined_tags  = local.defined_tags
@@ -433,7 +434,7 @@ module "compute" {
   wls_ocpu_count         = var.wls_ocpu_count
   network_compartment_id = var.network_compartment_id
   wls_subnet_cidr        = local.wls_subnet_cidr
-  subnet_id              = element(compact(coalescelist([var.wls_subnet_id], module.network-wls-public-subnet[*].subnet_id, module.network-wls-private-subnet[*].subnet_id)), 0)
+  subnet_id              = var.wls_subnet_id != "" ? var.wls_subnet_id : local.assign_weblogic_public_ip ? element(concat(module.network-wls-public-subnet[*].subnet_id, [""]), 0) : element(concat(module.network-wls-private-subnet[*].subnet_id, [""]), 0)
   wls_subnet_id          = var.wls_subnet_id
   region                 = var.region
   ssh_public_key         = var.ssh_public_key
@@ -507,7 +508,7 @@ module "compute" {
   ocir_user          = local.ocir_user
   fn_repo_path       = local.fn_repo_path
   fn_application_id  = element(concat(module.observability-autoscaling[*].autoscaling_function_application_id, [""]), 0)
-  use_autoscaling    = var.use_autoscaling
+  use_autoscaling    = var.use_autoscaling ? "Metric" : "None"
 
   use_marketplace_image       = var.use_marketplace_image
   mp_listing_id               = var.listing_id
@@ -545,10 +546,9 @@ module "observability-logging" {
   oci_managed_instances_principal_group = element(concat(module.policies[*].oci_managed_instances_principal_group, [""]), 0)
   service_prefix_name                   = local.service_name_prefix
   create_policies                       = var.create_policies
-  use_oci_logging                       = var.use_oci_logging
   dynamic_group_id                      = var.dynamic_group_id
   log_group_id                          = module.observability-common[0].log_group_id
-
+  use_oci_logging                       = var.use_oci_logging
   tags = {
     defined_tags  = local.defined_tags
     freeform_tags = local.free_form_tags

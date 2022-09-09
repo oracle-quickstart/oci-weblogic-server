@@ -48,9 +48,7 @@ locals {
     ["Standard Edition", "Enterprise Edition", "Suite Edition"],
   )
 
-  //TODO: Below statement is not working so temp fix to un block for now.
-  //new_lb_ip                  = local.add_existing_load_balancer ? "" : element(element(coalescelist(module.load-balancer[0].wls_loadbalancer_ip_addresses, [""]), 0), 0)
-  new_lb_ip                  = ""
+  new_lb_ip                  = local.add_existing_load_balancer ? "" : element(coalescelist(module.load-balancer[0].wls_loadbalancer_ip_addresses, [""]), 0)
   new_lb_id                  = element(concat(module.load-balancer[*].wls_loadbalancer_id, [""]), 0)
   existing_lb_ip             = local.add_existing_load_balancer ? local.existing_lb_object_as_list[0].ip_addresses[0] : ""
   existing_lb_object_as_list = [for lb in data.oci_load_balancer_load_balancers.existing_load_balancers_data_source.load_balancers[*] : lb if lb.id == var.existing_load_balancer_id]

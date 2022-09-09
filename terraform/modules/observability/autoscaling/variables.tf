@@ -124,3 +124,9 @@ variable "create_policies" {
   type    = bool
   description = "Set to true if the policies need to be created"
 }
+
+variable "use_oci_logging" {
+  type        = bool
+  description = "Enable logging service integration for WebLogic instances"
+  default     = false
+}

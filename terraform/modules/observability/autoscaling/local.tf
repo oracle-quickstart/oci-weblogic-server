@@ -21,7 +21,7 @@ locals {
   function_config_map = zipmap(
     ["min_wls_node_count", "wlsc_email_notification_topic_id", "debug", "offline_ms1_from_lb"],
     [ var.wls_node_count,
-      (var.use_autoscaling != "None" && var.subscription_endpoint != "" ? element(concat(oci_ons_notification_topic.wlsc_email_notification_topic.*.id, list("")), 0) : ""),
+      (var.subscription_endpoint != "" ? element(concat(oci_ons_notification_topic.wlsc_email_notification_topic.*.id, list("")), 0) : ""),
       "false",
       "false"
   ])
