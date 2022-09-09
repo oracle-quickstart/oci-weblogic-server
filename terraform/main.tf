@@ -156,6 +156,10 @@ module "policies" {
   use_oci_logging           = var.use_oci_logging
   use_apm_service           = var.use_apm_service
   apm_domain_compartment_id = local.apm_domain_compartment_id
+  use_autoscaling           = var.use_autoscaling
+  add_fss                   = var.add_fss
+  fss_compartment_id        = var.mount_target_compartment_id == "" ? var.compartment_id : var.mount_target_compartment_id
+  add_load_balancer         = var.add_load_balancer
 }
 
 
@@ -330,6 +334,13 @@ module "validators" {
   apm_domain_id             = var.apm_domain_id
   apm_private_data_key_name = var.apm_private_data_key_name
 
+  use_autoscaling       = var.use_autoscaling
+  wls_metric            = var.wls_metric
+  ocir_auth_token_id    = var.ocir_auth_token_id
+  max_threshold_counter = var.max_threshold_counter
+  max_threshold_percent = var.max_threshold_percent
+  min_threshold_counter = var.min_threshold_counter
+  min_threshold_percent = var.min_threshold_percent
 }
 
 module "fss" {
@@ -362,8 +373,9 @@ module "load-balancer" {
   lb_max_bandwidth         = var.lb_max_bandwidth
   lb_min_bandwidth         = var.lb_min_bandwidth
   lb_name                  = "${local.service_name_prefix}-lb"
-  lb_subnet_1_id           = [var.lb_subnet_1_id]
-  lb_subnet_2_id           = [var.lb_subnet_2_id]
+  lb_subnet_1_id           = var.lb_subnet_1_id != "" ? [var.lb_subnet_1_id] : [module.network-lb-subnet-1[0].subnet_id]
+  lb_subnet_2_id           = var.lb_subnet_2_id != "" ? [var.lb_subnet_2_id] : element(concat([module.network-lb-subnet-2[*].subnet_id], [""]), 0)
+
   tags = {
     defined_tags  = local.defined_tags
     freeform_tags = local.free_form_tags
@@ -377,6 +389,37 @@ module "observability-common" {
   compartment_id      = var.compartment_id
   service_prefix_name = local.service_name_prefix
 }
+
+module "observability-autoscaling" {
+  source = "./modules/observability/autoscaling"
+  count  = var.use_autoscaling ? 1 : 0
+
+  compartment_id        = var.compartment_id
+  metric_compartment_id = local.apm_domain_compartment_id
+  service_prefix_name   = local.service_name_prefix
+  subscription_endpoint = var.notification_email
+  alarm_severity        = var.alarm_severity
+  min_threshold_percent = var.min_threshold_percent
+  max_threshold_percent = var.max_threshold_percent
+  min_threshold_counter = var.min_threshold_counter
+  max_threshold_counter = var.max_threshold_counter
+  wls_metric            = var.wls_metric
+  wls_subnet_id         = var.wls_subnet_id != "" ? var.wls_subnet_id : local.assign_weblogic_public_ip ? element(concat(module.network-wls-public-subnet[*].subnet_id, [""]), 0) : element(concat(module.network-wls-private-subnet[*].subnet_id, [""]), 0)
+  wls_node_count        = var.wls_node_count
+  tenancy_id            = var.tenancy_id
+
+  fn_application_name = local.fn_application_name
+  fn_repo_name        = local.fn_repo_name
+  log_group_id        = element(concat(module.observability-common[*].log_group_id, [""]), 0)
+  create_policies     = var.create_policies
+  use_oci_logging     = var.use_oci_logging
+
+  tags = {
+    defined_tags  = local.defined_tags
+    freeform_tags = local.free_form_tags
+  }
+}
+
 
 module "compute" {
   source                 = "./modules/compute/wls_compute"
@@ -457,6 +500,16 @@ module "compute" {
   apm_domain_id             = var.apm_domain_id
   apm_private_data_key_name = var.apm_private_data_key_name
 
+  scalein_notification_topic_id  = element(concat(module.observability-autoscaling[*].scalein_notification_topic_id, [""]), 0)
+  scaleout_notification_topic_id = element(concat(module.observability-autoscaling[*].scaleout_notification_topic_id, [""]), 0)
+
+  ocir_auth_token_id = var.ocir_auth_token_id
+  ocir_url           = local.ocir_region_url
+  ocir_user          = local.ocir_user
+  fn_repo_path       = local.fn_repo_path
+  fn_application_id  = element(concat(module.observability-autoscaling[*].autoscaling_function_application_id, [""]), 0)
+  use_autoscaling    = var.use_autoscaling
+
   use_marketplace_image       = var.use_marketplace_image
   mp_listing_id               = var.listing_id
   mp_listing_resource_version = var.listing_resource_version
@@ -493,10 +546,9 @@ module "observability-logging" {
   oci_managed_instances_principal_group = element(concat(module.policies[*].oci_managed_instances_principal_group, [""]), 0)
   service_prefix_name                   = local.service_name_prefix
   create_policies                       = var.create_policies
-  use_oci_logging                       = var.use_oci_logging
   dynamic_group_id                      = var.dynamic_group_id
   log_group_id                          = module.observability-common[0].log_group_id
-
+  use_oci_logging                       = var.use_oci_logging
   tags = {
     defined_tags  = local.defined_tags
     freeform_tags = local.free_form_tags
