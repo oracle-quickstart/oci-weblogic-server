@@ -94,7 +94,7 @@ module "network-bastion-nsg" {
 module "network-mount-target-nsg" {
   source         = "./modules/network/nsg"
   count          = var.add_existing_mount_target ? 0 : (var.add_fss && var.mount_target_subnet_id == "" ? 1 : 0)
-  compartment_id = var.fss_compartment_id
+  compartment_id = local.network_compartment_id
   vcn_id         = local.vcn_id
   nsg_name       = "${local.service_name_prefix}-mount-target-nsg"
 
@@ -109,7 +109,7 @@ module "network-compute-admin-nsg" {
   count           = var.wls_subnet_cidr != "" ?  1 : 0
   compartment_id  = local.network_compartment_id
   vcn_id          = local.vcn_id
-  nsg_name        = "${local.service_name_prefix}-admin-nsg"
+  nsg_name        = "${local.service_name_prefix}-admin-server-nsg"
 
   tags = {
     defined_tags  = local.defined_tags
@@ -122,7 +122,7 @@ module "network-compute-managed-nsg" {
   count           = var.wls_subnet_cidr != "" ?  1 : 0
   compartment_id  = local.network_compartment_id
   vcn_id          = local.vcn_id
-  nsg_name        = "${local.service_name_prefix}-managed-nsg"
+  nsg_name        = "${local.service_name_prefix}-managed-server-nsg"
 
   tags = {
     defined_tags  = local.defined_tags
