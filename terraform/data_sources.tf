@@ -129,3 +129,39 @@ data "oci_core_vcn" "wls_vcn" {
   #Required
   vcn_id = var.wls_existing_vcn_id
 }
+
+data "oci_objectstorage_namespace" "object_namespace" {
+
+  #Optional
+  compartment_id = var.tenancy_id
+}
+
+data "oci_identity_regions" "all_regions" {
+}
+
+data "oci_core_image" "ucm_image" {
+  count = var.ucm_instance_image_id != "" ? 1 : 0
+  #Required
+  image_id = var.ucm_instance_image_id
+}
+
+data "oci_core_instances" "ucm_instances" {
+  #Required
+  compartment_id = var.compartment_id
+
+  #filter the instances based on the UCM image and the stack prefix.
+  filter {
+    name   = "source_details.source_id"
+    values = [var.ucm_instance_image_id]
+  }
+  filter {
+    name   = "display_name"
+    values = ["${local.service_name_prefix}-wls-*"]
+    regex  = true
+  }
+  #filter only the running instances, we need to consider stopped case also
+  filter {
+    name   = "state"
+    values = ["RUNNING", "STOPPED"]
+  }
+}

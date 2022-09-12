@@ -27,8 +27,10 @@ locals {
   logging_policy = var.use_oci_logging ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to use logging-family in compartment id ${var.compartment_id}" : ""
   # This policy with "use apm-domains" verb is needed to list the data keys of the APM domain
   apm_domain_policy_statement = var.use_apm_service ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to use apm-domains in compartment id ${var.apm_domain_compartment_id}" : ""
+  # This policy with "use load_balancer" verb is needed to create load balancer for new vcn
+  lb_policy_statement      = var.add_load_balancer ? length(oci_identity_dynamic_group.wlsc_instance_principal_group) > 0 ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to use load-balancers in compartment id ${var.network_compartment_id}" : "" : ""
 
-  service_statements = compact([local.core_policy_statement1, local.core_policy_statement2, local.core_policy_statement3, local.network_policy_statement1, local.secrets_policy_statement1, local.secrets_policy_statement2, local.atp_policy_statement1, local.atp_policy_statement2, local.oci_db_policy_statement1, local.oci_db_policy_statement2, local.logging_policy, local.apm_domain_policy_statement])
+  service_statements = compact([local.core_policy_statement1, local.core_policy_statement2, local.core_policy_statement3, local.network_policy_statement1, local.secrets_policy_statement1, local.secrets_policy_statement2, local.atp_policy_statement1, local.atp_policy_statement2, local.oci_db_policy_statement1, local.oci_db_policy_statement2, local.logging_policy, local.apm_domain_policy_statement, local.lb_policy_statement])
 
   #TODO: When other categories with more statements are added here, concat them with service_statements
   policy_statements = concat(local.service_statements, [])

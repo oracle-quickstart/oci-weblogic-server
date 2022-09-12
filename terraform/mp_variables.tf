@@ -4,7 +4,7 @@
 
 variable "use_bastion_marketplace_image" {
   type        = bool
-  description = "Set to true if using a marketplace image, to create the marketplace subscriptions"
+  description = "Set to true if using a marketplace bastion image, to create the marketplace subscriptions"
   default     = true
 }
 
@@ -28,7 +28,7 @@ variable "bastion_listing_resource_version" {
 
 variable "use_marketplace_image" {
   type        = bool
-  description = "Set to true if the image subscription is used for provisioning"
+  description = "Set to true if using a marketplace Weblogic instance image, to create the marketplace subscriptions"
   default     = true
 }
 

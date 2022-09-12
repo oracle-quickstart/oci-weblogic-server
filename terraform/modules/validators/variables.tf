@@ -280,7 +280,7 @@ variable "existing_fss_id" {
 }
 
 variable "mount_target_subnet_id" {
-  type = string
+  type        = string
   description = "The OCID of the subnet where the mount target exists"
   validation {
     condition     = var.mount_target_subnet_id == "" || length(regexall("^ocid1.subnet.*$", var.mount_target_subnet_id)) > 0
@@ -289,10 +289,10 @@ variable "mount_target_subnet_id" {
 }
 
 variable "mount_target_id" {
-  type = string
+  type        = string
   description = "The OCID of the mount target for File Shared System"
   default     = ""
-  validation {    
+  validation {
     condition     = var.mount_target_id == "" || length(regexall("^ocid1.mounttarget.*$", var.mount_target_id)) > 0
     error_message = "WLSC-ERROR: The value for mount_target_id should be blank or start with \"ocid1.mounttarget.\"."
   }
@@ -347,4 +347,45 @@ variable "apm_domain_id" {
 variable "apm_private_data_key_name" {
   type        = string
   description = "The name of the private data key used by this instance to push metrics to the Application Performance Monitoring domain"
+}
+
+variable "use_autoscaling" {
+  type        = bool
+  description = "Indicating that autoscaling is enabled"
+  default     = false
+}
+
+variable "wls_metric" {
+  type        = string
+  description = "Metric to use for triggering scaling actions"
+}
+
+variable "min_threshold_percent" {
+  type        = number
+  description = "Minimum threshold in percentage for the metric"
+  default     = 0
+}
+
+variable "max_threshold_percent" {
+  type        = number
+  description = "Maximum threshold in percentage for the metric"
+  default     = 0
+}
+
+variable "min_threshold_counter" {
+  type        = number
+  description = "Minimum threshold count for the metric"
+  default     = 0
+}
+
+variable "max_threshold_counter" {
+  type        = number
+  description = "Maximum threshold count for the metric"
+  default     = 0
+}
+
+variable "ocir_auth_token_id" {
+  type        = string
+  description = "Secrets Oracle Cloud ID (OCID) for Oracle Cloud Infrastructure Registry authorization token"
+  default     = ""
 }
