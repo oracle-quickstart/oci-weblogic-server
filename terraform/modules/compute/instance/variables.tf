@@ -16,6 +16,7 @@ variable "instance_params" {
     vnic_display_name = string
     assign_public_ip  = string
     hostname_label    = string
+    compute_nsg_ids   = list(string)
 
     ocpus = number
 

@@ -18,6 +18,7 @@ resource "oci_core_instance" "these" {
     display_name     = each.value.vnic_display_name
     assign_public_ip = each.value.assign_public_ip
     hostname_label   = each.value.hostname_label
+    nsg_ids          = each.value.compute_nsg_ids
   }
 
   shape_config {

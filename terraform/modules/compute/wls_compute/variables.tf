@@ -95,6 +95,11 @@ variable "network_compartment_id" {
   description = "The OCID of the compartment where the network resources associated to this compute instance (e.g. VCN, subnet) are located"
 }
 
+variable "compute_nsg_ids" {
+  type        = list(any)
+  description = "The list of NSG OCIDs associated with the compute instance"
+}
+
 variable "add_loadbalancer" {
   type        = bool
   description = "Set to true if a load balancer was created as part of the WebLogic for OCI stack"

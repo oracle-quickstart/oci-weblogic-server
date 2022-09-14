@@ -122,4 +122,6 @@ locals {
   fn_repo_name        = format("%s_autoscaling_function_repo", lower(local.service_name_prefix))
   fn_repo_path        = format("%s/%s/%s", local.ocir_region_url, local.ocir_namespace, local.fn_repo_name)
   fn_application_name = format("%s_autoscaling_function_application", local.service_name_prefix)
+
+  compute_nsg_ids = concat(module.network-compute-admin-nsg[*].nsg_id, module.network-compute-managed-nsg[*].nsg_id)
 }

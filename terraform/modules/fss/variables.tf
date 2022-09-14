@@ -40,6 +40,12 @@ variable "mount_target_id" {
   description = "The OCID of the mount target for File Shared System"
 }
 
+variable "mount_target_nsg_id" {
+  type        = list(any)
+  description = "The list of NSG OCIDs associated with the mount target"
+  default     = []
+}
+
 variable "tags" {
   type = object({
     defined_tags    = map(any),

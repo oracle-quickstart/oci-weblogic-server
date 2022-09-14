@@ -18,10 +18,11 @@ resource "oci_load_balancer_load_balancer" "wls_loadbalancer" {
     maximum_bandwidth_in_mbps = var.lb_max_bandwidth
     minimum_bandwidth_in_mbps = var.lb_min_bandwidth
   }
-  display_name  = var.lb_name
-  is_private    = var.is_lb_private
-  defined_tags  = var.tags.defined_tags
-  freeform_tags = var.tags.freeform_tags
+  display_name               = var.lb_name
+  is_private                 = var.is_lb_private
+  network_security_group_ids = var.lb_nsg_id
+  defined_tags               = var.tags.defined_tags
+  freeform_tags              = var.tags.freeform_tags
 
   dynamic "reserved_ips" {
     for_each = var.lb_reserved_public_ip_id
