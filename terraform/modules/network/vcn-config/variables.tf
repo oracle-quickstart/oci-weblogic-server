@@ -96,6 +96,7 @@ variable "wls_bastion_security_list_name" {
 variable "bastion_subnet_cidr" {
   type        = string
   description = "The CIDR value of the bastion subnet"
+  default     = ""
 }
 
 variable "is_bastion_instance_required" {
@@ -199,4 +200,7 @@ variable "load_balancer_max_value" {
   default     = 7004
 }
 
-
+variable "nsg_id" {
+  type        = string
+  description = "The OCID of the Network Server Group"
+}

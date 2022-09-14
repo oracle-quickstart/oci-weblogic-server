@@ -16,7 +16,7 @@ resource "oci_core_security_list" "wls_security_list" {
 
   // allow inbound ssh traffic
   ingress_security_rules {
-    protocol  = "6" // tcp
+    protocol  = 6 // tcp
     source    = "0.0.0.0/0"
     stateless = false
 
