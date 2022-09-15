@@ -21,10 +21,6 @@ output "mount_target_id" {
   value = var.mount_target_id != "" ? var.mount_target_id : (var.add_fss ? module.fss[0].mount_target_id : "")
 }
 
-output "mount_target_nsg_id" {
-  value = element(concat(module.network-mount-target-nsg[*].nsg_id, [""]), 0)
-}
-
 output "load_balancer_subnets_id" {
   value = compact(
     concat(
@@ -32,10 +28,6 @@ output "load_balancer_subnets_id" {
       [var.lb_subnet_2_id]
     ),
   )
-}
-
-output "load_balancer_nsg_id" {
-  value = element(concat(module.network-lb-nsg[*].nsg_id, [""]), 0)
 }
 
 output "weblogic_subnet_id" {
@@ -58,10 +50,6 @@ output "bastion_instance_public_ip" {
   value = local.bastion_public_ip
 }
 
-output "bastion_nsg_id" {
-  value = element(concat(module.network-bastion-nsg[*].nsg_id, [""]), 0)
-}
-
 output "weblogic_instances" {
   value = jsonencode(formatlist(
     "{ Instance Id:%s, Instance name:%s, Availability Domain:%s, Instance Shape:%s, Private IP:%s, Public IP:%s }",
@@ -71,11 +59,6 @@ output "weblogic_instances" {
     module.compute.instance_shapes,
     module.compute.instance_private_ips,
     module.compute.instance_public_ips,
-  ))
-}
-
-output "weblogic_instances_nsg_id" {
-  value = jsonencode(flatten(local.compute_nsg_ids
   ))
 }
 
