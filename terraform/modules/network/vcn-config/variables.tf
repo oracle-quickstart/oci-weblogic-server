@@ -200,7 +200,14 @@ variable "load_balancer_max_value" {
   default     = 7004
 }
 
-variable "nsg_id" {
-  type        = string
-  description = "The OCID of the Network Server Group"
+variable "nsg_ids" {
+  type = map(any)
+  default = {
+    lb_nsg_id  = ""
+    bastion_nsg_id = ""
+    mount_target_nsg_id = ""
+    admin_nsg_id = ""
+    managed_nsg_id = ""
+  }
+  description = "A map of nsg ids for laodbalancer,bastion,fss,admin instance, & managed server instance"
 }

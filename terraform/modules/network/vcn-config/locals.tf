@@ -7,4 +7,5 @@ locals {
   nat_gw_exists = length(var.existing_nat_gateway_ids) == 0 ? false : true
 
   //wls_ports = concat(local.wls_admin_port_source_cidrs, [22])
+
 }

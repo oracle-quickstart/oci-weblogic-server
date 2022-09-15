@@ -57,6 +57,13 @@ module "network-vcn-config" {
   create_service_gateway       = length(data.oci_core_nat_gateways.nat_gateways.*.id) > 0
   lb_destination_cidr          = var.is_lb_private ? var.bastion_subnet_cidr : "0.0.0.0/0"
   add_fss                      = var.add_fss
+  nsg_ids = {
+    lb_nsg_id = element(module.network-lb-nsg[*].nsg_id, 0)
+    bastion_nsg_id = element(module.network-bastion-nsg[*].nsg_id, 0)
+    mount_target_nsg_id    = element(module.network-mount-target-nsg[*].nsg_id, 0)
+    admin_nsg_id = element(module.network-compute-admin-nsg[*].nsg_id, 0)
+    managed_nsg_id = element(module.network-compute-managed-nsg[*].nsg_id, 0)
+  }
 
   tags = {
     defined_tags  = local.defined_tags
