@@ -126,6 +126,90 @@ resource "oci_core_network_security_group_security_rule" "existing_bastion_ingre
   stateless   = false
 }
 
+resource "oci_core_network_security_group_security_rule" "fss_ingress_security_list_1" {
+  for_each = {
+    for nsg_name, nsg_id in var.nsg_ids :
+    nsg_name => nsg_id if nsg_name == "mount_target_nsg_id"
+  }
+  network_security_group_id = element(each.value,0)
+  direction = "INGRESS"
+  protocol = "6"
+
+  source =  var.vcn_cidr
+  source_type = "CIDR_BLOCK"
+  stateless   = false
+
+  tcp_options {
+    destination_port_range {
+      max = 2050
+      min = 2048
+    }
+  }
+}
+
+resource "oci_core_network_security_group_security_rule" "fss_ingress_security_list_2" {
+  for_each = {
+    for nsg_name, nsg_id in var.nsg_ids :
+    nsg_name => nsg_id if nsg_name == "mount_target_nsg_id"
+  }
+  network_security_group_id = element(each.value,0)
+  direction = "INGRESS"
+  protocol = "6"
+
+  source =  var.vcn_cidr
+  source_type = "CIDR_BLOCK"
+  stateless   = false
+
+  tcp_options {
+    destination_port_range {
+      max = 111
+      min = 111
+    }
+  }
+}
+
+resource "oci_core_network_security_group_security_rule" "fss_ingress_security_list_3" {
+  for_each = {
+    for nsg_name, nsg_id in var.nsg_ids :
+    nsg_name => nsg_id if nsg_name == "mount_target_nsg_id"
+  }
+  network_security_group_id = element(each.value,0)
+  direction = "INGRESS"
+  protocol = "17"
+
+  source =  var.vcn_cidr
+  source_type = "CIDR_BLOCK"
+  stateless   = false
+
+  udp_options {
+    destination_port_range {
+      max = 2048
+      min = 2048
+    }
+  } 
+}  
+
+resource "oci_core_network_security_group_security_rule" "fss_ingress_security_list_4" {
+  for_each = {
+    for nsg_name, nsg_id in var.nsg_ids :
+    nsg_name => nsg_id if nsg_name == "mount_target_nsg_id"
+  }
+  network_security_group_id = element(each.value,0)
+  direction = "INGRESS"
+  protocol = "17"
+
+  source =  var.vcn_cidr
+  source_type = "CIDR_BLOCK"
+  stateless   = false
+
+  udp_options {
+    destination_port_range {
+      max = 111
+      min = 111
+    }
+  }
+} 
+
 resource "oci_core_network_security_group_security_rule" "egress_security_list" {
   for_each = {
     for nsg_name, nsg_id in var.nsg_ids :
@@ -138,4 +222,67 @@ resource "oci_core_network_security_group_security_rule" "egress_security_list" 
   destination =  "0.0.0.0/0"
   destination_type = "CIDR_BLOCK"
   stateless   = false
+}
+
+resource "oci_core_network_security_group_security_rule" "fss_egress_security_list_1" {
+  for_each = {
+    for nsg_name, nsg_id in var.nsg_ids :
+    nsg_name => nsg_id if nsg_name == "mount_target_nsg_id"
+  }
+  network_security_group_id = element(each.value,0)
+  direction = "EGRESS"
+  protocol = "6" 
+
+  destination =  var.vcn_cidr
+  destination_type = "CIDR_BLOCK"
+  stateless   = false
+
+  tcp_options {
+    source_port_range {
+      max = 2050
+      min = 2048
+    }
+  }
+}
+
+resource "oci_core_network_security_group_security_rule" "fss_egress_security_list_2" {
+  for_each = {
+    for nsg_name, nsg_id in var.nsg_ids :
+    nsg_name => nsg_id if nsg_name == "mount_target_nsg_id"
+  }
+  network_security_group_id = element(each.value,0)
+  direction = "EGRESS"
+  protocol = "6"
+  
+  destination =  var.vcn_cidr
+  destination_type = "CIDR_BLOCK"
+  stateless   = false
+        
+  tcp_options {
+    source_port_range {
+      max = 111
+      min = 111
+    }
+  }
+}
+
+resource "oci_core_network_security_group_security_rule" "fss_egress_security_list_3" {
+  for_each = {
+    for nsg_name, nsg_id in var.nsg_ids :
+    nsg_name => nsg_id if nsg_name == "mount_target_nsg_id"
+  }
+  network_security_group_id = element(each.value,0)
+  direction = "EGRESS"
+  protocol = "17"
+ 
+  destination =  var.vcn_cidr
+  destination_type = "CIDR_BLOCK"
+  stateless   = false  
+
+  udp_options {
+    source_port_range {
+      max = 111
+      min = 111
+    }
+  }
 }
