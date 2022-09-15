@@ -186,6 +186,7 @@ variable "wls_subnet_name" {
 
 variable "nsg_ids" {
   type = map(any)
+  description = "A map of nsg ids for laodbalancer,bastion,fss,admin instance, & managed server instance"
   default = {
     lb_nsg_id  = ""
     bastion_nsg_id = ""
@@ -193,5 +194,4 @@ variable "nsg_ids" {
     admin_nsg_id = ""
     managed_nsg_id = ""
   }
-  description = "A map of nsg ids for laodbalancer,bastion,fss,admin instance, & managed server instance"
 }

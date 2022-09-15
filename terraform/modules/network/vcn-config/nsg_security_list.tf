@@ -129,7 +129,7 @@ resource "oci_core_network_security_group_security_rule" "existing_bastion_ingre
 resource "oci_core_network_security_group_security_rule" "fss_ingress_security_list_1" {
   for_each = {
     for nsg_name, nsg_id in var.nsg_ids :
-    nsg_name => nsg_id if nsg_name == "mount_target_nsg_id"
+    nsg_name => nsg_id if nsg_name == "mount_target_nsg_id" && var.add_fss && var.existing_mt_subnet_id == ""
   }
   network_security_group_id = element(each.value,0)
   direction = "INGRESS"
@@ -150,7 +150,7 @@ resource "oci_core_network_security_group_security_rule" "fss_ingress_security_l
 resource "oci_core_network_security_group_security_rule" "fss_ingress_security_list_2" {
   for_each = {
     for nsg_name, nsg_id in var.nsg_ids :
-    nsg_name => nsg_id if nsg_name == "mount_target_nsg_id"
+    nsg_name => nsg_id if nsg_name == "mount_target_nsg_id" && var.add_fss && var.existing_mt_subnet_id == ""
   }
   network_security_group_id = element(each.value,0)
   direction = "INGRESS"
@@ -171,7 +171,7 @@ resource "oci_core_network_security_group_security_rule" "fss_ingress_security_l
 resource "oci_core_network_security_group_security_rule" "fss_ingress_security_list_3" {
   for_each = {
     for nsg_name, nsg_id in var.nsg_ids :
-    nsg_name => nsg_id if nsg_name == "mount_target_nsg_id"
+    nsg_name => nsg_id if nsg_name == "mount_target_nsg_id" && var.add_fss && var.existing_mt_subnet_id == ""
   }
   network_security_group_id = element(each.value,0)
   direction = "INGRESS"
@@ -192,7 +192,7 @@ resource "oci_core_network_security_group_security_rule" "fss_ingress_security_l
 resource "oci_core_network_security_group_security_rule" "fss_ingress_security_list_4" {
   for_each = {
     for nsg_name, nsg_id in var.nsg_ids :
-    nsg_name => nsg_id if nsg_name == "mount_target_nsg_id"
+    nsg_name => nsg_id if nsg_name == "mount_target_nsg_id" && var.add_fss && var.existing_mt_subnet_id == ""
   }
   network_security_group_id = element(each.value,0)
   direction = "INGRESS"
@@ -213,7 +213,7 @@ resource "oci_core_network_security_group_security_rule" "fss_ingress_security_l
 resource "oci_core_network_security_group_security_rule" "egress_security_list" {
   for_each = {
     for nsg_name, nsg_id in var.nsg_ids :
-    nsg_name => nsg_id if nsg_name != "managed_nsg_id"
+    nsg_name => nsg_id if nsg_name != "managed_nsg_id" && var.add_fss && var.existing_mt_subnet_id == "" 
   }
   network_security_group_id = element(each.value,0)
   direction = "EGRESS"
@@ -227,7 +227,7 @@ resource "oci_core_network_security_group_security_rule" "egress_security_list" 
 resource "oci_core_network_security_group_security_rule" "fss_egress_security_list_1" {
   for_each = {
     for nsg_name, nsg_id in var.nsg_ids :
-    nsg_name => nsg_id if nsg_name == "mount_target_nsg_id"
+    nsg_name => nsg_id if nsg_name == "mount_target_nsg_id" && var.add_fss && var.existing_mt_subnet_id == ""
   }
   network_security_group_id = element(each.value,0)
   direction = "EGRESS"
@@ -248,7 +248,7 @@ resource "oci_core_network_security_group_security_rule" "fss_egress_security_li
 resource "oci_core_network_security_group_security_rule" "fss_egress_security_list_2" {
   for_each = {
     for nsg_name, nsg_id in var.nsg_ids :
-    nsg_name => nsg_id if nsg_name == "mount_target_nsg_id"
+    nsg_name => nsg_id if nsg_name == "mount_target_nsg_id" && var.add_fss && var.existing_mt_subnet_id == ""
   }
   network_security_group_id = element(each.value,0)
   direction = "EGRESS"
@@ -269,7 +269,7 @@ resource "oci_core_network_security_group_security_rule" "fss_egress_security_li
 resource "oci_core_network_security_group_security_rule" "fss_egress_security_list_3" {
   for_each = {
     for nsg_name, nsg_id in var.nsg_ids :
-    nsg_name => nsg_id if nsg_name == "mount_target_nsg_id"
+    nsg_name => nsg_id if nsg_name == "mount_target_nsg_id" && var.add_fss && var.existing_mt_subnet_id == ""
   }
   network_security_group_id = element(each.value,0)
   direction = "EGRESS"
