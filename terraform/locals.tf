@@ -123,6 +123,6 @@ locals {
   fn_repo_path        = format("%s/%s/%s", local.ocir_region_url, local.ocir_namespace, local.fn_repo_name)
   fn_application_name = format("%s_autoscaling_function_application", local.service_name_prefix)
 
-  existing_compute_nsg_ids = var.add_existing_nsg ? concat([var.existing_admin_server_nsg_id], [var.existing_managed_server_nsg_id]) : []
+  existing_compute_nsg_ids = var.add_existing_nsg ? [var.existing_admin_server_nsg_id, var.existing_managed_server_nsg_id] : []
   compute_nsg_ids          = local.use_existing_subnets ? local.existing_compute_nsg_ids : concat(module.network-compute-admin-nsg[0].nsg_id, module.network-compute-managed-nsg[0].nsg_id)
 }

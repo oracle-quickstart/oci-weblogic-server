@@ -49,7 +49,7 @@ module "network-vcn-config" {
   bastion_subnet_cidr          = local.bastion_subnet_cidr
   is_bastion_instance_required = var.is_bastion_instance_required
   existing_bastion_instance_id = var.existing_bastion_instance_id
-  vcn_cidr                     = local.use_existing_subnets ? data.oci_core_vcn.wls_vcn[0].cidr_block : element(concat(module.network-vcn.*.vcn_cidr, tolist([""])), 0)
+  vcn_cidr                     = var.wls_vcn_name == "" ? data.oci_core_vcn.wls_vcn[0].cidr_block : element(concat(module.network-vcn.*.vcn_cidr, tolist([""])), 0)
   existing_mt_subnet_id        = var.mount_target_subnet_id
   existing_service_gateway_ids = var.wls_vcn_name == "" ? [] : data.oci_core_service_gateways.service_gateways.service_gateways.*.id
   existing_nat_gateway_ids     = var.wls_vcn_name == "" ? [] : data.oci_core_nat_gateways.nat_gateways.nat_gateways.*.id
@@ -66,7 +66,7 @@ module "network-vcn-config" {
 
 module "network-lb-nsg" {
   source            = "./modules/network/nsg"
-  count             = var.add_load_balancer ? (local.use_existing_subnets ? (var.add_existing_nsg ? 1 : 0) : 1) : 0
+  count             = var.add_load_balancer && var.lb_subnet_1_cidr == "" ? 0 : 1
   compartment_id    = local.network_compartment_id
   vcn_id            = local.vcn_id
 
@@ -80,7 +80,7 @@ module "network-lb-nsg" {
 
 module "network-bastion-nsg" {
   source          = "./modules/network/nsg"
-  count           = var.is_bastion_instance_required ? (var.bastion_subnet_id != "" ? (var.add_existing_nsg ? 1 : 0) : 1) : 0
+  count           = var.is_bastion_instance_required && var.bastion_subnet_cidr == "" ? 0 : 1
   compartment_id  = local.network_compartment_id
   vcn_id          = local.vcn_id
   nsg_name        = "${local.service_name_prefix}-bastion-nsg"
@@ -93,7 +93,7 @@ module "network-bastion-nsg" {
 
 module "network-mount-target-nsg" {
   source         = "./modules/network/nsg"
-  count          = var.add_fss ? (var.mount_target_subnet_id != "" ? (var.add_existing_nsg ? 1 : 0) : 1) : 0
+  count          = var.add_fss && var.mount_target_subnet_cidr == "" ? 0 : 1
   compartment_id = local.network_compartment_id
   vcn_id         = local.vcn_id
   nsg_name       = "${local.service_name_prefix}-mount-target-nsg"
@@ -106,7 +106,7 @@ module "network-mount-target-nsg" {
 
 module "network-compute-admin-nsg" {
   source          = "./modules/network/nsg"
-  count           = local.use_existing_subnets ? (var.add_existing_nsg ?  1 : 0) : 1
+  count           = var.wls_subnet_cidr == "" ? 0 : 1
   compartment_id  = local.network_compartment_id
   vcn_id          = local.vcn_id
   nsg_name        = "${local.service_name_prefix}-admin-server-nsg"
@@ -119,7 +119,7 @@ module "network-compute-admin-nsg" {
 
 module "network-compute-managed-nsg" {
   source          = "./modules/network/nsg"
-  count           = local.use_existing_subnets ? (var.add_existing_nsg ?  1 : 0) : 1
+  count           = var.wls_subnet_cidr == "" ? 0 : 1
   compartment_id  = local.network_compartment_id
   vcn_id          = local.vcn_id
   nsg_name        = "${local.service_name_prefix}-managed-server-nsg"
