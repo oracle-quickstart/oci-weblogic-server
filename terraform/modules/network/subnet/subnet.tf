@@ -22,7 +22,6 @@ resource "oci_core_subnet" "wls-subnet" {
   dns_label                  = local.dns_label
   compartment_id             = var.compartment_id
   vcn_id                     = var.vcn_id
-  security_list_ids          = var.security_list_ids
   route_table_id             = var.route_table_id
   dhcp_options_id            = var.dhcp_options_id
 
