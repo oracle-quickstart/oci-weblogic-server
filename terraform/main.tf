@@ -41,7 +41,7 @@ module "network-vcn-config" {
 
   wls_security_list_name       = !var.assign_weblogic_public_ip ? "bastion-security-list" : "wls-security-list"
   wls_subnet_cidr              = local.wls_subnet_cidr
-  wls_ms_source_cidrs          = var.add_load_balancer ? ((local.use_regional_subnet || local.is_single_ad_region) ? [local.lb_subnet_2_subnet_cidr] : [local.lb_subnet_1_subnet_cidr, local.lb_subnet_2_subnet_cidr]) : ["0.0.0.0/0"]
+  wls_ms_source_cidrs          = var.add_load_balancer ? ((local.use_regional_subnet || local.is_single_ad_region) ? [local.lb_subnet_1_subnet_cidr] : [local.lb_subnet_1_subnet_cidr, local.lb_subnet_2_subnet_cidr]) : ["0.0.0.0/0"]
   load_balancer_min_value      = var.add_load_balancer ? var.wls_ms_extern_port : var.wls_ms_extern_ssl_port
   load_balancer_max_value      = var.add_load_balancer ? var.wls_ms_extern_port : var.wls_ms_extern_ssl_port
   create_lb_sec_list           = var.add_load_balancer
@@ -49,7 +49,7 @@ module "network-vcn-config" {
   bastion_subnet_cidr          = local.bastion_subnet_cidr
   is_bastion_instance_required = var.is_bastion_instance_required
   existing_bastion_instance_id = var.existing_bastion_instance_id
-  vcn_cidr                     = element(concat(module.network-vcn.*.vcn_cidr, tolist([""])), 0)
+  vcn_cidr                     = var.wls_vcn_name == "" ? data.oci_core_vcn.wls_vcn[0].cidr_block : element(concat(module.network-vcn.*.vcn_cidr, tolist([""])), 0)
   existing_mt_subnet_id        = var.mount_target_subnet_id
   existing_service_gateway_ids = var.wls_vcn_name == "" ? [] : data.oci_core_service_gateways.service_gateways.service_gateways.*.id
   existing_nat_gateway_ids     = var.wls_vcn_name == "" ? [] : data.oci_core_nat_gateways.nat_gateways.nat_gateways.*.id
@@ -66,7 +66,7 @@ module "network-vcn-config" {
 
 module "network-lb-nsg" {
   source            = "./modules/network/nsg"
-  count             = local.add_existing_load_balancer ? 0 : var.add_load_balancer && var.lb_subnet_1_id == "" ? 1 : 0
+  count             = var.add_load_balancer && var.lb_subnet_1_cidr == "" ? 0 : 1
   compartment_id    = local.network_compartment_id
   vcn_id            = local.vcn_id
 
@@ -80,7 +80,7 @@ module "network-lb-nsg" {
 
 module "network-bastion-nsg" {
   source          = "./modules/network/nsg"
-  count           = !local.assign_weblogic_public_ip && var.bastion_subnet_id == "" && var.is_bastion_instance_required && var.existing_bastion_instance_id == "" ? 1 : 0
+  count           = var.is_bastion_instance_required && var.bastion_subnet_cidr == "" ? 0 : 1
   compartment_id  = local.network_compartment_id
   vcn_id          = local.vcn_id
   nsg_name        = "${local.service_name_prefix}-bastion-nsg"
@@ -93,7 +93,7 @@ module "network-bastion-nsg" {
 
 module "network-mount-target-nsg" {
   source         = "./modules/network/nsg"
-  count          = var.add_existing_mount_target ? 0 : (var.add_fss && var.mount_target_subnet_id == "" ? 1 : 0)
+  count          = var.add_fss && var.mount_target_subnet_cidr == "" ? 0 : 1
   compartment_id = local.network_compartment_id
   vcn_id         = local.vcn_id
   nsg_name       = "${local.service_name_prefix}-mount-target-nsg"
@@ -106,7 +106,7 @@ module "network-mount-target-nsg" {
 
 module "network-compute-admin-nsg" {
   source          = "./modules/network/nsg"
-  count           = var.wls_subnet_cidr != "" ?  1 : 0
+  count           = var.wls_subnet_cidr == "" ? 0 : 1
   compartment_id  = local.network_compartment_id
   vcn_id          = local.vcn_id
   nsg_name        = "${local.service_name_prefix}-admin-server-nsg"
@@ -119,7 +119,7 @@ module "network-compute-admin-nsg" {
 
 module "network-compute-managed-nsg" {
   source          = "./modules/network/nsg"
-  count           = var.wls_subnet_cidr != "" ?  1 : 0
+  count           = var.wls_subnet_cidr == "" ? 0 : 1
   compartment_id  = local.network_compartment_id
   vcn_id          = local.vcn_id
   nsg_name        = "${local.service_name_prefix}-managed-server-nsg"
@@ -248,7 +248,7 @@ module "bastion" {
     freeform_tags = local.free_form_tags
   }
   is_bastion_with_reserved_public_ip = var.is_bastion_with_reserved_public_ip
-  bastion_nsg_id = element(module.network-bastion-nsg[*].nsg_id, 0)
+  bastion_nsg_id                     =  var.bastion_subnet_id != "" ? (var.add_existing_nsg ? [var.existing_bastion_nsg_id] : []) : element(module.network-bastion-nsg[*].nsg_id, 0)
 
   use_bastion_marketplace_image = var.use_bastion_marketplace_image
   mp_listing_id                 = var.bastion_listing_id
@@ -421,8 +421,8 @@ module "fss" {
   resource_name_prefix   = var.service_name
   export_path            = local.export_path
   mount_target_id        = var.mount_target_id
-  mount_target_subnet_id = var.use_existing_subnets ? var.mount_target_subnet_id : module.network-mount-target-private-subnet[0].subnet_id
-  mount_target_nsg_id    = element(module.network-mount-target-nsg[*].nsg_id, 0)
+  mount_target_subnet_id = local.use_existing_subnets ? var.mount_target_subnet_id : module.network-mount-target-private-subnet[0].subnet_id
+  mount_target_nsg_id    = var.mount_target_subnet_id != "" ? (var.add_existing_nsg ? [var.existing_mount_target_nsg_id] : []) : element(module.network-mount-target-nsg[*].nsg_id, 0)
   tags = {
     defined_tags  = local.defined_tags
     freeform_tags = local.free_form_tags
@@ -436,7 +436,7 @@ module "load-balancer" {
   compartment_id           = local.network_compartment_id
   lb_reserved_public_ip_id = compact([var.lb_reserved_public_ip_id])
   is_lb_private            = var.is_lb_private
-  lb_nsg_id                = element(module.network-lb-nsg[*].nsg_id, 0)
+  lb_nsg_id                = var.lb_subnet_1_id != "" ? (var.add_existing_nsg ? [var.existing_lb_nsg_id] : []) : element(module.network-lb-nsg[*].nsg_id, 0)
   lb_max_bandwidth         = var.lb_max_bandwidth
   lb_min_bandwidth         = var.lb_min_bandwidth
   lb_name                  = "${local.service_name_prefix}-lb"
@@ -518,7 +518,7 @@ module "compute" {
   wls_domain_name         = format("%s_domain", local.service_name_prefix)
   wls_server_startup_args = var.wls_server_startup_args
   wls_existing_vcn_id     = var.wls_existing_vcn_id
-  wls_vcn_cidr            = var.wls_vcn_cidr != "" ? var.wls_vcn_cidr : module.network-vcn[0].vcn_cidr
+  wls_vcn_cidr            = var.wls_vcn_cidr != "" ? var.wls_vcn_cidr : element(concat(module.network-vcn.*.vcn_cidr, tolist([""])), 0)
   wls_version             = var.wls_version
   wls_edition             = var.wls_edition
   num_vm_instances        = var.wls_node_count

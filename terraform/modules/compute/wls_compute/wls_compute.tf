@@ -47,7 +47,7 @@ module "wls-instances" {
     vnic_display_name = "primaryvnic"
     assign_public_ip  = var.assign_public_ip
     hostname_label    = "${local.host_label}-${x}"
-    compute_nsg_ids   = x == 0 ? flatten(var.compute_nsg_ids) : element(var.compute_nsg_ids, 1)
+    compute_nsg_ids   = length(var.compute_nsg_ids) != 0 ? x == 0 ? var.compute_nsg_ids : [element(var.compute_nsg_ids, 1)] : []
 
     ocpus = length(regexall("^.*Flex", var.instance_shape)) == 0 ? lookup(data.oci_core_shapes.oci_shapes[x % length(local.ad_names)].shapes[0], "ocpus") : var.wls_ocpu_count
 

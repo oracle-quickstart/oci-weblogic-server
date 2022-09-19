@@ -60,3 +60,9 @@ variable "add_existing_mount_target" {
   description = "Add existing mount target to instances"
   default     = false
 }
+
+variable "existing_mount_target_nsg_id" {
+  type        = string
+  description = "The OCID of the pre-created NSG that should be attached to the mount target"
+  default     = ""
+}

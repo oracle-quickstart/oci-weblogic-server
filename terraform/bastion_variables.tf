@@ -28,3 +28,9 @@ variable "is_bastion_with_reserved_public_ip" {
   default     = false
   description = "Creates reserved public ip for bastion instance. Applicable only for new bastion, not for existing"
 }
+
+variable "existing_bastion_nsg_id" {
+  type        = string
+  description = "The OCID of the pre-created NSG that should be attached to the bastion instance"
+  default     = ""
+}
