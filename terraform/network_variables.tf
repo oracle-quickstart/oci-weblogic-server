@@ -16,7 +16,7 @@ variable "wls_existing_vcn_id" {
 variable "wls_vcn_cidr" {
   type        = string
   description = "The CIDR of the VCN where the compute instance will be created"
-  default     = "10.0.0.0/16"
+  default     = ""
 }
 
 variable "wls_vcn_name" {
@@ -110,9 +110,15 @@ variable "lb_subnet_2_id" {
   default     = ""
 }
 
+variable "existing_lb_nsg_id" {
+  type        = string
+  description = "The OCID of the pre-created NSG that should be attached to the load balancer"
+  default     = ""
+}
+
 variable "use_existing_subnets" {
   type        = bool
-  description = "Set to true if the exsiting subnets are used to create VCN config"
+  description = "Set to true if the existing subnets are used to create VCN config"
   default     = false
 }
 
@@ -143,25 +149,25 @@ variable "lb_subnet_2_name" {
 variable "lb_subnet_1_cidr" {
   type        = string
   description = "CIDR for loadbalancer subnet"
-  default     = "10.0.4.0/16"
+  default     = ""
 }
 
 variable "lb_subnet_2_cidr" {
   type        = string
   description = "CIDR for loadbalancer subnet"
-  default     = "10.0.5.0/16"
+  default     = ""
 }
 
 variable "wls_subnet_cidr" {
   type        = string
   description = "CIDR for weblogic subnet"
-  default     = "10.0.3.0/16"
+  default     = ""
 }
 
 variable "bastion_subnet_cidr" {
   type        = string
   description = "CIDR for bastion subnet"
-  default     = "10.0.6.0/16"
+  default     = ""
 }
 
 # Used in UI instead of use_regional_subnet
@@ -194,4 +200,22 @@ variable "nsg_ids" {
     admin_nsg_id        = ""
     managed_nsg_id      = ""
   }
+}
+
+variable "add_existing_nsg" {
+  type        = bool
+  description = "Use an existing network security group"
+  default     = false
+}
+
+variable "existing_admin_server_nsg_id" {
+  type        = string
+  description = "The OCID of the pre-created NSG that should be attached to the admin server"
+  default     = ""
+}
+
+variable "existing_managed_server_nsg_id" {
+  type        = string
+  description = "The OCID of the pre-created NSG that should be attached to the managed server"
+  default     = ""
 }
