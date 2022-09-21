@@ -99,7 +99,8 @@ module "network-bastion-nsg" {
 
 module "network-mount-target-nsg" {
   source         = "./modules/network/nsg"
-  count          = var.add_fss && var.mount_target_subnet_cidr == "" ? 0 : 1
+  //count          = var.add_existing_mount_target ? 0 : (var.add_fss && var.mount_target_subnet_id == "" ? 1 : 0)
+  count          = var.add_fss && var.mount_target_id != "" ? 0 : 1
   compartment_id = local.network_compartment_id
   vcn_id         = local.vcn_id
   nsg_name       = "${local.service_name_prefix}-mount-target-nsg"
@@ -396,8 +397,7 @@ module "fss" {
   count  = var.existing_fss_id == "" && var.add_fss ? 1 : 0
 
   compartment_id      = var.fss_compartment_id
-  availability_domain = var.use_regional_subnet ? var.fss_availability_domain : data.oci_core_subnet.mount_target_subnet[0].availability_domain
-
+  availability_domain = var.fss_availability_domain
   vcn_id                 = local.vcn_id
   vcn_cidr               = var.wls_vcn_cidr != "" ? var.wls_vcn_cidr : data.oci_core_vcn.wls_vcn[0].cidr_block
   resource_name_prefix   = var.service_name

@@ -1,7 +1,7 @@
 # Copyright (c) 2022, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
-resource "oci_core_network_security_group_security_rule" "wls_ssh_ingress_security_list" {
+resource "oci_core_network_security_group_security_rule" "wls_ssh_ingress_security_rule" {
 
     network_security_group_id = element(var.nsg_ids["admin_nsg_id"],0)
     direction = "INGRESS"
@@ -20,7 +20,7 @@ resource "oci_core_network_security_group_security_rule" "wls_ssh_ingress_securi
     }
 }
 
-resource "oci_core_network_security_group_security_rule" "wls_ingress_security_list" {
+resource "oci_core_network_security_group_security_rule" "wls_ingress_security_rule" {
     count = length(local.wls_admin_port_source_cidrs) > 0 ? length(local.wls_admin_port_source_cidrs) : 0
     network_security_group_id = element(var.nsg_ids["admin_nsg_id"],0)
     direction = "INGRESS"
@@ -39,7 +39,7 @@ resource "oci_core_network_security_group_security_rule" "wls_ingress_security_l
     }
 }
 
-resource "oci_core_network_security_group_security_rule" "wls_ingress_internal_security_list" {
+resource "oci_core_network_security_group_security_rule" "wls_ingress_internal_security_rule" {
 
   network_security_group_id = element(var.nsg_ids["admin_nsg_id"],0)
   direction = "INGRESS"
@@ -50,7 +50,7 @@ resource "oci_core_network_security_group_security_rule" "wls_ingress_internal_s
   stateless   = false
 }
 
-resource "oci_core_network_security_group_security_rule" "wls_ingress_lb_ms_security_list" {
+resource "oci_core_network_security_group_security_rule" "wls_ingress_lb_ms_security_rule" {
   count = length(var.wls_ms_source_cidrs) > 0 ? length(var.wls_ms_source_cidrs) : 0
   network_security_group_id = element(var.nsg_ids["managed_nsg_id"],0)
   direction = "INGRESS"
@@ -68,7 +68,7 @@ resource "oci_core_network_security_group_security_rule" "wls_ingress_lb_ms_secu
   }
 }
 
-resource "oci_core_network_security_group_security_rule" "wls_ingress_idcs_ms_security_list" {
+resource "oci_core_network_security_group_security_rule" "wls_ingress_idcs_ms_security_rule" {
   count = length(var.wls_ms_source_cidrs) > 0 ? length(var.wls_ms_source_cidrs) : 0
   network_security_group_id = element(var.nsg_ids["managed_nsg_id"],0)
   direction = "INGRESS"
@@ -86,7 +86,7 @@ resource "oci_core_network_security_group_security_rule" "wls_ingress_idcs_ms_se
   }
 }
 
-resource "oci_core_network_security_group_security_rule" "lb_ingress_security_list" {
+resource "oci_core_network_security_group_security_rule" "lb_ingress_security_rule" {
   count = var.create_load_balancer ? 1 : 0
   network_security_group_id = element(var.nsg_ids["lb_nsg_id"],0)
   direction = "INGRESS"
@@ -98,13 +98,13 @@ resource "oci_core_network_security_group_security_rule" "lb_ingress_security_li
 
   tcp_options {
     destination_port_range {
-       min = local.port_for_ingress_lb_security_list
-       max = local.port_for_ingress_lb_security_list
+       min = local.port_for_ingress_lb_security_rule
+       max = local.port_for_ingress_lb_security_rule
     }
   }
 }
 
-resource "oci_core_network_security_group_security_rule" "bastion_ingress_security_list" {
+resource "oci_core_network_security_group_security_rule" "bastion_ingress_security_rule" {
   count          = var.existing_bastion_instance_id == "" && var.is_bastion_instance_required ? 1 : 0
   network_security_group_id = element(var.nsg_ids["bastion_nsg_id"],0)
   direction = "INGRESS"      
@@ -115,7 +115,7 @@ resource "oci_core_network_security_group_security_rule" "bastion_ingress_securi
   stateless   = false
 }
 
-resource "oci_core_network_security_group_security_rule" "existing_bastion_ingress_security_list" {
+resource "oci_core_network_security_group_security_rule" "existing_bastion_ingress_security_rule" {
   count          = var.existing_bastion_instance_id != "" && var.is_bastion_instance_required ? 1 : 0
   network_security_group_id = element(var.nsg_ids["bastion_nsg_id"],0)
   direction = "INGRESS"
@@ -126,7 +126,7 @@ resource "oci_core_network_security_group_security_rule" "existing_bastion_ingre
   stateless   = false
 }
 
-resource "oci_core_network_security_group_security_rule" "fss_ingress_security_list_1" {
+resource "oci_core_network_security_group_security_rule" "fss_ingress_security_rule-1" {
   for_each = {
     for nsg_name, nsg_id in var.nsg_ids :
     nsg_name => nsg_id if nsg_name == "mount_target_nsg_id" && var.add_fss && var.existing_mt_subnet_id == ""
@@ -147,7 +147,7 @@ resource "oci_core_network_security_group_security_rule" "fss_ingress_security_l
   }
 }
 
-resource "oci_core_network_security_group_security_rule" "fss_ingress_security_list_2" {
+resource "oci_core_network_security_group_security_rule" "fss_ingress_security_rule_2" {
   for_each = {
     for nsg_name, nsg_id in var.nsg_ids :
     nsg_name => nsg_id if nsg_name == "mount_target_nsg_id" && var.add_fss && var.existing_mt_subnet_id == ""
@@ -168,7 +168,7 @@ resource "oci_core_network_security_group_security_rule" "fss_ingress_security_l
   }
 }
 
-resource "oci_core_network_security_group_security_rule" "fss_ingress_security_list_3" {
+resource "oci_core_network_security_group_security_rule" "fss_ingress_security_rule_3" {
   for_each = {
     for nsg_name, nsg_id in var.nsg_ids :
     nsg_name => nsg_id if nsg_name == "mount_target_nsg_id" && var.add_fss && var.existing_mt_subnet_id == ""
@@ -189,7 +189,7 @@ resource "oci_core_network_security_group_security_rule" "fss_ingress_security_l
   } 
 }  
 
-resource "oci_core_network_security_group_security_rule" "fss_ingress_security_list_4" {
+resource "oci_core_network_security_group_security_rule" "fss_ingress_security_rule_4" {
   for_each = {
     for nsg_name, nsg_id in var.nsg_ids :
     nsg_name => nsg_id if nsg_name == "mount_target_nsg_id" && var.add_fss && var.existing_mt_subnet_id == ""
@@ -210,7 +210,7 @@ resource "oci_core_network_security_group_security_rule" "fss_ingress_security_l
   }
 } 
 
-resource "oci_core_network_security_group_security_rule" "egress_security_list" {
+resource "oci_core_network_security_group_security_rule" "egress_security_rule" {
   for_each = {
     for nsg_name, nsg_id in var.nsg_ids :
     nsg_name => nsg_id if nsg_name != "managed_nsg_id"
@@ -224,7 +224,7 @@ resource "oci_core_network_security_group_security_rule" "egress_security_list" 
   stateless   = false
 }
 
-resource "oci_core_network_security_group_security_rule" "fss_egress_security_list_1" {
+resource "oci_core_network_security_group_security_rule" "fss_egress_security_rule_1" {
   for_each = {
     for nsg_name, nsg_id in var.nsg_ids :
     nsg_name => nsg_id if nsg_name == "mount_target_nsg_id" && var.add_fss && var.existing_mt_subnet_id == ""
@@ -245,7 +245,7 @@ resource "oci_core_network_security_group_security_rule" "fss_egress_security_li
   }
 }
 
-resource "oci_core_network_security_group_security_rule" "fss_egress_security_list_2" {
+resource "oci_core_network_security_group_security_rule" "fss_egress_security_rule_2" {
   for_each = {
     for nsg_name, nsg_id in var.nsg_ids :
     nsg_name => nsg_id if nsg_name == "mount_target_nsg_id" && var.add_fss && var.existing_mt_subnet_id == ""
@@ -266,7 +266,7 @@ resource "oci_core_network_security_group_security_rule" "fss_egress_security_li
   }
 }
 
-resource "oci_core_network_security_group_security_rule" "fss_egress_security_list_3" {
+resource "oci_core_network_security_group_security_rule" "fss_egress_security_rule_3" {
   for_each = {
     for nsg_name, nsg_id in var.nsg_ids :
     nsg_name => nsg_id if nsg_name == "mount_target_nsg_id" && var.add_fss && var.existing_mt_subnet_id == ""
