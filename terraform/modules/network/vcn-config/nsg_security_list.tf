@@ -87,7 +87,7 @@ resource "oci_core_network_security_group_security_rule" "wls_ingress_idcs_ms_se
 }
 
 resource "oci_core_network_security_group_security_rule" "lb_ingress_security_list" {
-  count = var.create_lb_sec_list ? 1 : 0
+  count = var.create_load_balancer ? 1 : 0
   network_security_group_id = element(var.nsg_ids["lb_nsg_id"],0)
   direction = "INGRESS"
   protocol = "6"
@@ -213,7 +213,7 @@ resource "oci_core_network_security_group_security_rule" "fss_ingress_security_l
 resource "oci_core_network_security_group_security_rule" "egress_security_list" {
   for_each = {
     for nsg_name, nsg_id in var.nsg_ids :
-    nsg_name => nsg_id if nsg_name != "managed_nsg_id" && var.add_fss && var.existing_mt_subnet_id == "" 
+    nsg_name => nsg_id if nsg_name != "managed_nsg_id"
   }
   network_security_group_id = element(each.value,0)
   direction = "EGRESS"

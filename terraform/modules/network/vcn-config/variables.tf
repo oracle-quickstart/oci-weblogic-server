@@ -183,7 +183,7 @@ variable "lb_destination_cidr" {
   description = "Set to bastion subnet cidr if loadbalancer is set to private"
 }
 
-variable "create_lb_sec_list" {
+variable "create_load_balancer" {
   type        = bool
   description = "Set to true if add load balancer is true"
 }
@@ -202,7 +202,7 @@ variable "load_balancer_max_value" {
 
 variable "nsg_ids" {
   type = map(any)
-  description = "A map of nsg ids for laodbalancer,bastion,fss,admin instance, & managed server instance"
+  description = "A map of nsg ids for load balancer,bastion,fss,admin server instance, and managed server instance"
   default = {
     lb_nsg_id  = ""
     bastion_nsg_id = ""

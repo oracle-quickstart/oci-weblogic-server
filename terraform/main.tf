@@ -44,7 +44,7 @@ module "network-vcn-config" {
   wls_ms_source_cidrs          = var.add_load_balancer ? ((local.use_regional_subnet || local.is_single_ad_region) ? [local.lb_subnet_1_subnet_cidr] : [local.lb_subnet_1_subnet_cidr, local.lb_subnet_2_subnet_cidr]) : ["0.0.0.0/0"]
   load_balancer_min_value      = var.add_load_balancer ? var.wls_ms_extern_port : var.wls_ms_extern_ssl_port
   load_balancer_max_value      = var.add_load_balancer ? var.wls_ms_extern_port : var.wls_ms_extern_ssl_port
-  create_lb_sec_list           = var.add_load_balancer
+  create_load_balancer         = var.add_load_balancer
   resource_name_prefix         = local.service_name_prefix
   bastion_subnet_cidr          = local.bastion_subnet_cidr
   is_bastion_instance_required = var.is_bastion_instance_required
@@ -72,11 +72,11 @@ module "network-vcn-config" {
 }
 
 module "network-lb-nsg" {
-  source            = "./modules/network/nsg"
-  count             = var.add_load_balancer && var.lb_subnet_1_cidr == "" ? 0 : 1
-  compartment_id    = local.network_compartment_id
-  vcn_id            = local.vcn_id
-  nsg_name = "${local.service_name_prefix}-lb-nsg"
+  source         = "./modules/network/nsg"
+  count          = var.add_load_balancer && var.lb_subnet_1_cidr == "" ? 0 : 1
+  compartment_id = local.network_compartment_id
+  vcn_id         = local.vcn_id
+  nsg_name       = "${local.service_name_prefix}-lb-nsg"
 
   tags = {
     defined_tags  = local.defined_tags
@@ -85,11 +85,11 @@ module "network-lb-nsg" {
 }
 
 module "network-bastion-nsg" {
-  source          = "./modules/network/nsg"
-  count           = var.is_bastion_instance_required && var.bastion_subnet_cidr == "" ? 0 : 1
-  compartment_id  = local.network_compartment_id
-  vcn_id          = local.vcn_id
-  nsg_name        = "${local.service_name_prefix}-bastion-nsg"
+  source         = "./modules/network/nsg"
+  count          = var.is_bastion_instance_required && var.bastion_subnet_cidr == "" ? 0 : 1
+  compartment_id = local.network_compartment_id
+  vcn_id         = local.vcn_id
+  nsg_name       = "${local.service_name_prefix}-bastion-nsg"
 
   tags = {
     defined_tags  = local.defined_tags
@@ -111,11 +111,11 @@ module "network-mount-target-nsg" {
 }
 
 module "network-compute-admin-nsg" {
-  source          = "./modules/network/nsg"
-  count           = var.wls_subnet_cidr == "" ? 0 : 1
-  compartment_id  = local.network_compartment_id
-  vcn_id          = local.vcn_id
-  nsg_name        = "${local.service_name_prefix}-admin-server-nsg"
+  source         = "./modules/network/nsg"
+  count          = var.wls_subnet_cidr == "" ? 0 : 1
+  compartment_id = local.network_compartment_id
+  vcn_id         = local.vcn_id
+  nsg_name       = "${local.service_name_prefix}-admin-server-nsg"
 
   tags = {
     defined_tags  = local.defined_tags
@@ -124,11 +124,11 @@ module "network-compute-admin-nsg" {
 }
 
 module "network-compute-managed-nsg" {
-  source          = "./modules/network/nsg"
-  count           = var.wls_subnet_cidr == "" ? 0 : 1
-  compartment_id  = local.network_compartment_id
-  vcn_id          = local.vcn_id
-  nsg_name        = "${local.service_name_prefix}-managed-server-nsg"
+  source         = "./modules/network/nsg"
+  count          = var.wls_subnet_cidr == "" ? 0 : 1
+  compartment_id = local.network_compartment_id
+  vcn_id         = local.vcn_id
+  nsg_name       = "${local.service_name_prefix}-managed-server-nsg"
 
   tags = {
     defined_tags  = local.defined_tags
@@ -138,12 +138,12 @@ module "network-compute-managed-nsg" {
 
 /* Create primary subnet for Load balancer only */
 module "network-lb-subnet-1" {
-  source            = "./modules/network/subnet"
-  count             = local.add_existing_load_balancer ? 0 : var.add_load_balancer && var.lb_subnet_1_id == "" ? 1 : 0
-  compartment_id    = local.network_compartment_id
-  vcn_id            = local.vcn_id
-  dhcp_options_id   = module.network-vcn-config[0].dhcp_options_id
-  route_table_id    = module.network-vcn-config[0].route_table_id
+  source          = "./modules/network/subnet"
+  count           = local.add_existing_load_balancer ? 0 : var.add_load_balancer && var.lb_subnet_1_id == "" ? 1 : 0
+  compartment_id  = local.network_compartment_id
+  vcn_id          = local.vcn_id
+  dhcp_options_id = module.network-vcn-config[0].dhcp_options_id
+  route_table_id  = module.network-vcn-config[0].route_table_id
 
   subnet_name = "${local.service_name_prefix}-${local.lb_subnet_1_name}"
   #Note: limit for dns label is 15 chars
@@ -158,13 +158,13 @@ module "network-lb-subnet-1" {
 
 /* Create secondary subnet for wls and lb backend */
 module "network-lb-subnet-2" {
-  source            = "./modules/network/subnet"
-  count             = local.add_existing_load_balancer ? 0 : var.add_load_balancer && local.lb_subnet_2_id == "" && !var.is_lb_private && !local.use_regional_subnet && !local.is_single_ad_region ? 1 : 0
-  compartment_id    = local.network_compartment_id
-  vcn_id            = local.vcn_id
-  dhcp_options_id   = module.network-vcn-config[0].dhcp_options_id
-  route_table_id    = module.network-vcn-config[0].route_table_id
-  subnet_name       = "${local.service_name_prefix}-${local.lb_subnet_2_name}"
+  source          = "./modules/network/subnet"
+  count           = local.add_existing_load_balancer ? 0 : var.add_load_balancer && local.lb_subnet_2_id == "" && !var.is_lb_private && !local.use_regional_subnet && !local.is_single_ad_region ? 1 : 0
+  compartment_id  = local.network_compartment_id
+  vcn_id          = local.vcn_id
+  dhcp_options_id = module.network-vcn-config[0].dhcp_options_id
+  route_table_id  = module.network-vcn-config[0].route_table_id
+  subnet_name     = "${local.service_name_prefix}-${local.lb_subnet_2_name}"
   #Note: limit for dns label is 15 chars
   dns_label  = format("%s-%s", local.lb_subnet_2_name, substr(strrev(var.service_name), 0, 7))
   cidr_block = local.lb_subnet_2_subnet_cidr
@@ -178,10 +178,10 @@ module "network-lb-subnet-2" {
 
 /* Create back end subnet for bastion subnet */
 module "network-bastion-subnet" {
-  source         = "./modules/network/subnet"
-  count          = !local.assign_weblogic_public_ip && var.bastion_subnet_id == "" && var.is_bastion_instance_required && var.existing_bastion_instance_id == "" ? 1 : 0
-  compartment_id = local.network_compartment_id
-  vcn_id         = local.vcn_id
+  source          = "./modules/network/subnet"
+  count           = !local.assign_weblogic_public_ip && var.bastion_subnet_id == "" && var.is_bastion_instance_required && var.existing_bastion_instance_id == "" ? 1 : 0
+  compartment_id  = local.network_compartment_id
+  vcn_id          = local.vcn_id
   dhcp_options_id = module.network-vcn-config[0].dhcp_options_id
   route_table_id  = module.network-vcn-config[0].route_table_id
   subnet_name     = "${local.service_name_prefix}-${var.bastion_subnet_name}"
@@ -246,7 +246,7 @@ module "bastion" {
     freeform_tags = local.free_form_tags
   }
   is_bastion_with_reserved_public_ip = var.is_bastion_with_reserved_public_ip
-  bastion_nsg_id                     =  var.bastion_subnet_id != "" ? (var.add_existing_nsg ? [var.existing_bastion_nsg_id] : []) : element(module.network-bastion-nsg[*].nsg_id, 0)
+  bastion_nsg_id                     = var.bastion_subnet_id != "" ? (var.add_existing_nsg ? [var.existing_bastion_nsg_id] : []) : element(module.network-bastion-nsg[*].nsg_id, 0)
 
   use_bastion_marketplace_image = var.use_bastion_marketplace_image
   mp_listing_id                 = var.bastion_listing_id
@@ -256,10 +256,10 @@ module "bastion" {
 
 /* Create back end  private subnet for wls */
 module "network-wls-private-subnet" {
-  source         = "./modules/network/subnet"
-  count          = !local.assign_weblogic_public_ip && var.wls_subnet_id == "" ? 1 : 0
-  compartment_id = local.network_compartment_id
-  vcn_id         = local.vcn_id
+  source          = "./modules/network/subnet"
+  count           = !local.assign_weblogic_public_ip && var.wls_subnet_id == "" ? 1 : 0
+  compartment_id  = local.network_compartment_id
+  vcn_id          = local.vcn_id
   dhcp_options_id = module.network-vcn-config[0].dhcp_options_id
   route_table_id  = module.network-vcn-config[0].service_gateway_route_table_id
   subnet_name     = "${local.service_name_prefix}-${var.wls_subnet_name}"
@@ -274,10 +274,10 @@ module "network-wls-private-subnet" {
 
 /* Create back end  public subnet for wls */
 module "network-wls-public-subnet" {
-  source         = "./modules/network/subnet"
-  count          = local.assign_weblogic_public_ip && var.wls_subnet_id == "" ? 1 : 0
-  compartment_id = local.network_compartment_id
-  vcn_id         = local.vcn_id
+  source          = "./modules/network/subnet"
+  count           = local.assign_weblogic_public_ip && var.wls_subnet_id == "" ? 1 : 0
+  compartment_id  = local.network_compartment_id
+  vcn_id          = local.vcn_id
   dhcp_options_id = module.network-vcn-config[0].dhcp_options_id
   route_table_id  = module.network-vcn-config[0].route_table_id
   subnet_name     = "${local.service_name_prefix}-${var.wls_subnet_name}"
@@ -292,10 +292,10 @@ module "network-wls-public-subnet" {
 
 /* Create private subnet for FSS */
 module "network-mount-target-private-subnet" {
-  source            = "./modules/network/subnet"
-  count             = var.add_existing_mount_target ? 0 : (var.add_fss && var.mount_target_subnet_id == "" ? 1 : 0)
-  compartment_id    = local.network_compartment_id
-  vcn_id            = local.vcn_id
+  source         = "./modules/network/subnet"
+  count          = var.add_existing_mount_target ? 0 : (var.add_fss && var.mount_target_subnet_id == "" ? 1 : 0)
+  compartment_id = local.network_compartment_id
+  vcn_id         = local.vcn_id
 
   dhcp_options_id = module.network-vcn-config[0].dhcp_options_id
   route_table_id  = module.network-vcn-config[0].service_gateway_route_table_id
