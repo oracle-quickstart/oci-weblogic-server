@@ -1,19 +1,22 @@
+# Copyright (c) 2022, Oracle and/or its affiliates.
+# Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
+
 #!/usr/bin/env bash
 
-########################################################################
-# Build ORM bundle for developers to test new features  or bug fixes    #
-########################################################################
+#######################################################################################################
+# Build the Oracle Resource Manager (ORM) bundles for developers to test new features or bug fixes    #
+#######################################################################################################
 
 ############################################################
 # help                                                     #
 ############################################################
 help()
 {
-  echo "Build the ORM bundles to deploy in Marketplace"
+  echo "Build the Oracle Resource Manager (ORM) bundles for developers to deploy in Marketplace"
   echo
   echo "Arguments: build.sh -v|--version <12.2.1.4|14.1.1.0> --all"
   echo "options:"
-  echo "-v, --version     Weblogic version. Supported values are 12.2.1.4 or 14.1.1.0. Optional when --all option is provided"
+  echo "-v, --version     WebLogic version. Supported values are 12.2.1.4 or 14.1.1.0. Optional when --all option is provided"
   echo "--all             All bundles"
   echo
 }
@@ -56,11 +59,11 @@ validate()
   fi
 
   if [ -z "${WLS_VERSION}" ]; then
-    echo "wls version is not provided"
+    echo "WebLogic version is not provided"
     help
     exit 1
   elif [ "${WLS_VERSION}" != "12.2.1.4" ] && [ "${WLS_VERSION}" != "14.1.1.0" ]; then
-    echo "Please provide valid wls version"
+    echo "Please provide valid WebLogic version"
     help
     exit 1
   fi
@@ -75,8 +78,8 @@ SCRIPT_DIR=$(pwd)
 echo "Cleaning wlsoci binaries folder"
 rm -rf ${SCRIPT_DIR}/binaries
 echo "Creating wlsoci binaries folder"
-mkdir -p ${SCRIPT_DIR}/binaries/tmpbuild
 TMP_BUILD=${SCRIPT_DIR}/binaries/tmpbuild
+mkdir -p ${SCRIPT_DIR}/binaries/tmpbuild
 
 create_12214_bundle()
 {

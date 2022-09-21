@@ -1,3 +1,6 @@
+# Copyright (c) 2022, Oracle and/or its affiliates.
+# Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
+
 #!/usr/bin/env bash
 
 ############################################################
@@ -5,12 +8,12 @@
 ############################################################
 help()
 {
-  echo "Build the ORM bundles to deploy in Marketplace"
+  echo "Build the Oracle Resource Manager (ORM) bundles to deploy in Marketplace"
   echo
   echo "Arguments: build_mp_bundles.sh -e|--edition <EE|SUITE|SE> -v|--version <12.2.1.4|14.1.1.0> -t|--type <UCM|BYOL> --all"
   echo "options:"
-  echo "-e, --edition     Weblogic edition. Supported values are EE,SUITE,or SE. Optional when --all option is provided"
-  echo "-v, --version     Weblogic version. Supported values are 12.2.1.4 or 14.1.1.0. Optional when --all option is provided"
+  echo "-e, --edition     WebLogic edition. Supported values are EE, SUITE, or SE. Optional when --all option is provided"
+  echo "-v, --version     WebLogic version. Supported values are 12.2.1.4 or 14.1.1.0. Optional when --all option is provided"
   echo "-t, --type        Type of bundle. Supported values are UCM or BYOL. Optional when --all option is provided"
   echo "--all             All bundles"
   echo
@@ -37,7 +40,7 @@ do
 	    shift
             ;;
         -t|--type)
-            MODE_TYPE="$2"
+            BUNDLE_TYPE="$2"
 	    shift
             ;;
         --all)
@@ -62,37 +65,37 @@ validate()
      return
   fi
   if [ -z "${WLS_EDITION}" ]; then
-    echo "wls edition is not provided"
+    echo "WebLogic edition is not provided"
     help
     exit 1
   elif [ "${WLS_EDITION}" != "EE" ] && [ "${WLS_EDITION}" != "SUITE" ] && [ "${WLS_EDITION}" != "SE" ]; then
-    echo "Please provide valid wls edition"
+    echo "Please provide valid WebLogic edition"
     help
     exit 1
   fi
 
   if [ -z "${WLS_VERSION}" ]; then
-    echo "wls version is not provided"
+    echo "WebLogic version is not provided"
     help
     exit 1
   elif [ "${WLS_VERSION}" != "12.2.1.4" ] && [ "${WLS_VERSION}" != "14.1.1.0" ]; then
-    echo "Please provide valid wls version"
+    echo "Please provide valid WebLogic version"
     help
     exit 1
   fi
 
-  if [ -z "${MODE_TYPE}" ]; then
-    echo "mode type is not provided"
+  if [ -z "${BUNDLE_TYPE}" ]; then
+    echo "Bundle type is not provided"
     help
     exit 1
-  elif [ "${MODE_TYPE}" != "UCM" ] && [ "${MODE_TYPE}" != "BYOL" ]; then
-    echo "Please provide valid mode type"
+  elif [ "${BUNDLE_TYPE}" != "UCM" ] && [ "${BUNDLE_TYPE}" != "BYOL" ]; then
+    echo "Please provide valid bundle type"
     help
     exit 1
   fi
 
-  if [ "${MODE_TYPE}" == "UCM" ] && [ "${WLS_EDITION}" == "SE" ]; then
-    echo "Standard edition(SE) is not supported for UCM mode. Please provide BYOL mode"
+  if [ "${BUNDLE_TYPE}" == "UCM" ] && [ "${WLS_EDITION}" == "SE" ]; then
+    echo "Standard edition(SE) is not supported for UCM bundle. Please provide BYOL as bundle type"
     help
     exit 1
   fi
@@ -107,8 +110,8 @@ SCRIPT_DIR=$(pwd)
 echo "Cleaning wlsoci binaries folder"
 rm -rf ${SCRIPT_DIR}/binaries
 echo "Creating wlsoci binaries folder"
-mkdir -p ${SCRIPT_DIR}/binaries/tmpbuild
 TMP_BUILD=${SCRIPT_DIR}/binaries/tmpbuild
+mkdir -p ${SCRIPT_DIR}/binaries/tmpbuild
 
 create_ucm_ee_12214()
 {
@@ -179,7 +182,7 @@ if [ "${CREATE_ALL_BUNDLES}" == "true" ]; then
   create_byol_standard_12214
   create_byol_standard_14110
 else
-  if [ "${MODE_TYPE}" == "UCM" ]; then
+  if [ "${BUNDLE_TYPE}" == "UCM" ]; then
     if [ "${WLS_EDITION}" == "EE" ]; then
       if [ "${WLS_VERSION}" == "12.2.1.4" ]; then
         create_ucm_ee_12214
