@@ -65,10 +65,10 @@ module "network-vcn-config" {
 }
 
 module "network-lb-nsg" {
-  source            = "./modules/network/nsg"
-  count             = var.add_load_balancer && var.lb_subnet_1_cidr == "" ? 0 : 1
-  compartment_id    = local.network_compartment_id
-  vcn_id            = local.vcn_id
+  source         = "./modules/network/nsg"
+  count          = var.add_load_balancer && var.lb_subnet_1_cidr == "" ? 0 : 1
+  compartment_id = local.network_compartment_id
+  vcn_id         = local.vcn_id
 
   nsg_name = "${local.service_name_prefix}-lb-nsg"
 
@@ -79,11 +79,11 @@ module "network-lb-nsg" {
 }
 
 module "network-bastion-nsg" {
-  source          = "./modules/network/nsg"
-  count           = var.is_bastion_instance_required && var.bastion_subnet_cidr == "" ? 0 : 1
-  compartment_id  = local.network_compartment_id
-  vcn_id          = local.vcn_id
-  nsg_name        = "${local.service_name_prefix}-bastion-nsg"
+  source         = "./modules/network/nsg"
+  count          = var.is_bastion_instance_required && var.bastion_subnet_cidr == "" ? 0 : 1
+  compartment_id = local.network_compartment_id
+  vcn_id         = local.vcn_id
+  nsg_name       = "${local.service_name_prefix}-bastion-nsg"
 
   tags = {
     defined_tags  = local.defined_tags
@@ -105,11 +105,11 @@ module "network-mount-target-nsg" {
 }
 
 module "network-compute-admin-nsg" {
-  source          = "./modules/network/nsg"
-  count           = var.wls_subnet_cidr == "" ? 0 : 1
-  compartment_id  = local.network_compartment_id
-  vcn_id          = local.vcn_id
-  nsg_name        = "${local.service_name_prefix}-admin-server-nsg"
+  source         = "./modules/network/nsg"
+  count          = var.wls_subnet_cidr == "" ? 0 : 1
+  compartment_id = local.network_compartment_id
+  vcn_id         = local.vcn_id
+  nsg_name       = "${local.service_name_prefix}-admin-server-nsg"
 
   tags = {
     defined_tags  = local.defined_tags
@@ -118,11 +118,11 @@ module "network-compute-admin-nsg" {
 }
 
 module "network-compute-managed-nsg" {
-  source          = "./modules/network/nsg"
-  count           = var.wls_subnet_cidr == "" ? 0 : 1
-  compartment_id  = local.network_compartment_id
-  vcn_id          = local.vcn_id
-  nsg_name        = "${local.service_name_prefix}-managed-server-nsg"
+  source         = "./modules/network/nsg"
+  count          = var.wls_subnet_cidr == "" ? 0 : 1
+  compartment_id = local.network_compartment_id
+  vcn_id         = local.vcn_id
+  nsg_name       = "${local.service_name_prefix}-managed-server-nsg"
 
   tags = {
     defined_tags  = local.defined_tags
@@ -142,8 +142,9 @@ module "network-lb-subnet-1" {
 
   subnet_name = "${local.service_name_prefix}-${local.lb_subnet_1_name}"
   #Note: limit for dns label is 15 chars
-  dns_label  = format("%s-%s", local.lb_subnet_1_name, substr(strrev(var.service_name), 0, 7))
-  cidr_block = local.lb_subnet_1_subnet_cidr
+  dns_label          = format("%s-%s", local.lb_subnet_1_name, substr(strrev(var.service_name), 0, 7))
+  cidr_block         = local.lb_subnet_1_subnet_cidr
+  prohibit_public_ip = var.is_lb_private
 
   tags = {
     defined_tags  = local.defined_tags
@@ -162,8 +163,9 @@ module "network-lb-subnet-2" {
   route_table_id    = module.network-vcn-config[0].route_table_id
   subnet_name       = "${local.service_name_prefix}-${local.lb_subnet_2_name}"
   #Note: limit for dns label is 15 chars
-  dns_label  = format("%s-%s", local.lb_subnet_2_name, substr(strrev(var.service_name), 0, 7))
-  cidr_block = local.lb_subnet_2_subnet_cidr
+  dns_label          = format("%s-%s", local.lb_subnet_2_name, substr(strrev(var.service_name), 0, 7))
+  cidr_block         = local.lb_subnet_2_subnet_cidr
+  prohibit_public_ip = var.is_lb_private
 
   tags = {
     defined_tags  = local.defined_tags
@@ -184,11 +186,12 @@ module "network-bastion-subnet" {
       [module.network-vcn-config[0].wls_ms_security_list_id],
     ),
   )
-  dhcp_options_id = module.network-vcn-config[0].dhcp_options_id
-  route_table_id  = module.network-vcn-config[0].route_table_id
-  subnet_name     = "${local.service_name_prefix}-${var.bastion_subnet_name}"
-  dns_label       = "${var.bastion_subnet_name}-${substr(uuid(), -7, -1)}"
-  cidr_block      = local.bastion_subnet_cidr
+  dhcp_options_id    = module.network-vcn-config[0].dhcp_options_id
+  route_table_id     = module.network-vcn-config[0].route_table_id
+  subnet_name        = "${local.service_name_prefix}-${var.bastion_subnet_name}"
+  dns_label          = "${var.bastion_subnet_name}-${substr(uuid(), -7, -1)}"
+  cidr_block         = local.bastion_subnet_cidr
+  prohibit_public_ip = false
 
   tags = {
     defined_tags  = local.defined_tags
@@ -248,7 +251,7 @@ module "bastion" {
     freeform_tags = local.free_form_tags
   }
   is_bastion_with_reserved_public_ip = var.is_bastion_with_reserved_public_ip
-  bastion_nsg_id                     =  var.bastion_subnet_id != "" ? (var.add_existing_nsg ? [var.existing_bastion_nsg_id] : []) : element(module.network-bastion-nsg[*].nsg_id, 0)
+  bastion_nsg_id                     = var.bastion_subnet_id != "" ? (var.add_existing_nsg ? [var.existing_bastion_nsg_id] : []) : element(module.network-bastion-nsg[*].nsg_id, 0)
 
   use_bastion_marketplace_image = var.use_bastion_marketplace_image
   mp_listing_id                 = var.bastion_listing_id
@@ -269,11 +272,12 @@ module "network-wls-private-subnet" {
       [module.network-vcn-config[0].wls_ms_security_list_id]
     ),
   )
-  dhcp_options_id = module.network-vcn-config[0].dhcp_options_id
-  route_table_id  = module.network-vcn-config[0].service_gateway_route_table_id
-  subnet_name     = "${local.service_name_prefix}-${var.wls_subnet_name}"
-  dns_label       = format("%s-%s", var.wls_subnet_name, substr(strrev(var.service_name), 0, 7))
-  cidr_block      = local.wls_subnet_cidr
+  dhcp_options_id    = module.network-vcn-config[0].dhcp_options_id
+  route_table_id     = module.network-vcn-config[0].service_gateway_route_table_id
+  subnet_name        = "${local.service_name_prefix}-${var.wls_subnet_name}"
+  dns_label          = format("%s-%s", var.wls_subnet_name, substr(strrev(var.service_name), 0, 7))
+  cidr_block         = local.wls_subnet_cidr
+  prohibit_public_ip = true
 
   tags = {
     defined_tags  = local.defined_tags
@@ -295,11 +299,12 @@ module "network-wls-public-subnet" {
     ),
   )
 
-  dhcp_options_id = module.network-vcn-config[0].dhcp_options_id
-  route_table_id  = module.network-vcn-config[0].route_table_id
-  subnet_name     = "${local.service_name_prefix}-${var.wls_subnet_name}"
-  dns_label       = format("%s-%s", var.wls_subnet_name, substr(strrev(var.service_name), 0, 7))
-  cidr_block      = local.wls_subnet_cidr
+  dhcp_options_id    = module.network-vcn-config[0].dhcp_options_id
+  route_table_id     = module.network-vcn-config[0].route_table_id
+  subnet_name        = "${local.service_name_prefix}-${var.wls_subnet_name}"
+  dns_label          = format("%s-%s", var.wls_subnet_name, substr(strrev(var.service_name), 0, 7))
+  cidr_block         = local.wls_subnet_cidr
+  prohibit_public_ip = false
 
   tags = {
     defined_tags  = local.defined_tags
@@ -315,11 +320,12 @@ module "network-mount-target-private-subnet" {
   vcn_id            = local.vcn_id
   security_list_ids = module.network-vcn-config[0].fss_security_list_id
 
-  dhcp_options_id = module.network-vcn-config[0].dhcp_options_id
-  route_table_id  = module.network-vcn-config[0].service_gateway_route_table_id
-  subnet_name     = "${local.service_name_prefix}-mt-subnet"
-  dns_label       = format("%s-%s", "mt-sbn", substr(strrev(var.service_name), 0, 7))
-  cidr_block      = local.mount_target_subnet_cidr
+  dhcp_options_id    = module.network-vcn-config[0].dhcp_options_id
+  route_table_id     = module.network-vcn-config[0].service_gateway_route_table_id
+  subnet_name        = "${local.service_name_prefix}-mt-subnet"
+  dns_label          = format("%s-%s", "mt-sbn", substr(strrev(var.service_name), 0, 7))
+  cidr_block         = local.mount_target_subnet_cidr
+  prohibit_public_ip = true
 
   tags = {
     defined_tags  = local.defined_tags
