@@ -83,9 +83,15 @@ locals {
 
   invalid_lb_type = var.is_lb_private && var.assign_public_ip
 
+  # VCN peering
+  missing_db_vcn_lpg = var.is_vcn_peering ? var.db_vcn_lpg_id == "" : false
+
   # Validations
-  vcn_params_msg      = "WLSC-ERROR: Atleast existing_vcn_id or vcn_name must be provided. Both can only be provided when provisioning with OCI DB in peered VCNs."
+  vcn_params_msg      = "WLSC-ERROR: At least wls_existing_vcn_id or wls_vcn_name must be provided."
   validate_vcn_params = local.missing_vcn ? local.validators_msg_map[local.vcn_params_msg] : null
+
+  both_vcn_param_msg      = "WLSC-ERROR: Both wls_existing_vcn_id and wls_vcn_name cannot be provided."
+  validate_both_vcn_param = local.both_vcn_param ? local.validators_msg_map[local.both_vcn_param_msg] : null
 
   missing_wls_subnet_cidr_msg      = "WLSC-ERROR: The value for wls_subnet_cidr is required if existing virtual cloud network is used."
   validate_missing_wls_subnet_cidr = local.missing_wls_subnet_cidr ? local.validators_msg_map[local.missing_wls_subnet_cidr_msg] : null
@@ -131,6 +137,9 @@ locals {
 
   missing_existing_bastion_host_private_subnet_msg      = "WLSC-ERROR: Support existing bastion host for provisioning WLS in private subnet is enabled in CLI only. Provide all required parameters [ is_bastion_instance_required, existing_bastion_instance_id, bastion_ssh_private_key ]."
   validate_missing_existing_bastion_host_private_subnet = (local.invalid_bastion_private_key) ? local.validators_msg_map[local.missing_existing_bastion_host_private_subnet_msg] : null
+
+  missing_db_vcn_lpg_msg      = "WLSC-ERROR: The value for db_vcn_lpg_id is required if VCN peering is required."
+  validate_missing_db_vcn_lpg = local.missing_db_vcn_lpg ? local.validators_msg_map[local.missing_db_vcn_lpg_msg] : null
 
 }
 

@@ -25,13 +25,23 @@ output "load_balancer_subnets_id" {
   value = compact(
     concat(
       [var.lb_subnet_1_id],
-      [var.lb_subnet_2_id]
+      [var.lb_subnet_2_id],
+      module.network-lb-subnet-1[*].subnet_id,
+      module.network-lb-subnet-2[*].subnet_id,
     ),
   )
 }
 
 output "weblogic_subnet_id" {
-  value = var.wls_subnet_id
+  value = distinct(
+    compact(
+      concat(
+        [var.wls_subnet_id],
+        module.network-wls-public-subnet[*].subnet_id,
+        module.network-wls-private-subnet[*].subnet_id,
+      ),
+    ),
+  )
 }
 
 output "load_balancer_id" {

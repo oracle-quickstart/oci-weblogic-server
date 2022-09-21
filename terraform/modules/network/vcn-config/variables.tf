@@ -110,12 +110,6 @@ variable "existing_bastion_instance_id" {
   description = "An OCID of the existing bastion instance to connect to the compute instance"
 }
 
-variable "is_vcn_peering" {
-  type        = bool
-  description = "Set to true if you want VCN peering"
-  default     = false
-}
-
 variable "tags" {
   type = object({
     defined_tags  = map(any),
@@ -207,13 +201,13 @@ variable "load_balancer_max_value" {
 }
 
 variable "nsg_ids" {
-  type = map(any)
+  type        = map(any)
   description = "A map of nsg ids for load balancer,bastion,fss,admin server instance, and managed server instance"
   default = {
-    lb_nsg_id  = ""
-    bastion_nsg_id = ""
+    lb_nsg_id           = ""
+    bastion_nsg_id      = ""
     mount_target_nsg_id = ""
-    admin_nsg_id = ""
-    managed_nsg_id = ""
+    admin_nsg_id        = ""
+    managed_nsg_id      = ""
   }
 }

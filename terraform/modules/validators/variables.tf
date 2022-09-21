@@ -149,6 +149,20 @@ variable "db_password_id" {
   description = "The OCID of the vault secret with the password of the database"
 }
 
+variable "is_vcn_peering" {
+  type        = bool
+  description = "Set to true if automatic VCN peering will be done during stack creation"
+}
+
+variable "db_vcn_lpg_id" {
+  type        = string
+  description = "The OCID of the Local Peering Gateway (LPG) in the DB VCN to which the LPG in the WebLogic VCN will be peered. Required if VCN peering is required"
+  validation {
+    condition     = var.db_vcn_lpg_id == "" || length(regexall("^ocid1.localpeeringgateway.*$", var.db_vcn_lpg_id)) > 0
+    error_message = "WLSC-ERROR: The value for db_vcn_lpg_id should be blank or start with \"ocid1.localpeeringgateway.\"."
+  }
+}
+
 # OCI DB parameters
 variable "is_oci_db" {
   type        = bool
@@ -251,6 +265,20 @@ variable "atp_db_level" {
   }
 }
 
+variable "is_atp_with_private_endpoints" {
+  type        = bool
+  description = "Set to true if the ATP DB uses private endpoint for access control."
+}
+
+variable "atp_db_existing_vcn_id" {
+  type        = string
+  description = "The OCID of the VCN of the ATP DB when using private endpoint."
+  validation {
+    condition     = var.atp_db_existing_vcn_id == "" || length(regexall("^ocid1.vcn.*$", var.atp_db_existing_vcn_id)) > 0
+    error_message = "WLSC-ERROR: The value for atp_db_existing_vcn_id should be blank or start with \"ocid1.vcn.\"."
+  }
+}
+
 variable "add_fss" {
   type        = bool
   description = "Add file system storage to WebLogic Server instances"
@@ -301,7 +329,7 @@ variable "mount_target_id" {
 variable "mount_target_compartment_id" {
   type        = string
   description = "The OCID of the compartment where the mount target exists"
-  validation {    
+  validation {
     condition     = var.mount_target_compartment_id == "" || length(regexall("^ocid1.compartment.*$", var.mount_target_compartment_id)) > 0
     error_message = "WLSC-ERROR: The value for mount_target_compartment_id should be blank or start with \"ocid1.compartment.\"."
   }

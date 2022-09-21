@@ -207,3 +207,9 @@ variable "existing_managed_server_nsg_id" {
   description = "The OCID of the pre-created NSG that should be attached to the managed server"
   default     = ""
 }
+
+variable "db_vcn_lpg_id" {
+  type        = string
+  description = "The OCID of the Local Peering Gateway (LPG) in the DB VCN to which the LPG in the WebLogic VCN will be peered. Required if VCN peering is required"
+  default     = ""
+}
