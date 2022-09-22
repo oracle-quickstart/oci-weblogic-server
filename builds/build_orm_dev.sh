@@ -14,7 +14,7 @@ help()
 {
   echo "Build the Oracle Resource Manager (ORM) bundles for developers to deploy in Marketplace"
   echo
-  echo "Arguments: build.sh -v|--version <12.2.1.4|14.1.1.0> --all"
+  echo "Arguments: build_orm_dev.sh -v|--version <12.2.1.4|14.1.1.0> --all"
   echo "options:"
   echo "-v, --version     WebLogic version. Supported values are 12.2.1.4 or 14.1.1.0. Optional when --all option is provided"
   echo "--all             All bundles"
@@ -84,12 +84,12 @@ mkdir -p ${SCRIPT_DIR}/binaries/tmpbuild
 create_12214_bundle()
 {
   cp -Rf ${SCRIPT_DIR}/../terraform/schema.yaml ${SCRIPT_DIR}/../terraform/modules ${SCRIPT_DIR}/../terraform/*.tf ${SCRIPT_DIR}/../terraform/version.txt ${TMP_BUILD}
-  (cd ${TMP_BUILD}; zip -r ${SCRIPT_DIR}/binaries/wlsoci-resource-manager-ee-ucm-12214.zip *; rm -Rf ${TMP_BUILD}/*)
+  (cd ${TMP_BUILD}; zip -r ${SCRIPT_DIR}/binaries/wlsoci-resource-manager-ee-12214.zip *; rm -Rf ${TMP_BUILD}/*)
 }
 create_14110_bundle()
 {
   cp -Rf ${SCRIPT_DIR}/../terraform/modules ${SCRIPT_DIR}/../terraform/*.tf ${SCRIPT_DIR}/../terraform/version.txt ${SCRIPT_DIR}/../terraform/schema_14110.yaml ${TMP_BUILD}
-  (cd ${TMP_BUILD}; zip -r ${SCRIPT_DIR}/binaries/wlsoci-resource-manager-ee-ucm-14110.zip *; rm -Rf ${TMP_BUILD}/*)
+  (cd ${TMP_BUILD}; zip -r ${SCRIPT_DIR}/binaries/wlsoci-resource-manager-ee-14110.zip *; rm -Rf ${TMP_BUILD}/*)
 } 
 
 if [ "${CREATE_ALL_BUNDLES}" == "true" ]; then
