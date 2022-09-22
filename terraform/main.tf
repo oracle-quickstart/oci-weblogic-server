@@ -393,12 +393,13 @@ module "validators" {
 
 module "fss" {
   source = "./modules/fss"
-  count  = var.existing_fss_id == "" && var.add_fss ? 1 : 0
+  count  = var.add_fss ? 1 : 0
 
   compartment_id      = var.fss_compartment_id
-  availability_domain = var.use_regional_subnet ? var.fss_availability_domain : data.oci_core_subnet.mount_target_subnet[0].availability_domain
+  availability_domain = local.use_regional_subnet ? var.fss_availability_domain : data.oci_core_subnet.mount_target_subnet[0].availability_domain
   vcn_id                 = local.vcn_id
   vcn_cidr               = var.wls_vcn_cidr != "" ? var.wls_vcn_cidr : data.oci_core_vcn.wls_vcn[0].cidr_block
+  existing_fss_id                 = var.existing_fss_id
   resource_name_prefix   = var.service_name
   export_path            = local.export_path
   mount_target_id        = var.mount_target_id

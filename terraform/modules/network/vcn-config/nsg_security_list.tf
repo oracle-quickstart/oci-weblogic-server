@@ -126,7 +126,7 @@ resource "oci_core_network_security_group_security_rule" "existing_bastion_ingre
   stateless   = false
 }
 
-resource "oci_core_network_security_group_security_rule" "fss_ingress_security_rule-1" {
+resource "oci_core_network_security_group_security_rule" "fss_ingress_security_rule_1" {
   for_each = {
     for nsg_name, nsg_id in var.nsg_ids :
     nsg_name => nsg_id if nsg_name == "mount_target_nsg_id" && var.add_fss && var.existing_mt_subnet_id == ""

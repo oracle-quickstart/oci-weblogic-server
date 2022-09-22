@@ -62,3 +62,9 @@ variable "resource_name_prefix" {
   type        = string
   description = "Prefix which will be used to create File Shared System resources"
 }
+
+variable "existing_fss_id" {
+  type        = string
+  description = "The OCID of your existing file system"
+  default     = ""
+}

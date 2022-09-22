@@ -3,6 +3,8 @@
 
 resource "oci_file_storage_file_system" "file_system" {
 
+  count = var.existing_fss_id == "" ? 1 : 0
+
   #Required
   availability_domain = var.availability_domain
   compartment_id      = var.compartment_id
