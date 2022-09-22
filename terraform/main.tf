@@ -395,16 +395,16 @@ module "fss" {
   source = "./modules/fss"
   count  = var.add_fss ? 1 : 0
 
-  compartment_id      = var.fss_compartment_id
-  availability_domain = local.use_regional_subnet ? var.fss_availability_domain : data.oci_core_subnet.mount_target_subnet[0].availability_domain
+  compartment_id         = var.fss_compartment_id
+  availability_domain    = local.use_regional_subnet ? var.fss_availability_domain : data.oci_core_subnet.mount_target_subnet[0].availability_domain
   vcn_id                 = local.vcn_id
   vcn_cidr               = var.wls_vcn_cidr != "" ? var.wls_vcn_cidr : data.oci_core_vcn.wls_vcn[0].cidr_block
-  existing_fss_id                 = var.existing_fss_id
+  existing_fss_id        = var.existing_fss_id
   resource_name_prefix   = var.service_name
   export_path            = local.export_path
   mount_target_id        = var.mount_target_id
   mount_target_subnet_id = local.use_existing_subnets ? var.mount_target_subnet_id : module.network-mount-target-private-subnet[0].subnet_id
-  mount_target_nsg_id    = var.mount_target_subnet_id != "" ? (var.add_existing_nsg ? [var.existing_mount_target_nsg_id] : []) : element(module.network-mount-target-nsg[*].nsg_id, 0)
+  mount_target_nsg_id    = var.mount_target_subnet_cidr != "" && var.mount_target_id == "" ? element(module.network-mount-target-nsg[*].nsg_id, 0) : []
   tags = {
     defined_tags  = local.defined_tags
     freeform_tags = local.free_form_tags
