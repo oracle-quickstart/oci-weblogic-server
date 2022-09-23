@@ -56,7 +56,7 @@ data "oci_load_balancer_load_balancers" "existing_load_balancers_data_source" {
 
 data "oci_core_nat_gateways" "nat_gateways" {
   #Required
-  compartment_id = var.compartment_id
+  compartment_id = local.network_compartment_id
 
   #Optional
   vcn_id = local.vcn_id
@@ -64,7 +64,7 @@ data "oci_core_nat_gateways" "nat_gateways" {
 
 data "oci_core_service_gateways" "service_gateways" {
   #Required
-  compartment_id = var.compartment_id
+  compartment_id = local.network_compartment_id
 
   #Optional
   vcn_id = local.vcn_id

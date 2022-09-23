@@ -147,8 +147,9 @@ module "network-lb-subnet-1" {
 
   subnet_name = "${local.service_name_prefix}-${local.lb_subnet_1_name}"
   #Note: limit for dns label is 15 chars
-  dns_label  = format("%s-%s", local.lb_subnet_1_name, substr(strrev(var.service_name), 0, 7))
-  cidr_block = local.lb_subnet_1_subnet_cidr
+  dns_label          = format("%s-%s", local.lb_subnet_1_name, substr(strrev(var.service_name), 0, 7))
+  cidr_block         = local.lb_subnet_1_subnet_cidr
+  prohibit_public_ip = var.is_lb_private
 
   tags = {
     defined_tags  = local.defined_tags
@@ -166,8 +167,9 @@ module "network-lb-subnet-2" {
   route_table_id  = module.network-vcn-config[0].route_table_id
   subnet_name     = "${local.service_name_prefix}-${local.lb_subnet_2_name}"
   #Note: limit for dns label is 15 chars
-  dns_label  = format("%s-%s", local.lb_subnet_2_name, substr(strrev(var.service_name), 0, 7))
-  cidr_block = local.lb_subnet_2_subnet_cidr
+  dns_label          = format("%s-%s", local.lb_subnet_2_name, substr(strrev(var.service_name), 0, 7))
+  cidr_block         = local.lb_subnet_2_subnet_cidr
+  prohibit_public_ip = var.is_lb_private
 
   tags = {
     defined_tags  = local.defined_tags
@@ -178,15 +180,22 @@ module "network-lb-subnet-2" {
 
 /* Create back end subnet for bastion subnet */
 module "network-bastion-subnet" {
-  source          = "./modules/network/subnet"
-  count           = !local.assign_weblogic_public_ip && var.bastion_subnet_id == "" && var.is_bastion_instance_required && var.existing_bastion_instance_id == "" ? 1 : 0
-  compartment_id  = local.network_compartment_id
-  vcn_id          = local.vcn_id
-  dhcp_options_id = module.network-vcn-config[0].dhcp_options_id
-  route_table_id  = module.network-vcn-config[0].route_table_id
-  subnet_name     = "${local.service_name_prefix}-${var.bastion_subnet_name}"
-  dns_label       = "${var.bastion_subnet_name}-${substr(uuid(), -7, -1)}"
-  cidr_block      = local.bastion_subnet_cidr
+  source         = "./modules/network/subnet"
+  count          = !local.assign_weblogic_public_ip && var.bastion_subnet_id == "" && var.is_bastion_instance_required && var.existing_bastion_instance_id == "" ? 1 : 0
+  compartment_id = local.network_compartment_id
+  vcn_id         = local.vcn_id
+  security_list_ids = compact(
+    concat(
+      [module.network-vcn-config[0].wls_security_list_id],
+      [module.network-vcn-config[0].wls_ms_security_list_id],
+    ),
+  )
+  dhcp_options_id    = module.network-vcn-config[0].dhcp_options_id
+  route_table_id     = module.network-vcn-config[0].route_table_id
+  subnet_name        = "${local.service_name_prefix}-${var.bastion_subnet_name}"
+  dns_label          = "${var.bastion_subnet_name}-${substr(uuid(), -7, -1)}"
+  cidr_block         = local.bastion_subnet_cidr
+  prohibit_public_ip = false
 
   tags = {
     defined_tags  = local.defined_tags
@@ -256,15 +265,23 @@ module "bastion" {
 
 /* Create back end  private subnet for wls */
 module "network-wls-private-subnet" {
-  source          = "./modules/network/subnet"
-  count           = !local.assign_weblogic_public_ip && var.wls_subnet_id == "" ? 1 : 0
-  compartment_id  = local.network_compartment_id
-  vcn_id          = local.vcn_id
-  dhcp_options_id = module.network-vcn-config[0].dhcp_options_id
-  route_table_id  = module.network-vcn-config[0].service_gateway_route_table_id
-  subnet_name     = "${local.service_name_prefix}-${var.wls_subnet_name}"
-  dns_label       = format("%s-%s", var.wls_subnet_name, substr(strrev(var.service_name), 0, 7))
-  cidr_block      = local.wls_subnet_cidr
+  source         = "./modules/network/subnet"
+  count          = !local.assign_weblogic_public_ip && var.wls_subnet_id == "" ? 1 : 0
+  compartment_id = local.network_compartment_id
+  vcn_id         = local.vcn_id
+  security_list_ids = compact(
+    concat(
+      module.network-vcn-config[0].wls_bastion_security_list_id,
+      [module.network-vcn-config[0].wls_internal_security_list_id],
+      [module.network-vcn-config[0].wls_ms_security_list_id]
+    ),
+  )
+  dhcp_options_id    = module.network-vcn-config[0].dhcp_options_id
+  route_table_id     = module.network-vcn-config[0].service_gateway_route_table_id
+  subnet_name        = "${local.service_name_prefix}-${var.wls_subnet_name}"
+  dns_label          = format("%s-%s", var.wls_subnet_name, substr(strrev(var.service_name), 0, 7))
+  cidr_block         = local.wls_subnet_cidr
+  prohibit_public_ip = true
 
   tags = {
     defined_tags  = local.defined_tags
@@ -274,15 +291,24 @@ module "network-wls-private-subnet" {
 
 /* Create back end  public subnet for wls */
 module "network-wls-public-subnet" {
-  source          = "./modules/network/subnet"
-  count           = local.assign_weblogic_public_ip && var.wls_subnet_id == "" ? 1 : 0
-  compartment_id  = local.network_compartment_id
-  vcn_id          = local.vcn_id
-  dhcp_options_id = module.network-vcn-config[0].dhcp_options_id
-  route_table_id  = module.network-vcn-config[0].route_table_id
-  subnet_name     = "${local.service_name_prefix}-${var.wls_subnet_name}"
-  dns_label       = format("%s-%s", var.wls_subnet_name, substr(strrev(var.service_name), 0, 7))
-  cidr_block      = local.wls_subnet_cidr
+  source         = "./modules/network/subnet"
+  count          = local.assign_weblogic_public_ip && var.wls_subnet_id == "" ? 1 : 0
+  compartment_id = local.network_compartment_id
+  vcn_id         = local.vcn_id
+  security_list_ids = compact(
+    concat(
+      [module.network-vcn-config[0].wls_security_list_id],
+      [module.network-vcn-config[0].wls_ms_security_list_id],
+      [module.network-vcn-config[0].wls_internal_security_list_id]
+    ),
+  )
+
+  dhcp_options_id    = module.network-vcn-config[0].dhcp_options_id
+  route_table_id     = module.network-vcn-config[0].route_table_id
+  subnet_name        = "${local.service_name_prefix}-${var.wls_subnet_name}"
+  dns_label          = format("%s-%s", var.wls_subnet_name, substr(strrev(var.service_name), 0, 7))
+  cidr_block         = local.wls_subnet_cidr
+  prohibit_public_ip = false
 
   tags = {
     defined_tags  = local.defined_tags
@@ -297,11 +323,12 @@ module "network-mount-target-private-subnet" {
   compartment_id = local.network_compartment_id
   vcn_id         = local.vcn_id
 
-  dhcp_options_id = module.network-vcn-config[0].dhcp_options_id
-  route_table_id  = module.network-vcn-config[0].service_gateway_route_table_id
-  subnet_name     = "${local.service_name_prefix}-mt-subnet"
-  dns_label       = format("%s-%s", "mt-sbn", substr(strrev(var.service_name), 0, 7))
-  cidr_block      = local.mount_target_subnet_cidr
+  dhcp_options_id    = module.network-vcn-config[0].dhcp_options_id
+  route_table_id     = module.network-vcn-config[0].service_gateway_route_table_id
+  subnet_name        = "${local.service_name_prefix}-mt-subnet"
+  dns_label          = format("%s-%s", "mt-sbn", substr(strrev(var.service_name), 0, 7))
+  cidr_block         = local.mount_target_subnet_cidr
+  prohibit_public_ip = true
 
   tags = {
     defined_tags  = local.defined_tags

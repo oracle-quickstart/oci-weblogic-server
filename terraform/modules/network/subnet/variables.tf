@@ -11,43 +11,53 @@ variable "compartment_id" {
 }
 
 variable "dns_label" {
-  type = string
+  type        = string
   description = "A DNS label for the subnet, used in conjunction with the VNIC's hostname and VCN's DNS label to form a fully qualified domain name (FQDN) for each VNIC within this subnet"
 }
 
 variable "vcn_id" {
-  type = string
+  type        = string
   description = "The OCID of the VCN to contain the subnet"
 }
 
+variable "security_list_ids" {
+  type        = list(any)
+  description = "The OCIDs of the security list or lists that the subnet uses"
+}
+
 variable "dhcp_options_id" {
-  type = string
+  type        = string
   description = "The OCID of the set of DHCP options the subnet will use"
 }
 
 variable "route_table_id" {
-  type = string
+  type        = string
   description = "The OCID of the route table the subnet will use"
 }
 
 variable "cidr_block" {
-  type = string
+  type        = string
   description = "The subnet's CIDR block"
 }
 
 variable "subnet_name" {
-  type = string
+  type        = string
   description = "A user-friendly subnet name"
+}
+
+variable "prohibit_public_ip" {
+  type        = bool
+  description = "Set to true to create a private subnet"
 }
 
 variable "tags" {
   type = object({
-    defined_tags    = map(any),
-    freeform_tags   = map(any),
+    defined_tags  = map(any),
+    freeform_tags = map(any),
   })
   description = "Defined tags and freeform tags to be added to the VCN"
   default = {
-    defined_tags    = {},
-    freeform_tags   = {},
+    defined_tags  = {},
+    freeform_tags = {},
   }
 }
