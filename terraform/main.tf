@@ -399,17 +399,17 @@ module "validators" {
 
 module "fss" {
   source = "./modules/fss"
-  count  = var.add_fss ? 1 : 0
+  count  = var.existing_fss_id == "" && var.add_fss ? 1 : 0
 
   compartment_id         = var.fss_compartment_id
-  availability_domain    = local.use_regional_subnet ? var.fss_availability_domain : data.oci_core_subnet.mount_target_subnet[0].availability_domain
+  availability_domain    = var.fss_availability_domain
+
   vcn_id                 = local.vcn_id
   vcn_cidr               = var.wls_vcn_cidr != "" ? var.wls_vcn_cidr : data.oci_core_vcn.wls_vcn[0].cidr_block
-  existing_fss_id        = var.existing_fss_id
   resource_name_prefix   = var.service_name
   export_path            = local.export_path
   mount_target_id        = var.mount_target_id
-  mount_target_subnet_id = local.use_existing_subnets ? var.mount_target_subnet_id : module.network-mount-target-private-subnet[0].subnet_id
+  mount_target_subnet_id = var.mount_target_subnet_id != "" ? var.mount_target_subnet_id : module.network-mount-target-private-subnet[0].subnet_id
   mount_target_nsg_id    = var.mount_target_subnet_cidr != "" && var.mount_target_id == "" ? element(module.network-mount-target-nsg[*].nsg_id, 0) : []
   tags = {
     defined_tags  = local.defined_tags
@@ -524,7 +524,7 @@ module "compute" {
   lbip = local.lb_ip
 
   add_fss     = var.add_fss
-  mount_ip    = element(concat(module.fss[*].mount_ip, [""]), 0)
+  mount_ip    = var.existing_fss_id != "" ? element(concat(data.oci_core_private_ip.mount_target_private_ips.*.ip_address, [""]), 0) : element(concat(module.fss[*].mount_ip, [""]), 0)
   mount_path  = var.mount_path
   export_path = var.existing_export_path_id != "" ? element(concat(data.oci_file_storage_exports.export[*].exports[0].path, [""]), 0) : element(concat(module.fss[*].export_path, [""]), 0)
 
