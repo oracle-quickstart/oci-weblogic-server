@@ -51,18 +51,19 @@ module "network-vcn-config" {
   existing_bastion_instance_id = var.existing_bastion_instance_id
   vcn_cidr                     = var.wls_vcn_name == "" ? data.oci_core_vcn.wls_vcn[0].cidr_block : element(concat(module.network-vcn.*.vcn_cidr, tolist([""])), 0)
   existing_mt_subnet_id        = var.mount_target_subnet_id
-  existing_service_gateway_ids = var.wls_vcn_name == "" ? [] : data.oci_core_service_gateways.service_gateways.service_gateways.*.id
-  existing_nat_gateway_ids     = var.wls_vcn_name == "" ? [] : data.oci_core_nat_gateways.nat_gateways.nat_gateways.*.id
+  existing_service_gateway_ids = var.wls_vcn_name != "" ? [] : data.oci_core_service_gateways.service_gateways.service_gateways.*.id
+  existing_nat_gateway_ids     = var.wls_vcn_name != "" ? [] : data.oci_core_nat_gateways.nat_gateways.nat_gateways.*.id
   create_nat_gateway           = var.is_idcs_selected && length(data.oci_core_nat_gateways.nat_gateways.*.id) == 0
-  create_service_gateway       = length(data.oci_core_nat_gateways.nat_gateways.*.id) > 0
+  create_service_gateway       = length(data.oci_core_service_gateways.service_gateways.*.id) == 0
+  create_internet_gateway       = var.wls_vcn_name != ""
   lb_destination_cidr          = var.is_lb_private ? var.bastion_subnet_cidr : "0.0.0.0/0"
   add_fss                      = var.add_fss
   nsg_ids = {
-    lb_nsg_id           = element(module.network-lb-nsg[*].nsg_id, 0)
-    bastion_nsg_id      = element(module.network-bastion-nsg[*].nsg_id, 0)
-    mount_target_nsg_id = element(module.network-mount-target-nsg[*].nsg_id, 0)
-    admin_nsg_id        = element(module.network-compute-admin-nsg[*].nsg_id, 0)
-    managed_nsg_id      = element(module.network-compute-managed-nsg[*].nsg_id, 0)
+    lb_nsg_id           = element(coalescelist(compact(module.network-lb-nsg[*].nsg_id), [[""]]), 0)
+    bastion_nsg_id      = element(coalescelist(compact(module.network-bastion-nsg[*].nsg_id), [[""]]), 0)
+    mount_target_nsg_id = element(coalescelist(compact(module.network-mount-target-nsg[*].nsg_id), [[""]]), 0)
+    admin_nsg_id        = element(coalescelist(compact(module.network-compute-admin-nsg[*].nsg_id), [[""]]), 0)
+    managed_nsg_id      = element(coalescelist(compact(module.network-compute-managed-nsg[*].nsg_id), [[""]]), 0)
   }
 
   tags = {
