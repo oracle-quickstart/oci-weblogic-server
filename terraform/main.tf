@@ -184,12 +184,6 @@ module "network-bastion-subnet" {
   count          = !local.assign_weblogic_public_ip && var.bastion_subnet_id == "" && var.is_bastion_instance_required && var.existing_bastion_instance_id == "" ? 1 : 0
   compartment_id = local.network_compartment_id
   vcn_id         = local.vcn_id
-  security_list_ids = compact(
-    concat(
-      [module.network-vcn-config[0].wls_security_list_id],
-      [module.network-vcn-config[0].wls_ms_security_list_id],
-    ),
-  )
   dhcp_options_id    = module.network-vcn-config[0].dhcp_options_id
   route_table_id     = module.network-vcn-config[0].route_table_id
   subnet_name        = "${local.service_name_prefix}-${var.bastion_subnet_name}"
@@ -269,13 +263,6 @@ module "network-wls-private-subnet" {
   count          = !local.assign_weblogic_public_ip && var.wls_subnet_id == "" ? 1 : 0
   compartment_id = local.network_compartment_id
   vcn_id         = local.vcn_id
-  security_list_ids = compact(
-    concat(
-      module.network-vcn-config[0].wls_bastion_security_list_id,
-      [module.network-vcn-config[0].wls_internal_security_list_id],
-      [module.network-vcn-config[0].wls_ms_security_list_id]
-    ),
-  )
   dhcp_options_id    = module.network-vcn-config[0].dhcp_options_id
   route_table_id     = module.network-vcn-config[0].service_gateway_route_table_id
   subnet_name        = "${local.service_name_prefix}-${var.wls_subnet_name}"
@@ -295,14 +282,6 @@ module "network-wls-public-subnet" {
   count          = local.assign_weblogic_public_ip && var.wls_subnet_id == "" ? 1 : 0
   compartment_id = local.network_compartment_id
   vcn_id         = local.vcn_id
-  security_list_ids = compact(
-    concat(
-      [module.network-vcn-config[0].wls_security_list_id],
-      [module.network-vcn-config[0].wls_ms_security_list_id],
-      [module.network-vcn-config[0].wls_internal_security_list_id]
-    ),
-  )
-
   dhcp_options_id    = module.network-vcn-config[0].dhcp_options_id
   route_table_id     = module.network-vcn-config[0].route_table_id
   subnet_name        = "${local.service_name_prefix}-${var.wls_subnet_name}"
