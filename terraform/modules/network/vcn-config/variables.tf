@@ -178,6 +178,12 @@ variable "create_service_gateway" {
   default     = false
 }
 
+variable "create_internet_gateway" {
+  type        = bool
+  description = "Set to true if internet gateway needs to be created"
+  default     = false
+}
+
 variable "lb_destination_cidr" {
   type        = string
   description = "Set to bastion subnet cidr if loadbalancer is set to private"

@@ -299,7 +299,7 @@ module "network-wls-public-subnet" {
 /* Create private subnet for FSS */
 module "network-mount-target-private-subnet" {
   source         = "./modules/network/subnet"
-  count          = var.add_existing_mount_target ? 0 : (var.add_fss && var.mount_target_subnet_id == "" ? 1 : 0)
+  count          = var.add_fss && var.mount_target_subnet_id == "" ? 1 : 0
   compartment_id = local.network_compartment_id
   vcn_id         = local.vcn_id
 
@@ -410,8 +410,8 @@ module "fss" {
   resource_name_prefix   = var.service_name
   export_path            = local.export_path
   mount_target_id        = var.mount_target_id
-  mount_target_subnet_id = var.mount_target_subnet_id != "" ? var.mount_target_subnet_id : module.network-mount-target-private-subnet[0].subnet_id
-  mount_target_nsg_id    = var.mount_target_subnet_cidr != "" && var.mount_target_id == "" ? element(module.network-mount-target-nsg[*].nsg_id, 0) : []
+  mount_target_subnet_id = local.use_existing_subnets ? var.mount_target_subnet_id : module.network-mount-target-private-subnet[0].subnet_id
+  mount_target_nsg_id    = var.mount_target_subnet_id != "" ? (var.add_existing_nsg ? [var.existing_mount_target_nsg_id] : []) : element(module.network-mount-target-nsg[*].nsg_id, 0)
   tags = {
     defined_tags  = local.defined_tags
     freeform_tags = local.free_form_tags

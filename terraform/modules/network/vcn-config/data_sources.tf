@@ -18,7 +18,6 @@ data "oci_core_internet_gateways" "vcn_internet_gateways" {
   vcn_id         = var.vcn_id
 }
 
-
 data "oci_core_services" "services" {
   filter {
     name   = "cidr_block"

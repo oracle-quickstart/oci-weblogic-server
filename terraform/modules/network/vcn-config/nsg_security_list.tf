@@ -198,7 +198,7 @@ resource "oci_core_network_security_group_security_rule" "fss_ingress_security_r
   direction = "INGRESS"
   protocol = "17"
 
-  source =  var.vcn_cidr
+  source =  var.wls_subnet_cidr
   source_type = "CIDR_BLOCK"
   stateless   = false
 

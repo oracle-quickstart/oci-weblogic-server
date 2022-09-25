@@ -22,7 +22,7 @@ output "dhcp_options_id" {
 /* Gateways */
 output "wls_internet_gateway_id" {
   description = "OCID of internet gateway"
-  value       = oci_core_internet_gateway.wls_internet_gateway.id
+  value       = join("", oci_core_internet_gateway.wls_internet_gateway.*.id)
 }
 
 output "wls_service_gateway_services_id" {
