@@ -10,7 +10,7 @@ output "mount_export_id" {
 }
 
 output "fss_id" {
-  value = oci_file_storage_file_system.file_system.id
+  value = join("", oci_file_storage_file_system.file_system.*.id)
 }
 
 output "export_path" {

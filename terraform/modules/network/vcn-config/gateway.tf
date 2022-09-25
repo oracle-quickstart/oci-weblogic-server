@@ -2,6 +2,7 @@
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 resource "oci_core_internet_gateway" "wls_internet_gateway" {
+  count = var.create_internet_gateway ? 1 : 0
   compartment_id = var.compartment_id
   display_name   = "${var.resource_name_prefix}-internet-gateway"
   vcn_id         = var.vcn_id
@@ -14,7 +15,7 @@ resource "oci_core_internet_gateway" "wls_internet_gateway" {
 }
 
 resource "oci_core_service_gateway" "wls_service_gateway" {
-  count = ! var.create_service_gateway ? 0 : 1
+  count = !var.create_service_gateway ? 0 : 1
   #Required
   compartment_id = var.compartment_id
   vcn_id         = var.vcn_id

@@ -96,6 +96,7 @@ variable "wls_bastion_security_list_name" {
 variable "bastion_subnet_cidr" {
   type        = string
   description = "The CIDR value of the bastion subnet"
+  default     = ""
 }
 
 variable "is_bastion_instance_required" {
@@ -177,12 +178,18 @@ variable "create_service_gateway" {
   default     = false
 }
 
+variable "create_internet_gateway" {
+  type        = bool
+  description = "Set to true if internet gateway needs to be created"
+  default     = false
+}
+
 variable "lb_destination_cidr" {
   type        = string
   description = "Set to bastion subnet cidr if loadbalancer is set to private"
 }
 
-variable "create_lb_sec_list" {
+variable "create_load_balancer" {
   type        = bool
   description = "Set to true if add load balancer is true"
 }
@@ -199,4 +206,14 @@ variable "load_balancer_max_value" {
   default     = 7004
 }
 
-
+variable "nsg_ids" {
+  type = map(any)
+  description = "A map of nsg ids for load balancer,bastion,fss,admin server instance, and managed server instance"
+  default = {
+    lb_nsg_id  = ""
+    bastion_nsg_id = ""
+    mount_target_nsg_id = ""
+    admin_nsg_id = ""
+    managed_nsg_id = ""
+  }
+}

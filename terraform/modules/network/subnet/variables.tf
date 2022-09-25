@@ -20,11 +20,6 @@ variable "vcn_id" {
   description = "The OCID of the VCN to contain the subnet"
 }
 
-variable "security_list_ids" {
-  type        = list(any)
-  description = "The OCIDs of the security list or lists that the subnet uses"
-}
-
 variable "dhcp_options_id" {
   type        = string
   description = "The OCID of the set of DHCP options the subnet will use"

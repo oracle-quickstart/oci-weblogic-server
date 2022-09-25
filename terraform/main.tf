@@ -44,19 +44,27 @@ module "network-vcn-config" {
   wls_ms_source_cidrs          = var.add_load_balancer ? ((local.use_regional_subnet || local.is_single_ad_region) ? [local.lb_subnet_1_subnet_cidr] : [local.lb_subnet_1_subnet_cidr, local.lb_subnet_2_subnet_cidr]) : ["0.0.0.0/0"]
   load_balancer_min_value      = var.add_load_balancer ? var.wls_ms_extern_port : var.wls_ms_extern_ssl_port
   load_balancer_max_value      = var.add_load_balancer ? var.wls_ms_extern_port : var.wls_ms_extern_ssl_port
-  create_lb_sec_list           = var.add_load_balancer
+  create_load_balancer         = var.add_load_balancer
   resource_name_prefix         = local.service_name_prefix
   bastion_subnet_cidr          = local.bastion_subnet_cidr
   is_bastion_instance_required = var.is_bastion_instance_required
   existing_bastion_instance_id = var.existing_bastion_instance_id
   vcn_cidr                     = var.wls_vcn_name == "" ? data.oci_core_vcn.wls_vcn[0].cidr_block : element(concat(module.network-vcn.*.vcn_cidr, tolist([""])), 0)
   existing_mt_subnet_id        = var.mount_target_subnet_id
-  existing_service_gateway_ids = var.wls_vcn_name == "" ? [] : data.oci_core_service_gateways.service_gateways.service_gateways.*.id
-  existing_nat_gateway_ids     = var.wls_vcn_name == "" ? [] : data.oci_core_nat_gateways.nat_gateways.nat_gateways.*.id
+  existing_service_gateway_ids = var.wls_vcn_name != "" ? [] : data.oci_core_service_gateways.service_gateways.service_gateways.*.id
+  existing_nat_gateway_ids     = var.wls_vcn_name != "" ? [] : data.oci_core_nat_gateways.nat_gateways.nat_gateways.*.id
   create_nat_gateway           = var.is_idcs_selected && length(data.oci_core_nat_gateways.nat_gateways.*.id) == 0
-  create_service_gateway       = length(data.oci_core_nat_gateways.nat_gateways.*.id) > 0
+  create_service_gateway       = length(data.oci_core_service_gateways.service_gateways.*.id) == 0
+  create_internet_gateway       = var.wls_vcn_name != ""
   lb_destination_cidr          = var.is_lb_private ? var.bastion_subnet_cidr : "0.0.0.0/0"
   add_fss                      = var.add_fss
+  nsg_ids = {
+    lb_nsg_id           = element(coalescelist(compact(module.network-lb-nsg[*].nsg_id), [[""]]), 0)
+    bastion_nsg_id      = element(coalescelist(compact(module.network-bastion-nsg[*].nsg_id), [[""]]), 0)
+    mount_target_nsg_id = element(coalescelist(compact(module.network-mount-target-nsg[*].nsg_id), [[""]]), 0)
+    admin_nsg_id        = element(coalescelist(compact(module.network-compute-admin-nsg[*].nsg_id), [[""]]), 0)
+    managed_nsg_id      = element(coalescelist(compact(module.network-compute-managed-nsg[*].nsg_id), [[""]]), 0)
+  }
 
   tags = {
     defined_tags  = local.defined_tags
@@ -69,8 +77,7 @@ module "network-lb-nsg" {
   count          = var.add_load_balancer && var.lb_subnet_1_cidr == "" ? 0 : 1
   compartment_id = local.network_compartment_id
   vcn_id         = local.vcn_id
-
-  nsg_name = "${local.service_name_prefix}-lb-nsg"
+  nsg_name       = "${local.service_name_prefix}-lb-nsg"
 
   tags = {
     defined_tags  = local.defined_tags
@@ -132,13 +139,12 @@ module "network-compute-managed-nsg" {
 
 /* Create primary subnet for Load balancer only */
 module "network-lb-subnet-1" {
-  source            = "./modules/network/subnet"
-  count             = local.add_existing_load_balancer ? 0 : var.add_load_balancer && var.lb_subnet_1_id == "" ? 1 : 0
-  compartment_id    = local.network_compartment_id
-  vcn_id            = local.vcn_id
-  security_list_ids = module.network-vcn-config[0].lb_security_list_id
-  dhcp_options_id   = module.network-vcn-config[0].dhcp_options_id
-  route_table_id    = module.network-vcn-config[0].route_table_id
+  source          = "./modules/network/subnet"
+  count           = local.add_existing_load_balancer ? 0 : var.add_load_balancer && var.lb_subnet_1_id == "" ? 1 : 0
+  compartment_id  = local.network_compartment_id
+  vcn_id          = local.vcn_id
+  dhcp_options_id = module.network-vcn-config[0].dhcp_options_id
+  route_table_id  = module.network-vcn-config[0].route_table_id
 
   subnet_name = "${local.service_name_prefix}-${local.lb_subnet_1_name}"
   #Note: limit for dns label is 15 chars
@@ -154,14 +160,13 @@ module "network-lb-subnet-1" {
 
 /* Create secondary subnet for wls and lb backend */
 module "network-lb-subnet-2" {
-  source            = "./modules/network/subnet"
-  count             = local.add_existing_load_balancer ? 0 : var.add_load_balancer && local.lb_subnet_2_id == "" && !var.is_lb_private && !local.use_regional_subnet && !local.is_single_ad_region ? 1 : 0
-  compartment_id    = local.network_compartment_id
-  vcn_id            = local.vcn_id
-  security_list_ids = module.network-vcn-config[0].lb_security_list_id
-  dhcp_options_id   = module.network-vcn-config[0].dhcp_options_id
-  route_table_id    = module.network-vcn-config[0].route_table_id
-  subnet_name       = "${local.service_name_prefix}-${local.lb_subnet_2_name}"
+  source          = "./modules/network/subnet"
+  count           = local.add_existing_load_balancer ? 0 : var.add_load_balancer && local.lb_subnet_2_id == "" && !var.is_lb_private && !local.use_regional_subnet && !local.is_single_ad_region ? 1 : 0
+  compartment_id  = local.network_compartment_id
+  vcn_id          = local.vcn_id
+  dhcp_options_id = module.network-vcn-config[0].dhcp_options_id
+  route_table_id  = module.network-vcn-config[0].route_table_id
+  subnet_name     = "${local.service_name_prefix}-${local.lb_subnet_2_name}"
   #Note: limit for dns label is 15 chars
   dns_label          = format("%s-%s", local.lb_subnet_2_name, substr(strrev(var.service_name), 0, 7))
   cidr_block         = local.lb_subnet_2_subnet_cidr
@@ -180,12 +185,6 @@ module "network-bastion-subnet" {
   count          = !local.assign_weblogic_public_ip && var.bastion_subnet_id == "" && var.is_bastion_instance_required && var.existing_bastion_instance_id == "" ? 1 : 0
   compartment_id = local.network_compartment_id
   vcn_id         = local.vcn_id
-  security_list_ids = compact(
-    concat(
-      [module.network-vcn-config[0].wls_security_list_id],
-      [module.network-vcn-config[0].wls_ms_security_list_id],
-    ),
-  )
   dhcp_options_id    = module.network-vcn-config[0].dhcp_options_id
   route_table_id     = module.network-vcn-config[0].route_table_id
   subnet_name        = "${local.service_name_prefix}-${var.bastion_subnet_name}"
@@ -265,13 +264,6 @@ module "network-wls-private-subnet" {
   count          = !local.assign_weblogic_public_ip && var.wls_subnet_id == "" ? 1 : 0
   compartment_id = local.network_compartment_id
   vcn_id         = local.vcn_id
-  security_list_ids = compact(
-    concat(
-      module.network-vcn-config[0].wls_bastion_security_list_id,
-      [module.network-vcn-config[0].wls_internal_security_list_id],
-      [module.network-vcn-config[0].wls_ms_security_list_id]
-    ),
-  )
   dhcp_options_id    = module.network-vcn-config[0].dhcp_options_id
   route_table_id     = module.network-vcn-config[0].service_gateway_route_table_id
   subnet_name        = "${local.service_name_prefix}-${var.wls_subnet_name}"
@@ -291,14 +283,6 @@ module "network-wls-public-subnet" {
   count          = local.assign_weblogic_public_ip && var.wls_subnet_id == "" ? 1 : 0
   compartment_id = local.network_compartment_id
   vcn_id         = local.vcn_id
-  security_list_ids = compact(
-    concat(
-      [module.network-vcn-config[0].wls_security_list_id],
-      [module.network-vcn-config[0].wls_ms_security_list_id],
-      [module.network-vcn-config[0].wls_internal_security_list_id]
-    ),
-  )
-
   dhcp_options_id    = module.network-vcn-config[0].dhcp_options_id
   route_table_id     = module.network-vcn-config[0].route_table_id
   subnet_name        = "${local.service_name_prefix}-${var.wls_subnet_name}"
@@ -314,11 +298,10 @@ module "network-wls-public-subnet" {
 
 /* Create private subnet for FSS */
 module "network-mount-target-private-subnet" {
-  source            = "./modules/network/subnet"
-  count             = var.add_existing_mount_target ? 0 : (var.add_fss && var.mount_target_subnet_id == "" ? 1 : 0)
-  compartment_id    = local.network_compartment_id
-  vcn_id            = local.vcn_id
-  security_list_ids = module.network-vcn-config[0].fss_security_list_id
+  source         = "./modules/network/subnet"
+  count          = var.add_fss && var.mount_target_subnet_id == "" ? 1 : 0
+  compartment_id = local.network_compartment_id
+  vcn_id         = local.vcn_id
 
   dhcp_options_id    = module.network-vcn-config[0].dhcp_options_id
   route_table_id     = module.network-vcn-config[0].service_gateway_route_table_id
@@ -419,8 +402,8 @@ module "fss" {
   source = "./modules/fss"
   count  = var.existing_fss_id == "" && var.add_fss ? 1 : 0
 
-  compartment_id      = var.fss_compartment_id
-  availability_domain = var.use_regional_subnet ? var.fss_availability_domain : data.oci_core_subnet.mount_target_subnet[0].availability_domain
+  compartment_id         = var.fss_compartment_id
+  availability_domain    = var.fss_availability_domain
 
   vcn_id                 = local.vcn_id
   vcn_cidr               = var.wls_vcn_cidr != "" ? var.wls_vcn_cidr : data.oci_core_vcn.wls_vcn[0].cidr_block
@@ -542,7 +525,7 @@ module "compute" {
   lbip = local.lb_ip
 
   add_fss     = var.add_fss
-  mount_ip    = element(concat(module.fss[*].mount_ip, [""]), 0)
+  mount_ip    = var.existing_fss_id != "" ? element(concat(data.oci_core_private_ip.mount_target_private_ips.*.ip_address, [""]), 0) : element(concat(module.fss[*].mount_ip, [""]), 0)
   mount_path  = var.mount_path
   export_path = var.existing_export_path_id != "" ? element(concat(data.oci_file_storage_exports.export[*].exports[0].path, [""]), 0) : element(concat(module.fss[*].export_path, [""]), 0)
 
