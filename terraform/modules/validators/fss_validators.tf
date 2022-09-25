@@ -14,7 +14,7 @@ locals {
   validate_fss_mount_availability_domain = var.add_fss && (var.existing_fss_id != "" && var.mount_target_id != "") && (var.fss_availability_domain != var.mount_target_availability_domain) ? local.validators_msg_map[local.invalid_availability_domain_msg] : null
 
   missing_mount_target_subnet_id_msg      = "WLSC-ERROR: The value for mount target subnet id is required if exisitng subnets are required"
-  validate_missing_mount_target_subnet_id = var.add_fss && var.use_existing_subnets=true && var.mount_target_subnet_id == "" ? local.validators_msg_map[local.missing_mount_target_subnet_id_msg] : null
+  validate_missing_mount_target_subnet_id = var.add_fss && var.use_existing_subnets && var.mount_target_subnet_id == "" ? local.validators_msg_map[local.missing_mount_target_subnet_id_msg] : null
 
 }
 
