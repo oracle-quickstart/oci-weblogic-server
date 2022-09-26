@@ -74,7 +74,7 @@ module "network-vcn-config" {
 
 module "network-lb-nsg" {
   source         = "./modules/network/nsg"
-  count          = var.add_load_balancer && var.lb_subnet_1_cidr == "" ? 0 : 1
+  count          = var.add_load_balancer && var.lb_subnet_1_cidr != "" ? 1 : 0
   compartment_id = local.network_compartment_id
   vcn_id         = local.vcn_id
   nsg_name       = "${local.service_name_prefix}-lb-nsg"
@@ -87,7 +87,7 @@ module "network-lb-nsg" {
 
 module "network-bastion-nsg" {
   source         = "./modules/network/nsg"
-  count          = var.is_bastion_instance_required && var.bastion_subnet_cidr == "" ? 0 : 1
+  count          = var.is_bastion_instance_required && var.bastion_subnet_cidr != "" ? 1 : 0
   compartment_id = local.network_compartment_id
   vcn_id         = local.vcn_id
   nsg_name       = "${local.service_name_prefix}-bastion-nsg"
@@ -113,7 +113,7 @@ module "network-mount-target-nsg" {
 
 module "network-compute-admin-nsg" {
   source         = "./modules/network/nsg"
-  count          = var.wls_subnet_cidr == "" ? 0 : 1
+  count          = var.wls_subnet_cidr != "" ? 1 : 0
   compartment_id = local.network_compartment_id
   vcn_id         = local.vcn_id
   nsg_name       = "${local.service_name_prefix}-admin-server-nsg"
@@ -126,7 +126,7 @@ module "network-compute-admin-nsg" {
 
 module "network-compute-managed-nsg" {
   source         = "./modules/network/nsg"
-  count          = var.wls_subnet_cidr == "" ? 0 : 1
+  count          = var.wls_subnet_cidr != "" ? 1 : 0
   compartment_id = local.network_compartment_id
   vcn_id         = local.vcn_id
   nsg_name       = "${local.service_name_prefix}-managed-server-nsg"
