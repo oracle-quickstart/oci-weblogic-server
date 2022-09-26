@@ -59,11 +59,11 @@ module "network-vcn-config" {
   lb_destination_cidr          = var.is_lb_private ? var.bastion_subnet_cidr : "0.0.0.0/0"
   add_fss                      = var.add_fss
   nsg_ids = {
-    lb_nsg_id           = element((module.network-lb-nsg[*].nsg_id), 0)
-    bastion_nsg_id      = element((module.network-bastion-nsg[*].nsg_id), 0)
-    mount_target_nsg_id = element((module.network-mount-target-nsg[*].nsg_id), 0)
-    admin_nsg_id        = element((module.network-compute-admin-nsg[*].nsg_id), 0)
-    managed_nsg_id      = element((module.network-compute-managed-nsg[*].nsg_id), 0)
+    lb_nsg_id           = element(coalescelist(module.network-lb-nsg[*].nsg_id, [[""]]), 0)
+    bastion_nsg_id      = element(coalescelist(module.network-bastion-nsg[*].nsg_id, [[""]]), 0)
+    mount_target_nsg_id = element(coalescelist(module.network-mount-target-nsg[*].nsg_id, [[""]]), 0)
+    admin_nsg_id        = element(coalescelist(module.network-compute-admin-nsg[*].nsg_id, [[""]]), 0)
+    managed_nsg_id      = element(coalescelist(module.network-compute-managed-nsg[*].nsg_id, [[""]]), 0)
   }
 
   tags = {
@@ -100,7 +100,7 @@ module "network-bastion-nsg" {
 
 module "network-mount-target-nsg" {
   source         = "./modules/network/nsg"
-  count          = var.add_fss && var.mount_target_subnet_cidr == "" ? 0 : 1
+  count          = var.add_fss && var.mount_target_subnet_cidr != "" ? 1 : 0
   compartment_id = local.network_compartment_id
   vcn_id         = local.vcn_id
   nsg_name       = "${local.service_name_prefix}-mount-target-nsg"
