@@ -389,3 +389,9 @@ variable "ocir_auth_token_id" {
   description = "Secrets Oracle Cloud ID (OCID) for Oracle Cloud Infrastructure Registry authorization token"
   default     = ""
 }
+
+variable "use_existing_subnets" {
+  type        = bool
+  description = "Set to true if the existing subnets are used to create VCN config"
+  default     = false
+}
