@@ -11,16 +11,6 @@ variable "wls_version" {
   }
 }
 
-variable "wls_edition" {
-  type        = string
-  description = "The WebLogic edition to be installed in this compute instance. Accepted values are: SE, SUITE, EE"
-  default     = "EE"
-  validation {
-    condition     = contains(["EE", "SE", "SUITE"], var.wls_edition)
-    error_message = "Allowed values for wls_edition are SE, EE and SUITE."
-  }
-}
-
 variable "wls_node_count" {
   type        = number
   description = "Number of WebLogic managed servers. One VM per managed server will be created"
