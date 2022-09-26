@@ -53,9 +53,9 @@ module "network-vcn-config" {
   existing_mt_subnet_id        = var.mount_target_subnet_id
   existing_service_gateway_ids = var.wls_vcn_name != "" ? [] : data.oci_core_service_gateways.service_gateways.service_gateways.*.id
   existing_nat_gateway_ids     = var.wls_vcn_name != "" ? [] : data.oci_core_nat_gateways.nat_gateways.nat_gateways.*.id
-  create_nat_gateway           = var.is_idcs_selected && length(data.oci_core_nat_gateways.nat_gateways.*.id) == 0
-  create_service_gateway       = length(data.oci_core_service_gateways.service_gateways.*.id) == 0
-  create_internet_gateway       = var.wls_vcn_name != ""
+  create_nat_gateway           = var.is_idcs_selected && var.wls_vcn_name != ""
+  create_service_gateway       = var.wls_vcn_name != ""
+  create_internet_gateway      = var.wls_vcn_name != ""
   lb_destination_cidr          = var.is_lb_private ? var.bastion_subnet_cidr : "0.0.0.0/0"
   add_fss                      = var.add_fss
   nsg_ids = {
@@ -181,10 +181,10 @@ module "network-lb-subnet-2" {
 
 /* Create back end subnet for bastion subnet */
 module "network-bastion-subnet" {
-  source         = "./modules/network/subnet"
-  count          = !local.assign_weblogic_public_ip && var.bastion_subnet_id == "" && var.is_bastion_instance_required && var.existing_bastion_instance_id == "" ? 1 : 0
-  compartment_id = local.network_compartment_id
-  vcn_id         = local.vcn_id
+  source             = "./modules/network/subnet"
+  count              = !local.assign_weblogic_public_ip && var.bastion_subnet_id == "" && var.is_bastion_instance_required && var.existing_bastion_instance_id == "" ? 1 : 0
+  compartment_id     = local.network_compartment_id
+  vcn_id             = local.vcn_id
   dhcp_options_id    = module.network-vcn-config[0].dhcp_options_id
   route_table_id     = module.network-vcn-config[0].route_table_id
   subnet_name        = "${local.service_name_prefix}-${var.bastion_subnet_name}"
@@ -260,10 +260,10 @@ module "bastion" {
 
 /* Create back end  private subnet for wls */
 module "network-wls-private-subnet" {
-  source         = "./modules/network/subnet"
-  count          = !local.assign_weblogic_public_ip && var.wls_subnet_id == "" ? 1 : 0
-  compartment_id = local.network_compartment_id
-  vcn_id         = local.vcn_id
+  source             = "./modules/network/subnet"
+  count              = !local.assign_weblogic_public_ip && var.wls_subnet_id == "" ? 1 : 0
+  compartment_id     = local.network_compartment_id
+  vcn_id             = local.vcn_id
   dhcp_options_id    = module.network-vcn-config[0].dhcp_options_id
   route_table_id     = module.network-vcn-config[0].service_gateway_route_table_id
   subnet_name        = "${local.service_name_prefix}-${var.wls_subnet_name}"
@@ -279,10 +279,10 @@ module "network-wls-private-subnet" {
 
 /* Create back end  public subnet for wls */
 module "network-wls-public-subnet" {
-  source         = "./modules/network/subnet"
-  count          = local.assign_weblogic_public_ip && var.wls_subnet_id == "" ? 1 : 0
-  compartment_id = local.network_compartment_id
-  vcn_id         = local.vcn_id
+  source             = "./modules/network/subnet"
+  count              = local.assign_weblogic_public_ip && var.wls_subnet_id == "" ? 1 : 0
+  compartment_id     = local.network_compartment_id
+  vcn_id             = local.vcn_id
   dhcp_options_id    = module.network-vcn-config[0].dhcp_options_id
   route_table_id     = module.network-vcn-config[0].route_table_id
   subnet_name        = "${local.service_name_prefix}-${var.wls_subnet_name}"
@@ -403,8 +403,8 @@ module "fss" {
   source = "./modules/fss"
   count  = var.existing_fss_id == "" && var.add_fss ? 1 : 0
 
-  compartment_id         = var.fss_compartment_id
-  availability_domain    = var.fss_availability_domain
+  compartment_id      = var.fss_compartment_id
+  availability_domain = var.fss_availability_domain
 
   vcn_id                 = local.vcn_id
   vcn_cidr               = var.wls_vcn_cidr != "" ? var.wls_vcn_cidr : data.oci_core_vcn.wls_vcn[0].cidr_block
