@@ -53,8 +53,8 @@ module "network-vcn-config" {
   existing_mt_subnet_id        = var.mount_target_subnet_id
   existing_service_gateway_ids = var.wls_vcn_name != "" ? [] : data.oci_core_service_gateways.service_gateways.service_gateways.*.id
   existing_nat_gateway_ids     = var.wls_vcn_name != "" ? [] : data.oci_core_nat_gateways.nat_gateways.nat_gateways.*.id
-  create_nat_gateway           = var.is_idcs_selected && length(data.oci_core_nat_gateways.nat_gateways.*.id) == 0
-  create_service_gateway       = length(data.oci_core_service_gateways.service_gateways.*.id) == 0
+  create_nat_gateway           = var.is_idcs_selected && var.wls_vcn_name != ""
+  create_service_gateway       = var.wls_vcn_name != ""
   create_internet_gateway      = var.wls_vcn_name != ""
   lb_destination_cidr          = var.is_lb_private ? var.bastion_subnet_cidr : "0.0.0.0/0"
   add_fss                      = var.add_fss
