@@ -59,11 +59,11 @@ module "network-vcn-config" {
   lb_destination_cidr          = var.is_lb_private ? var.bastion_subnet_cidr : "0.0.0.0/0"
   add_fss                      = var.add_fss
   nsg_ids = {
-    lb_nsg_id           = element(coalescelist(compact(module.network-lb-nsg[*].nsg_id), [[""]]), 0)
-    bastion_nsg_id      = element(coalescelist(compact(module.network-bastion-nsg[*].nsg_id), [[""]]), 0)
-    mount_target_nsg_id = element(coalescelist(compact(module.network-mount-target-nsg[*].nsg_id), [[""]]), 0)
-    admin_nsg_id        = element(coalescelist(compact(module.network-compute-admin-nsg[*].nsg_id), [[""]]), 0)
-    managed_nsg_id      = element(coalescelist(compact(module.network-compute-managed-nsg[*].nsg_id), [[""]]), 0)
+    lb_nsg_id           = element((module.network-lb-nsg[*].nsg_id), 0)
+    bastion_nsg_id      = element((module.network-bastion-nsg[*].nsg_id), 0)
+    mount_target_nsg_id = element((module.network-mount-target-nsg[*].nsg_id), 0)
+    admin_nsg_id        = element((module.network-compute-admin-nsg[*].nsg_id), 0)
+    managed_nsg_id      = element((module.network-compute-managed-nsg[*].nsg_id), 0)
   }
 
   tags = {
@@ -360,6 +360,7 @@ module "validators" {
   bastion_ssh_private_key      = var.bastion_ssh_private_key
   add_load_balancer            = var.add_load_balancer
   existing_load_balancer_id    = var.existing_load_balancer_id
+  use_existing_subnets         = var.use_existing_subnets
 
   wls_subnet_id     = var.wls_subnet_id
   lb_subnet_1_id    = var.lb_subnet_1_id
