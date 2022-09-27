@@ -301,7 +301,7 @@ variable "mount_target_id" {
 variable "mount_target_compartment_id" {
   type        = string
   description = "The OCID of the compartment where the mount target exists"
-  validation {    
+  validation {
     condition     = var.mount_target_compartment_id == "" || length(regexall("^ocid1.compartment.*$", var.mount_target_compartment_id)) > 0
     error_message = "WLSC-ERROR: The value for mount_target_compartment_id should be blank or start with \"ocid1.compartment.\"."
   }
@@ -394,4 +394,23 @@ variable "use_existing_subnets" {
   type        = bool
   description = "Set to true if the existing subnets are used to create VCN config"
   default     = false
+}
+
+variable "tags" {
+  type = object({
+    defined_tags  = map(any),
+    freeform_tags = map(any),
+  })
+  description = "Defined tags and freeform tags to be added to the File Shared System resources"
+}
+
+variable "generate_dg_tag" {
+  type = bool
+}
+
+variable "service_tags" {
+  type = object({
+    freeformTags = map(string)
+    definedTags  = map(string)
+  })
 }

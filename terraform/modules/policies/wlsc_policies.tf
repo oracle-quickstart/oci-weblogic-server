@@ -10,5 +10,8 @@ resource "oci_identity_policy" "wlsc_oci_policy" {
 
   defined_tags  = var.tags.defined_tags
   freeform_tags = var.tags.freeform_tags
+  lifecycle {
+    ignore_changes = [defined_tags, freeform_tags]
+  }
 }
 
