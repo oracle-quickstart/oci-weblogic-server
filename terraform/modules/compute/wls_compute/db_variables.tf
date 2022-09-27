@@ -70,10 +70,3 @@ variable "db_existing_vcn_add_seclist" {
   type        = bool
   description = "Set to true to add a security list to the database subnet (for OCI DB) when using existing VCN or network security group (for ATP with private endpoint) that allows connections from the WebLogic Server subnet"
 }
-
-#TODO: set default to false because peering is not supported yet. But added the variable because other variables use it. Remove it and its usage if peering is not implemented ever
-variable "disable_infra_db_vcn_peering" {
-  type        = bool
-  description = "Indicates use of virtual cloud network peering if infra DB and WebLogic servers are different virtual cloud networks and already peered"
-  default     = false
-}

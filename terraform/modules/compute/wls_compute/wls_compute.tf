@@ -164,9 +164,9 @@ module "wls-instances" {
       wls_vcn_peering_dns_resolver_id           = var.wls_vcn_peering_dns_resolver_id
       wls_vcn_peering_route_table_attachment_id = var.wls_vcn_peering_route_table_attachment_id
 
-      # Optional Peering
-      db_scan_ip_list     = local.is_oci_db ? (var.disable_infra_db_vcn_peering ? local.infradb_scanip_list : "") : ""
-      db_host_private_ips = local.is_oci_db ? (var.disable_infra_db_vcn_peering ? local.infradb_private_ip_list : "") : ""
+      # Optional Peering TODO: remove these two when code from image related to this is removed as well
+      db_scan_ip_list     = ""
+      db_host_private_ips = ""
 
       # ATP parameters for JRF
       is_atp_db             = local.is_atp_db
