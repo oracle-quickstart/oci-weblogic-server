@@ -301,7 +301,7 @@ variable "mount_target_id" {
 variable "mount_target_compartment_id" {
   type        = string
   description = "The OCID of the compartment where the mount target exists"
-  validation {    
+  validation {
     condition     = var.mount_target_compartment_id == "" || length(regexall("^ocid1.compartment.*$", var.mount_target_compartment_id)) > 0
     error_message = "WLSC-ERROR: The value for mount_target_compartment_id should be blank or start with \"ocid1.compartment.\"."
   }
@@ -406,4 +406,18 @@ variable "num_vm_instances" {
   type        = number
   description = "Number of WebLogic managed servers. One VM per managed server will be created"
   default     = "1"
+}
+
+variable "generate_dg_tag" {
+  type        = bool
+  description = "Set to true to generate defined tags for dynamic group definition"
+  default     = true
+}
+
+variable "service_tags" {
+  type = object({
+    freeformTags = map(string)
+    definedTags  = map(string)
+  })
+  description = "Tags to be applied to all resources that support tag created by the WebLogic for OCI stack. Only tags provided by user"
 }

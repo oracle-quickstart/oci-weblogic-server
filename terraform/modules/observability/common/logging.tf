@@ -9,7 +9,6 @@ resource "oci_logging_log_group" "wlsc_log_group" {
 
   defined_tags  = var.tags.defined_tags
   freeform_tags = var.tags.freeform_tags
-
   lifecycle {
     ignore_changes = all
   }

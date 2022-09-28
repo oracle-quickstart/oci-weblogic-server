@@ -7,7 +7,7 @@
 resource "oci_core_route_table" "wls_route_table" {
   compartment_id = var.compartment_id
   vcn_id         = var.vcn_id
-  display_name   = "${var.resource_name_prefix}-${var.route_table_name}"
+  display_name   = "${var.resource_name_prefix}-ig-${var.route_table_name_suffix}"
 
   dynamic "route_rules" {
     for_each = concat(oci_core_internet_gateway.wls_internet_gateway.*.id, data.oci_core_internet_gateways.vcn_internet_gateways.gateways.*.id)
@@ -31,10 +31,10 @@ resource "oci_core_route_table" "wls_route_table" {
 resource "oci_core_route_table" "wls_gateway_route_table" {
   compartment_id = var.compartment_id
   vcn_id         = var.vcn_id
-  display_name   = "${var.resource_name_prefix}-${var.route_table_name}"
+  display_name   = "${var.resource_name_prefix}-sg-${var.route_table_name_suffix}"
 
   dynamic "route_rules" {
-    for_each = var.create_nat_gateway ? concat(oci_core_nat_gateway.wls_nat_gateway.*.id,var.existing_nat_gateway_ids) : []
+    for_each = var.create_nat_gateway ? concat(oci_core_nat_gateway.wls_nat_gateway.*.id, var.existing_nat_gateway_ids) : []
     content {
       destination       = "0.0.0.0/0"
       destination_type  = "CIDR_BLOCK"
@@ -43,7 +43,7 @@ resource "oci_core_route_table" "wls_gateway_route_table" {
   }
 
   dynamic "route_rules" {
-    for_each =  concat(oci_core_service_gateway.wls_service_gateway.*.id,var.existing_service_gateway_ids)
+    for_each = concat(oci_core_service_gateway.wls_service_gateway.*.id, var.existing_service_gateway_ids)
     content {
       destination       = lookup(data.oci_core_services.services.services[0], "cidr_block")
       destination_type  = "SERVICE_CIDR_BLOCK"

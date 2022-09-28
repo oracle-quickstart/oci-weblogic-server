@@ -30,9 +30,9 @@ variable "dhcp_options_name" {
 
 }
 
-variable "route_table_name" {
+variable "route_table_name_suffix" {
   type        = string
-  description = "A user-friendly name of the route table"
+  description = "A user-friendly suffix name of the route tables"
   default     = "routetable"
 }
 
@@ -207,13 +207,13 @@ variable "load_balancer_max_value" {
 }
 
 variable "nsg_ids" {
-  type = map(any)
-  description = "A map of nsg ids for load balancer,bastion,fss,admin server instance, and managed server instance"
+  type        = map(any)
+  description = "A map of nsg ids for load balancer, bastion, fss, admin server instance, and managed server instance"
   default = {
-    lb_nsg_id  = ""
-    bastion_nsg_id = ""
+    lb_nsg_id           = ""
+    bastion_nsg_id      = ""
     mount_target_nsg_id = ""
-    admin_nsg_id = ""
-    managed_nsg_id = ""
+    admin_nsg_id        = ""
+    managed_nsg_id      = ""
   }
 }

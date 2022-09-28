@@ -43,6 +43,6 @@ resource "oci_core_instance" "these" {
   }
 
   lifecycle {
-    ignore_changes = [metadata, shape, shape_config, source_details]
+    ignore_changes = [metadata, shape, shape_config, source_details, defined_tags, freeform_tags]
   }
 }
