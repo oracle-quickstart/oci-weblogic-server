@@ -11,6 +11,10 @@ resource "oci_core_volume" "these" {
   size_in_gbs         = each.value.bv_size
   defined_tags        = each.value.defined_tags
   freeform_tags       = each.value.freeform_tags
+  lifecycle {
+    ignore_changes = [defined_tags, freeform_tags]
+  }
+
 }
 
 resource "oci_core_volume_attachment" "these" {

@@ -397,6 +397,12 @@ module "validators" {
   max_threshold_percent = var.max_threshold_percent
   min_threshold_counter = var.min_threshold_counter
   min_threshold_percent = var.min_threshold_percent
+  generate_dg_tag       = var.generate_dg_tag
+  service_tags          = var.service_tags
+  tags = {
+    defined_tags  = local.defined_tags
+    freeform_tags = local.free_form_tags
+  }
 }
 
 module "fss" {
