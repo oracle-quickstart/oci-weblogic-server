@@ -395,3 +395,15 @@ variable "use_existing_subnets" {
   description = "Set to true if the existing subnets are used to create VCN config"
   default     = false
 }
+
+variable "wls_node_count_limit" {
+  type    = number
+  default = "8"
+  description = "Maximum number of weblogic managed servers"
+}
+
+variable "num_vm_instances" {
+  type        = number
+  description = "Number of WebLogic managed servers. One VM per managed server will be created"
+  default     = "1"
+}

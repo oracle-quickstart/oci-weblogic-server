@@ -9,7 +9,7 @@ data "oci_identity_regions" "home_region" {
 }
 
 data "oci_identity_tenancy" "tenancy" {
-  tenancy_id = var.tenancy_id
+  tenancy_id = var.tenancy_ocid
 }
 
 data "oci_core_instance" "existing_bastion_instance" {
@@ -34,13 +34,13 @@ data "template_file" "ad_names" {
 }
 
 data "oci_identity_availability_domains" "ADs" {
-  compartment_id = var.tenancy_id
+  compartment_id = var.tenancy_ocid
 }
 
 data "oci_limits_limit_values" "compute_shape_service_limits" {
   count = length(data.oci_identity_availability_domains.ADs.availability_domains)
   #Required
-  compartment_id = var.tenancy_id
+  compartment_id = var.tenancy_ocid
   service_name   = "compute"
 
   #Optional
@@ -51,7 +51,7 @@ data "oci_limits_limit_values" "compute_shape_service_limits" {
 }
 
 data "oci_load_balancer_load_balancers" "existing_load_balancers_data_source" {
-  compartment_id = var.compartment_id
+  compartment_id = var.compartment_ocid
 }
 
 data "oci_core_nat_gateways" "nat_gateways" {
@@ -107,7 +107,7 @@ data "oci_file_storage_mount_targets" "mount_target_by_export_set" {
   count = var.existing_fss_id != "" ? 1 : 0
   #Required
   availability_domain = var.fss_availability_domain
-  compartment_id      = var.compartment_id
+  compartment_id      = var.compartment_ocid
   export_set_id       = data.oci_file_storage_exports.export[0].export_set_id
 }
 
@@ -133,7 +133,7 @@ data "oci_core_vcn" "wls_vcn" {
 data "oci_objectstorage_namespace" "object_namespace" {
 
   #Optional
-  compartment_id = var.tenancy_id
+  compartment_id = var.tenancy_ocid
 }
 
 data "oci_identity_regions" "all_regions" {
@@ -147,7 +147,7 @@ data "oci_core_image" "ucm_image" {
 
 data "oci_core_instances" "ucm_instances" {
   #Required
-  compartment_id = var.compartment_id
+  compartment_id = var.compartment_ocid
 
   #filter the instances based on the UCM image and the stack prefix.
   filter {

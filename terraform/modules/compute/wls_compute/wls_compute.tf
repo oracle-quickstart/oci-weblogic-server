@@ -141,7 +141,7 @@ module "wls-instances" {
       db_password_ocid            = var.jrf_parameters.db_password_id
       db_existing_vcn_add_seclist = var.db_existing_vcn_add_seclist
 
-      rcu_component_list = var.wls_version_to_rcu_component_list_map[var.wls_version]
+      rcu_component_list = lookup(var.wls_version_to_rcu_component_list_map, var.wls_version, "")
 
       # OCI DB parameters for JRF
       db_is_oci_db                 = local.is_oci_db
