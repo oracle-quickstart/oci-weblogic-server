@@ -152,12 +152,6 @@ variable "lb_subnet_1_cidr" {
   default     = ""
 }
 
-variable "lb_subnet_2_cidr" {
-  type        = string
-  description = "CIDR for loadbalancer subnet"
-  default     = ""
-}
-
 variable "wls_subnet_cidr" {
   type        = string
   description = "CIDR for weblogic subnet"

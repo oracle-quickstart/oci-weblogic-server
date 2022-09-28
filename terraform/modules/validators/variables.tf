@@ -61,11 +61,6 @@ variable "lb_subnet_1_cidr" {
   description = "CIDR for loadbalancer subnet"
 }
 
-variable "lb_subnet_2_cidr" {
-  type        = string
-  description = "CIDR for loadbalancer subnet"
-}
-
 variable "existing_vcn_id" {
   type        = string
   description = "The OCID of the existing VCN where the WebLogic servers and other resources will be created. If not specified, a new VCN is created"
