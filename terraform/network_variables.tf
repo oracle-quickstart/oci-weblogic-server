@@ -116,12 +116,6 @@ variable "existing_lb_nsg_id" {
   default     = ""
 }
 
-variable "use_existing_subnets" {
-  type        = bool
-  description = "Set to true if the existing subnets are used to create VCN config"
-  default     = false
-}
-
 variable "mount_target_subnet_id" {
   type        = string
   description = "OCID for existing subnet for mount target"

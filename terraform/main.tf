@@ -360,7 +360,7 @@ module "validators" {
   bastion_ssh_private_key      = var.bastion_ssh_private_key
   add_load_balancer            = var.add_load_balancer
   existing_load_balancer_id    = var.existing_load_balancer_id
-  use_existing_subnets         = var.use_existing_subnets
+  use_existing_subnets         = local.use_existing_subnets
 
   wls_subnet_id     = var.wls_subnet_id
   lb_subnet_1_id    = var.lb_subnet_1_id
