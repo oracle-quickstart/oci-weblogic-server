@@ -126,13 +126,13 @@ create_ucm_ee_14110()
 create_ucm_suite_12214()
 {
   cp -Rf ${SCRIPT_DIR}/../terraform/modules ${SCRIPT_DIR}/../terraform/edition.tf ${SCRIPT_DIR}/../terraform/*.tf ${SCRIPT_DIR}/../terraform/version.txt ${SCRIPT_DIR}/../terraform/schema.yaml ${TMP_BUILD}
-  sed -i '' 's/EE/SUITE/' ${TMP_BUILD}/edition.tf
+  sed -i '' 's/default     = "EE"/default     = "SUITE"/' ${TMP_BUILD}/edition.tf
   (cd ${TMP_BUILD}; zip -r ${SCRIPT_DIR}/binaries/wlsoci-resource-manager-suite-ucm-mp-12214.zip *; rm -Rf ${TMP_BUILD}/*)
 }  
 create_ucm_suite_14110()
 {
   cp -Rf ${SCRIPT_DIR}/../terraform/modules ${SCRIPT_DIR}/../terraform/edition.tf ${SCRIPT_DIR}/../terraform/*.tf ${SCRIPT_DIR}/../terraform/version.txt ${SCRIPT_DIR}/../terraform/schema_14110.yaml ${TMP_BUILD}
-  sed -i '' 's/EE/SUITE/' ${TMP_BUILD}/edition.tf
+  sed -i '' 's/default     = "EE"/default     = "SUITE"/' ${TMP_BUILD}/edition.tf
   (cd ${TMP_BUILD}; zip -r ${SCRIPT_DIR}/binaries/wlsoci-resource-manager-suite-ucm-mp-14110.zip *; rm -Rf ${TMP_BUILD}/*)
 } 
 create_byol_ee_12214()
@@ -148,25 +148,25 @@ create_byol_ee_14110()
 create_byol_suite_12214()
 {
   cp -Rf ${SCRIPT_DIR}/../terraform/modules ${SCRIPT_DIR}/../terraform/edition.tf ${SCRIPT_DIR}/../terraform/*.tf ${SCRIPT_DIR}/../terraform/version.txt ${SCRIPT_DIR}/../terraform/schema.yaml ${TMP_BUILD}
-  sed -i '' 's/EE/SUITE/' ${TMP_BUILD}/edition.tf
+  sed -i '' 's/default     = "EE"/default     = "SUITE"/' ${TMP_BUILD}/edition.tf
   (cd ${TMP_BUILD}; zip -r ${SCRIPT_DIR}/binaries/wlsoci-resource-manager-suite-byol-mp-12214.zip *; rm -Rf ${TMP_BUILD}/*)
 } 
 create_byol_suite_14110()
 {
   cp -Rf ${SCRIPT_DIR}/../terraform/modules ${SCRIPT_DIR}/../terraform/edition.tf ${SCRIPT_DIR}/../terraform/*.tf ${SCRIPT_DIR}/../terraform/version.txt ${SCRIPT_DIR}/../terraform/schema_14110.yaml ${TMP_BUILD}
-  sed -i '' 's/EE/SUITE/' ${TMP_BUILD}/edition.tf
+  sed -i '' 's/default     = "EE"/default     = "SUITE"/' ${TMP_BUILD}/edition.tf
   (cd ${TMP_BUILD}; zip -r ${SCRIPT_DIR}/binaries/wlsoci-resource-manager-suite-byol-mp-14110.zip *; rm -Rf ${TMP_BUILD}/*)
 } 
 create_byol_standard_12214()
 {
   cp -Rf ${SCRIPT_DIR}/../terraform/modules ${SCRIPT_DIR}/../terraform/edition.tf ${SCRIPT_DIR}/../terraform/*.tf ${SCRIPT_DIR}/../terraform/version.txt ${SCRIPT_DIR}/../terraform/schema.yaml ${TMP_BUILD}
-  sed -i '' 's/EE/SE/' ${TMP_BUILD}/edition.tf
+  sed -i '' 's/default     = "EE"/default     = "SE"/' ${TMP_BUILD}/edition.tf
   (cd ${TMP_BUILD}; zip -r ${SCRIPT_DIR}/binaries/wlsoci-resource-manager-se-byol-mp-12214.zip *; rm -Rf ${TMP_BUILD}/*)
 }
 create_byol_standard_14110()
 {
   cp -Rf ${SCRIPT_DIR}/../terraform/modules ${SCRIPT_DIR}/../terraform/edition.tf ${SCRIPT_DIR}/../terraform/*.tf ${SCRIPT_DIR}/../terraform/version.txt ${SCRIPT_DIR}/../terraform/schema_14110.yaml ${TMP_BUILD}
-  sed -i '' 's/EE/SE/' ${TMP_BUILD}/edition.tf
+  sed -i '' 's/default     = "EE"/default     = "SE"/' ${TMP_BUILD}/edition.tf
   (cd ${TMP_BUILD}; zip -r ${SCRIPT_DIR}/binaries/wlsoci-resource-manager-se-byol-mp-14110.zip *; rm -Rf ${TMP_BUILD}/*)
 }
 
