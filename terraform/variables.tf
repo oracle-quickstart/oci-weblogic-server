@@ -35,7 +35,7 @@ variable "create_policies" {
 variable "generate_dg_tag" {
   type        = bool
   description = "Set to true to generate defined tags for dynamic group definition."
-  default     = false
+  default     = true
 }
 
 variable "service_tags" {
