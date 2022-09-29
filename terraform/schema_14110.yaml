@@ -665,6 +665,18 @@ variables:
     title: "Create new subnets"
     description: "Create new subnets in the existing Virtual Cloud Network"
 
+  add_nsgs:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - not:
+            or
+            - ${create_new_vcn}
+    type: boolean
+    default: false
+    title: "Create new subnets"
+    description: "Create new subnets in the existing Virtual Cloud Network"
+
   subnet_strategy_existing_vcn:
     visible: false
     type: enum

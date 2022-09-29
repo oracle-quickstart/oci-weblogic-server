@@ -419,7 +419,6 @@ variable "num_vm_instances" {
 variable "generate_dg_tag" {
   type        = bool
   description = "Set to true to generate defined tags for dynamic group definition"
-  default     = true
 }
 
 variable "service_tags" {
