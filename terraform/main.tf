@@ -58,12 +58,14 @@ module "network-vcn-config" {
   create_internet_gateway      = var.wls_vcn_name != ""
   lb_destination_cidr          = var.is_lb_private ? var.bastion_subnet_cidr : "0.0.0.0/0"
   add_fss                      = var.add_fss
+  # If the module is empty (count is zero), an empty list is returned. If not, a list of lists of strings is returned.
+  # By using flatten we make sure each entry in the map is a list of string, either with one element, or empty
   nsg_ids = {
-    lb_nsg_id           = element(coalescelist(module.network-lb-nsg[*].nsg_id, [[""]]), 0)
-    bastion_nsg_id      = element(coalescelist(module.network-bastion-nsg[*].nsg_id, [[""]]), 0)
-    mount_target_nsg_id = element(coalescelist(module.network-mount-target-nsg[*].nsg_id, [[""]]), 0)
-    admin_nsg_id        = element(coalescelist(module.network-compute-admin-nsg[*].nsg_id, [[""]]), 0)
-    managed_nsg_id      = element(coalescelist(module.network-compute-managed-nsg[*].nsg_id, [[""]]), 0)
+    lb_nsg_id           = flatten(module.network-lb-nsg[*].nsg_id)
+    bastion_nsg_id      = flatten(module.network-bastion-nsg[*].nsg_id)
+    mount_target_nsg_id = flatten(module.network-mount-target-nsg[*].nsg_id)
+    admin_nsg_id        = flatten(module.network-compute-admin-nsg[*].nsg_id)
+    managed_nsg_id      = flatten(module.network-compute-managed-nsg[*].nsg_id)
   }
 
   tags = {
