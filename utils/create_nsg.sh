@@ -38,6 +38,7 @@ function create_nsg() {
   vcn_ocid=$(oci network subnet get --subnet-id "${WLS_SUBNET_OCID}" | jq -r '.data["vcn-id"]')
   vcn_cidr=$(oci network vcn get --vcn-id "${vcn_ocid}" | jq -r '.data["cidr-block"]')
   vcn_compartment_ocid=$(oci network vcn get --vcn-id ${vcn_ocid} | jq -r '.data["compartment-id"]')
+  network_security_group_ocid=""
 
   network_security_group=$(oci network nsg create \
         --compartment-id $vcn_compartment_ocid \
@@ -51,7 +52,7 @@ function create_nsg() {
   if [[ -n $network_security_group_ocid ]]; then
     echo $network_security_group_ocid
   else
-    echo 0
+    echo ""
   fi
 }
 
@@ -180,21 +181,21 @@ then
   INTERNAL_RULES_FILE=$(mktemp)
   cat > ${INTERNAL_RULES_FILE} << EOF
   [{
-  		"description": "TCP traffic for ports: All",
-  		"direction": "INGRESS",
-  		"isStateless": "false",
-  		"protocol": "6",
-  		"sourceType": "CIDR_BLOCK",
+      "description": "TCP traffic for ports: All",
+      "direction": "INGRESS",
+      "isStateless": "false",
+      "protocol": "6",
+      "sourceType": "CIDR_BLOCK",
       "source": "$wls_subnet_cidr_block"
-  	},
-  	{
-  		"description": "All traffic for all ports",
-  		"direction": "EGRESS",
-  		"isStateless": "false",
-  		"protocol": "all",
-  		"sourceType": "CIDR_BLOCK",
+    },
+    {
+      "description": "All traffic for all ports",
+      "direction": "EGRESS",
+      "isStateless": "false",
+      "protocol": "all",
+      "sourceType": "CIDR_BLOCK",
       "destination": "0.0.0.0/0"
-  	}]
+    }]
 EOF
   # Admin Server NSG
   network_security_group_name="admin_server_nsg"
@@ -224,39 +225,39 @@ then
   BASTION_RULES_FILE=$(mktemp)
   cat > ${BASTION_RULES_FILE} << EOF
   [{
-  		"description": "TCP traffic for ports: 22 SSH Remote Login Protocol",
-  		"direction": "INGRESS",
-  		"isStateless": "false",
-  		"protocol": "6",
-  		"source": "0.0.0.0/0",
-  		"sourceType": "CIDR_BLOCK",
-  		"tcpOptions": {
-  			"destinationPortRange": {
-  				"min": "22",
-  				"max": "22"
-  			}
-  		}
-  	},
-  	{
-  		"description": "All traffic for all ports",
-  		"direction": "EGRESS",
-  		"isStateless": "false",
-  		"protocol": "all",
-  		"sourceType": "CIDR_BLOCK",
+      "description": "TCP traffic for ports: 22 SSH Remote Login Protocol",
+      "direction": "INGRESS",
+      "isStateless": "false",
+      "protocol": "6",
+      "source": "0.0.0.0/0",
+      "sourceType": "CIDR_BLOCK",
+      "tcpOptions": {
+        "destinationPortRange": {
+          "min": "22",
+          "max": "22"
+        }
+      }
+    },
+    {
+      "description": "All traffic for all ports",
+      "direction": "EGRESS",
+      "isStateless": "false",
+      "protocol": "all",
+      "sourceType": "CIDR_BLOCK",
       "destination": "0.0.0.0/0"
-  	}]
+    }]
 EOF
   # Create security rules for WLS private subnet
   WLS_BASTION_RULES_FILE=$(mktemp)
   cat > ${WLS_BASTION_RULES_FILE} << EOF
   [{
-  		"description": "All traffic for all ports",
-  		"direction": "INGRESS",
-  		"isStateless": "false",
-  		"protocol": "all",
+      "description": "All traffic for all ports",
+      "direction": "INGRESS",
+      "isStateless": "false",
+      "protocol": "all",
       "sourceType": "CIDR_BLOCK",
       "source": "$bastion_cidr_block"
-  	}]
+    }]
 EOF
 
   # Bastion instance NSG
@@ -281,13 +282,13 @@ then
   WLS_EXT_BASTION_RULES_FILE=$(mktemp)
   cat > ${WLS_EXT_BASTION_RULES_FILE} << EOF
   [{
-  		"description": "All traffic for all ports",
-  		"direction": "INGRESS",
-  		"isStateless": "false",
-  		"protocol": "all",
+      "description": "All traffic for all ports",
+      "direction": "INGRESS",
+      "isStateless": "false",
+      "protocol": "all",
       "sourceType": "CIDR_BLOCK",
       "source": "$BASTION_HOST_IP_CIDR"
-  	}]
+    }]
 EOF
   if [[ -n $managed_server_nsg_ocid ]]
   then
@@ -314,27 +315,27 @@ then
   LB_RULES_FILE=$(mktemp)
   cat > ${LB_RULES_FILE} << EOF
   [{
-  		"description": "TCP traffic for ports: 443 HTTPS",
-  		"direction": "INGRESS",
-  		"isStateless": "false",
-  		"protocol": "6",
-  		"source": "$lb_source_cidr",
-  		"sourceType": "CIDR_BLOCK",
-  		"tcpOptions": {
-  			"destinationPortRange": {
-  				"min": "$LB_PORT",
-  				"max": "$LB_PORT"
-  			}
-  		}
-  	},
-  	{
-  		"description": "TCP traffic for ports: All",
-  		"direction": "EGRESS",
-  		"isStateless": "false",
-  		"protocol": "all",
-  		"sourceType": "CIDR_BLOCK",
+      "description": "TCP traffic for ports: 443 HTTPS",
+      "direction": "INGRESS",
+      "isStateless": "false",
+      "protocol": "6",
+      "source": "$lb_source_cidr",
+      "sourceType": "CIDR_BLOCK",
+      "tcpOptions": {
+        "destinationPortRange": {
+          "min": "$LB_PORT",
+          "max": "$LB_PORT"
+        }
+      }
+    },
+    {
+      "description": "TCP traffic for ports: All",
+      "direction": "EGRESS",
+      "isStateless": "false",
+      "protocol": "all",
+      "sourceType": "CIDR_BLOCK",
       "destination": "0.0.0.0/0"
-  	}]
+    }]
 EOF
   # Create security rules for WLS Managed servers
   WLS_MS_RULES_FILE=$(mktemp)
@@ -375,22 +376,26 @@ EOF
     IDCS_RULES_FILE=$(mktemp)
     cat > ${IDCS_RULES_FILE} << EOF
     [{
-    		"description": "TCP traffic for cloudgate port",
-    		"direction": "INGRESS",
-    		"isStateless": "false",
-    		"protocol": "6",
-    		"sourceType": "CIDR_BLOCK",
-    		"source": "$lbsubnet_cidr_block",
-    		"tcpOptions": {
-    			"destinationPortRange": {
-    				"min": "$CLOUDGATE_PORT",
-    				"max": "$CLOUDGATE_PORT"
-    			}
-    		}
-    	}]
+        "description": "TCP traffic for cloudgate port",
+        "direction": "INGRESS",
+        "isStateless": "false",
+        "protocol": "6",
+        "sourceType": "CIDR_BLOCK",
+        "source": "$lbsubnet_cidr_block",
+        "tcpOptions": {
+          "destinationPortRange": {
+            "min": "$CLOUDGATE_PORT",
+            "max": "$CLOUDGATE_PORT"
+          }
+        }
+      }]
 EOF
+    if [[ -n $managed_server_nsg_ocid ]]
+    then
+      echo -e "Adding IDCS Security Rule to access CLOUD GATE port in Managed Server Network Security Group $managed_server_nsg_ocid..."
+      oci network nsg rules add --nsg-id $managed_server_nsg_ocid --security-rules file://$IDCS_RULES_FILE
+    fi
   fi
-
   # Load Balancer NSG
   network_security_group_name="load_balancer_nsg"
   load_balancer_nsg_ocid=$(create_nsg $network_security_group_name)
@@ -406,8 +411,6 @@ EOF
     then
       echo -e "Adding LB Security Rules to access MS HTTP port in Managed Server Network Security Group $managed_server_nsg_ocid..."
       oci network nsg rules add --nsg-id $managed_server_nsg_ocid --security-rules file://$WLS_MS_RULES_FILE
-      echo -e "Adding IDCS Security Rule to access CLOUD GATE port in Managed Server Network Security Group $managed_server_nsg_ocid..."
-      oci network nsg rules add --nsg-id $managed_server_nsg_ocid --security-rules file://$IDCS_RULES_FILE
       if [[ -n $lbsubnet_availability_domain  && $is_private_lb = false ]]
           then
             if [[ -n ${LB_SUBNET2_OCID} ]]
@@ -417,33 +420,33 @@ EOF
               WLS_MS_RULES_FILE2=$(mktemp)
                   cat > ${WLS_MS_RULES_FILE2} << EOF
                   [{
-                  		"description": "TCP traffic for HTTP port for applications",
-                  		"direction": "INGRESS",
-                  		"isStateless": "false",
-                  		"protocol": "6",
-                  		"sourceType": "CIDR_BLOCK",
-                  		"source": "$lbsubnet2_cidr_block",
-                  		"tcpOptions": {
-                  			"destinationPortRange": {
-                  				"min": "$MS_HTTP_PORT",
-                  				"max": "$MS_HTTP_PORT"
-                  			}
-                  		}
-                  	},
-                  	{
-                  		"description": "TCP traffic for HTTPS port for applications",
-                  		"direction": "INGRESS",
-                  		"isStateless": "false",
-                  		"protocol": "6",
-                  		"sourceType": "CIDR_BLOCK",
-                  		"source": "$lbsubnet2_cidr_block",
-                  		"tcpOptions": {
-                  			"destinationPortRange": {
-                  				"min": "$MS_HTTPS_PORT",
-                  				"max": "$MS_HTTPS_PORT"
-                  			}
-                  		}
-                  	}]
+                      "description": "TCP traffic for HTTP port for applications",
+                      "direction": "INGRESS",
+                      "isStateless": "false",
+                      "protocol": "6",
+                      "sourceType": "CIDR_BLOCK",
+                      "source": "$lbsubnet2_cidr_block",
+                      "tcpOptions": {
+                        "destinationPortRange": {
+                          "min": "$MS_HTTP_PORT",
+                          "max": "$MS_HTTP_PORT"
+                        }
+                      }
+                    },
+                    {
+                      "description": "TCP traffic for HTTPS port for applications",
+                      "direction": "INGRESS",
+                      "isStateless": "false",
+                      "protocol": "6",
+                      "sourceType": "CIDR_BLOCK",
+                      "source": "$lbsubnet2_cidr_block",
+                      "tcpOptions": {
+                        "destinationPortRange": {
+                          "min": "$MS_HTTPS_PORT",
+                          "max": "$MS_HTTPS_PORT"
+                        }
+                      }
+                    }]
 EOF
               echo -e "Adding LB Security Rules to access MS HTTP port for AD subnet in Admin Server Network Security Group $admin_server_nsg_ocid..."
               oci network nsg rules add --nsg-id $admin_server_nsg_ocid --security-rules file://$WLS_MS_RULES_FILE2
@@ -461,103 +464,103 @@ then
   FSS_RULES_FILE=$(mktemp)
   cat > ${FSS_RULES_FILE} << EOF
   [{
-  		"description": "TCP traffic for ports: 2048-2050",
-  		"direction": "INGRESS",
-  		"isStateless": "false",
-  		"protocol": "6",
-  		"sourceType": "CIDR_BLOCK",
-  		"source": "$vcn_cidr",
-  		"tcpOptions": {
-  			"destinationPortRange": {
-  				"min": "2048",
-  				"max": "2050"
-  			}
-  		}
-  	},
-  	{
-  		"description": "TCP traffic for ports: 111",
-  		"direction": "INGRESS",
-  		"isStateless": "false",
-  		"protocol": "6",
-  		"sourceType": "CIDR_BLOCK",
-  		"source": "$vcn_cidr",
-  		"tcpOptions": {
-  			"destinationPortRange": {
-  				"min": "111",
-  				"max": "111"
-  			}
-  		}
-  	},
-  	{
-  		"description": "TCP traffic for ports: 111",
-  		"direction": "INGRESS",
-  		"isStateless": "false",
-  		"protocol": "17",
-  		"sourceType": "CIDR_BLOCK",
-  		"source": "$vcn_cidr",
-  		"udpOptions": {
-  			"destinationPortRange": {
-  				"min": "111",
-  				"max": "111"
-  			}
-  		}
-  	},
-  	{
-  		"description": "UDP traffic for ports: 2048",
-  		"direction": "INGRESS",
-  		"isStateless": "false",
-  		"protocol": "17",
-  		"sourceType": "CIDR_BLOCK",
-  		"source": "$vcn_cidr",
-  		"udpOptions": {
-  			"destinationPortRange": {
-  				"min": "2048",
-  				"max": "2048"
-  			}
-  		}
-  	},
-  	{
-  		"description": "TCP traffic for ports: All",
-  		"direction": "EGRESS",
-  		"isStateless": "false",
-  		"protocol": "6",
-  		"destinationType": "CIDR_BLOCK",
-  		"destination": "$vcn_cidr",
-  		"tcpOptions": {
-  			"destinationPortRange": {
-  				"min": "2048",
-  				"max": "2050"
-  			}
-  		}
-  	},
-  	{
-  		"description": "TCP traffic for ports: All",
-  		"direction": "EGRESS",
-  		"isStateless": "false",
-  		"protocol": "6",
-  		"destinationType": "CIDR_BLOCK",
-  		"destination": "$vcn_cidr",
-  		"tcpOptions": {
-  			"destinationPortRange": {
-  				"min": "111",
-  				"max": "111"
-  			}
-  		}
-  	},
-  	{
-  		"description": "TCP traffic for ports: All",
-  		"direction": "EGRESS",
-  		"isStateless": "false",
-  		"protocol": "17",
-  		"destinationType": "CIDR_BLOCK",
-  		"destination": "$vcn_cidr",
-  		"udpOptions": {
-  			"destinationPortRange": {
-  				"min": "111",
-  				"max": "111"
-  			}
-  		}
-  	}]
+      "description": "TCP traffic for ports: 2048-2050",
+      "direction": "INGRESS",
+      "isStateless": "false",
+      "protocol": "6",
+      "sourceType": "CIDR_BLOCK",
+      "source": "$vcn_cidr",
+      "tcpOptions": {
+        "destinationPortRange": {
+          "min": "2048",
+          "max": "2050"
+        }
+      }
+    },
+    {
+      "description": "TCP traffic for ports: 111",
+      "direction": "INGRESS",
+      "isStateless": "false",
+      "protocol": "6",
+      "sourceType": "CIDR_BLOCK",
+      "source": "$vcn_cidr",
+      "tcpOptions": {
+        "destinationPortRange": {
+          "min": "111",
+          "max": "111"
+        }
+      }
+    },
+    {
+      "description": "TCP traffic for ports: 111",
+      "direction": "INGRESS",
+      "isStateless": "false",
+      "protocol": "17",
+      "sourceType": "CIDR_BLOCK",
+      "source": "$vcn_cidr",
+      "udpOptions": {
+        "destinationPortRange": {
+          "min": "111",
+          "max": "111"
+        }
+      }
+    },
+    {
+      "description": "UDP traffic for ports: 2048",
+      "direction": "INGRESS",
+      "isStateless": "false",
+      "protocol": "17",
+      "sourceType": "CIDR_BLOCK",
+      "source": "$vcn_cidr",
+      "udpOptions": {
+        "destinationPortRange": {
+          "min": "2048",
+          "max": "2048"
+        }
+      }
+    },
+    {
+      "description": "TCP traffic for ports: All",
+      "direction": "EGRESS",
+      "isStateless": "false",
+      "protocol": "6",
+      "destinationType": "CIDR_BLOCK",
+      "destination": "$vcn_cidr",
+      "tcpOptions": {
+        "destinationPortRange": {
+          "min": "2048",
+          "max": "2050"
+        }
+      }
+    },
+    {
+      "description": "TCP traffic for ports: All",
+      "direction": "EGRESS",
+      "isStateless": "false",
+      "protocol": "6",
+      "destinationType": "CIDR_BLOCK",
+      "destination": "$vcn_cidr",
+      "tcpOptions": {
+        "destinationPortRange": {
+          "min": "111",
+          "max": "111"
+        }
+      }
+    },
+    {
+      "description": "TCP traffic for ports: All",
+      "direction": "EGRESS",
+      "isStateless": "false",
+      "protocol": "17",
+      "destinationType": "CIDR_BLOCK",
+      "destination": "$vcn_cidr",
+      "udpOptions": {
+        "destinationPortRange": {
+          "min": "111",
+          "max": "111"
+        }
+      }
+    }]
 EOF
 
   # Mount Target NSG
@@ -578,18 +581,18 @@ then
   DB_RULES_FILE=$(mktemp)
   cat > ${DB_RULES_FILE} << EOF
   [{
-  		"description": "TCP traffic for DB port",
-  		"direction": "EGRESS",
-  		"isStateless": "false",
-  		"protocol": "6",
-  		"destinationType": "CIDR_BLOCK",
-  		"destination": "$db_subnet_cidr_block",
-  		"tcpOptions": {
-  			"destinationPortRange": {
-  				"min": "$DB_PORT",
-  				"max": "$DB_PORT"
-  		}
-  	}
+      "description": "TCP traffic for DB port",
+      "direction": "EGRESS",
+      "isStateless": "false",
+      "protocol": "6",
+      "destinationType": "CIDR_BLOCK",
+      "destination": "$db_subnet_cidr_block",
+      "tcpOptions": {
+        "destinationPortRange": {
+          "min": "$DB_PORT",
+          "max": "$DB_PORT"
+      }
+    }
   }]
 EOF
   if [[ -n $managed_server_nsg_ocid ]]
