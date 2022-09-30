@@ -156,7 +156,7 @@ variable "is_vcn_peering" {
 
 variable "db_vcn_lpg_id" {
   type        = string
-  description = "The OCID of the Local Peering Gateway (LPG) in the DB VCN to which the LPG in the WebLogic VCN will be peered. Required if VCN peering is required"
+  description = "The OCID of the Local Peering Gateway (LPG) in the DB VCN to which the LPG in the WebLogic VCN will be peered. Required for VCN peering"
   validation {
     condition     = var.db_vcn_lpg_id == "" || length(regexall("^ocid1.localpeeringgateway.*$", var.db_vcn_lpg_id)) > 0
     error_message = "WLSC-ERROR: The value for db_vcn_lpg_id should be blank or start with \"ocid1.localpeeringgateway.\"."

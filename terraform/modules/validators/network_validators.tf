@@ -138,7 +138,7 @@ locals {
   missing_existing_bastion_host_private_subnet_msg      = "WLSC-ERROR: Support existing bastion host for provisioning WLS in private subnet is enabled in CLI only. Provide all required parameters [ is_bastion_instance_required, existing_bastion_instance_id, bastion_ssh_private_key ]."
   validate_missing_existing_bastion_host_private_subnet = (local.invalid_bastion_private_key) ? local.validators_msg_map[local.missing_existing_bastion_host_private_subnet_msg] : null
 
-  missing_db_vcn_lpg_msg      = "WLSC-ERROR: The value for db_vcn_lpg_id is required if VCN peering is required."
+  missing_db_vcn_lpg_msg      = "WLSC-ERROR: The value for db_vcn_lpg_id is required for VCN peering."
   validate_missing_db_vcn_lpg = local.missing_db_vcn_lpg ? local.validators_msg_map[local.missing_db_vcn_lpg_msg] : null
 
 }

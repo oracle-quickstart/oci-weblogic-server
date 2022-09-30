@@ -318,19 +318,20 @@ module "network-mount-target-private-subnet" {
 }
 
 module "vcn-peering" {
-  count                      = local.is_vcn_peering ? 1 : 0
-  source                     = "./modules/network/vcn-peering"
-  resource_name_prefix       = local.service_name_prefix
-  wls_network_compartment_id = local.network_compartment_id
-  wls_vcn_id                 = local.vcn_id
-  is_existing_wls_vcn        = var.wls_existing_vcn_id != ""
-  is_wls_subnet_public       = local.assign_weblogic_public_ip
-  wls_subnet_id              = var.wls_subnet_id != "" ? var.wls_subnet_id : local.assign_weblogic_public_ip ? element(concat(module.network-wls-public-subnet[*].subnet_id, [""]), 0) : element(concat(module.network-wls-private-subnet[*].subnet_id, [""]), 0)
-  wls_service_gateway_id     = var.wls_vcn_name == "" ? data.oci_core_service_gateways.service_gateways.service_gateways[0].id : element(concat(module.network-vcn-config[*].wls_service_gateway_services_id, [""]), 0)
-  wls_internet_gateway_id    = var.wls_vcn_name == "" ? data.oci_core_internet_gateways.internet_gateways.gateways[0].id : element(concat(module.network-vcn-config[*].wls_internet_gateway_id, [""]), 0)
-  db_vcn_id                  = local.is_oci_db ? var.oci_db_existing_vcn_id : var.atp_db_existing_vcn_id
-  db_subnet_id               = local.is_oci_db ? data.oci_database_db_systems.ocidb_db_systems[0].db_systems[0].subnet_id : local.is_atp_with_private_endpoints ? data.oci_database_autonomous_database.atp_db[0].subnet_id : ""
-  db_vcn_lpg_id              = var.db_vcn_lpg_id
+  count                          = local.is_vcn_peering ? 1 : 0
+  source                         = "./modules/network/vcn-peering"
+  resource_name_prefix           = local.service_name_prefix
+  wls_network_compartment_id     = local.network_compartment_id
+  wls_vcn_id                     = local.vcn_id
+  is_existing_wls_vcn            = var.wls_existing_vcn_id != ""
+  is_wls_subnet_public           = local.assign_weblogic_public_ip
+  wls_subnet_id                  = var.wls_subnet_id != "" ? var.wls_subnet_id : local.assign_weblogic_public_ip ? element(concat(module.network-wls-public-subnet[*].subnet_id, [""]), 0) : element(concat(module.network-wls-private-subnet[*].subnet_id, [""]), 0)
+  wls_service_gateway_id         = var.wls_vcn_name == "" ? data.oci_core_service_gateways.service_gateways.service_gateways[0].id : element(concat(module.network-vcn-config[*].wls_service_gateway_services_id, [""]), 0)
+  wls_internet_gateway_id        = var.wls_vcn_name == "" ? data.oci_core_internet_gateways.internet_gateways.gateways[0].id : element(concat(module.network-vcn-config[*].wls_internet_gateway_id, [""]), 0)
+  db_vcn_id                      = local.is_oci_db ? var.oci_db_existing_vcn_id : var.atp_db_existing_vcn_id
+  db_subnet_id                   = local.is_oci_db ? data.oci_database_db_systems.ocidb_db_systems[0].db_systems[0].subnet_id : local.is_atp_with_private_endpoints ? data.oci_database_autonomous_database.atp_db[0].subnet_id : ""
+  db_vcn_lpg_id                  = var.db_vcn_lpg_id
+  wait_time_wls_vnc_dns_resolver = var.wait_time_wls_vnc_dns_resolver
 }
 
 module "validators" {

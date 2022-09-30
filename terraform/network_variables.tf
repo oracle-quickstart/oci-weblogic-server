@@ -213,3 +213,13 @@ variable "db_vcn_lpg_id" {
   description = "The OCID of the Local Peering Gateway (LPG) in the DB VCN to which the LPG in the WebLogic VCN will be peered. Required for VCN peering"
   default     = ""
 }
+
+variable "wait_time_wls_vnc_dns_resolver" {
+  type        = number
+  description = "The amount of seconds to wait before querying the DNS resolver association of the WebLogic VCN. Used by VCN peering module and ignored if using existing VCN"
+  validation {
+    condition     = var.wait_time_wls_vnc_dns_resolver > 0 && var.wait_time_wls_vnc_dns_resolver <= 1800
+    error_message = "WLSC-ERROR: The value for wait_time_wls_vnc_dns_resolver should be between 0 and 1800 (30 minutes)."
+  }
+  default = 60
+}

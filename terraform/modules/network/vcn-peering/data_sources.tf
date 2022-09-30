@@ -2,7 +2,7 @@
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 resource "time_sleep" "wait_for_wls_vcn_dns_resolver" {
-  create_duration = "30s"
+  create_duration = "${var.wait_time_wls_vnc_dns_resolver}s"
 }
 
 # When a new VCN is created, the DNS resolver is created asynchronously. Therefore, this data source might return null
