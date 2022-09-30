@@ -87,7 +87,7 @@ module "network-lb-nsg" {
 
 module "network-bastion-nsg" {
   source         = "./modules/network/nsg"
-  count          = var.is_bastion_instance_required && var.bastion_subnet_cidr != "" ? 1 : 0
+  count          = var.is_bastion_instance_required && var.existing_bastion_instance_id == "" && var.bastion_subnet_cidr != "" ? 1 : 0
   compartment_id = local.network_compartment_id
   vcn_id         = local.vcn_id
   nsg_name       = "${local.service_name_prefix}-bastion-nsg"

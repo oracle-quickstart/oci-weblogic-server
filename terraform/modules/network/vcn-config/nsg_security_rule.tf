@@ -117,7 +117,7 @@ resource "oci_core_network_security_group_security_rule" "bastion_ingress_securi
 
 resource "oci_core_network_security_group_security_rule" "existing_bastion_ingress_security_rule" {
   count          = var.existing_bastion_instance_id != "" && var.is_bastion_instance_required ? 1 : 0
-  network_security_group_id = element(var.nsg_ids["bastion_nsg_id"],0)
+  network_security_group_id = element(var.nsg_ids["managed_nsg_id"],0)
   direction = "INGRESS"
   protocol = "all"
   
