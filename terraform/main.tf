@@ -59,13 +59,13 @@ module "network-vcn-config" {
   lb_destination_cidr          = var.is_lb_private ? var.bastion_subnet_cidr : "0.0.0.0/0"
   add_fss                      = var.add_fss
   nsg_ids = {
-    lb_nsg_id = element(coalescelist(module.network-lb-nsg[*].nsg_id, [[""]]), 0)
-    bastion_nsg_id = element(coalescelist(module.network-bastion-nsg[*].nsg_id, [[""]]), 0)
+    lb_nsg_id           = element(coalescelist(module.network-lb-nsg[*].nsg_id, [[""]]), 0)
+    bastion_nsg_id      = element(coalescelist(module.network-bastion-nsg[*].nsg_id, [[""]]), 0)
     mount_target_nsg_id = element(coalescelist(module.network-mount-target-nsg[*].nsg_id, [[""]]), 0)
-    admin_nsg_id = element(coalescelist(module.network-compute-admin-nsg[*].nsg_id, [[""]]), 0)
-    managed_nsg_id = element(coalescelist(module.network-compute-managed-nsg[*].nsg_id, [[""]]), 0)
+    admin_nsg_id        = element(coalescelist(module.network-compute-admin-nsg[*].nsg_id, [[""]]), 0)
+    managed_nsg_id      = element(coalescelist(module.network-compute-managed-nsg[*].nsg_id, [[""]]), 0)
   }
-  
+
   tags = {
     defined_tags  = local.defined_tags
     freeform_tags = local.free_form_tags
@@ -327,7 +327,7 @@ module "validators" {
   wls_admin_port_source_cidr = var.wls_admin_port_source_cidr
   wls_expose_admin_port      = var.wls_expose_admin_port
   wls_version                = var.wls_version
-  num_vm_instances        = var.wls_node_count
+  num_vm_instances           = var.wls_node_count
 
   db_user                  = local.db_user
   db_password_id           = local.db_password_id
@@ -504,33 +504,33 @@ module "compute" {
   ssh_public_key         = var.ssh_public_key
   compute_nsg_ids        = local.compute_nsg_ids
 
-  tenancy_id              = var.tenancy_ocid
-  tf_script_version       = file(local.tf_version_file)
-  use_regional_subnet     = var.use_regional_subnet
-  wls_14c_jdk_version     = var.wls_14c_jdk_version
-  wls_admin_user          = var.wls_admin_user
-  wls_admin_password_id   = var.wls_admin_password_id
-  wls_admin_server_name   = format("%s_adminserver", local.service_name_prefix)
-  wls_ms_server_name      = format("%s_server_", local.service_name_prefix)
-  wls_nm_port                   = var.wls_nm_port
-  wls_ms_port                   = var.wls_ms_port
-  wls_ms_ssl_port               = var.wls_ms_ssl_port
-  wls_ms_extern_ssl_port        = var.wls_ms_extern_ssl_port
-  wls_ms_extern_port            = var.wls_ms_extern_port
-  wls_cluster_name              = format("%s_cluster", local.service_name_prefix)
-  wls_machine_name              = format("%s_machine_", local.service_name_prefix)
-  wls_extern_admin_port         = var.wls_extern_admin_port
-  wls_extern_ssl_admin_port     = var.wls_extern_ssl_admin_port
-  wls_admin_port                = var.wls_admin_port
-  wls_admin_ssl_port            = var.wls_admin_ssl_port
-  wls_domain_name         = format("%s_domain", local.service_name_prefix)
-  wls_server_startup_args = var.wls_server_startup_args
-  wls_existing_vcn_id     = var.wls_existing_vcn_id
-  wls_vcn_cidr            = var.wls_vcn_cidr != "" ? var.wls_vcn_cidr : element(concat(module.network-vcn.*.vcn_cidr, tolist([""])), 0)
-  wls_version             = var.wls_version
-  wls_edition             = var.wls_edition
-  num_vm_instances        = var.wls_node_count
-  resource_name_prefix    = var.service_name
+  tenancy_id                = var.tenancy_ocid
+  tf_script_version         = file(local.tf_version_file)
+  use_regional_subnet       = var.use_regional_subnet
+  wls_14c_jdk_version       = var.wls_14c_jdk_version
+  wls_admin_user            = var.wls_admin_user
+  wls_admin_password_id     = var.wls_admin_password_id
+  wls_admin_server_name     = format("%s_adminserver", local.service_name_prefix)
+  wls_ms_server_name        = format("%s_server_", local.service_name_prefix)
+  wls_nm_port               = var.wls_nm_port
+  wls_ms_port               = var.wls_ms_port
+  wls_ms_ssl_port           = var.wls_ms_ssl_port
+  wls_ms_extern_ssl_port    = var.wls_ms_extern_ssl_port
+  wls_ms_extern_port        = var.wls_ms_extern_port
+  wls_cluster_name          = format("%s_cluster", local.service_name_prefix)
+  wls_machine_name          = format("%s_machine_", local.service_name_prefix)
+  wls_extern_admin_port     = var.wls_extern_admin_port
+  wls_extern_ssl_admin_port = var.wls_extern_ssl_admin_port
+  wls_admin_port            = var.wls_admin_port
+  wls_admin_ssl_port        = var.wls_admin_ssl_port
+  wls_domain_name           = format("%s_domain", local.service_name_prefix)
+  wls_server_startup_args   = var.wls_server_startup_args
+  wls_existing_vcn_id       = var.wls_existing_vcn_id
+  wls_vcn_cidr              = var.wls_vcn_cidr != "" ? var.wls_vcn_cidr : element(concat(module.network-vcn.*.vcn_cidr, tolist([""])), 0)
+  wls_version               = var.wls_version
+  wls_edition               = var.wls_edition
+  num_vm_instances          = var.wls_node_count
+  resource_name_prefix      = var.service_name
 
   is_idcs_selected      = var.is_idcs_selected
   idcs_host             = var.idcs_host

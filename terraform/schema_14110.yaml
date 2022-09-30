@@ -9,9 +9,9 @@ groupings:
   - title: "Stack Configuration"
     variables:
       - ${service_name}
+      - ${ssh_public_key}
       - ${create_policies}
       - ${is_bastion_instance_required}
-      - ${ssh_public_key}
       - ${add_load_balancer}
       - ${is_idcs_selected}
       - ${use_oci_logging}
@@ -19,6 +19,20 @@ groupings:
       - ${use_autoscaling}
       - ${create_new_vcn}
       - ${add_fss}
+
+  - title: "Identity Cloud Service (IDCS) Integration"
+    visible:
+      and:
+       - ${add_load_balancer}
+       - ${is_idcs_selected}
+    variables:
+      - ${idcs_host}
+      - ${idcs_port}
+      - ${idcs_tenant}
+      - ${idcs_client_id}
+      - ${idcs_secret_compartment_id}
+      - ${idcs_client_secret_id}
+      - ${idcs_cloudgate_port}
 
   - title: "WebLogic Domain Configuration"
     variables:
@@ -48,6 +62,7 @@ groupings:
       - ${subnet_compartment_id}
       - ${subnet_type}
       - ${subnet_span}
+      - ${add_existing_nsg}
 
   - title: "WebLogic Server Compute Instance"
     variables:
@@ -61,6 +76,8 @@ groupings:
       - ${wls_subnet_id}
       - ${wls_subnet_cidr}
       - ${wls_admin_port_source_cidr}
+      - ${existing_admin_server_nsg_id}
+      - ${existing_managed_server_nsg_id}
 
   - title: "Bastion Instance"
     variables:
@@ -68,6 +85,7 @@ groupings:
       - ${bastion_subnet_id}
       - ${bastion_subnet_cidr}
       - ${bastion_instance_shape}
+      - ${existing_bastion_nsg_id}
 
   - title: "Load balancer"
     variables:
@@ -84,6 +102,9 @@ groupings:
       - ${lb_subnet_2_cidr}
       - ${lb_min_bandwidth}
       - ${lb_max_bandwidth}
+      - ${existing_load_balancer_id}
+      - ${backendset_name_for_existing_load_balancer}
+      - ${existing_lb_nsg_id}
 
   - title: "Add File System Storage"
     visible: ${add_fss}
@@ -118,6 +139,7 @@ groupings:
       - ${max_threshold_counter}
       # Common autoscaling params
       - ${ocir_user}
+      - ${ocir_auth_token_compartment_id}
       - ${ocir_auth_token_id}
       - ${notification_email}
 
@@ -199,15 +221,10 @@ groupings:
       - ${image_mode}
       - ${terms_and_conditions}
       - ${generate_dg_tag}
-      - ${existing_bastion_nsg_id}
       - ${existing_mount_target_nsg_id}
       - ${existing_export_path_id}
-      - ${existing_admin_server_nsg_id}
       - ${existing_lb_nsg_id}
-      - ${existing_managed_server_nsg_id}
-      - ${add_existing_nsg}
       - ${vcn_strategy}
-      - ${existing_load_balancer_id}
 
 outputs:
   Virtual_Cloud_Network_Id:
@@ -665,18 +682,6 @@ variables:
     title: "Create new subnets"
     description: "Create new subnets in the existing Virtual Cloud Network"
 
-  add_nsgs:
-    visible:
-      and:
-        - ${orm_create_mode}
-        - not:
-            or
-            - ${create_new_vcn}
-    type: boolean
-    default: false
-    title: "Create new subnets"
-    description: "Create new subnets in the existing Virtual Cloud Network"
-
   subnet_strategy_existing_vcn:
     visible: false
     type: enum
@@ -824,6 +829,21 @@ variables:
       - "AD Specific Subnet"
     required: true
     default: "Regional Subnet"
+
+  add_existing_nsg:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - not:
+            - ${create_new_vcn}
+        - not:
+            - ${create_new_subnets}
+    type: boolean
+    default: false
+    required: true
+    title: "Existing Network Service Groups"
+    description: "Add existing Network Service Groups(NSG) for existing subnets"
+
 
   # WLS Network Configuration
   wls_vcn_name:
@@ -1080,6 +1100,20 @@ variables:
       compartmentId: ${compartment_ocid}
       imageId: ${bastion_image_id}
 
+  existing_bastion_nsg_id:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${is_bastion_instance_required}
+        - ${add_existing_nsg}
+    type: oci:core:nsg:id
+    title: "Bastion instance Network Security Group"
+    description: "The OCID of the pre-created NSG that should be attached to the admin server"
+    required: true
+    dependsOn:
+      compartmentId: ${network_compartment_id}
+      vcnId: ${wls_existing_vcn_id} 
+
   # WLS admin console port configuration for public subnet -remove this as it hidden and public subnets are not created anymore
   wls_expose_admin_port:
     visible:
@@ -1112,6 +1146,34 @@ variables:
     pattern: "^(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\\/(3[0-2]|[1-2]?[0-9])$"
     title:  Source CIDR
     required: true
+
+  existing_admin_server_nsg_id:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - and:
+            - ${add_existing_nsg}
+    type: oci:core:nsg:id
+    title: "WebLogic admin server Network Security Group"
+    description: "The OCID of the pre-created NSG that should be attached to the admin server"
+    required: true
+    dependsOn:
+      compartmentId: ${network_compartment_id}
+      vcnId: ${wls_existing_vcn_id}
+      
+  existing_managed_server_nsg_id:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - and:
+            - ${add_existing_nsg}
+    type: oci:core:nsg:id
+    title: "WebLogic managed server Network Security Group"
+    description: "The OCID of the pre-created NSG that should be attached to the managed server"
+    required: true
+    dependsOn:
+      compartmentId: ${network_compartment_id}
+      vcnId: ${wls_existing_vcn_id}
 
   # Load Balancer Configuration
   add_load_balancer:
@@ -1204,6 +1266,10 @@ variables:
         - eq:
             - ${subnet_type}
             - "Use Private Subnet"
+        - not:
+            - eq:
+                - ${load_balancer_strategy_existing_subnet}
+                - "Use Existing Load Balancer"
     type: boolean
     default: false
     title: Private Load balancer
@@ -1215,6 +1281,10 @@ variables:
         - ${add_load_balancer}
         - not:
             - ${is_lb_private}
+        - not:
+            - eq:
+                - ${load_balancer_strategy_existing_subnet}
+                - "Use Existing Load Balancer"
     type: boolean
     default: false
     title: Load Balancer with Reserved Public IP
@@ -1294,7 +1364,10 @@ variables:
     visible:
       and:
         - ${add_load_balancer}
-        - ${create_new_subnets}
+        - and:
+             - or:
+                - ${create_new_vcn}
+                - ${create_new_subnets}
     type: string
     default: 10.0.3.0/24
     pattern: "^(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\\/(3[0-2]|[1-2]?[0-9])$"
@@ -1311,6 +1384,10 @@ variables:
               - ${create_new_subnets}
             - not:
               - ${create_new_vcn}
+            - not:
+                - eq:
+                    - ${load_balancer_strategy_existing_subnet}
+                    - "Use Existing Load Balancer"
     type: oci:core:subnet:id
     dependsOn:
       vcnId: ${wls_existing_vcn_id}
@@ -1400,7 +1477,7 @@ variables:
                 - not:
                     - ${create_new_vcn}
                 - not:
-                    - ${create_new_subnets}}
+                    - ${create_new_subnets}
                 - eq:
                     - ${load_balancer_strategy_existing_subnet}
                     - "Create New Load Balancer"
@@ -1419,6 +1496,10 @@ variables:
                 - eq:
                     - ${load_balancer_strategy_new_subnet}
                     - "Create New Load Balancer"
+            - and:
+                - or:
+                    - ${create_new_vcn}
+                    - ${create_new_subnets}
     type: integer
     title: Minimum Bandwidth for Flexible Load Balancer
     description: Create flexible shape Load Balancer with minimum bandwidth. The minimum service limit is 10 Mbps.
@@ -1455,6 +1536,10 @@ variables:
                 - eq:
                     - ${load_balancer_strategy_new_subnet}
                     - "Create New Load Balancer"
+            - and:
+                - or:
+                    - ${create_new_vcn}
+                    - ${create_new_subnets}
     type: integer
     title: Maximum Bandwidth for Flexible Load Balancer
     description: Create flexible shape Load Balancer with maximum bandwidth. The maximum service limit is 8000 Mbps. Check the service limits page in the Console to provide accurate service limits.
@@ -1462,6 +1547,20 @@ variables:
     maximum: 8000
     default: 400
     required: true
+
+  existing_lb_nsg_id:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${add_load_balancer}
+        - ${add_existing_nsg}
+    type: oci:core:nsg:id
+    title: "Load Balancer Network Security Group"
+    description: "The OCID of the pre-created NSG that should be attached to the load balancer"
+    required: true
+    dependsOn:
+      compartmentId: ${network_compartment_id}
+      vcnId: ${wls_existing_vcn_id}
 
   create_policies:
     visible: ${orm_create_mode}
@@ -2002,18 +2101,36 @@ variables:
     description: The user name to access the Oracle Cloud Infrastructure Registry (OCIR) for deploying autoscaling OCI functions
     required: true
 
+  ocir_auth_token_compartment_id:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - and:
+            - ${use_autoscaling}
+            - and:
+                - ${config_observability}
+                - ${use_apm_service}
+    type: oci:identity:compartment:id
+    title: OCIR Auth Token Compartment
+    description: The compartment where you have the OCIR auth token
+    required: true
+    default: ${compartment_ocid}
+
   ocir_auth_token_id:
     visible:
       and:
         - ${orm_create_mode}
         - and:
             - ${use_autoscaling}
-            - ${use_apm_service}
-    type: string
-    title: Secrets ID for Registry Authentication Token
-    description: The OCID of the secret which contains the auth token that you generated for the user to access the image registry
-    pattern: ^ocid1.vaultsecret.*$
+            - and:
+                - ${config_observability}
+                - ${use_apm_service}
+    type: "oci:kms:secret:id"
+    title: Validated Secret for OCIR Auth Token
+    description: The secret that contains the OCIR auth token that you generated for the user to access the image registry
     required: true
+    dependsOn:
+      compartmentId: ${ocir_auth_token_compartment_id}
 
   notification_email:
     visible:
