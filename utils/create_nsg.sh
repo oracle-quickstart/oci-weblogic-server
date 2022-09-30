@@ -3,9 +3,9 @@
 # Copyright (c) 2022, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 #
-# ##################################################
-# Script to create NSGs in existing subnets
-# ##################################################
+# ############################################################################
+# This script is to create Network Security Groups (NSGs) in existing subnets.
+# ############################################################################
 #
 
 # Set Flags
@@ -17,13 +17,14 @@ DB_PORT=1521
 MS_HTTP_PORT=7003
 MS_HTTPS_PORT=7004
 LB_PORT=443
+CLOUDGATE_PORT=9999
 WLS_SUBNET_OCID=""
 DB_SUBNET_OCID=""
 BASTION_SUBNET_OCID=""
 BASTION_HOST_IP_CIDR=""
 LB_SUBNET_OCID=""
 LB_SUBNET2_OCID=""
-FSS_SUBNET_OCID=""
+MNT_SUBNET_OCID=""
 
 debug=false
 args=()
@@ -60,14 +61,16 @@ function create_nsg() {
 usage() {
   echo -n "$0 [OPTIONS]...
 
-This script is to create NSGs in existing subnets.
+This script is to create Network Security Groups (NSGs) in existing subnets.
  ${bold}Options:${reset}
   -w, --wlssubnet     WebLogic Subnet OCID (Required)
   -d, --dbsubnet      DB Subnet OCID
   -b, --bastionsubnet Bastion Subnet OCID
+  -i, --bastionipcidr Bastion Host IP CIDR (should be suffixed with /32)
   -l, --lbsubnet      LB Subnet OCID
-  -a, --lbsubnet2     LB Subnet2 OCID ( if AD subnet)
-  -f, --fsssubnet     FSS Subnet OCID
+  -a, --lbsubnet2     LB Subnet2 OCID (if AD subnet)
+  -c, --cloudgateport Cloudgate Port (if IDCS is to be enabled)
+  -f, --mntsubnet     Mount Target Subnet OCID
       --debug         Runs script in BASH debug mode (set -x)
   -h, --help          Display this help and exit
   "
@@ -119,9 +122,11 @@ while [[ $1 = -?* ]]; do
     -w|--wlssubnet) shift; WLS_SUBNET_OCID=${1} ;;
     -d|--dbsubnet) shift; DB_SUBNET_OCID=${1} ;;
     -b|--bastionsubnet) shift; BASTION_SUBNET_OCID=${1} ;;
+    -i|--bastionipcidr) shift; BASTION_HOST_IP_CIDR=${1} ;;
     -l|--lbsubnet) shift; LB_SUBNET_OCID=${1} ;;
+    -c|--cloudgateport) shift; CLOUDGATE_PORT=${1} ;;
     -a|--lbsubnet2) shift; LB_SUBNET2_OCID=${1} ;;
-    -f|--fsssubnet) shift; FSS_SUBNET_OCID=${1} ;;
+    -f|--mntsubnet) shift; MNT_SUBNET_OCID=${1} ;;
     --debug) debug=true;;
     --endopts) shift; break ;;
     *) "invalid option: '$1'." ; usage >&2; exit 1 ;;
@@ -161,10 +166,14 @@ then
   exit
 fi
 
+# The NSGs will be created in the VCN of the weblogic subnet & in the same compartment as the VCN
 vcn_ocid=$(oci network subnet get --subnet-id "${WLS_SUBNET_OCID}" | jq -r '.data["vcn-id"]')
 vcn_cidr=$(oci network vcn get --vcn-id "${vcn_ocid}" | jq -r '.data["cidr-block"]')
 wls_subnet_cidr_block=$(oci network subnet get --subnet-id ${WLS_SUBNET_OCID} | jq -r '.data["cidr-block"]')
 
+# Create admin & managed server NSGs when weblogic subnet is provided
+admin_server_nsg_id=""
+managed_server_nsg_id=""
 if [[ -n ${WLS_SUBNET_OCID} ]]
 then
   # Create security rules for WLS VM-VM access
@@ -193,8 +202,6 @@ EOF
   if [[ -n $admin_server_nsg_id ]]
   then
     echo -e "Created Admin Server Network Security Group: ${admin_server_nsg_id}"
-  else
-    echo "Error in creating Admin Server Network Security Group"
   fi
 
   # Managed server NSG
@@ -205,11 +212,11 @@ EOF
     echo -e "Created Managed Server Network Security Group: ${managed_server_nsg_id}"
     echo -e "Adding Security Rules for WLS VM-VM access in the Managed Server Network Security Group $managed_server_nsg_id..."
     oci network nsg rules add --nsg-id $managed_server_nsg_id --security-rules file://$INTERNAL_RULES_FILE
-  else
-    echo "Error in creating Managed Server Network Security Group"
   fi
 fi
 
+# Create bastion server NSG when bastion subnet is provided
+bastion_nsg_id=""
 if [[ -n ${BASTION_SUBNET_OCID} ]]
 then
   bastion_cidr_block=$(oci network subnet get --subnet-id ${BASTION_SUBNET_OCID} | jq -r '.data["cidr-block"]')
@@ -265,22 +272,43 @@ EOF
       echo -e "Adding Bastion Security Rules in Managed Server Network Security Group $managed_server_nsg_id..."
       oci network nsg rules add --nsg-id $managed_server_nsg_id --security-rules file://$WLS_BASTION_RULES_FILE
     fi
-  else
-    echo "Error in creating Bastion Instance Network Security Group"
   fi
 fi
 
+if [[ -n ${BASTION_HOST_IP_CIDR} ]]
+then
+  # Create security rules for WLS private subnet with existing bastion instance
+  WLS_EXT_BASTION_RULES_FILE=$(mktemp)
+  cat > ${WLS_EXT_BASTION_RULES_FILE} << EOF
+  [{
+  		"description": "All traffic for all ports",
+  		"direction": "INGRESS",
+  		"isStateless": "false",
+  		"protocol": "all",
+      "sourceType": "CIDR_BLOCK",
+      "source": "$BASTION_HOST_IP_CIDR"
+  	}]
+EOF
+  if [[ -n $managed_server_nsg_id ]]
+  then
+    echo -e "Adding Existing Bastion Security Rule in Managed Server Network Security Group $managed_server_nsg_id..."
+    oci network nsg rules add --nsg-id $managed_server_nsg_id --security-rules file://$WLS_EXT_BASTION_RULES_FILE
+  fi
+fi
+
+# Create load balancer NSG when load balancer subnet is provided
+load_balancer_nsg_id=""
 if [[ -n ${LB_SUBNET_OCID} ]]
 then
   lbsubnet_cidr_block=$(oci network subnet get --subnet-id "${LB_SUBNET_OCID}" | jq -r '.data["cidr-block"]')
   lbsubnet_availability_domain=$(oci network subnet get --subnet-id "${LB_SUBNET_OCID}" | jq -r '.data["availability-domain"]')
   is_private_lb=$(oci network subnet get --subnet-id ${LB_SUBNET_OCID} | jq -r '.data["prohibit-public-ip-on-vnic"]')
-  lb_destination_cidr=0.0.0.0/0
+  lb_source_cidr=0.0.0.0/0
 
   if [[ $is_private_lb = true && -n ${BASTION_SUBNET_OCID} ]]
   then
     bastion_cidr_block=$(oci network subnet get --subnet-id ${BASTION_SUBNET_OCID} | jq -r '.data["cidr-block"]')
-    lb_destination_cidr=$bastion_cidr_block
+    lb_source_cidr=$bastion_cidr_block
   fi
   # Create security rules for LB
   LB_RULES_FILE=$(mktemp)
@@ -290,7 +318,7 @@ then
   		"direction": "INGRESS",
   		"isStateless": "false",
   		"protocol": "6",
-  		"source": "$lb_destination_cidr",
+  		"source": "$lb_source_cidr",
   		"sourceType": "CIDR_BLOCK",
   		"tcpOptions": {
   			"destinationPortRange": {
@@ -312,7 +340,7 @@ EOF
   WLS_MS_RULES_FILE=$(mktemp)
   cat > ${WLS_MS_RULES_FILE} << EOF
   [{
-      "description": "TCP traffic for ports: 7003",
+      "description": "TCP traffic for HTTP port for applications",
       "direction": "INGRESS",
       "isStateless": "false",
       "protocol": "6",
@@ -326,7 +354,7 @@ EOF
       }
     },
     {
-      "description": "TCP traffic for ports: 7004",
+      "description": "TCP traffic for HTTPS port for applications",
       "direction": "INGRESS",
       "isStateless": "false",
       "protocol": "6",
@@ -341,6 +369,28 @@ EOF
     }]
 EOF
 
+  # Create security rule for IDCS - Open CLOUDGATE GATE PORT from LB subnet in MANAGED SERVER NSG
+  if [[ -n ${CLOUDGATE_PORT} ]]
+  then
+    IDCS_RULES_FILE=$(mktemp)
+    cat > ${IDCS_RULES_FILE} << EOF
+    [{
+    		"description": "TCP traffic for cloudgate port",
+    		"direction": "INGRESS",
+    		"isStateless": "false",
+    		"protocol": "6",
+    		"sourceType": "CIDR_BLOCK",
+    		"source": "$lbsubnet_cidr_block",
+    		"tcpOptions": {
+    			"destinationPortRange": {
+    				"min": "$CLOUDGATE_PORT",
+    				"max": "$CLOUDGATE_PORT"
+    			}
+    		}
+    	}]
+EOF
+  fi
+
   # Load Balancer NSG
   network_security_group_name="load_balancer_nsg"
   load_balancer_nsg_id=$(create_nsg $network_security_group_name)
@@ -352,10 +402,12 @@ EOF
       echo -e "Adding LB Security Rules in Load Balancer Network Security Group $load_balancer_nsg_id..."
       oci network nsg rules add --nsg-id $load_balancer_nsg_id --security-rules file://$LB_RULES_FILE
     fi
-    if [[ -n $admin_server_nsg_id ]]
+    if [[ -n $managed_server_nsg_id ]]
     then
-      echo -e "Adding LB Security Rules to access MS HTTP port in Admin Server Network Security Group $admin_server_nsg_id..."
-      oci network nsg rules add --nsg-id $admin_server_nsg_id --security-rules file://$WLS_MS_RULES_FILE
+      echo -e "Adding LB Security Rules to access MS HTTP port in Managed Server Network Security Group $managed_server_nsg_id..."
+      oci network nsg rules add --nsg-id $managed_server_nsg_id --security-rules file://$WLS_MS_RULES_FILE
+      echo -e "Adding IDCS Security Rule to access CLOUD GATE port in Managed Server Network Security Group $managed_server_nsg_id..."
+      oci network nsg rules add --nsg-id $managed_server_nsg_id --security-rules file://$IDCS_RULES_FILE
       if [[ -n $lbsubnet_availability_domain  && $is_private_lb = false ]]
           then
             if [[ -n ${LB_SUBNET2_OCID} ]]
@@ -365,7 +417,7 @@ EOF
               WLS_MS_RULES_FILE2=$(mktemp)
                   cat > ${WLS_MS_RULES_FILE2} << EOF
                   [{
-                  		"description": "TCP traffic for ports: 7003",
+                  		"description": "TCP traffic for HTTP port for applications",
                   		"direction": "INGRESS",
                   		"isStateless": "false",
                   		"protocol": "6",
@@ -379,7 +431,7 @@ EOF
                   		}
                   	},
                   	{
-                  		"description": "TCP traffic for ports: 7004",
+                  		"description": "TCP traffic for HTTPS port for applications",
                   		"direction": "INGRESS",
                   		"isStateless": "false",
                   		"protocol": "6",
@@ -397,14 +449,14 @@ EOF
               oci network nsg rules add --nsg-id $admin_server_nsg_id --security-rules file://$WLS_MS_RULES_FILE2
             fi
         fi
-    else
-      echo "Error in creating Load Balancer Network Security Group"
     fi
   fi
 fi
 
-# Create security rules for FSS - Open All TCP Ports in FSS SUBNET OCID for VCN CIDR
-if [[ -n ${FSS_SUBNET_OCID} ]]
+# Create mount target NSG when mount target subnet is provided
+# Security rules for FSS - Open All TCP Ports in MOUNT TARGET SUBNET OCID for VCN CIDR
+mount_target_nsg_id=""
+if [[ -n ${MNT_SUBNET_OCID} ]]
 then
   FSS_RULES_FILE=$(mktemp)
   cat > ${FSS_RULES_FILE} << EOF
@@ -516,12 +568,10 @@ EOF
     echo -e "Created Mount Target Network Security Group: ${mount_target_nsg_id}"
     echo -e "Adding FSS Security Rules in Mount Target Network Security Group $mount_target_nsg_id..."
     oci network nsg rules add --nsg-id $mount_target_nsg_id --security-rules file://$FSS_RULES_FILE
-  else
-    echo "Error in creating Mount Target Network Security Group"
   fi
 fi
 
-#  Allow outbound tcp traffic on DB Port
+# Allow outbound tcp traffic on DB Port when DB subnet is provided
 if [[ -n ${DB_SUBNET_OCID} ]]
 then
   db_subnet_cidr_block=$(oci network subnet get --subnet-id ${DB_SUBNET_OCID} | jq -r '.data["cidr-block"]')
@@ -549,6 +599,7 @@ EOF
   fi
 fi
 
+# The list of NSGs created by the script
 echo -e "The Network Security Groups created are:"
 if [[ -n $admin_server_nsg_id ]]
   then
