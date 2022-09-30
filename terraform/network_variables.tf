@@ -116,12 +116,6 @@ variable "existing_lb_nsg_id" {
   default     = ""
 }
 
-variable "use_existing_subnets" {
-  type        = bool
-  description = "Set to true if the existing subnets are used to create VCN config"
-  default     = false
-}
-
 variable "mount_target_subnet_id" {
   type        = string
   description = "OCID for existing subnet for mount target"
@@ -147,12 +141,6 @@ variable "lb_subnet_2_name" {
 }
 
 variable "lb_subnet_1_cidr" {
-  type        = string
-  description = "CIDR for loadbalancer subnet"
-  default     = ""
-}
-
-variable "lb_subnet_2_cidr" {
   type        = string
   description = "CIDR for loadbalancer subnet"
   default     = ""

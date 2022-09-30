@@ -8,7 +8,6 @@ locals {
   has_mgmt_subnet_cidr = var.is_bastion_instance_required ? (var.bastion_subnet_cidr != "" || var.existing_bastion_instance_id != "") : true
 
   has_lb_subnet_1_cidr     = var.lb_subnet_1_cidr != ""
-  has_lb_subnet_2_cidr     = var.lb_subnet_2_cidr != ""
   missing_wls_subnet_cidr  = var.existing_vcn_id != "" && var.wls_subnet_id == "" ? !local.has_wls_subnet_cidr : false
   add_new_load_balancer    = var.add_load_balancer && var.existing_load_balancer_id == ""
   missing_lb_subnet_1_cidr = local.add_new_load_balancer && var.existing_vcn_id != "" && var.lb_subnet_1_id == "" ? !local.has_lb_subnet_1_cidr : false
@@ -17,20 +16,13 @@ locals {
   missing_mgmt_backend_subnet_cidr   = (var.existing_vcn_id != "" && !var.assign_public_ip && var.bastion_subnet_id == "" && var.is_bastion_instance_required && var.existing_bastion_instance_id == "") ? !local.has_mgmt_subnet_cidr : false
 
   duplicate_wls_subnet_cidr_with_lb1_cidr            = (local.add_new_load_balancer) && (local.has_lb_subnet_1_cidr) && (local.has_wls_subnet_cidr) && (var.wls_subnet_cidr == var.lb_subnet_1_cidr)
-  duplicate_wls_subnet_cidr_with_lb2_cidr            = (local.add_new_load_balancer) && (var.use_regional_subnet == false) && (local.has_lb_subnet_2_cidr) && (local.has_wls_subnet_cidr) && (var.wls_subnet_cidr == var.lb_subnet_2_cidr)
   duplicate_wls_subnet_cidr_with_private_subnet_cidr = ((var.existing_vcn_id == "") && (!var.assign_public_ip) && var.bastion_subnet_id == "") && (local.has_mgmt_subnet_cidr) && (local.has_wls_subnet_cidr) && (var.wls_subnet_cidr == var.bastion_subnet_cidr)
 
-  check_duplicate_wls_subnet_cidr = var.wls_subnet_cidr != "" && (local.duplicate_wls_subnet_cidr_with_lb1_cidr || local.duplicate_wls_subnet_cidr_with_lb2_cidr || local.duplicate_wls_subnet_cidr_with_private_subnet_cidr)
+  check_duplicate_wls_subnet_cidr = var.wls_subnet_cidr != "" && (local.duplicate_wls_subnet_cidr_with_lb1_cidr || local.duplicate_wls_subnet_cidr_with_private_subnet_cidr)
 
   #lb1 check
-  duplicate_lb1_subnet_cidr_with_lb2_cidr            = (local.add_new_load_balancer) && (var.use_regional_subnet == false) && (local.has_lb_subnet_1_cidr) && (local.has_lb_subnet_2_cidr) && (var.lb_subnet_1_cidr == var.lb_subnet_2_cidr)
   duplicate_lb1_subnet_cidr_with_private_subnet_cidr = ((!var.assign_public_ip) && var.bastion_subnet_id == "") && (local.has_mgmt_subnet_cidr) && (local.has_lb_subnet_1_cidr) && (var.lb_subnet_1_cidr == var.bastion_subnet_cidr)
-
-  check_duplicate_lb1_subnet_cidr = local.has_lb_subnet_1_cidr && (local.duplicate_lb1_subnet_cidr_with_lb2_cidr || local.duplicate_lb1_subnet_cidr_with_private_subnet_cidr)
-
-  #lb2 check
-  duplicate_lb2_subnet_cidr_with_private_subnet_cidr = (local.add_new_load_balancer) && (var.use_regional_subnet == false) && ((!var.assign_public_ip) && var.bastion_subnet_id == "") && (local.has_mgmt_subnet_cidr) && (local.has_lb_subnet_2_cidr) && (var.lb_subnet_2_cidr == var.bastion_subnet_cidr)
-  check_duplicate_lb2_subnet_cidr                    = local.has_lb_subnet_2_cidr && local.duplicate_lb2_subnet_cidr_with_private_subnet_cidr
+  check_duplicate_lb1_subnet_cidr                    = local.has_lb_subnet_1_cidr && local.duplicate_lb1_subnet_cidr_with_private_subnet_cidr
 
   missing_vcn               = var.existing_vcn_id == "" && var.vcn_name == ""
   has_existing_vcn          = var.existing_vcn_id != ""
@@ -55,7 +47,7 @@ locals {
 
   #existing private AD subnet
   has_all_existing_private_subnets = (local.add_new_load_balancer && local.has_wls_subnet_id && local.has_lb_frontend_subnet_id && local.has_mgmt_subnet_id) || ((!local.add_new_load_balancer && local.has_wls_subnet_id && local.has_mgmt_subnet_id))
-  has_all_new_private_subnets      = (local.add_new_load_balancer && local.has_wls_subnet_cidr && local.has_lb_subnet_1_cidr && local.has_lb_subnet_2_cidr && local.has_mgmt_subnet_cidr) || (!local.add_new_load_balancer && local.has_wls_subnet_cidr && local.has_mgmt_subnet_cidr)
+  has_all_new_private_subnets      = (local.add_new_load_balancer && local.has_wls_subnet_cidr && local.has_lb_subnet_1_cidr && local.has_mgmt_subnet_cidr) || (!local.add_new_load_balancer && local.has_wls_subnet_cidr && local.has_mgmt_subnet_cidr)
   is_private_subnet_condition      = (local.has_all_existing_private_subnets || local.has_all_new_private_subnets)
   missing_existing_private_subnets = !local.is_private_subnet_condition
 
@@ -114,11 +106,8 @@ locals {
   wls_subnet_cidr_msg       = "WLSC-ERROR:  WebLogic subnet CIDR has to be unique value."
   duplicate_wls_subnet_cidr = local.check_duplicate_wls_subnet_cidr == true ? local.validators_msg_map[local.wls_subnet_cidr_msg] : null
 
-  duplicate_lb1_subnet_cidr_msg = "WLSC-ERROR:  Load balancer subnet 1 CIDR has to be unique value. "
+  duplicate_lb1_subnet_cidr_msg = "WLSC-ERROR:  Load balancer subnet 1 CIDR has to be unique value."
   duplicate_lb1_subnet_cidr     = local.check_duplicate_lb1_subnet_cidr ? local.validators_msg_map[local.duplicate_lb1_subnet_cidr_msg] : null
-
-  duplicate_lb2_subnet_cidr_msg = "WLSC-ERROR:  Load balancer subnet 2 CIDR has to be unique value. "
-  duplicate_lb2_subnet_cidr     = local.check_duplicate_lb2_subnet_cidr ? local.validators_msg_map[local.duplicate_lb2_subnet_cidr_msg] : null
 
   lb_type_msg      = "WLSC-ERROR: Private load balancer can only be provisioned if private subnets are used for provisioning."
   validate_lb_type = local.invalid_lb_type ? local.validators_msg_map[local.lb_type_msg] : null

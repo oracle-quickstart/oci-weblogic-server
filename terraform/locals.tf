@@ -110,7 +110,6 @@ locals {
   bastion_subnet_cidr       = var.bastion_subnet_cidr == "" && var.wls_vcn_name != "" && !local.assign_weblogic_public_ip ? local.is_vcn_peering ? "11.0.1.0/24" : "10.0.1.0/24" : var.bastion_subnet_cidr
   wls_subnet_cidr           = var.wls_subnet_cidr == "" && var.wls_vcn_name != "" ? local.is_vcn_peering ? "11.0.2.0/24" : "10.0.2.0/24" : var.wls_subnet_cidr
   lb_subnet_1_subnet_cidr   = var.lb_subnet_1_cidr == "" && var.wls_vcn_name != "" ? local.is_vcn_peering ? "11.0.3.0/24" : "10.0.3.0/24" : var.lb_subnet_1_cidr
-  lb_subnet_2_subnet_cidr   = var.lb_subnet_2_cidr == "" && var.wls_vcn_name != "" ? local.is_vcn_peering ? "11.0.4.0/24" : "10.0.4.0/24" : var.lb_subnet_2_cidr
   mount_target_subnet_cidr  = var.mount_target_subnet_cidr == "" && var.wls_vcn_name != "" ? local.is_vcn_peering ? "11.0.5.0/24" : "10.0.5.0/24" : var.mount_target_subnet_cidr
 
   num_ads = length(

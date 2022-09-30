@@ -80,7 +80,7 @@ variable "atp_db_level" {
   default     = "low"
   validation {
     condition     = contains(["low", "tp", "tpurgent"], var.atp_db_level)
-    error_message = "Invalid value for atp_db_level. Allowed values are low, tp and tpurgent."
+    error_message = "WLSC-ERROR: Invalid value for atp_db_level. Allowed values are low, tp and tpurgent."
   }
 }
 
