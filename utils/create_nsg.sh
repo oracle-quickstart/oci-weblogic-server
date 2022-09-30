@@ -46,10 +46,10 @@ function create_nsg() {
         --wait-for-state "AVAILABLE" 2> /dev/null \
         | jq -rc '.data')
 
-  network_security_group_id=$(echo "${network_security_group}" | jq -r '.id')
+  network_security_group_ocid=$(echo "${network_security_group}" | jq -r '.id')
 
-  if [[ -n $network_security_group_id ]]; then
-    echo $network_security_group_id
+  if [[ -n $network_security_group_ocid ]]; then
+    echo $network_security_group_ocid
   else
     echo 0
   fi
@@ -172,8 +172,8 @@ vcn_cidr=$(oci network vcn get --vcn-id "${vcn_ocid}" | jq -r '.data["cidr-block
 wls_subnet_cidr_block=$(oci network subnet get --subnet-id ${WLS_SUBNET_OCID} | jq -r '.data["cidr-block"]')
 
 # Create admin & managed server NSGs when weblogic subnet is provided
-admin_server_nsg_id=""
-managed_server_nsg_id=""
+admin_server_nsg_ocid=""
+managed_server_nsg_ocid=""
 if [[ -n ${WLS_SUBNET_OCID} ]]
 then
   # Create security rules for WLS VM-VM access
@@ -198,25 +198,25 @@ then
 EOF
   # Admin Server NSG
   network_security_group_name="admin_server_nsg"
-  admin_server_nsg_id=$(create_nsg $network_security_group_name)
-  if [[ -n $admin_server_nsg_id ]]
+  admin_server_nsg_ocid=$(create_nsg $network_security_group_name)
+  if [[ -n $admin_server_nsg_ocid ]]
   then
-    echo -e "Created Admin Server Network Security Group: ${admin_server_nsg_id}"
+    echo -e "Created Admin Server Network Security Group: ${admin_server_nsg_ocid}"
   fi
 
   # Managed server NSG
   network_security_group_name="managed_server_nsg"
-  managed_server_nsg_id=$(create_nsg $network_security_group_name)
-  if [[ -n $managed_server_nsg_id ]]
+  managed_server_nsg_ocid=$(create_nsg $network_security_group_name)
+  if [[ -n $managed_server_nsg_ocid ]]
   then
-    echo -e "Created Managed Server Network Security Group: ${managed_server_nsg_id}"
-    echo -e "Adding Security Rules for WLS VM-VM access in the Managed Server Network Security Group $managed_server_nsg_id..."
-    oci network nsg rules add --nsg-id $managed_server_nsg_id --security-rules file://$INTERNAL_RULES_FILE
+    echo -e "Created Managed Server Network Security Group: ${managed_server_nsg_ocid}"
+    echo -e "Adding Security Rules for WLS VM-VM access in the Managed Server Network Security Group $managed_server_nsg_ocid..."
+    oci network nsg rules add --nsg-id $managed_server_nsg_ocid --security-rules file://$INTERNAL_RULES_FILE
   fi
 fi
 
 # Create bastion server NSG when bastion subnet is provided
-bastion_nsg_id=""
+bastion_nsg_ocid=""
 if [[ -n ${BASTION_SUBNET_OCID} ]]
 then
   bastion_cidr_block=$(oci network subnet get --subnet-id ${BASTION_SUBNET_OCID} | jq -r '.data["cidr-block"]')
@@ -261,16 +261,16 @@ EOF
 
   # Bastion instance NSG
   network_security_group_name="bastion_nsg"
-  bastion_nsg_id=$(create_nsg $network_security_group_name)
-  if [[ -n $bastion_nsg_id ]]
+  bastion_nsg_ocid=$(create_nsg $network_security_group_name)
+  if [[ -n $bastion_nsg_ocid ]]
   then
-    echo -e "Created Bastion Instance Network Security Group: ${bastion_nsg_id}"
-    echo -e "Adding Security Rules in Bastion Instance Network Security Group $bastion_nsg_id..."
-    oci network nsg rules add --nsg-id $bastion_nsg_id --security-rules file://$BASTION_RULES_FILE
-    if [[ -n $managed_server_nsg_id ]]
+    echo -e "Created Bastion Instance Network Security Group: ${bastion_nsg_ocid}"
+    echo -e "Adding Security Rules in Bastion Instance Network Security Group $bastion_nsg_ocid..."
+    oci network nsg rules add --nsg-id $bastion_nsg_ocid --security-rules file://$BASTION_RULES_FILE
+    if [[ -n $managed_server_nsg_ocid ]]
     then
-      echo -e "Adding Bastion Security Rules in Managed Server Network Security Group $managed_server_nsg_id..."
-      oci network nsg rules add --nsg-id $managed_server_nsg_id --security-rules file://$WLS_BASTION_RULES_FILE
+      echo -e "Adding Bastion Security Rules in Managed Server Network Security Group $managed_server_nsg_ocid..."
+      oci network nsg rules add --nsg-id $managed_server_nsg_ocid --security-rules file://$WLS_BASTION_RULES_FILE
     fi
   fi
 fi
@@ -289,15 +289,15 @@ then
       "source": "$BASTION_HOST_IP_CIDR"
   	}]
 EOF
-  if [[ -n $managed_server_nsg_id ]]
+  if [[ -n $managed_server_nsg_ocid ]]
   then
-    echo -e "Adding Existing Bastion Security Rule in Managed Server Network Security Group $managed_server_nsg_id..."
-    oci network nsg rules add --nsg-id $managed_server_nsg_id --security-rules file://$WLS_EXT_BASTION_RULES_FILE
+    echo -e "Adding Existing Bastion Security Rule in Managed Server Network Security Group $managed_server_nsg_ocid..."
+    oci network nsg rules add --nsg-id $managed_server_nsg_ocid --security-rules file://$WLS_EXT_BASTION_RULES_FILE
   fi
 fi
 
 # Create load balancer NSG when load balancer subnet is provided
-load_balancer_nsg_id=""
+load_balancer_nsg_ocid=""
 if [[ -n ${LB_SUBNET_OCID} ]]
 then
   lbsubnet_cidr_block=$(oci network subnet get --subnet-id "${LB_SUBNET_OCID}" | jq -r '.data["cidr-block"]')
@@ -393,21 +393,21 @@ EOF
 
   # Load Balancer NSG
   network_security_group_name="load_balancer_nsg"
-  load_balancer_nsg_id=$(create_nsg $network_security_group_name)
-  if [[ -n $load_balancer_nsg_id ]]
+  load_balancer_nsg_ocid=$(create_nsg $network_security_group_name)
+  if [[ -n $load_balancer_nsg_ocid ]]
   then
-    echo -e "Created Load Balancer Network Security Group: ${load_balancer_nsg_id}"
+    echo -e "Created Load Balancer Network Security Group: ${load_balancer_nsg_ocid}"
     if [[ (($is_private_lb = true && -n ${BASTION_SUBNET_OCID}) || $is_private_lb = false) ]]
     then
-      echo -e "Adding LB Security Rules in Load Balancer Network Security Group $load_balancer_nsg_id..."
-      oci network nsg rules add --nsg-id $load_balancer_nsg_id --security-rules file://$LB_RULES_FILE
+      echo -e "Adding LB Security Rules in Load Balancer Network Security Group $load_balancer_nsg_ocid..."
+      oci network nsg rules add --nsg-id $load_balancer_nsg_ocid --security-rules file://$LB_RULES_FILE
     fi
-    if [[ -n $managed_server_nsg_id ]]
+    if [[ -n $managed_server_nsg_ocid ]]
     then
-      echo -e "Adding LB Security Rules to access MS HTTP port in Managed Server Network Security Group $managed_server_nsg_id..."
-      oci network nsg rules add --nsg-id $managed_server_nsg_id --security-rules file://$WLS_MS_RULES_FILE
-      echo -e "Adding IDCS Security Rule to access CLOUD GATE port in Managed Server Network Security Group $managed_server_nsg_id..."
-      oci network nsg rules add --nsg-id $managed_server_nsg_id --security-rules file://$IDCS_RULES_FILE
+      echo -e "Adding LB Security Rules to access MS HTTP port in Managed Server Network Security Group $managed_server_nsg_ocid..."
+      oci network nsg rules add --nsg-id $managed_server_nsg_ocid --security-rules file://$WLS_MS_RULES_FILE
+      echo -e "Adding IDCS Security Rule to access CLOUD GATE port in Managed Server Network Security Group $managed_server_nsg_ocid..."
+      oci network nsg rules add --nsg-id $managed_server_nsg_ocid --security-rules file://$IDCS_RULES_FILE
       if [[ -n $lbsubnet_availability_domain  && $is_private_lb = false ]]
           then
             if [[ -n ${LB_SUBNET2_OCID} ]]
@@ -445,8 +445,8 @@ EOF
                   		}
                   	}]
 EOF
-              echo -e "Adding LB Security Rules to access MS HTTP port for AD subnet in Admin Server Network Security Group $admin_server_nsg_id..."
-              oci network nsg rules add --nsg-id $admin_server_nsg_id --security-rules file://$WLS_MS_RULES_FILE2
+              echo -e "Adding LB Security Rules to access MS HTTP port for AD subnet in Admin Server Network Security Group $admin_server_nsg_ocid..."
+              oci network nsg rules add --nsg-id $admin_server_nsg_ocid --security-rules file://$WLS_MS_RULES_FILE2
             fi
         fi
     fi
@@ -455,7 +455,7 @@ fi
 
 # Create mount target NSG when mount target subnet is provided
 # Security rules for FSS - Open All TCP Ports in MOUNT TARGET SUBNET OCID for VCN CIDR
-mount_target_nsg_id=""
+mount_target_nsg_ocid=""
 if [[ -n ${MNT_SUBNET_OCID} ]]
 then
   FSS_RULES_FILE=$(mktemp)
@@ -562,12 +562,12 @@ EOF
 
   # Mount Target NSG
   network_security_group_name="mount_target_nsg"
-  mount_target_nsg_id=$(create_nsg $network_security_group_name)
-  if [[ -n $mount_target_nsg_id ]]
+  mount_target_nsg_ocid=$(create_nsg $network_security_group_name)
+  if [[ -n $mount_target_nsg_ocid ]]
   then
-    echo -e "Created Mount Target Network Security Group: ${mount_target_nsg_id}"
-    echo -e "Adding FSS Security Rules in Mount Target Network Security Group $mount_target_nsg_id..."
-    oci network nsg rules add --nsg-id $mount_target_nsg_id --security-rules file://$FSS_RULES_FILE
+    echo -e "Created Mount Target Network Security Group: ${mount_target_nsg_ocid}"
+    echo -e "Adding FSS Security Rules in Mount Target Network Security Group $mount_target_nsg_ocid..."
+    oci network nsg rules add --nsg-id $mount_target_nsg_ocid --security-rules file://$FSS_RULES_FILE
   fi
 fi
 
@@ -592,34 +592,34 @@ then
   	}
   }]
 EOF
-  if [[ -n $managed_server_nsg_id ]]
+  if [[ -n $managed_server_nsg_ocid ]]
   then
-    echo -e "Adding Security Rules to allow outbound tcp traffic on DB Port in Managed Server Network Security Group $managed_server_nsg_id..."
-    oci network nsg rules add --nsg-id $managed_server_nsg_id --security-rules file://$DB_RULES_FILE
+    echo -e "Adding Security Rules to allow outbound tcp traffic on DB Port in Managed Server Network Security Group $managed_server_nsg_ocid..."
+    oci network nsg rules add --nsg-id $managed_server_nsg_ocid --security-rules file://$DB_RULES_FILE
   fi
 fi
 
 # The list of NSGs created by the script
 echo -e "The Network Security Groups created are:"
-if [[ -n $admin_server_nsg_id ]]
+if [[ -n $admin_server_nsg_ocid ]]
   then
-    echo -e "Admin Server Network Security Group     : $admin_server_nsg_id"
+    echo -e "Admin Server Network Security Group     : $admin_server_nsg_ocid"
 fi
-if [[ -n $managed_server_nsg_id ]]
+if [[ -n $managed_server_nsg_ocid ]]
   then
-    echo -e "Managed Server Network Security Group   : $managed_server_nsg_id"
+    echo -e "Managed Server Network Security Group   : $managed_server_nsg_ocid"
 fi
-if [[ -n $bastion_nsg_id ]]
+if [[ -n $bastion_nsg_ocid ]]
   then
-    echo -e "Bastion Instance Network Security Group : $bastion_nsg_id"
+    echo -e "Bastion Instance Network Security Group : $bastion_nsg_ocid"
 fi
-if [[ -n $load_balancer_nsg_id ]]
+if [[ -n $load_balancer_nsg_ocid ]]
   then
-    echo -e "Load Balancer Network Security Group    : $load_balancer_nsg_id"
+    echo -e "Load Balancer Network Security Group    : $load_balancer_nsg_ocid"
 fi
-if [[ -n $mount_target_nsg_id ]]
+if [[ -n $mount_target_nsg_ocid ]]
   then
-    echo -e "Mount Target Network Security Group     : $mount_target_nsg_id"
+    echo -e "Mount Target Network Security Group     : $mount_target_nsg_ocid"
 fi
 
 
