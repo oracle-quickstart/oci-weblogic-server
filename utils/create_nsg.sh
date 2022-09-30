@@ -306,7 +306,7 @@ then
   is_private_lb=$(oci network subnet get --subnet-id ${LB_SUBNET_OCID} | jq -r '.data["prohibit-public-ip-on-vnic"]')
   lb_source_cidr=0.0.0.0/0
 
-  if [[ $is_private_lb == true && -n ${BASTION_SUBNET_OCID} ]]
+  if [[ $is_private_lb = true && -n ${BASTION_SUBNET_OCID} ]]
   then
     bastion_cidr_block=$(oci network subnet get --subnet-id ${BASTION_SUBNET_OCID} | jq -r '.data["cidr-block"]')
     lb_source_cidr=$bastion_cidr_block
@@ -402,7 +402,7 @@ EOF
   if [[ -n $load_balancer_nsg_ocid ]]
   then
     echo -e "Created Load Balancer Network Security Group: ${load_balancer_nsg_ocid}"
-    if [[ (($is_private_lb == true && -n ${BASTION_SUBNET_OCID}) || $is_private_lb == false) ]]
+    if [[ (($is_private_lb = true && -n ${BASTION_SUBNET_OCID}) || $is_private_lb = false) ]]
     then
       echo -e "Adding LB Security Rules in Load Balancer Network Security Group $load_balancer_nsg_ocid..."
       oci network nsg rules add --nsg-id $load_balancer_nsg_ocid --security-rules file://$LB_RULES_FILE
@@ -411,7 +411,7 @@ EOF
     then
       echo -e "Adding LB Security Rules to access MS HTTP port in Managed Server Network Security Group $managed_server_nsg_ocid..."
       oci network nsg rules add --nsg-id $managed_server_nsg_ocid --security-rules file://$WLS_MS_RULES_FILE
-      if [[ -n $lbsubnet_availability_domain  && $is_private_lb == false ]]
+      if [[ -n $lbsubnet_availability_domain  && $is_private_lb = false ]]
           then
             if [[ -n ${LB_SUBNET2_OCID} ]]
             then
