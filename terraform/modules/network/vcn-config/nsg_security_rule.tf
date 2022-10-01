@@ -213,7 +213,7 @@ resource "oci_core_network_security_group_security_rule" "fss_ingress_security_r
 resource "oci_core_network_security_group_security_rule" "egress_security_rule" {
   for_each = {
     for nsg_name, nsg_id in var.nsg_ids :
-    nsg_name => nsg_id if nsg_name != "managed_nsg_id" && nsg_name != "mount_target_nsg_id" && element(var.nsg_ids[nsg_name],0) != [""]
+    nsg_name => nsg_id if nsg_name != "managed_nsg_id" && nsg_name != "mount_target_nsg_id" && length(nsg_id) != 0
   }
   network_security_group_id = element(each.value,0)
   direction = "EGRESS"
