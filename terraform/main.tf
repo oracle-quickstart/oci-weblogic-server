@@ -41,7 +41,7 @@ module "network-vcn-config" {
 
   wls_security_list_name       = !var.assign_weblogic_public_ip ? "bastion-security-list" : "wls-security-list"
   wls_subnet_cidr              = local.wls_subnet_cidr
-  wls_ms_source_cidrs          = var.add_load_balancer ? ((local.use_regional_subnet || local.is_single_ad_region) ? [local.lb_subnet_1_subnet_cidr] : [local.lb_subnet_1_subnet_cidr, local.lb_subnet_2_subnet_cidr]) : ["0.0.0.0/0"]
+  wls_ms_source_cidrs          = var.add_load_balancer ? [local.lb_subnet_1_subnet_cidr] : ["0.0.0.0/0"]
   load_balancer_min_value      = var.add_load_balancer ? var.wls_ms_extern_port : var.wls_ms_extern_ssl_port
   load_balancer_max_value      = var.add_load_balancer ? var.wls_ms_extern_port : var.wls_ms_extern_ssl_port
   create_load_balancer         = var.add_load_balancer
@@ -58,12 +58,14 @@ module "network-vcn-config" {
   create_internet_gateway      = var.wls_vcn_name != ""
   lb_destination_cidr          = var.is_lb_private ? var.bastion_subnet_cidr : "0.0.0.0/0"
   add_fss                      = var.add_fss
+  # If the module is empty (count is zero), an empty list is returned. If not, a list of lists of strings is returned.
+  # By using flatten we make sure each entry in the map is a list of string, either with one element, or empty
   nsg_ids = {
-    lb_nsg_id           = element(coalescelist(module.network-lb-nsg[*].nsg_id, [[""]]), 0)
-    bastion_nsg_id      = element(coalescelist(module.network-bastion-nsg[*].nsg_id, [[""]]), 0)
-    mount_target_nsg_id = element(coalescelist(module.network-mount-target-nsg[*].nsg_id, [[""]]), 0)
-    admin_nsg_id        = element(coalescelist(module.network-compute-admin-nsg[*].nsg_id, [[""]]), 0)
-    managed_nsg_id      = element(coalescelist(module.network-compute-managed-nsg[*].nsg_id, [[""]]), 0)
+    lb_nsg_id           = flatten(module.network-lb-nsg[*].nsg_id)
+    bastion_nsg_id      = flatten(module.network-bastion-nsg[*].nsg_id)
+    mount_target_nsg_id = flatten(module.network-mount-target-nsg[*].nsg_id)
+    admin_nsg_id        = flatten(module.network-compute-admin-nsg[*].nsg_id)
+    managed_nsg_id      = flatten(module.network-compute-managed-nsg[*].nsg_id)
   }
 
   tags = {
@@ -156,27 +158,6 @@ module "network-lb-subnet-1" {
     defined_tags  = local.defined_tags
     freeform_tags = local.free_form_tags
   }
-}
-
-/* Create secondary subnet for wls and lb backend */
-module "network-lb-subnet-2" {
-  source          = "./modules/network/subnet"
-  count           = local.add_existing_load_balancer ? 0 : var.add_load_balancer && local.lb_subnet_2_id == "" && !var.is_lb_private && !local.use_regional_subnet && !local.is_single_ad_region ? 1 : 0
-  compartment_id  = local.network_compartment_id
-  vcn_id          = local.vcn_id
-  dhcp_options_id = module.network-vcn-config[0].dhcp_options_id
-  route_table_id  = module.network-vcn-config[0].route_table_id
-  subnet_name     = "${local.service_name_prefix}-${local.lb_subnet_2_name}"
-  #Note: limit for dns label is 15 chars
-  dns_label          = format("%s-%s", local.lb_subnet_2_name, substr(strrev(var.service_name), 0, 7))
-  cidr_block         = local.lb_subnet_2_subnet_cidr
-  prohibit_public_ip = var.is_lb_private
-
-  tags = {
-    defined_tags  = local.defined_tags
-    freeform_tags = local.free_form_tags
-  }
-
 }
 
 /* Create back end subnet for bastion subnet */
@@ -353,7 +334,6 @@ module "validators" {
   existing_vcn_id              = var.wls_existing_vcn_id
   wls_subnet_cidr              = var.wls_subnet_cidr
   lb_subnet_1_cidr             = var.lb_subnet_1_cidr
-  lb_subnet_2_cidr             = var.lb_subnet_2_cidr
   bastion_subnet_cidr          = var.bastion_subnet_cidr
   assign_public_ip             = local.assign_weblogic_public_ip
   is_bastion_instance_required = var.is_bastion_instance_required
@@ -438,7 +418,7 @@ module "load-balancer" {
   lb_min_bandwidth         = var.lb_min_bandwidth
   lb_name                  = "${local.service_name_prefix}-lb"
   lb_subnet_1_id           = var.lb_subnet_1_id != "" ? [var.lb_subnet_1_id] : [module.network-lb-subnet-1[0].subnet_id]
-  lb_subnet_2_id           = var.lb_subnet_2_id != "" ? [var.lb_subnet_2_id] : element(concat([module.network-lb-subnet-2[*].subnet_id], [""]), 0)
+  lb_subnet_2_id           = [var.lb_subnet_2_id]
 
   tags = {
     defined_tags  = local.defined_tags
