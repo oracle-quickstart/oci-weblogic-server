@@ -109,15 +109,17 @@ groupings:
   - title: "Add File System Storage"
     visible: ${add_fss}
     variables:
-      - ${add_existing_mount_target}
-      - ${mount_target_compartment_id}
-      - ${mount_target_id}
-      - ${fss_availability_domain}
-      - ${mount_target_subnet_cidr}
-      - ${mount_target_subnet_id}
       - ${add_existing_fss}
-      - ${fss_compartment_id}
       - ${existing_fss_id}
+      - ${export_fss_id}
+      - ${add_existing_mount_target}
+      - ${mount_target_subnet_cidr}
+      - ${mount_target_id}
+      - ${mount_target_compartment_id}
+      - ${mount_target_subnet_id}
+      - ${fss_availability_domain}
+      - ${fss_compartment_id}
+      - ${existing_mount_target_nsg_id}
 
   - title: "OCI Logging"
     variables:
@@ -221,9 +223,7 @@ groupings:
       - ${image_mode}
       - ${terms_and_conditions}
       - ${generate_dg_tag}
-      - ${existing_mount_target_nsg_id}
       - ${existing_export_path_id}
-      - ${existing_lb_nsg_id}
       - ${vcn_strategy}
 
 outputs:
@@ -720,12 +720,17 @@ variables:
     title: "Add File System Storage"
     description: "Add file system storage"
 
-  add_existing_mountTarget:
+  add_existing_mount_target:
     visible:
       and:
         - ${add_fss}
         - not:
-            - ${create_new_subnets}
+            - ${add_existing_fss}
+        - and:
+            - or:
+              - ${create_new_subnets}
+              - not:
+                  - ${create_new_vcn}
     type: boolean
     default: false
     title: "Existing Mount Target"
@@ -735,38 +740,73 @@ variables:
     visible:
       and:
         - ${add_fss}
-        - not:
-            - ${create_new_subnets}
+        - and:
+            - not:
+                - ${create_new_vcn}
     type: boolean
     default: false
     title: "Existing File System"
     description: "Use the existing file system"
 
-  mountTarget_compartment_id:
+  mount_target_compartment_id:
     visible:
       and:
         - ${add_fss}
+        - not:
+            - ${add_existing_mount_target}
+        - not:
+            - {add_existing_fss}
         - and:
-          - ${add_existing_mountTarget}
-          - not:
-              - ${create_new_subnets}
-    type: oci:identity:compartment:id
-    title: Mount Target Compartment
-    description: The compartment where you have existing mount target
-    required: true
-    default: ${compartment_ocid}
+            - not:
+                - ${create_new_vcn}
+            - not:
+                - ${create_new_subnets}
+            - ${create_new_subnets}
+      type: oci:identity:compartment:id
+      title: Mount Target Compartment
+      description: The compartment where you have existing mount target
+      required: true
+      default: ${compartment_ocid}
 
   fss_compartment_id:
     visible:
       and:
         - ${add_fss}
-        - ${add_existing_fss}
         - not:
+            - ${add_existing_fss}
+        - not:
+            - ${add_existing_mount_target}
+        - and:
+            - not:
+                - ${create_new_vcn}
+            - not:
+                - ${create_new_subnets}
             - ${create_new_subnets}
     type: oci:identity:compartment:id
     required: true
     title: Existing File System Compartment
     description: The compartment where the file system exists
+
+  existing_mount_target_nsg_id:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${add_fss}
+        - not:
+            - ${create_new_subnets}
+        - not:
+            - ${create_new_vcn}
+        - not:
+            - ${add_existing_mount_target}
+        - not:
+            - ${add_existing_fss}
+    type: oci:core:nsg:id
+    title: "Mount Target Network Security Group"
+    description: "The OCID of the pre-created NSG that should be attached to the mount target"
+    required: true
+    dependsOn:
+      compartmentId: ${mount_target_compartment_id}
+      vcnId: ${wls_existing_vcn_id}
 
   #Network Validation script execution acknowledgement
   existing_network_validated:
@@ -904,7 +944,14 @@ variables:
     visible:
       and:
         - ${add_fss}
-        - ${create_new_subnets}
+        - not:
+            - ${add_existing_mount_target}
+        - not:
+            - ${add_existing_fss}
+        - and:
+            - or:
+                - ${create_new_vcn}
+                - ${create_new_subnets}
     type: string
     default: 10.0.5.0/24
     pattern: "^(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\\/(3[0-2]|[1-2]?[0-9])$"
@@ -954,7 +1001,13 @@ variables:
       and:
         - ${add_fss}
         - not:
+            - ${add_existing_fss}
+        - not:
+            - ${add_existing_mount_target}
+        - not:
             - ${create_new_subnets}
+        - not:
+            - ${create_new_vcn}
     type: oci:core:subnet:id
     dependsOn:
       vcnId: ${wls_existing_vcn_id}
@@ -981,7 +1034,7 @@ variables:
               - "AD Specific Subnet"
     default: ''
     required: true
-    title: Existing Subnet for mount Target
+    title: Existing Subnet for Mount Target
     description: An existing subnet to use for mount target. This subnet must already be present in the chosen VCN.
   assign_weblogic_public_ip:
     visible: ${orm_create_mode}
@@ -1685,7 +1738,6 @@ variables:
     dependsOn:
       compartmentId: ${idcs_secret_compartment_id}
 
-
   idcs_cloudgate_port:
     visible:
       and:
@@ -1702,21 +1754,25 @@ variables:
     description: The listen port for the Identity Cloud Service App Gateway, which authenticates requests and redirects them to WebLogic Server
     required: true
 
-  mountTarget_id:
+  mount_target_id:
     visible:
       and:
         - ${add_fss}
-        - ${add_existing_mountTarget}
+        - ${add_existing_mount_target}
+        - not:
+            - {add_existing_fss}
         - and:
-          - eq:
-              - ${subnet_strategy_existing_vcn}
-              - "Use Existing Subnet"
-          - not:
-              - ${create_new_vcn}
-    type: string
+            - or:
+                - eq:
+                    - ${create_new_subsets}
+                - not:
+                    - ${create_new_vcn}
+    type: oci:mount:target:id
     title: Existing Mount Target ID
     description: The Oracle Cloud Identifier (OCID) of your existing mount target. The existing mount target must be in the same subnet which is already present in the chosen VCN.
-    pattern: ^$|^ocid1.mounttarget.*$
+    dependsOn:
+      compartmentId: ${mount_target_compartment_id}
+      availabilityDomain: ${fss_availability_domain}
     required: true
 
   existing_fss_id:
@@ -1725,42 +1781,45 @@ variables:
         - ${add_fss}
         - ${add_existing_fss}
         - not:
-            - ${create_new_subnets}
+            - ${create_new_vcn}
     type: string
     title: Existing File System ID
     description: The Oracle Cloud Identifier (OCID) of your existing file system. The existing file system must be in the same availability domain as the existing mount target.
     pattern: ^$|^ocid1.filesystem.*$
     required: true
 
+  export_fss_id:
+    visible:
+      and:
+        - ${add_fss}
+        - ${add_existing_fss}
+        - not:
+            - ${create_new_vcn}
+    type: string
+    title: Existing Export ID
+    description: The Oracle Cloud Identifier (OCID) of your existing export.
+    pattern: ^$|^ocid1.export.*$
+    required: true
+
   fss_availability_domain:
     visible:
       and:
         - ${add_fss}
-        - or:
-            - eq:
-                - ${subnet_strategy_existing_vcn}
-                - "Create New Subnet"
-            - and:
-                - or:
-                    - not:
-                        - ${add_existing_mountTarget}
-                - or:
-                    - not:
-                        - ${add_existing_fss}
-                - eq:
-                    - ${subnet_strategy_existing_vcn}
-                    - "Use Existing Subnet"
+        - not:
+            - ${add_existing_fss}
     type: oci:identity:availabilitydomain:name
-    title: Mount Target Availability Domain
+    title: FSS Availability Domain
     description: The name of the availability domain in which to create the file system and mount target.
     dependsOn:
       compartmentId: ${compartment_ocid}
+    required: true
 
   # Hidden Variables
   mount_path:
     type: string
     title: Mount Path on the WebLogic Server instances
     description: The path to mount FSS on the WebLogic Server instances
+
   mode:
     type: enum
     title: Terraform mode
@@ -1883,7 +1942,7 @@ variables:
     type: oci:identity:dynamicgroups:id
     title: Dynamic Group OCID for WebLogic Server Instances
     dependsOn:
-      compartmentId: ${tenancy_id}
+      compartmentId: ${tenancy_ocid}
     description: "The OCID of the dynamic group that contains the WebLogic instances from which logs will be exported to OCI Logging Service."
     pattern: ^ocid1.dynamicgroup.*$
     required: true
@@ -1921,11 +1980,12 @@ variables:
 
   apm_domain_id:
     visible: ${use_apm_service}
-    type: string
+    type: oci:apm:domain:id
     title: "Application Performance Monitoring Domain ID"
     description: "The OCID of the Application Performance Monitoring domain used by this WebLogic instance"
-    pattern: ^ocid1.apmdomain.*$
     required: true
+    dependsOn:
+      compartmentId: ${compartment_ocid}
 
   apm_private_data_key_name:
     visible: ${use_apm_service}
