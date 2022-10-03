@@ -92,8 +92,8 @@ variable "wait_time_wls_vnc_dns_resolver" {
   type        = number
   description = "The amount of seconds to wait before querying the DNS resolver association of the WebLogic VCN. Ignored if using existing VCN"
   validation {
-    condition     = var.wait_time_wls_vnc_dns_resolver > 0 && var.wait_time_wls_vnc_dns_resolver <= 1800
-    error_message = "WLSC-ERROR: The value for wait_time_wls_vnc_dns_resolver should be between 0 and 1800 (30 minutes)."
+    condition     = var.wait_time_wls_vnc_dns_resolver > 0 && var.wait_time_wls_vnc_dns_resolver <= 600
+    error_message = "WLSC-ERROR: The value for wait_time_wls_vnc_dns_resolver should be between 0 and 600 (10 minutes)."
   }
   default = 60
 }

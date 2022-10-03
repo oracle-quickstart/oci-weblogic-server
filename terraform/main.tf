@@ -517,10 +517,14 @@ module "compute" {
   wls_server_startup_args = var.wls_server_startup_args
   wls_existing_vcn_id     = var.wls_existing_vcn_id
   wls_vcn_cidr            = var.wls_vcn_cidr != "" ? var.wls_vcn_cidr : element(concat(module.network-vcn.*.vcn_cidr, tolist([""])), 0)
-  wls_version             = var.wls_version
-  wls_edition             = var.wls_edition
-  num_vm_instances        = var.wls_node_count
-  resource_name_prefix    = var.service_name
+  #The following two are for adding a dependency on the peering module
+  wls_vcn_peering_dns_resolver_id           = element(flatten(concat(module.vcn-peering[*].wls_vcn_dns_resolver_id, [""])), 0)
+  wls_vcn_peering_route_table_attachment_id = local.assign_weblogic_public_ip ? element(flatten(concat(module.vcn-peering[*].wls_vcn_public_route_table_attachment_id, [""])), 0) : element(flatten(concat(module.vcn-peering[*].wls_vcn_private_route_table_attachment_id, [""])), 0)
+
+  wls_version          = var.wls_version
+  wls_edition          = var.wls_edition
+  num_vm_instances     = var.wls_node_count
+  resource_name_prefix = var.service_name
 
   is_idcs_selected      = var.is_idcs_selected
   idcs_host             = var.idcs_host
