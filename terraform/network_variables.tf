@@ -195,3 +195,19 @@ variable "existing_managed_server_nsg_id" {
   description = "The OCID of the pre-created NSG that should be attached to the managed server"
   default     = ""
 }
+
+variable "db_vcn_lpg_id" {
+  type        = string
+  description = "The OCID of the Local Peering Gateway (LPG) in the DB VCN to which the LPG in the WebLogic VCN will be peered. Required for VCN peering"
+  default     = ""
+}
+
+variable "wait_time_wls_vnc_dns_resolver" {
+  type        = number
+  description = "The amount of seconds to wait before querying the DNS resolver association of the WebLogic VCN. Used by VCN peering module and ignored if using existing VCN"
+  validation {
+    condition     = var.wait_time_wls_vnc_dns_resolver > 0 && var.wait_time_wls_vnc_dns_resolver <= 600
+    error_message = "WLSC-ERROR: The value for wait_time_wls_vnc_dns_resolver should be between 0 and 600 (10 minutes)."
+  }
+  default = 60
+}

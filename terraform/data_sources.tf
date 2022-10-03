@@ -70,6 +70,11 @@ data "oci_core_service_gateways" "service_gateways" {
   vcn_id = local.vcn_id
 }
 
+data "oci_core_internet_gateways" "internet_gateways" {
+  compartment_id = var.network_compartment_id
+  vcn_id         = local.vcn_id
+}
+
 data "oci_core_subnet" "mount_target_subnet" {
   count = var.mount_target_subnet_id == "" ? 0 : 1
 
@@ -143,6 +148,20 @@ data "oci_core_image" "ucm_image" {
   count = var.ucm_instance_image_id != "" ? 1 : 0
   #Required
   image_id = var.ucm_instance_image_id
+}
+
+data "oci_database_autonomous_database" "atp_db" {
+  count                  = local.is_atp_db ? 1 : 0
+  autonomous_database_id = var.atp_db_id
+}
+
+data "oci_database_db_systems" "ocidb_db_systems" {
+  count          = local.is_oci_db ? 1 : 0
+  compartment_id = var.oci_db_compartment_id
+  filter {
+    name   = "id"
+    values = [var.oci_db_dbsystem_id]
+  }
 }
 
 data "oci_core_instances" "ucm_instances" {

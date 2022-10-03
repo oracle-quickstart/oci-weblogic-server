@@ -20,9 +20,12 @@ locals {
   defined_tags       = var.service_tags.definedTags
   free_form_tags     = length(var.service_tags.freeformTags) > 0 ? var.service_tags.freeformTags : module.system-tags.system_tag_value
 
-  db_user        = local.is_atp_db ? "ADMIN" : var.oci_db_user
-  db_password_id = local.is_atp_db ? var.atp_db_password_id : var.oci_db_password_id
-  is_atp_db      = trimspace(var.atp_db_id) != ""
+  db_user                       = local.is_atp_db ? "ADMIN" : var.oci_db_user
+  db_password_id                = local.is_atp_db ? var.atp_db_password_id : var.oci_db_password_id
+  is_atp_db                     = trimspace(var.atp_db_id) != ""
+  is_atp_with_private_endpoints = local.is_atp_db && (length(data.oci_database_autonomous_database.atp_db) != 0 ? data.oci_database_autonomous_database.atp_db[0].subnet_id != null : false)
+
+
   atp_db = {
     is_atp         = local.is_atp_db
     compartment_id = var.atp_db_compartment_id
@@ -90,7 +93,20 @@ locals {
 
   tf_version_file           = "version.txt"
   use_existing_subnets      = var.wls_subnet_id == "" && var.lb_subnet_1_id == "" && var.lb_subnet_2_id == "" ? false : true
-  is_vcn_peering            = false
+
+  // Criteria for VCN peering:
+  // 1. Only when both WLS VCN name is provided (wls_vcn_name) and DB VCN ID is provided (either oci_db_existing_vcn_id or atp_db_existing_vcn_id)
+  // 2. or when both WLS VCN ID is provided (wls_existing_vcn_id) and DB VCN ID is provided (either oci_db_existing_vcn_id or atp_db_existing_vcn_id) and they are different IDs,
+  // and not using existing subnets (local.use_existing_subnets)
+
+  new_vcn_and_oci_db                    = var.wls_vcn_name != "" && local.is_oci_db && var.oci_db_existing_vcn_id != ""
+  existing_vcn_and_oci_db_different_vcn = var.wls_existing_vcn_id != "" && var.oci_db_existing_vcn_id != "" && var.wls_existing_vcn_id != var.oci_db_existing_vcn_id
+
+  new_vcn_and_atp_db_private_endpoint                    = var.wls_vcn_name != "" && local.is_atp_with_private_endpoints && var.atp_db_existing_vcn_id != ""
+  existing_vcn_and_atp_db_private_endpoint_different_vcn = var.wls_existing_vcn_id != "" && local.is_atp_with_private_endpoints && var.atp_db_existing_vcn_id != "" && var.wls_existing_vcn_id != var.atp_db_existing_vcn_id
+
+  is_vcn_peering = local.new_vcn_and_oci_db || local.new_vcn_and_atp_db_private_endpoint || ((local.existing_vcn_and_oci_db_different_vcn || local.existing_vcn_and_atp_db_private_endpoint_different_vcn) && !local.use_existing_subnets)
+
   assign_weblogic_public_ip = var.assign_weblogic_public_ip || var.subnet_type == "Use Public Subnet" ? true : false
   bastion_subnet_cidr       = var.bastion_subnet_cidr == "" && var.wls_vcn_name != "" && !local.assign_weblogic_public_ip ? local.is_vcn_peering ? "11.0.1.0/24" : "10.0.1.0/24" : var.bastion_subnet_cidr
   wls_subnet_cidr           = var.wls_subnet_cidr == "" && var.wls_vcn_name != "" ? local.is_vcn_peering ? "11.0.2.0/24" : "10.0.2.0/24" : var.wls_subnet_cidr

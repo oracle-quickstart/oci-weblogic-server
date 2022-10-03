@@ -15,7 +15,7 @@ locals {
   is14cVersion               = var.wls_version == "14.1.1.0"
   invalid_14c_jrf            = local.is14cVersion && (var.is_atp_db || var.is_oci_db || var.oci_db_connection_string != "")
   invalid_multiple_infra_dbs = ((var.is_oci_db || var.oci_db_connection_string != "") && var.is_atp_db)
-  both_vcn_param_non_ocidb   = !var.is_oci_db ? (local.has_existing_vcn && local.has_vcn_name) : false
+  both_vcn_param             = local.has_existing_vcn && local.has_vcn_name
 
   invalid_dynamic_group = (!var.create_policies && var.use_oci_logging) ? length(regexall("^ocid1.dynamicgroup.", var.dynamic_group_id)) == 0 : false
 

@@ -110,12 +110,6 @@ variable "existing_bastion_instance_id" {
   description = "An OCID of the existing bastion instance to connect to the compute instance"
 }
 
-variable "is_vcn_peering" {
-  type        = bool
-  description = "Set to true if you want VCN peering"
-  default     = false
-}
-
 variable "tags" {
   type = object({
     defined_tags  = map(any),

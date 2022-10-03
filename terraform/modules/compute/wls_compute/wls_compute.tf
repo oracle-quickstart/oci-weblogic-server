@@ -158,6 +158,12 @@ module "wls-instances" {
       db_subnet_id                 = local.is_oci_db ? try(lookup(data.oci_database_db_systems.ocidb_db_systems[0].db_systems[0], "subnet_id"), "") : ""
       ocidb_network_compartment_id = var.jrf_parameters.oci_db_parameters.oci_db_network_compartment_id
       ocidb_existing_vcn_id        = var.jrf_parameters.oci_db_parameters.oci_db_existing_vcn_id
+
+      # These two are used only to make sure WLS compute is created after VCN peering for DNS resolution and
+      # LPG routing are created. These are not used in the provisioning scripts
+      wls_vcn_peering_dns_resolver_id           = var.wls_vcn_peering_dns_resolver_id
+      wls_vcn_peering_route_table_attachment_id = var.wls_vcn_peering_route_table_attachment_id
+
       # Optional Peering
       db_scan_ip_list     = local.is_oci_db ? (var.disable_infra_db_vcn_peering ? local.infradb_scanip_list : "") : ""
       db_host_private_ips = local.is_oci_db ? (var.disable_infra_db_vcn_peering ? local.infradb_private_ip_list : "") : ""

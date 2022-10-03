@@ -144,6 +144,20 @@ variable "db_password_id" {
   description = "The OCID of the vault secret with the password of the database"
 }
 
+variable "is_vcn_peering" {
+  type        = bool
+  description = "Set to true if automatic VCN peering will be done during stack creation"
+}
+
+variable "db_vcn_lpg_id" {
+  type        = string
+  description = "The OCID of the Local Peering Gateway (LPG) in the DB VCN to which the LPG in the WebLogic VCN will be peered. Required for VCN peering"
+  validation {
+    condition     = var.db_vcn_lpg_id == "" || length(regexall("^ocid1.localpeeringgateway.*$", var.db_vcn_lpg_id)) > 0
+    error_message = "WLSC-ERROR: The value for db_vcn_lpg_id should be blank or start with \"ocid1.localpeeringgateway.\"."
+  }
+}
+
 # OCI DB parameters
 variable "is_oci_db" {
   type        = bool
@@ -243,6 +257,20 @@ variable "atp_db_level" {
   validation {
     condition     = contains(["low", "tp", "tpurgent"], var.atp_db_level)
     error_message = "WLSC-ERROR: Invalid value for atp_db_level. Allowed values are low, tp and tpurgent."
+  }
+}
+
+variable "is_atp_with_private_endpoints" {
+  type        = bool
+  description = "Set to true if the ATP DB uses private endpoint for access control."
+}
+
+variable "atp_db_existing_vcn_id" {
+  type        = string
+  description = "The OCID of the VCN of the ATP DB when using private endpoint."
+  validation {
+    condition     = var.atp_db_existing_vcn_id == "" || length(regexall("^ocid1.vcn.*$", var.atp_db_existing_vcn_id)) > 0
+    error_message = "WLSC-ERROR: The value for atp_db_existing_vcn_id should be blank or start with \"ocid1.vcn.\"."
   }
 }
 
