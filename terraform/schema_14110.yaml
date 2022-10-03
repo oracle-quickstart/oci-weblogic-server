@@ -62,7 +62,7 @@ groupings:
       - ${subnet_compartment_id}
       - ${subnet_type}
       - ${subnet_span}
-      - ${add_existing_nsg}
+      - ${use_existing_nsg}
 
   - title: "WebLogic Server Compute Instance"
     variables:
@@ -99,7 +99,6 @@ groupings:
       - ${lb_subnet_1_availability_domain_name}
       - ${lb_subnet_1_cidr}
       - ${lb_subnet_2_availability_domain_name}
-      - ${lb_subnet_2_cidr}
       - ${lb_min_bandwidth}
       - ${lb_max_bandwidth}
       - ${existing_load_balancer_id}
@@ -496,8 +495,8 @@ variables:
   wls_14c_jdk_version:
     visible: ${orm_create_mode}
     type: enum
-    title: JDK version
-    description: Select Java Development Kit
+    title: Java Development Kit version
+    description: Select the Java Development Kit (JDK) version
     enum:
       - "jdk8"
       - "jdk11"
@@ -510,7 +509,7 @@ variables:
     type: boolean
     default: false
     title: "Configure Ports"
-    description: Configure the ports for admin server, managed server and cluster
+    description: Configure the ports for administration server, managed server and cluster
 
   wls_nm_port:
     visible:
@@ -657,18 +656,6 @@ variables:
     title: "Create new subnets"
     description: "Create new subnets in the existing Virtual Cloud Network"
 
-  subnet_strategy_existing_vcn:
-    visible: false
-    type: enum
-    title: Subnet Strategy
-    description: Create or use existing subnet
-    enum:
-      - "Create New Subnet"
-      - "Use Existing Subnet"
-    required: true
-    default: "Use Existing Subnet"
-
-  # Network Type Options
   network_compartment_id:
     visible: ${orm_create_mode}
     type: oci:identity:compartment:id
@@ -677,17 +664,6 @@ variables:
     required: false
     default: ${compartment_ocid}
 
-  subnet_strategy_new_vcn:
-    visible: false
-    type: enum
-    title: Subnet Strategy
-    description: Create or use existing subnet
-    enum:
-      - "Create New Subnet"
-    required: true
-    default: "Create New Subnet"
-
-  # Network Type Options
   # WLS Advanced Configuration Option
   add_fss:
     type: boolean
@@ -845,7 +821,7 @@ variables:
     required: true
     default: "Regional Subnet"
 
-  add_existing_nsg:
+  use_existing_nsg:
     visible:
       and:
         - ${orm_create_mode}
@@ -857,7 +833,7 @@ variables:
     default: false
     required: true
     title: "Existing Network Service Groups"
-    description: "Add existing Network Service Groups(NSG) for existing subnets"
+    description: "Use/select existing Network Service Groups(NSG) for existing subnets"
 
 
   # WLS Network Configuration
@@ -887,7 +863,7 @@ variables:
     required: true
     default: ''
     title: Existing Network
-    description: An existing Virtual Cloud Network (VCN) in which to create the compute instances, network resources, and load balancers. If not specified, a new VCN is created.
+    description: An existing Virtual Cloud Network (VCN) in which to create the compute instances, network resources, and load balancers.
 
   wls_vcn_cidr:
     visible:
@@ -898,7 +874,7 @@ variables:
     default: 10.0.0.0/16
     pattern: "^(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\\/(3[0-2]|[1-2]?[0-9])$"
     title: Virtual Cloud Network CIDR
-    description: The CIDR to assign to the new Virtual Cloud Network (VCN) to create for this service. This field is not required if you want to use an existing VCN. When using VCN peering ensure that the VCNs being peered have non-overlapping CIDR blocks.
+    description: The CIDR to assign to the new Virtual Cloud Network (VCN) to create for this service.
 
   wls_subnet_cidr:
     visible:
@@ -913,7 +889,7 @@ variables:
     pattern: "^(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\\/(3[0-2]|[1-2]?[0-9])$"
     required: true
     title: WebLogic Server Subnet CIDR
-    description: "The CIDR of the new subnet to create for WebLogic Server compute instances. This field is required only if you want to use an existing VCN. The new subnet's CIDR should not overlap with any other subnet CIDRs."
+    description: "The CIDR of the new subnet to create for WebLogic Server compute instances. This field is required only if you want to use new subnets. The new subnet's CIDR should not overlap with any other subnet CIDRs."
 
   mount_target_subnet_cidr:
     visible:
@@ -932,7 +908,7 @@ variables:
     pattern: "^(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\\/(3[0-2]|[1-2]?[0-9])$"
     required: true
     title: Mount Target Subnet CIDR
-    description: "The CIDR of the new subnet to create for mount target. This field is required only if you want to use an existing VCN. The new subnet's CIDR should not overlap with any other subnet CIDRs."
+    description: "The CIDR of the new subnet to create for mount target. This field is required only if you want to use new subnets. The new subnet's CIDR should not overlap with any other subnet CIDRs."
 
   wls_subnet_id:
     visible:
@@ -1011,6 +987,7 @@ variables:
     required: true
     title: Existing Subnet for Mount Target
     description: An existing subnet to use for mount target. This subnet must already be present in the chosen VCN.
+
   assign_weblogic_public_ip:
     visible: ${orm_create_mode}
     type: boolean
@@ -1133,10 +1110,10 @@ variables:
       and:
         - ${orm_create_mode}
         - ${is_bastion_instance_required}
-        - ${add_existing_nsg}
+        - ${use_existing_nsg}
     type: oci:core:nsg:id
     title: "Bastion instance Network Security Group"
-    description: "The OCID of the pre-created NSG that should be attached to the admin server"
+    description: "The OCID of the pre-created NSG that should be attached to the bastion instance"
     required: true
     dependsOn:
       compartmentId: ${network_compartment_id}
@@ -1180,7 +1157,7 @@ variables:
       and:
         - ${orm_create_mode}
         - and:
-            - ${add_existing_nsg}
+            - ${use_existing_nsg}
     type: oci:core:nsg:id
     title: "WebLogic admin server Network Security Group"
     description: "The OCID of the pre-created NSG that should be attached to the admin server"
@@ -1194,7 +1171,7 @@ variables:
       and:
         - ${orm_create_mode}
         - and:
-            - ${add_existing_nsg}
+            - ${use_existing_nsg}
     type: oci:core:nsg:id
     title: "WebLogic managed server Network Security Group"
     description: "The OCID of the pre-created NSG that should be attached to the managed server"
@@ -1583,7 +1560,7 @@ variables:
       and:
         - ${orm_create_mode}
         - ${add_load_balancer}
-        - ${add_existing_nsg}
+        - ${use_existing_nsg}
     type: oci:core:nsg:id
     title: "Load Balancer Network Security Group"
     description: "The OCID of the pre-created NSG that should be attached to the load balancer"
@@ -1669,7 +1646,7 @@ variables:
     minLength: 1
     maxLength: 1024
     title: IDCS Tenant
-    description: The ID of your Identity Cloud Service tenant, which typically has the format idcs-<guid>, and is part of the host name that you use to access Identity Cloud Service
+    description: The ID of your Identity Cloud Service tenant, which typically has the format idcs-&lt;guid&gt;, and is part of the host name that you use to access Identity Cloud Service
     required: true
 
   idcs_client_id:
@@ -1710,7 +1687,7 @@ variables:
     minLength: 1
     maxLength: 1024
     title: Validated Secret for IDCS Client
-    description: The secret that contains the confidential application password in IDCS, which is used to create the necessary artifacts in IDCS. To create secrets, see <a target="_blank" href="https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/you-begin-oracle-weblogic-cloud.html#GUID-0517A019-4A89-40ED-A568-DD2193733F8B"> Create Secrets for Passwords</a>.
+    description: The secret that contains the client secret of the confidential application password in IDCS, which is used to create the necessary artifacts in IDCS. To create secrets, see <a target="_blank" href="https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/you-begin-oracle-weblogic-cloud.html#GUID-0517A019-4A89-40ED-A568-DD2193733F8B"> Create Secrets for Passwords</a>.
     required: true
     dependsOn:
       compartmentId: ${idcs_secret_compartment_id}
@@ -1967,7 +1944,7 @@ variables:
     visible: ${use_apm_service}
     type: oci:apm:domain:id
     title: "Application Performance Monitoring Domain ID"
-    description: "The OCID of the Application Performance Monitoring domain used by this WebLogic instance"
+    description: "The Application Performance Monitoring domain used by this WebLogic instance"
     required: true
     dependsOn:
       compartmentId: ${apm_domain_compartment_id}
@@ -2026,7 +2003,7 @@ variables:
 
     type: integer
     title: "Minimum Threshold Percent"
-    description: "Minimum Threshold Percent"
+    description: "Minimum Threshold Percent for the metric"
     minimum: 0
     maximum: 100
     required: true
@@ -2096,14 +2073,6 @@ variables:
     minimum: 0
     required: true
 
-# Schedule based autoscaling UI
-  scale_cron_expression_1:
-    visible: false
-    type: string
-    title: "Cron Expression 1"
-    description: <a target="_blank" href="https://docs.oracle.com/en-us/iaas/Content/Compute/Tasks/autoscalinginstancepools.htm#cron">Cron expression</a> for schedule based autoscaling
-    required: true
-
   scale_target_node_count_1:
     visible: false
     type: integer
@@ -2114,13 +2083,6 @@ variables:
     multipleOf: 1
     default: 1
     required: true
-
-  scale_cron_expression_2:
-    visible: false
-    type: string
-    title: "Cron Expression 2"
-    description: <a target="_blank" href="https://docs.oracle.com/en-us/iaas/Content/Compute/Tasks/autoscalinginstancepools.htm#cron">Cron expression</a> for schedule based autoscaling
-    required: false
 
   scale_target_node_count_2:
     visible: false
