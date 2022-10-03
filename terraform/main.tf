@@ -241,12 +241,13 @@ module "bastion" {
 
 /* Create back end  private subnet for wls */
 module "network-wls-private-subnet" {
-  source             = "./modules/network/subnet"
-  count              = !local.assign_weblogic_public_ip && var.wls_subnet_id == "" ? 1 : 0
-  compartment_id     = local.network_compartment_id
-  vcn_id             = local.vcn_id
-  dhcp_options_id    = module.network-vcn-config[0].dhcp_options_id
-  route_table_id     = module.network-vcn-config[0].service_gateway_route_table_id
+  source          = "./modules/network/subnet"
+  count           = !local.assign_weblogic_public_ip && var.wls_subnet_id == "" ? 1 : 0
+  compartment_id  = local.network_compartment_id
+  vcn_id          = local.vcn_id
+  dhcp_options_id = module.network-vcn-config[0].dhcp_options_id
+  #This is to prevent Terraform from resetting the route table on reapply. Peering module will set a new route table
+  route_table_id     = local.is_vcn_peering ? "" : module.network-vcn-config[0].service_gateway_route_table_id
   subnet_name        = "${local.service_name_prefix}-${var.wls_subnet_name}"
   dns_label          = format("%s-%s", var.wls_subnet_name, substr(strrev(var.service_name), 0, 7))
   cidr_block         = local.wls_subnet_cidr
@@ -297,6 +298,23 @@ module "network-mount-target-private-subnet" {
   }
 }
 
+module "vcn-peering" {
+  count                          = local.is_vcn_peering ? 1 : 0
+  source                         = "./modules/network/vcn-peering"
+  resource_name_prefix           = local.service_name_prefix
+  wls_network_compartment_id     = local.network_compartment_id
+  wls_vcn_id                     = local.vcn_id
+  is_existing_wls_vcn            = var.wls_existing_vcn_id != ""
+  is_wls_subnet_public           = local.assign_weblogic_public_ip
+  wls_subnet_id                  = var.wls_subnet_id != "" ? var.wls_subnet_id : local.assign_weblogic_public_ip ? element(concat(module.network-wls-public-subnet[*].subnet_id, [""]), 0) : element(concat(module.network-wls-private-subnet[*].subnet_id, [""]), 0)
+  wls_service_gateway_id         = var.wls_vcn_name == "" ? data.oci_core_service_gateways.service_gateways.service_gateways[0].id : element(concat(module.network-vcn-config[*].wls_service_gateway_services_id, [""]), 0)
+  wls_internet_gateway_id        = var.wls_vcn_name == "" ? data.oci_core_internet_gateways.internet_gateways.gateways[0].id : element(concat(module.network-vcn-config[*].wls_internet_gateway_id, [""]), 0)
+  db_vcn_id                      = local.is_oci_db ? var.oci_db_existing_vcn_id : var.atp_db_existing_vcn_id
+  db_subnet_id                   = local.is_oci_db ? data.oci_database_db_systems.ocidb_db_systems[0].db_systems[0].subnet_id : local.is_atp_with_private_endpoints ? data.oci_database_autonomous_database.atp_db[0].subnet_id : ""
+  db_vcn_lpg_id                  = var.db_vcn_lpg_id
+  wait_time_wls_vnc_dns_resolver = var.wait_time_wls_vnc_dns_resolver
+}
+
 module "validators" {
   source = "./modules/validators"
 
@@ -309,19 +327,23 @@ module "validators" {
   wls_expose_admin_port      = var.wls_expose_admin_port
   wls_version                = var.wls_version
 
-  db_user                  = local.db_user
-  db_password_id           = local.db_password_id
-  is_oci_db                = local.is_oci_db
-  oci_db_compartment_id    = local.oci_db_compartment_id
-  oci_db_connection_string = var.oci_db_connection_string
-  oci_db_database_id       = var.oci_db_database_id
-  oci_db_dbsystem_id       = var.oci_db_dbsystem_id
-  oci_db_existing_vcn_id   = var.oci_db_existing_vcn_id
-  oci_db_pdb_service_name  = var.oci_db_pdb_service_name
-  is_atp_db                = local.is_atp_db
-  atp_db_id                = var.atp_db_id
-  atp_db_compartment_id    = var.atp_db_compartment_id
-  atp_db_level             = var.atp_db_level
+  db_user                       = local.db_user
+  db_password_id                = local.db_password_id
+  db_vcn_lpg_id                 = var.db_vcn_lpg_id
+  is_vcn_peering                = local.is_vcn_peering
+  is_oci_db                     = local.is_oci_db
+  oci_db_compartment_id         = local.oci_db_compartment_id
+  oci_db_connection_string      = var.oci_db_connection_string
+  oci_db_database_id            = var.oci_db_database_id
+  oci_db_dbsystem_id            = var.oci_db_dbsystem_id
+  oci_db_existing_vcn_id        = var.oci_db_existing_vcn_id
+  oci_db_pdb_service_name       = var.oci_db_pdb_service_name
+  is_atp_db                     = local.is_atp_db
+  atp_db_id                     = var.atp_db_id
+  atp_db_compartment_id         = var.atp_db_compartment_id
+  atp_db_level                  = var.atp_db_level
+  atp_db_existing_vcn_id        = var.atp_db_existing_vcn_id
+  is_atp_with_private_endpoints = local.is_atp_with_private_endpoints
 
   is_idcs_selected      = var.is_idcs_selected
   idcs_host             = var.idcs_host
@@ -495,10 +517,14 @@ module "compute" {
   wls_server_startup_args = var.wls_server_startup_args
   wls_existing_vcn_id     = var.wls_existing_vcn_id
   wls_vcn_cidr            = var.wls_vcn_cidr != "" ? var.wls_vcn_cidr : element(concat(module.network-vcn.*.vcn_cidr, tolist([""])), 0)
-  wls_version             = var.wls_version
-  wls_edition             = var.wls_edition
-  num_vm_instances        = var.wls_node_count
-  resource_name_prefix    = var.service_name
+  #The following two are for adding a dependency on the peering module
+  wls_vcn_peering_dns_resolver_id           = element(flatten(concat(module.vcn-peering[*].wls_vcn_dns_resolver_id, [""])), 0)
+  wls_vcn_peering_route_table_attachment_id = local.assign_weblogic_public_ip ? element(flatten(concat(module.vcn-peering[*].wls_vcn_public_route_table_attachment_id, [""])), 0) : element(flatten(concat(module.vcn-peering[*].wls_vcn_private_route_table_attachment_id, [""])), 0)
+
+  wls_version          = var.wls_version
+  wls_edition          = var.wls_edition
+  num_vm_instances     = var.wls_node_count
+  resource_name_prefix = var.service_name
 
   is_idcs_selected      = var.is_idcs_selected
   idcs_host             = var.idcs_host

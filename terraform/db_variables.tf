@@ -90,6 +90,12 @@ variable "atp_db_password_id" {
   default     = ""
 }
 
+variable "atp_db_existing_vcn_id" {
+  type        = string
+  description = "The OCID of the VCN used by the ATP database private endpoint"
+  default     = ""
+}
+
 #This variable is used for both oci db and ATP with private subnet
 #NOTE: this has not been renamed to support future cloning support
 variable "ocidb_existing_vcn_add_seclist" {

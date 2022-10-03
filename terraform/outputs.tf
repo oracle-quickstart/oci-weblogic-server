@@ -21,19 +21,6 @@ output "mount_target_id" {
   value = var.mount_target_id != "" ? var.mount_target_id : (var.add_fss ? module.fss[0].mount_target_id : "")
 }
 
-output "load_balancer_subnets_id" {
-  value = compact(
-    concat(
-      [var.lb_subnet_1_id],
-      [var.lb_subnet_2_id]
-    ),
-  )
-}
-
-output "weblogic_subnet_id" {
-  value = var.wls_subnet_id
-}
-
 output "load_balancer_id" {
   value = local.lb_id
 }

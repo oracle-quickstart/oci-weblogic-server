@@ -70,8 +70,21 @@ variable "wls_vcn_cidr" {
   description = "The CIDR of the VCN where the subnet the compute instance will be created is located"
 }
 
+variable "wls_vcn_peering_dns_resolver_id" {
+  type        = string
+  description = "The OCID of the VCN resolver in the WebLogic VCN. Used for local peering. This resolver has the private view of the DB VCN"
+  default     = ""
+}
+
+variable "wls_vcn_peering_route_table_attachment_id" {
+  type        = string
+  description = "The OCID of the route table attachment in the WebLogic VCN used for local peering. This route table has a route to the LPG in the WebLogic VCN"
+  default     = ""
+}
+
+
 variable "wls_subnet_cidr" {
-  type = string
+  type        = string
   description = "The CIDR for the new subnet where the compute instance will be created. Ignored if wls_subnet_id is not empty"
 }
 
@@ -146,7 +159,7 @@ variable "volume_size" {
 }
 
 variable "volume_map" {
-  type        = list
+  type        = list(any)
   description = "List of volumes to be mounted in the compute instance. Each element must be an object with the following attributes: volume_mount_point, display_name, device"
   default = [
     {
@@ -252,12 +265,12 @@ variable "mode" {
 }
 
 variable "mp_listing_id" {
-  type = string
+  type        = string
   description = "marketplace listing id"
 }
 
 variable "mp_listing_resource_version" {
-  type = string
+  type        = string
   description = "marketplace listing resource version"
 }
 
