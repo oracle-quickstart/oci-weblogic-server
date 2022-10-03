@@ -106,7 +106,7 @@ groupings:
       - ${backendset_name_for_existing_load_balancer}
       - ${existing_lb_nsg_id}
 
-  - title: "Add File System Storage"
+  - title: "Add File System"
     visible: ${add_fss}
     variables:
       - ${add_existing_fss}
@@ -225,6 +225,7 @@ groupings:
       - ${generate_dg_tag}
       - ${existing_export_path_id}
       - ${vcn_strategy}
+      - ${apm_domain_compartment_id}
 
 outputs:
   Virtual_Cloud_Network_Id:
@@ -409,7 +410,7 @@ variables:
       compartmentId: ${compartment_ocid}
 
   instance_shape:
-    type: oci:core:instanceshape:name
+    type: ooci:core:instanceshapewithflex:name
     title: Compute Shape
     description: The shape for WebLogic Server compute instances. When scaled-out, the changes to instance shape will apply only to the added nodes.
     required: true
@@ -417,32 +418,6 @@ variables:
     dependsOn:
       compartmentId: ${compartment_ocid}
       imageId: ${instance_image_id}
-
-  wls_ocpu_count:
-    type: integer
-    title: OCPU Count
-    description: The number of OCPU count for instances. Only required for VM.Standard.E3.Flex, VM.Standard.E4.Flex, VM.Optimized3.Flex, and  VM.Standard3.Flex Shapes. The maximum number of ocpus for VM.Standard.E3.Flex and VM.Standard.E4.Flex is 64 while VM.Optimized3.Flex shape supports maximum of 18 ocpus. When scaled-out, the changes in OCPU count will apply only to the added nodes.
-    minimum: 1
-    maximum: 64
-    multipleOf: 1
-    default: 1
-    required: true
-    dependsOn:
-      instance_shape: ${instance_shape}
-    visible:
-      or:
-        - eq:
-          - ${instance_shape}
-          - "VM.Standard.E3.Flex"
-        - eq:
-          - ${instance_shape}
-          - "VM.Standard.E4.Flex"
-        - eq:
-          - ${instance_shape}
-          - "VM.Optimized3.Flex"
-        - eq:
-          - ${instance_shape}
-          - "VM.Standard3.Flex"
 
   ssh_public_key:
     type: oci:core:ssh:publickey
@@ -1145,7 +1120,7 @@ variables:
             - eq:
                 - ${subnet_type}
                 - "Use Private Subnet"
-    type: oci:core:instanceshape:name
+    type: oci:core:instanceshapewithflex:name
     title: Bastion Host Shape
     description: The shape for bastion compute instance.
     required: true
@@ -1288,11 +1263,13 @@ variables:
           - eq:
             - ${load_balancer_strategy_existing_subnet}
             - "Use Existing Load Balancer"
-    type: string
-    pattern: ^ocid1.loadbalancer.*$
+    type: oci:loadbalancer:loadbalancer:id
+    pattern: ^(10)Mbps.*$
     title: Existing Load Balancer ID
     description: The OCID of the existing load balancer. If you use an existing load balancer, the WebLogic Server nodes are added to the backend set of the existing load balancer.
     required: true
+    dependsOn:
+      compartmentId: ${network_compartment_id}
 
   backendset_name_for_existing_load_balancer:
     visible:
@@ -1978,6 +1955,14 @@ variables:
     title: "Enable Application Performance Monitoring"
     description: "Enable Application Performance Monitoring for WebLogic instances, which is required for automatic scaling of the stack. If you automatically scale the stack, you must not unselect the Enable Application Performance Monitoring option when editing the stack."
 
+  apm_domain_compartment_id:
+    visible: ${use_apm_service}
+    type: oci:identity:compartment:id
+    title: Application Performance Monitoring Domain Compartment
+    description: The compartment where you want to create the application performance monitoring domain.
+    required: true
+    default: ${compartment_ocid}
+
   apm_domain_id:
     visible: ${use_apm_service}
     type: oci:apm:domain:id
@@ -1985,7 +1970,7 @@ variables:
     description: "The OCID of the Application Performance Monitoring domain used by this WebLogic instance"
     required: true
     dependsOn:
-      compartmentId: ${compartment_ocid}
+      compartmentId: ${apm_domain_compartment_id}
 
   apm_private_data_key_name:
     visible: ${use_apm_service}
@@ -2171,7 +2156,7 @@ variables:
                 - ${config_observability}
                 - ${use_apm_service}
     type: oci:identity:compartment:id
-    title: OCIR Auth Token Compartment
+    title: OCIR Auth Token Secret Compartment
     description: The compartment where you have the OCIR auth token
     required: true
     default: ${compartment_ocid}

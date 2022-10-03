@@ -401,8 +401,8 @@ variable "tags" {
 
 variable "wls_node_count_limit" {
   type    = number
+  description = "Maximum number of WebLogic managed servers"
   default = "8"
-  description = "Maximum number of weblogic managed servers"
 }
 
 variable "num_vm_instances" {
@@ -414,7 +414,6 @@ variable "num_vm_instances" {
 variable "generate_dg_tag" {
   type        = bool
   description = "Set to true to generate defined tags for dynamic group definition"
-  default     = true
 }
 
 variable "service_tags" {
