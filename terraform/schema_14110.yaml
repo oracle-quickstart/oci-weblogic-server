@@ -41,10 +41,10 @@ groupings:
     variables:
       - ${network_compartment_id}
       - ${wls_existing_vcn_id}
-      - ${existing_network_validated}
       - ${wls_vcn_name}
       - ${wls_vcn_cidr}
       - ${create_new_subnets}
+      - ${existing_network_validated}
       - ${subnet_compartment_id}
       - ${subnet_type}
       - ${subnet_span}
@@ -53,7 +53,6 @@ groupings:
   - title: "WebLogic Server Compute Instance"
     variables:
       - ${instance_shape}
-      - ${wls_ocpu_count}
       - ${wls_node_count}
       - ${wls_node_count_limit}
       #- ${image_mode}
@@ -92,10 +91,7 @@ groupings:
       - ${existing_lb_nsg_id}
 
   - title: "Identity Cloud Service (IDCS) Integration"
-    visible:
-      and:
-        - ${add_load_balancer}
-        - ${is_idcs_selected}
+    visible: ${is_idcs_selected}
     variables:
       - ${idcs_host}
       - ${idcs_port}
@@ -125,12 +121,17 @@ groupings:
       - ${dynamic_group_id}
 
   - title: "Application Performance Monitoring"
+    visible:
+      or:
+        - ${use_apm_service}
+        - ${use_autoscaling}
     variables:
+      - ${apm_domain_compartment_id}
       - ${apm_domain_id}
       - ${apm_private_data_key_name}
 
   - title: "Autoscaling"
-    visible: true
+    visible: ${use_autoscaling}
     variables:
       # Metric based autoscaling
       - ${wls_metric}
@@ -224,10 +225,10 @@ groupings:
       - ${generate_dg_tag}
       - ${existing_export_path_id}
       - ${vcn_strategy}
-      - ${apm_domain_compartment_id}
       - ${db_vcn_lpg_id}
       - ${wait_time_wls_vnc_dns_resolver}
       - ${atp_db_existing_vcn_id}
+      - ${wls_ocpu_count}
 
 outputs:
   Virtual_Cloud_Network_Id:
@@ -412,40 +413,13 @@ variables:
       compartmentId: ${compartment_ocid}
 
   instance_shape:
-    type: oci:core:instanceshape:name
+    type: oci:core:instanceshapewithflex:name
     title: Compute Shape
     description: The shape for WebLogic Server compute instances. When scaled-out, the changes to instance shape will apply only to the added nodes.
     required: true
-    default: VM.Standard.E4.Flex
     dependsOn:
       compartmentId: ${compartment_ocid}
       imageId: ${instance_image_id}
-
-  wls_ocpu_count:
-    type: integer
-    title: OCPU Count
-    description: The number of OCPU count for instances. Only required for VM.Standard.E3.Flex, VM.Standard.E4.Flex, VM.Optimized3.Flex, and  VM.Standard3.Flex Shapes. The maximum number of ocpus for VM.Standard.E3.Flex and VM.Standard.E4.Flex is 64 while VM.Optimized3.Flex shape supports maximum of 18 ocpus. When scaled-out, the changes in OCPU count will apply only to the added nodes.
-    minimum: 1
-    maximum: 64
-    multipleOf: 1
-    default: 1
-    required: true
-    dependsOn:
-      instance_shape: ${instance_shape}
-    visible:
-      or:
-        - eq:
-            - ${instance_shape}
-            - "VM.Standard.E3.Flex"
-        - eq:
-            - ${instance_shape}
-            - "VM.Standard.E4.Flex"
-        - eq:
-            - ${instance_shape}
-            - "VM.Optimized3.Flex"
-        - eq:
-            - ${instance_shape}
-            - "VM.Standard3.Flex"
 
   ssh_public_key:
     type: oci:core:ssh:publickey
@@ -538,7 +512,8 @@ variables:
     type: boolean
     default: false
     title: "Configure Ports"
-    description: Configure the ports for administration server, managed server and cluster
+    description: Configure the ports for administration server, managed server and cluster. It is optional, if not changed, default ports will be used. See <a target="_blank" href="https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/default-ports.html">configure ports</a>.
+
 
   wls_nm_port:
     visible:
@@ -703,6 +678,7 @@ variables:
   add_existing_mount_target:
     visible:
       and:
+        - ${orm_create_mode}
         - ${add_fss}
         - not:
             - ${add_existing_fss}
@@ -719,6 +695,7 @@ variables:
   add_existing_fss:
     visible:
       and:
+        - ${orm_create_mode}
         - ${add_fss}
         - and:
             - not:
@@ -783,7 +760,7 @@ variables:
             - ${add_existing_fss}
     type: oci:core:nsg:id
     title: "Mount Target Network Security Group"
-    description: "The OCID of the pre-created NSG that should be attached to the mount target"
+    description: "The pre-created NSG that should be attached to the mount target"
     required: true
     dependsOn:
       compartmentId: ${mount_target_compartment_id}
@@ -980,6 +957,7 @@ variables:
   mount_target_subnet_id:
     visible:
       and:
+        - ${orm_create_mode}
         - ${add_fss}
         - not:
             - ${add_existing_fss}
@@ -1031,9 +1009,7 @@ variables:
         - ${orm_create_mode}
         - and:
             - not:
-                - or:
-                    - ${create_new_vcn}
-                    - ${create_new_subnets}
+                - ${create_new_subnets}
             - eq:
                 - ${subnet_type}
                 - "Use Private Subnet"
@@ -1126,7 +1102,7 @@ variables:
             - eq:
                 - ${subnet_type}
                 - "Use Private Subnet"
-    type: oci:core:instanceshape:name
+    type: oci:core:instanceshapewithflex:name
     title: Bastion Host Shape
     description: The shape for bastion compute instance.
     required: true
@@ -1203,7 +1179,7 @@ variables:
                 - ${create_new_subnets}
     type: oci:core:nsg:id
     title: "WebLogic admin server Network Security Group"
-    description: "The OCID of the pre-created NSG that should be attached to the admin server"
+    description: "The pre-created NSG that should be attached to the admin server"
     required: true
     dependsOn:
       compartmentId: ${network_compartment_id}
@@ -1222,7 +1198,7 @@ variables:
                 - ${create_new_subnets}
     type: oci:core:nsg:id
     title: "WebLogic managed server Network Security Group"
-    description: "The OCID of the pre-created NSG that should be attached to the managed server"
+    description: "The pre-created NSG that should be attached to the managed server"
     required: true
     dependsOn:
       compartmentId: ${network_compartment_id}
@@ -1238,7 +1214,9 @@ variables:
   load_balancer_strategy_new_subnet:
     visible:
       and:
-        - ${add_load_balancer}
+        - or:
+            - ${add_load_balancer}
+            - ${is_idcs_selected}
         - or:
           - and:
             - not:
@@ -1261,7 +1239,10 @@ variables:
   load_balancer_strategy_existing_subnet:
     visible:
       and:
-        - ${add_load_balancer}
+        - ${orm_create_mode}
+        - or:
+            - ${add_load_balancer}
+            - ${is_idcs_selected}
         - and:
           - not:
               - ${create_new_vcn}
@@ -1280,14 +1261,16 @@ variables:
     visible:
       and:
         - and:
-          - ${add_load_balancer}
-          - not:
-              - ${create_new_subnets}
-          - not:
-              - ${create_new_vcn}
-          - eq:
-            - ${load_balancer_strategy_existing_subnet}
-            - "Use Existing Load Balancer"
+            - or:
+                - ${add_load_balancer}
+                - ${is_idcs_selected}
+            - not:
+                - ${create_new_subnets}
+            - not:
+                - ${create_new_vcn}
+            - eq:
+                - ${load_balancer_strategy_existing_subnet}
+                - "Use Existing Load Balancer"
     type: oci:loadbalancer:loadbalancer:id
     title: Existing Load Balancer ID
     description: The OCID of the existing load balancer. If you use an existing load balancer, the WebLogic Server nodes are added to the backend set of the existing load balancer.
@@ -1299,11 +1282,13 @@ variables:
     visible:
       and:
         - and:
-            - ${add_load_balancer}
+            - or:
+                - ${add_load_balancer}
+                - ${is_idcs_selected}
             - not:
-              - ${create_new_subnets}
+                - ${create_new_subnets}
             - not:
-              - ${create_new_vcn}
+                - ${create_new_vcn}
             - eq:
                 - ${load_balancer_strategy_existing_subnet}
                 - "Use Existing Load Balancer"
@@ -1316,7 +1301,9 @@ variables:
   is_lb_private:
     visible:
       and:
-        - ${add_load_balancer}
+        - or:
+            - ${add_load_balancer}
+            - ${is_idcs_selected}
         - eq:
             - ${subnet_type}
             - "Use Private Subnet"
@@ -1332,7 +1319,9 @@ variables:
   add_lb_reserved_public_ip_id:
     visible:
       and:
-        - ${add_load_balancer}
+        - or:
+            - ${add_load_balancer}
+            - ${is_idcs_selected}
         - not:
             - ${is_lb_private}
         - not:
@@ -1350,6 +1339,10 @@ variables:
         - ${add_lb_reserved_public_ip_id}
         - not:
             - ${is_lb_private}
+        - not:
+            - eq:
+                - ${load_balancer_strategy_existing_subnet}
+                - "Use Existing Load Balancer"
     type: string
     title: Reserved Public IP OCID for Load Balancer
     required: true
@@ -1360,7 +1353,9 @@ variables:
   lb_subnet_1_availability_domain_name:
     visible:
       and:
-        - ${add_load_balancer}
+        - or:
+            - ${add_load_balancer}
+            - ${is_idcs_selected}
         - and:
             - ${create_new_subnets}
             - eq:
@@ -1389,7 +1384,9 @@ variables:
   lb_subnet_2_availability_domain_name:
     visible:
       and:
-        - ${add_load_balancer}
+        - or:
+            - ${add_load_balancer}
+            - ${is_idcs_selected}
         - and:
             - ${create_new_subnets}
             - eq:
@@ -1417,7 +1414,9 @@ variables:
   lb_subnet_1_cidr:
     visible:
       and:
-        - ${add_load_balancer}
+        - or:
+            - ${add_load_balancer}
+            - ${is_idcs_selected}
         - and:
              - or:
                 - ${create_new_vcn}
@@ -1432,12 +1431,15 @@ variables:
   lb_subnet_1_id:
     visible:
       and:
-        - ${add_load_balancer}
+        - ${orm_create_mode}
+        - or:
+            - ${add_load_balancer}
+            - ${is_idcs_selected}
         - and:
             - not:
-              - ${create_new_subnets}
+                - ${create_new_subnets}
             - not:
-              - ${create_new_vcn}
+                - ${create_new_vcn}
             - not:
                 - eq:
                     - ${load_balancer_strategy_existing_subnet}
@@ -1465,30 +1467,12 @@ variables:
     title: Existing Subnet for Load Balancer
     description: An existing subnet to use for the load balancer. This subnet must already be present in the chosen VCN.
 
-  #Note: no longer relevant as Ad specific subnets are not created anymore
-  lb_subnet_2_cidr:
-    visible:
-      and:
-        - ${add_load_balancer}
-        - and:
-            - not:
-                - ${create_new_subnets}
-            - not:
-                - ${create_new_vcn}
-        - eq:
-            - ${subnet_span}
-            - "AD Specific Subnet"
-    type: string
-    default: 10.0.4.0/24
-    pattern: "^(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\\/(3[0-2]|[1-2]?[0-9])$"
-    required: true
-    title: Load Balancer Subnet 2 CIDR
-    description: "The CIDR of the subnet to create for the second load balancer node. This field is required only if you are not using regional subnets. The new subnet's CIDR should not overlap with any other subnet CIDRs."
-
   lb_subnet_2_id:
     visible:
       and:
-        - ${add_load_balancer}
+        - or:
+            - ${add_load_balancer}
+            - ${is_idcs_selected}
         - not:
             - ${is_lb_private}
         - and:
@@ -1525,7 +1509,9 @@ variables:
   lb_min_bandwidth:
     visible:
       and:
-        - ${add_load_balancer}
+        - or:
+            - ${add_load_balancer}
+            - ${is_idcs_selected}
         - or:
             - and:
                 - not:
@@ -1565,7 +1551,9 @@ variables:
   lb_max_bandwidth:
     visible:
       and:
-        - ${add_load_balancer}
+        - or:
+            - ${add_load_balancer}
+            - ${is_idcs_selected}
         - or:
             - and:
                 - not:
@@ -1606,8 +1594,10 @@ variables:
     visible:
       and:
         - ${orm_create_mode}
-        - ${add_load_balancer}
         - ${add_existing_nsg}
+        - or:
+            - ${add_load_balancer}
+            - ${is_idcs_selected}
         - and:
             - not:
                 - ${create_new_vcn}
@@ -1615,7 +1605,7 @@ variables:
                 - ${create_new_subnets}
     type: oci:core:nsg:id
     title: "Load Balancer Network Security Group"
-    description: "The OCID of the pre-created NSG that should be attached to the load balancer"
+    description: "The pre-created NSG that should be attached to the load balancer"
     required: true
     dependsOn:
       compartmentId: ${network_compartment_id}
@@ -1651,17 +1641,13 @@ variables:
     default: false
     title: Enable Authentication Using Identity Cloud Service
     description: Authenticate WebLogic Server users against Oracle Identity Cloud Service (IDCS). If not selected, WebLogic Server uses the local identity store. If you enable Authentication Using Identity Cloud Service, you must select the option to Provision Load Balancer.
-    visible:
-      and:
-        - ${orm_create_mode}
-        - ${add_load_balancer}
+    visible: ${orm_create_mode}
 
   idcs_host:
     visible:
       and:
         - ${orm_create_mode}
         - and:
-          - ${add_load_balancer}
           - ${is_idcs_selected}
     type: string
     minLength: 1
@@ -1676,7 +1662,6 @@ variables:
       and:
         - ${orm_create_mode}
         - and:
-          - ${add_load_balancer}
           - ${is_idcs_selected}
     type: integer
     default: 443
@@ -1692,7 +1677,6 @@ variables:
       and:
         - ${orm_create_mode}
         - and:
-          - ${add_load_balancer}
           - ${is_idcs_selected}
     type: string
     minLength: 1
@@ -1706,13 +1690,12 @@ variables:
       and:
         - ${orm_create_mode}
         - and:
-          - ${add_load_balancer}
           - ${is_idcs_selected}
     type: string
     minLength: 1
     maxLength: 1024
     title: IDCS Client ID
-    description: The client ID of a confidential application in Identity Cloud Service that is used to create the necessary artifacts in Identity Cloud Service. This application needs to be configured as client, and has to be granted with access to Identity Cloud Service Admin APIs, with Identity Domain Administrator app role
+    description: The client ID of a confidential application in Identity Cloud Service that is used to create the necessary artifacts in Identity Cloud Service. This application needs to be configured as client, and has to be granted with access to Identity Cloud Service Admin APIs, with Identity Domain Administrator app role. See <a target="_blank" href="https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/you-begin-oracle-weblogic-cloud.html#GUID-807D5863-04A3-47A3-8D65-443B859B80FD">Create a Confidential Application</a>.
     required: true
 
   idcs_secret_compartment_id:
@@ -1720,7 +1703,6 @@ variables:
       and:
         - ${orm_create_mode}
         - and:
-            - ${add_load_balancer}
             - ${is_idcs_selected}
     type: oci:identity:compartment:id
     title: IDCS Secret Compartment
@@ -1733,7 +1715,6 @@ variables:
       and:
         - ${orm_create_mode}
         - and:
-            - ${add_load_balancer}
             - ${is_idcs_selected}
     type: "oci:kms:secret:id"
     minLength: 1
@@ -1749,7 +1730,6 @@ variables:
       and:
         - ${orm_create_mode}
         - and:
-          - ${add_load_balancer}
           - ${is_idcs_selected}
     type: integer
     default: 9999
@@ -1777,6 +1757,7 @@ variables:
   existing_fss_id:
     visible:
       and:
+        - ${orm_create_mode}
         - ${add_fss}
         - ${add_existing_fss}
         - not:
@@ -1790,6 +1771,7 @@ variables:
   export_fss_id:
     visible:
       and:
+        - ${orm_create_mode}
         - ${add_fss}
         - ${add_existing_fss}
         - not:
@@ -1943,7 +1925,6 @@ variables:
     dependsOn:
       compartmentId: ${tenancy_ocid}
     description: "The OCID of the dynamic group that contains the WebLogic instances from which logs will be exported to OCI Logging Service."
-    pattern: ^ocid1.dynamicgroup.*$
     required: true
 
   image_mode:
@@ -1973,12 +1954,15 @@ variables:
 
   use_apm_service:
     type: boolean
-    default: true
+    default: false
     title: "Enable Application Performance Monitoring"
     description: "Enable Application Performance Monitoring for WebLogic instances, which is required for automatic scaling of the stack. If you automatically scale the stack, you must not unselect the Enable Application Performance Monitoring option when editing the stack."
 
   apm_domain_compartment_id:
-    visible: ${use_apm_service}
+    visible:
+      -or:
+        - ${use_apm_service}
+        - ${use_autoscaling}
     type: oci:identity:compartment:id
     title: Application Performance Monitoring Domain Compartment
     description: The compartment where you want to create the application performance monitoring domain.
@@ -1986,7 +1970,10 @@ variables:
     default: ${compartment_ocid}
 
   apm_domain_id:
-    visible: ${use_apm_service}
+    visible:
+      -or:
+        - ${use_apm_service}
+        - ${use_autoscaling}
     type: oci:apm:domain:id
     title: "Application Performance Monitoring Domain ID"
     description: "The Application Performance Monitoring domain used by this WebLogic instance"
@@ -1995,7 +1982,10 @@ variables:
       compartmentId: ${apm_domain_compartment_id}
 
   apm_private_data_key_name:
-    visible: ${use_apm_service}
+    visible:
+      -or:
+        - ${use_apm_service}
+        - ${use_autoscaling}
     type: string
     title: "Application Performance Monitoring Private Data Key Name"
     description: "The name of the private data key used by this WebLogic instance to push metrics to the Application Performance Monitoring domain"
@@ -2004,7 +1994,6 @@ variables:
   use_autoscaling:
     visible:
       and:
-        - ${use_apm_service}
         - ${orm_create_mode}
     type: boolean
     default: false
@@ -2018,7 +2007,6 @@ variables:
         - ${orm_create_mode}
         - and:
             - ${use_autoscaling}
-            - ${use_apm_service}
     type: enum
     title: "WebLogic Monitoring Metrics"
     description: "WebLogic monitoring metrics type"
@@ -2037,7 +2025,6 @@ variables:
         - and:
             - ${use_autoscaling}
             - and:
-                - ${use_apm_service}
                 - or:
                   - eq:
                     - ${wls_metric}
@@ -2060,7 +2047,6 @@ variables:
           - and:
               - ${use_autoscaling}
               - and:
-                  - ${use_apm_service}
                   - or:
                     - eq:
                       - ${wls_metric}
@@ -2083,7 +2069,6 @@ variables:
           - and:
               - ${use_autoscaling}
               - and:
-                  - ${use_apm_service}
                   - or:
                       - eq:
                         - ${wls_metric}
@@ -2104,7 +2089,6 @@ variables:
         - and:
             - ${use_autoscaling}
             - and:
-                - ${use_apm_service}
                 - or:
                   - eq:
                     - ${wls_metric}
@@ -2147,7 +2131,6 @@ variables:
         - ${orm_create_mode}
         - and:
             - ${use_autoscaling}
-            - ${use_apm_service}
     type: string
     title: Registry User Name
     description: The user name to access the Oracle Cloud Infrastructure Registry (OCIR) for deploying autoscaling OCI functions
@@ -2161,7 +2144,6 @@ variables:
             - ${use_autoscaling}
             - and:
                 - ${config_observability}
-                - ${use_apm_service}
     type: oci:identity:compartment:id
     title: OCIR Auth Token Secret Compartment
     description: The compartment where you have the OCIR auth token
@@ -2176,7 +2158,6 @@ variables:
             - ${use_autoscaling}
             - and:
                 - ${config_observability}
-                - ${use_apm_service}
     type: "oci:kms:secret:id"
     title: Validated Secret for OCIR Auth Token
     description: The secret that contains the OCIR auth token that you generated for the user to access the image registry
@@ -2190,7 +2171,6 @@ variables:
         - ${orm_create_mode}
         - and:
             - ${use_autoscaling}
-            - ${use_apm_service}
     type: string
     title: Notification Email
     description: Email address to which scaling notifications are sent
