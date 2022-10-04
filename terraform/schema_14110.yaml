@@ -48,7 +48,7 @@ groupings:
       - ${subnet_compartment_id}
       - ${subnet_type}
       - ${subnet_span}
-      - ${use_existing_nsg}
+      - ${add_existing_nsg}
 
   - title: "WebLogic Server Compute Instance"
     variables:
@@ -92,19 +92,19 @@ groupings:
       - ${existing_lb_nsg_id}
 
   - title: "Identity Cloud Service (IDCS) Integration"
-      visible:
-        and:
-          - ${add_load_balancer}
-          - ${is_idcs_selected}
-      variables:
-        - ${idcs_host}
-        - ${idcs_port}
-        - ${idcs_tenant}
-        - ${idcs_client_id}
-        - ${idcs_secret_compartment_id}
-        - ${idcs_client_secret_id}
-        - ${idcs_cloudgate_port}
-        
+    visible:
+      and:
+        - ${add_load_balancer}
+        - ${is_idcs_selected}
+    variables:
+      - ${idcs_host}
+      - ${idcs_port}
+      - ${idcs_tenant}
+      - ${idcs_client_id}
+      - ${idcs_secret_compartment_id}
+      - ${idcs_client_secret_id}
+      - ${idcs_cloudgate_port}
+
   - title: "Add File System"
     visible: ${add_fss}
     variables:
@@ -225,6 +225,8 @@ groupings:
       - ${existing_export_path_id}
       - ${vcn_strategy}
       - ${apm_domain_compartment_id}
+      - ${db_vcn_lpg_id}
+      - ${wait_time_wls_vnc_dns_resolver}
 
 outputs:
   Virtual_Cloud_Network_Id:
@@ -821,7 +823,7 @@ variables:
     required: true
     default: "Regional Subnet"
 
-  use_existing_nsg:
+  add_existing_nsg:
     visible:
       and:
         - ${orm_create_mode}
@@ -1110,7 +1112,7 @@ variables:
       and:
         - ${orm_create_mode}
         - ${is_bastion_instance_required}
-        - ${use_existing_nsg}
+        - ${add_existing_nsg}
     type: oci:core:nsg:id
     title: "Bastion instance Network Security Group"
     description: "The OCID of the pre-created NSG that should be attached to the bastion instance"
@@ -1157,7 +1159,7 @@ variables:
       and:
         - ${orm_create_mode}
         - and:
-            - ${use_existing_nsg}
+            - ${add_existing_nsg}
     type: oci:core:nsg:id
     title: "WebLogic admin server Network Security Group"
     description: "The OCID of the pre-created NSG that should be attached to the admin server"
@@ -1171,7 +1173,7 @@ variables:
       and:
         - ${orm_create_mode}
         - and:
-            - ${use_existing_nsg}
+            - ${add_existing_nsg}
     type: oci:core:nsg:id
     title: "WebLogic managed server Network Security Group"
     description: "The OCID of the pre-created NSG that should be attached to the managed server"
@@ -1560,7 +1562,7 @@ variables:
       and:
         - ${orm_create_mode}
         - ${add_load_balancer}
-        - ${use_existing_nsg}
+        - ${add_existing_nsg}
     type: oci:core:nsg:id
     title: "Load Balancer Network Security Group"
     description: "The OCID of the pre-created NSG that should be attached to the load balancer"
