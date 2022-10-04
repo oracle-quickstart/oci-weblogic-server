@@ -91,8 +91,8 @@ locals {
   ssh_proxyjump_access = var.assign_weblogic_public_ip ? "" : format("ssh -i <privateKey> -o ProxyCommand=\"ssh -i <privateKey> -W %s -p 22 opc@%s\" -p 22 %s", "%h:%p", local.bastion_public_ip, "opc@<wls_vm_private_ip>")
   ssh_dp_fwd           = var.assign_weblogic_public_ip ? "" : format("ssh -i <privatekey> -C -D <local-port> opc@%s", local.bastion_public_ip)
 
-  tf_version_file           = "version.txt"
-  use_existing_subnets      = var.wls_subnet_id == "" && var.lb_subnet_1_id == "" && var.lb_subnet_2_id == "" ? false : true
+  tf_version_file      = "version.txt"
+  use_existing_subnets = var.wls_subnet_id == "" && var.lb_subnet_1_id == "" && var.lb_subnet_2_id == "" ? false : true
 
   // Criteria for VCN peering:
   // 1. Only when both WLS VCN name is provided (wls_vcn_name) and DB VCN ID is provided (either oci_db_existing_vcn_id or atp_db_existing_vcn_id)

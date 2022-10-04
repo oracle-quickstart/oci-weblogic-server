@@ -227,6 +227,7 @@ groupings:
       - ${apm_domain_compartment_id}
       - ${db_vcn_lpg_id}
       - ${wait_time_wls_vnc_dns_resolver}
+      - ${atp_db_existing_vcn_id}
 
 outputs:
   Virtual_Cloud_Network_Id:
@@ -411,7 +412,7 @@ variables:
       compartmentId: ${compartment_ocid}
 
   instance_shape:
-    type: ooci:core:instanceshapewithflex:name
+    type: oci:core:instanceshape:name
     title: Compute Shape
     description: The shape for WebLogic Server compute instances. When scaled-out, the changes to instance shape will apply only to the added nodes.
     required: true
@@ -419,6 +420,32 @@ variables:
     dependsOn:
       compartmentId: ${compartment_ocid}
       imageId: ${instance_image_id}
+
+  wls_ocpu_count:
+    type: integer
+    title: OCPU Count
+    description: The number of OCPU count for instances. Only required for VM.Standard.E3.Flex, VM.Standard.E4.Flex, VM.Optimized3.Flex, and  VM.Standard3.Flex Shapes. The maximum number of ocpus for VM.Standard.E3.Flex and VM.Standard.E4.Flex is 64 while VM.Optimized3.Flex shape supports maximum of 18 ocpus. When scaled-out, the changes in OCPU count will apply only to the added nodes.
+    minimum: 1
+    maximum: 64
+    multipleOf: 1
+    default: 1
+    required: true
+    dependsOn:
+      instance_shape: ${instance_shape}
+    visible:
+      or:
+        - eq:
+            - ${instance_shape}
+            - "VM.Standard.E3.Flex"
+        - eq:
+            - ${instance_shape}
+            - "VM.Standard.E4.Flex"
+        - eq:
+            - ${instance_shape}
+            - "VM.Optimized3.Flex"
+        - eq:
+            - ${instance_shape}
+            - "VM.Standard3.Flex"
 
   ssh_public_key:
     type: oci:core:ssh:publickey
@@ -745,6 +772,7 @@ variables:
       and:
         - ${orm_create_mode}
         - ${add_fss}
+        - ${add_existing_nsg}
         - not:
             - ${create_new_subnets}
         - not:
@@ -1068,7 +1096,6 @@ variables:
               - ${create_new_vcn}
           - not:
               - ${create_new_subnets}
-
     type: oci:core:subnet:id
     dependsOn:
       vcnId: ${wls_existing_vcn_id}
@@ -1099,7 +1126,7 @@ variables:
             - eq:
                 - ${subnet_type}
                 - "Use Private Subnet"
-    type: oci:core:instanceshapewithflex:name
+    type: oci:core:instanceshape:name
     title: Bastion Host Shape
     description: The shape for bastion compute instance.
     required: true
@@ -1113,6 +1140,15 @@ variables:
         - ${orm_create_mode}
         - ${is_bastion_instance_required}
         - ${add_existing_nsg}
+        - and:
+            - not:
+                - ${create_new_vcn}
+            - not:
+                - ${create_new_subnets}
+        - not :
+            - eq:
+                - ${subnet_type}
+                - "Use Public Subnet"
     type: oci:core:nsg:id
     title: "Bastion instance Network Security Group"
     description: "The OCID of the pre-created NSG that should be attached to the bastion instance"
@@ -1160,6 +1196,11 @@ variables:
         - ${orm_create_mode}
         - and:
             - ${add_existing_nsg}
+        - and:
+            - not:
+                - ${create_new_vcn}
+            - not:
+                - ${create_new_subnets}
     type: oci:core:nsg:id
     title: "WebLogic admin server Network Security Group"
     description: "The OCID of the pre-created NSG that should be attached to the admin server"
@@ -1174,6 +1215,11 @@ variables:
         - ${orm_create_mode}
         - and:
             - ${add_existing_nsg}
+        - and:
+            - not:
+                - ${create_new_vcn}
+            - not:
+                - ${create_new_subnets}
     type: oci:core:nsg:id
     title: "WebLogic managed server Network Security Group"
     description: "The OCID of the pre-created NSG that should be attached to the managed server"
@@ -1243,7 +1289,6 @@ variables:
             - ${load_balancer_strategy_existing_subnet}
             - "Use Existing Load Balancer"
     type: oci:loadbalancer:loadbalancer:id
-    pattern: ^(10)Mbps.*$
     title: Existing Load Balancer ID
     description: The OCID of the existing load balancer. If you use an existing load balancer, the WebLogic Server nodes are added to the backend set of the existing load balancer.
     required: true
@@ -1563,6 +1608,11 @@ variables:
         - ${orm_create_mode}
         - ${add_load_balancer}
         - ${add_existing_nsg}
+        - and:
+            - not:
+                - ${create_new_vcn}
+            - not:
+                - ${create_new_subnets}
     type: oci:core:nsg:id
     title: "Load Balancer Network Security Group"
     description: "The OCID of the pre-created NSG that should be attached to the load balancer"
@@ -1713,16 +1763,9 @@ variables:
   mount_target_id:
     visible:
       and:
-        - ${add_fss}
         - ${add_existing_mount_target}
         - not:
-            - {add_existing_fss}
-        - and:
-            - or:
-                - eq:
-                    - ${create_new_subsets}
-                - not:
-                    - ${create_new_vcn}
+            - ${add_existing_fss}
     type: oci:mount:target:id
     title: Existing Mount Target ID
     description: The Oracle Cloud Identifier (OCID) of your existing mount target. The existing mount target must be in the same subnet which is already present in the chosen VCN.
