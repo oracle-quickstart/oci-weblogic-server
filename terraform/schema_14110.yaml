@@ -20,20 +20,6 @@ groupings:
       - ${create_new_vcn}
       - ${add_fss}
 
-  - title: "Identity Cloud Service (IDCS) Integration"
-    visible:
-      and:
-       - ${add_load_balancer}
-       - ${is_idcs_selected}
-    variables:
-      - ${idcs_host}
-      - ${idcs_port}
-      - ${idcs_tenant}
-      - ${idcs_client_id}
-      - ${idcs_secret_compartment_id}
-      - ${idcs_client_secret_id}
-      - ${idcs_cloudgate_port}
-
   - title: "WebLogic Domain Configuration"
     variables:
       - ${wls_admin_user}
@@ -105,6 +91,20 @@ groupings:
       - ${backendset_name_for_existing_load_balancer}
       - ${existing_lb_nsg_id}
 
+  - title: "Identity Cloud Service (IDCS) Integration"
+      visible:
+        and:
+          - ${add_load_balancer}
+          - ${is_idcs_selected}
+      variables:
+        - ${idcs_host}
+        - ${idcs_port}
+        - ${idcs_tenant}
+        - ${idcs_client_id}
+        - ${idcs_secret_compartment_id}
+        - ${idcs_client_secret_id}
+        - ${idcs_cloudgate_port}
+        
   - title: "Add File System"
     visible: ${add_fss}
     variables:
