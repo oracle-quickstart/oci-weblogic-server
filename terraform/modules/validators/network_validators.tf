@@ -7,9 +7,9 @@ locals {
   has_wls_subnet_cidr  = var.wls_subnet_cidr != ""
   has_mgmt_subnet_cidr = var.is_bastion_instance_required ? (var.bastion_subnet_cidr != "" || var.existing_bastion_instance_id != "") : true
 
-  has_lb_subnet_1_cidr     = var.lb_subnet_1_cidr != ""
-  missing_wls_subnet_cidr  = var.existing_vcn_id != "" && var.wls_subnet_id == "" ? !local.has_wls_subnet_cidr : false
-  add_new_load_balancer    = var.add_load_balancer && var.existing_load_balancer_id == ""
+  has_lb_subnet_1_cidr    = var.lb_subnet_1_cidr != ""
+  missing_wls_subnet_cidr = var.existing_vcn_id != "" && var.wls_subnet_id == "" ? !local.has_wls_subnet_cidr : false
+  add_new_load_balancer   = var.add_load_balancer && var.existing_load_balancer_id == ""
   missing_lb_subnet_1_cidr = local.add_new_load_balancer && var.existing_vcn_id != "" && var.lb_subnet_1_id == "" ? !local.has_lb_subnet_1_cidr : false
 
   invalid_wls_admin_port_source_cidr = var.wls_expose_admin_port ? length(regexall("^(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\\/(3[0-2]|[1-2]?[0-9])$", var.wls_admin_port_source_cidr)) == 0 : false
@@ -112,7 +112,7 @@ locals {
   lb_type_msg      = "WLSC-ERROR: Private load balancer can only be provisioned if private subnets are used for provisioning."
   validate_lb_type = local.invalid_lb_type ? local.validators_msg_map[local.lb_type_msg] : null
 
-  missing_existing_subnets_msg      = "WLSC-ERROR: Provide all required existing subnet id if one of the existing subnets is provided[ lb_subnet_1_id, lb_subnet_2_id, wls_subnet_id ]."
+  missing_existing_subnets_msg      = "WLSC-ERROR: Provide all required existing subnet id if one of the existing subnets is provided [ lb_subnet_1_id, lb_subnet_2_id, wls_subnet_id ]."
   validate_missing_existing_subnets = var.use_regional_subnet ? false : local.missing_existing_subnets
 
   missing_existing_private_subnets_msg      = "WLSC-ERROR: Provide all required existing subnet ids or subnet CIDRs if one of the existing subnets is provided [ lb_subnet_1_id/cidr, lb_subnet_2_id/cidr, wls_subnet_id/cidr, bastion_subnet_id/cidr ]."

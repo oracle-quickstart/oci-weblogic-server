@@ -51,7 +51,7 @@ data "oci_limits_limit_values" "compute_shape_service_limits" {
 }
 
 data "oci_load_balancer_load_balancers" "existing_load_balancers_data_source" {
-  compartment_id = var.compartment_id
+  compartment_id = local.network_compartment_id
 }
 
 data "oci_core_nat_gateways" "nat_gateways" {

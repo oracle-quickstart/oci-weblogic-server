@@ -16,7 +16,7 @@ resource "oci_load_balancer_backend_set" "wls_lb_backendset" {
   policy           = var.lb_policy
 
   health_checker {
-    port                = var.lb_port
+    port                = var.backend_port
     protocol            = var.lb_protocol
     response_body_regex = ".*"
     url_path            = local.health_check_url_path
@@ -41,7 +41,7 @@ resource "oci_load_balancer_listener" "wls_lb_listener_https" {
   }
   ssl_configuration {
     #Required
-    certificate_name        = oci_load_balancer_certificate.demo_certificate.certificate_name
+    certificate_name        = oci_load_balancer_certificate.demo_certificate[count.index].certificate_name
     verify_peer_certificate = false
   }
 }
@@ -52,7 +52,7 @@ resource "oci_load_balancer_backend" "wls_lb_backend" {
   load_balancer_id = var.load_balancer_id
   backendset_name  = var.use_existing_lb ? var.lb_backendset_name : oci_load_balancer_backend_set.wls_lb_backendset[0].name
   ip_address       = var.instance_private_ips[count.index]
-  port             = var.lb_port
+  port             = var.backend_port
   backup           = false
   drain            = false
   offline          = false
@@ -77,20 +77,5 @@ resource "oci_load_balancer_rule_set" "SSL_headers" {
     action = "ADD_HTTP_REQUEST_HEADER"
     header = "is_ssl"
     value  = "ssl"
-  }
-}
-
-resource "oci_load_balancer_certificate" "demo_certificate" {
-
-  #Required
-  certificate_name = "${var.resource_name_prefix}_${var.lb_certificate_name}"
-  load_balancer_id = var.load_balancer_id
-
-  #Optional
-  public_certificate = tls_self_signed_cert.demo_cert.cert_pem
-  private_key        = tls_private_key.ss_private_key.private_key_pem
-
-  lifecycle {
-    create_before_destroy = true
   }
 }

@@ -60,6 +60,7 @@ variable "lb_subnet_1_cidr" {
   type        = string
   description = "CIDR for loadbalancer subnet"
 }
+variable "network_compartment_id" {}
 
 variable "existing_vcn_id" {
   type        = string
@@ -112,10 +113,35 @@ variable "existing_load_balancer_id" {
   description = "The OCID of an existing load balancer. If set, use the existing load balancer and add the stack nodes to the backend set of the existing load balancer. Set add_load_balancer to true in order for this value to take effect"
 }
 
+variable "existing_lb_subnet_1_id" {
+  type        = string
+  description = "The OCID of a regional or AD-specific subnet for existing primary load balancer"
+}
+variable "existing_lb_subnet_2_id" {
+  type        = string
+  description = "The OCID of an AD-specific subnet for existing secondary load balancer. Must be blank if the load balancer is in a regional subnet or is private"
+}
+
+variable "backendset_name_for_existing_load_balancer" {
+  type        = string
+  description = "The name of an existing backend set in an existing load balancer. The backend set should not have any backend. The WebLogic VMs will be added as backends to this backend set"
+}
+
+variable "existing_load_balancer_found" {
+  type        = bool
+  description = "True if the load balancer specified in [existing_load_balancer_id] exists"
+}
+
 variable "lb_subnet_1_id" {
   type        = string
   description = "The OCID of a regional or AD-specific subnet for primary load balancer"
 }
+
+variable "lb_subnet_2_id" {
+  type        = string
+  description = "The OCID of a regional or AD-specific subnet for secondary load balancer"
+}
+
 variable "wls_version" {
   type        = string
   description = "The WebLogic version to be installed for this stack. Accepted values are: 12.2.1.4, 14.1.1.0"
@@ -123,11 +149,6 @@ variable "wls_version" {
     condition     = contains(["12.2.1.4", "14.1.1.0"], var.wls_version)
     error_message = "WLSC-ERROR: Allowed values for wls_version are 12.2.1.4, 14.1.1.0."
   }
-}
-
-variable "lb_subnet_2_id" {
-  type        = string
-  description = "The OCID of a regional or AD-specific subnet for secondary load balancer"
 }
 
 variable "assign_public_ip" {

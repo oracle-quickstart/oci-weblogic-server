@@ -73,6 +73,12 @@ variable "existing_load_balancer_id" {
   default     = ""
 }
 
+variable "backendset_name_for_existing_load_balancer" {
+  type        = string
+  default     = ""
+  description = "Existing load balancer backend set name"
+}
+
 variable "lb_reserved_public_ip_id" {
   type        = string
   description = "The OCID of a reserved public IP for the load balancer of the stack"
