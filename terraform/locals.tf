@@ -107,10 +107,10 @@ locals {
   is_vcn_peering = local.new_vcn_and_oci_db || local.new_vcn_and_atp_db_private_endpoint || ((local.existing_vcn_and_oci_db_different_vcn || local.existing_vcn_and_atp_db_private_endpoint_different_vcn) && !local.use_existing_subnets)
 
   assign_weblogic_public_ip = var.assign_weblogic_public_ip || var.subnet_type == "Use Public Subnet" ? true : false
-  bastion_subnet_cidr       = var.bastion_subnet_cidr == "" && var.wls_vcn_name != "" && !local.assign_weblogic_public_ip ? local.is_vcn_peering ? "11.0.1.0/24" : "10.0.1.0/24" : var.bastion_subnet_cidr
-  wls_subnet_cidr           = var.wls_subnet_cidr == "" && var.wls_vcn_name != "" ? local.is_vcn_peering ? "11.0.2.0/24" : "10.0.2.0/24" : var.wls_subnet_cidr
-  lb_subnet_1_subnet_cidr   = var.lb_subnet_1_cidr == "" && var.wls_vcn_name != "" ? local.is_vcn_peering ? "11.0.3.0/24" : "10.0.3.0/24" : var.lb_subnet_1_cidr
-  mount_target_subnet_cidr  = var.mount_target_subnet_cidr == "" && var.wls_vcn_name != "" ? local.is_vcn_peering ? "11.0.5.0/24" : "10.0.5.0/24" : var.mount_target_subnet_cidr
+  bastion_subnet_cidr       = var.bastion_subnet_cidr == "" && var.wls_vcn_name != "" && !local.assign_weblogic_public_ip ? "10.0.1.0/24" : var.bastion_subnet_cidr
+  wls_subnet_cidr           = var.wls_subnet_cidr == "" && var.wls_vcn_name != "" ? "10.0.2.0/24" : var.wls_subnet_cidr
+  lb_subnet_1_subnet_cidr   = var.lb_subnet_1_cidr == "" && var.wls_vcn_name != "" ? "10.0.3.0/24" : var.lb_subnet_1_cidr
+  mount_target_subnet_cidr  = var.mount_target_subnet_cidr == "" && var.wls_vcn_name != "" ? "10.0.5.0/24" : var.mount_target_subnet_cidr
 
   num_ads = length(
     data.oci_identity_availability_domains.ADs.availability_domains,
