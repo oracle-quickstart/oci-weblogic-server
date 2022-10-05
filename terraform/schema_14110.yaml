@@ -682,11 +682,8 @@ variables:
         - ${add_fss}
         - not:
             - ${add_existing_fss}
-        - and:
-            - or:
-              - ${create_new_subnets}
-              - not:
-                  - ${create_new_vcn}
+        - not:
+            - ${create_new_vcn}
     type: boolean
     default: false
     title: "Existing Mount Target"
@@ -903,9 +900,9 @@ variables:
       and:
         - ${add_fss}
         - not:
-            - ${add_existing_mount_target}
-        - not:
             - ${add_existing_fss}
+        - not:
+            - ${add_existing_mount_target}
         - and:
             - or:
                 - ${create_new_vcn}
@@ -1722,9 +1719,12 @@ variables:
   mount_target_id:
     visible:
       and:
+        - ${add_fss}
         - ${add_existing_mount_target}
         - not:
             - ${add_existing_fss}
+        - not:
+            - ${create_new_vcn}
     type: oci:mount:target:id
     title: Existing Mount Target ID
     description: The Oracle Cloud Identifier (OCID) of your existing mount target. The existing mount target must be in the same subnet which is already present in the chosen VCN.
@@ -1767,6 +1767,8 @@ variables:
         - ${add_fss}
         - not:
             - ${add_existing_fss}
+        - not:
+            - ${add_existing_mount_target}
     type: oci:identity:availabilitydomain:name
     title: FSS Availability Domain
     description: The name of the availability domain in which to create the file system and mount target.
