@@ -1217,17 +1217,10 @@ variables:
         - or:
             - ${add_load_balancer}
             - ${is_idcs_selected}
-        - or:
-          - and:
-            - not:
-              - ${create_new_vcn}
-            - eq:
-              - ${create_new_subnets}
-          - and:
-            - eq:
-              - ${create_new_vcn}
-            - eq:
-              - ${create_new_subnets}
+        - and:
+            - or:
+                - ${create_new_vcn}
+                - ${create_new_subnets}
     type: enum
     enum:
       - "Create New Load Balancer"
@@ -1239,15 +1232,14 @@ variables:
   load_balancer_strategy_existing_subnet:
     visible:
       and:
-        - ${orm_create_mode}
         - or:
             - ${add_load_balancer}
             - ${is_idcs_selected}
         - and:
-          - not:
-              - ${create_new_vcn}
-          - not:
-              - ${create_new_subnets}
+            - not:
+                - ${create_new_vcn}
+            - not:
+                - ${create_new_subnets}
     type: enum
     enum:
       - "Create New Load Balancer"
@@ -1296,7 +1288,6 @@ variables:
     title: Existing Load Balancer Backend Set Name
     description: Name of the backend set for the existing load balancer. The backend set should not have any associated backends. Ensure that you have configured a routing policy for the backend set.
     required: true
-
 
   is_lb_private:
     visible:
@@ -1524,22 +1515,16 @@ variables:
             - and:
                 - or:
                     - and:
+                        - ${create_new_subnets}
                         - not:
                             - ${create_new_vcn}
-                        - eq:
-                            - ${create_new_subnets}
                     - and:
-                        - eq:
+                        - or:
                             - ${create_new_vcn}
-                        - eq:
                             - ${create_new_subnets}
                 - eq:
                     - ${load_balancer_strategy_new_subnet}
                     - "Create New Load Balancer"
-            - and:
-                - or:
-                    - ${create_new_vcn}
-                    - ${create_new_subnets}
     type: integer
     title: Minimum Bandwidth for Flexible Load Balancer
     description: Create flexible shape Load Balancer with minimum bandwidth. The minimum service limit is 10 Mbps.
@@ -1566,22 +1551,16 @@ variables:
             - and:
                 - or:
                     - and:
+                        - ${create_new_subnets}
                         - not:
                             - ${create_new_vcn}
-                        - eq:
-                            - ${create_new_subnets}
                     - and:
-                        - eq:
+                        - or:
                             - ${create_new_vcn}
-                        - eq:
                             - ${create_new_subnets}
                 - eq:
                     - ${load_balancer_strategy_new_subnet}
                     - "Create New Load Balancer"
-            - and:
-                - or:
-                    - ${create_new_vcn}
-                    - ${create_new_subnets}
     type: integer
     title: Maximum Bandwidth for Flexible Load Balancer
     description: Create flexible shape Load Balancer with maximum bandwidth. The maximum service limit is 8000 Mbps. Check the service limits page in the Console to provide accurate service limits.
