@@ -4,6 +4,7 @@
 variable "is_bastion_instance_required" {
   type        = bool
   description = "Set to true to use a bastion, either new or existing. If existing_bastion_instance_id is blank, a new bastion will be created"
+  default     = true
 }
 
 variable "existing_bastion_instance_id" {
@@ -25,8 +26,9 @@ variable "bastion_ssh_private_key" {
 }
 
 variable "is_bastion_with_reserved_public_ip" {
-  default     = false
+  type        = bool
   description = "Creates reserved public ip for bastion instance. Applicable only for new bastion, not for existing"
+  default     = false
 }
 
 variable "existing_bastion_nsg_id" {

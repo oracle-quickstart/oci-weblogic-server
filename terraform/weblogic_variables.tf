@@ -46,6 +46,45 @@ variable "wls_14c_jdk_version" {
   }
 }
 
+variable "wls_ms_port" {
+  type        = number
+  description = "The managed server port for T3 protocol"
+  default     = 9073
+  validation {
+    condition     = var.wls_ms_port > 0
+    error_message = "WLSC-ERROR: The value for wls_ms_port should be greater than 0."
+  }
+}
+
+variable "wls_ms_ssl_port" {
+  type        = number
+  description = "The managed server port for T3s protocol"
+  default     = 9074
+  validation {
+    condition     = var.wls_ms_ssl_port > 0
+    error_message = "WLSC-ERROR: The value for wls_ms_ssl_port should be greater than 0."
+  }
+}
+
+variable "wls_admin_port" {
+  type        = number
+  description = "The administration server port for T3 protocol"
+  default     = 9071
+  validation {
+    condition     = var.wls_admin_port > 0
+    error_message = "WLSC-ERROR: The value for wls_admin_port should be greater than 0."
+  }
+}
+
+variable "wls_admin_ssl_port" {
+  type        = number
+  description = "The administration server port for T3s protocol"
+  default     = 9072
+  validation {
+    condition     = var.wls_admin_ssl_port > 0
+    error_message = "WLSC-ERROR: The value for wls_admin_ssl_port should be greater than 0."
+  }
+}
 variable "wls_expose_admin_port" {
   type        = bool
   description = "[WARNING] Selecting this option will expose the console to the internet if the default 0.0.0.0/0 CIDR is used. You should change the CIDR range below to allow access to a trusted IP range."
@@ -104,6 +143,27 @@ variable "wls_extern_admin_port" {
     error_message = "WLSC-ERROR: The value for wls_extern_admin_port should be greater than 0."
   }
 }
+
+variable "wls_cluster_mc_port" {
+  type        = number
+  description = "The managed server port on which to send heartbeats and other internal cluster traffic"
+  default     = 5555
+  validation {
+    condition     = var.wls_cluster_mc_port > 0
+    error_message = "WLSC-ERROR: The value for wls_cluster_mc_port should be greater than 0."
+  }
+}
+
+variable "wls_nm_port" {
+  type        = number
+  description = "The listen port number for the node manager process on all compute instances"
+  default     = 5556
+  validation {
+    condition     = var.wls_nm_port > 0
+    error_message = "WLSC-ERROR: The value for wls_nm_port should be greater than 0."
+  }
+}
+
 
 variable "deploy_sample_app" {
   type        = bool

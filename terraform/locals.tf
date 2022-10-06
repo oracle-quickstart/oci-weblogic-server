@@ -10,7 +10,7 @@ locals {
 
   bastion_availability_domain = var.bastion_subnet_id != "" ? (var.use_regional_subnet ? var.wls_availability_domain_name != "" ? var.wls_availability_domain_name : local.ad_names[0] : data.oci_core_subnet.bastion_subnet[0].availability_domain) : (var.use_regional_subnet ? var.wls_availability_domain_name != "" ? var.wls_availability_domain_name : local.ad_names[0] : var.wls_availability_domain_name)
   wls_availability_domain     = var.use_regional_subnet ? (var.wls_availability_domain_name == "" ? local.ad_names[0] : var.wls_availability_domain_name) : (var.wls_subnet_id == "" ? var.wls_availability_domain_name : data.oci_core_subnet.wls_subnet[0].availability_domain)
-  network_compartment_id      = var.network_compartment_id == "" ? var.compartment_id : var.network_compartment_id
+  network_compartment_id      = var.network_compartment_id == "" ? var.compartment_ocid : var.network_compartment_id
 
   #dynamic group is based on the system generated tags for DG
   create_dg_tags     = var.create_policies && var.generate_dg_tag # Only create dynamic group tags when create policies and generate dg tag is true
@@ -91,6 +91,7 @@ locals {
   ssh_proxyjump_access = var.assign_weblogic_public_ip ? "" : format("ssh -i <privateKey> -o ProxyCommand=\"ssh -i <privateKey> -W %s -p 22 opc@%s\" -p 22 %s", "%h:%p", local.bastion_public_ip, "opc@<wls_vm_private_ip>")
   ssh_dp_fwd           = var.assign_weblogic_public_ip ? "" : format("ssh -i <privatekey> -C -D <local-port> opc@%s", local.bastion_public_ip)
 
+  tf_version_file      = "version.txt"
   use_existing_subnets = var.wls_subnet_id == "" && var.lb_subnet_1_id == "" && var.lb_subnet_2_id == "" ? false : true
 
   // Criteria for VCN peering:

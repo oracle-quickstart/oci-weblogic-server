@@ -3,7 +3,7 @@
 
 module "system-tags" {
   source         = "./modules/resource-tags"
-  compartment_id = var.compartment_id
+  compartment_id = var.compartment_ocid
   service_name   = var.service_name
   is_system_tag  = true # TODO: should we allow to customize this?
   create_dg_tags = local.create_dg_tags
@@ -182,11 +182,11 @@ module "network-bastion-subnet" {
 module "policies" {
   source                 = "./modules/policies"
   count                  = var.create_policies ? 1 : 0
-  compartment_id         = var.compartment_id
+  compartment_id         = var.compartment_ocid
   network_compartment_id = local.network_compartment_id
   dynamic_group_rule     = local.dynamic_group_rule
   resource_name_prefix   = local.service_name_prefix
-  tenancy_id             = var.tenancy_id
+  tenancy_id             = var.tenancy_ocid
   wls_admin_password_id  = var.wls_admin_password_id
   providers = {
     oci = oci.home
@@ -206,7 +206,7 @@ module "policies" {
   apm_domain_compartment_id = local.apm_domain_compartment_id
   use_autoscaling           = var.use_autoscaling
   add_fss                   = var.add_fss
-  fss_compartment_id        = var.mount_target_compartment_id == "" ? var.compartment_id : var.mount_target_compartment_id
+  fss_compartment_id        = var.mount_target_compartment_id == "" ? var.compartment_ocid : var.mount_target_compartment_id
   add_load_balancer         = var.add_load_balancer
 }
 
@@ -217,12 +217,12 @@ module "bastion" {
   availability_domain = local.bastion_availability_domain
   bastion_subnet_id   = var.bastion_subnet_id != "" ? var.bastion_subnet_id : module.network-bastion-subnet[0].subnet_id
 
-  compartment_id      = var.compartment_id
+  compartment_id      = var.compartment_ocid
   instance_image_id   = var.bastion_image_id
   instance_shape      = var.bastion_instance_shape
   region              = var.region
   ssh_public_key      = var.ssh_public_key
-  tenancy_id          = var.tenancy_id
+  tenancy_id          = var.tenancy_ocid
   use_existing_subnet = var.bastion_subnet_id != ""
   vm_count            = var.wls_node_count
   instance_name       = "${local.service_name_prefix}-bastion-instance"
@@ -326,6 +326,7 @@ module "validators" {
   wls_admin_port_source_cidr = var.wls_admin_port_source_cidr
   wls_expose_admin_port      = var.wls_expose_admin_port
   wls_version                = var.wls_version
+  num_vm_instances           = var.wls_node_count
 
   db_user                       = local.db_user
   db_password_id                = local.db_password_id
@@ -411,7 +412,7 @@ module "fss" {
   source = "./modules/fss"
   count  = var.existing_fss_id == "" && var.add_fss ? 1 : 0
 
-  compartment_id      = var.fss_compartment_id
+  compartment_id      = var.compartment_ocid
   availability_domain = var.fss_availability_domain
 
   vcn_id                 = local.vcn_id
@@ -451,7 +452,7 @@ module "observability-common" {
   source = "./modules/observability/common"
   count  = var.use_oci_logging ? 1 : 0
 
-  compartment_id      = var.compartment_id
+  compartment_id      = var.compartment_ocid
   service_prefix_name = local.service_name_prefix
 }
 
@@ -459,7 +460,7 @@ module "observability-autoscaling" {
   source = "./modules/observability/autoscaling"
   count  = var.use_autoscaling ? 1 : 0
 
-  compartment_id        = var.compartment_id
+  compartment_id        = var.compartment_ocid
   metric_compartment_id = local.apm_domain_compartment_id
   service_prefix_name   = local.service_name_prefix
   subscription_endpoint = var.notification_email
@@ -471,7 +472,7 @@ module "observability-autoscaling" {
   wls_metric            = var.wls_metric
   wls_subnet_id         = var.wls_subnet_id != "" ? var.wls_subnet_id : local.assign_weblogic_public_ip ? element(concat(module.network-wls-public-subnet[*].subnet_id, [""]), 0) : element(concat(module.network-wls-private-subnet[*].subnet_id, [""]), 0)
   wls_node_count        = var.wls_node_count
-  tenancy_id            = var.tenancy_id
+  tenancy_id            = var.tenancy_ocid
 
   fn_application_name = local.fn_application_name
   fn_repo_name        = local.fn_repo_name
@@ -493,7 +494,7 @@ module "compute" {
   load_balancer_id       = var.add_load_balancer ? (var.existing_load_balancer_id != "" ? var.existing_load_balancer_id : element(coalescelist(module.load-balancer[*].wls_loadbalancer_id, [""]), 0)) : ""
   assign_public_ip       = var.assign_weblogic_public_ip
   availability_domain    = local.wls_availability_domain
-  compartment_id         = var.compartment_id
+  compartment_id         = var.compartment_ocid
   instance_image_id      = var.instance_image_id
   instance_shape         = var.instance_shape
   wls_ocpu_count         = var.wls_ocpu_count
@@ -505,26 +506,33 @@ module "compute" {
   ssh_public_key         = var.ssh_public_key
   compute_nsg_ids        = local.compute_nsg_ids
 
-  tenancy_id              = var.tenancy_id
-  tf_script_version       = var.tf_script_version
-  use_regional_subnet     = var.use_regional_subnet
-  wls_14c_jdk_version     = var.wls_14c_jdk_version
-  wls_admin_password_id   = var.wls_admin_password_id
-  wls_admin_server_name   = format("%s_adminserver", local.service_name_prefix)
-  wls_ms_server_name      = format("%s_server_", local.service_name_prefix)
-  wls_admin_user          = var.wls_admin_user
-  wls_domain_name         = format("%s_domain", local.service_name_prefix)
-  wls_server_startup_args = var.wls_server_startup_args
-  wls_existing_vcn_id     = var.wls_existing_vcn_id
-  wls_vcn_cidr            = var.wls_vcn_cidr != "" ? var.wls_vcn_cidr : element(concat(module.network-vcn.*.vcn_cidr, tolist([""])), 0)
-  #The following two are for adding a dependency on the peering module
-  wls_vcn_peering_dns_resolver_id           = element(flatten(concat(module.vcn-peering[*].wls_vcn_dns_resolver_id, [""])), 0)
-  wls_vcn_peering_route_table_attachment_id = local.assign_weblogic_public_ip ? element(flatten(concat(module.vcn-peering[*].wls_vcn_public_route_table_attachment_id, [""])), 0) : element(flatten(concat(module.vcn-peering[*].wls_vcn_private_route_table_attachment_id, [""])), 0)
-
-  wls_version          = var.wls_version
-  wls_edition          = var.wls_edition
-  num_vm_instances     = var.wls_node_count
-  resource_name_prefix = var.service_name
+  tenancy_id                = var.tenancy_ocid
+  tf_script_version         = file(local.tf_version_file)
+  use_regional_subnet       = var.use_regional_subnet
+  wls_14c_jdk_version       = var.wls_14c_jdk_version
+  wls_admin_user            = var.wls_admin_user
+  wls_admin_password_id     = var.wls_admin_password_id
+  wls_admin_server_name     = format("%s_adminserver", local.service_name_prefix)
+  wls_ms_server_name        = format("%s_server_", local.service_name_prefix)
+  wls_nm_port               = var.wls_nm_port
+  wls_ms_port               = var.wls_ms_port
+  wls_ms_ssl_port           = var.wls_ms_ssl_port
+  wls_ms_extern_ssl_port    = var.wls_ms_extern_ssl_port
+  wls_ms_extern_port        = var.wls_ms_extern_port
+  wls_cluster_name          = format("%s_cluster", local.service_name_prefix)
+  wls_machine_name          = format("%s_machine_", local.service_name_prefix)
+  wls_extern_admin_port     = var.wls_extern_admin_port
+  wls_extern_ssl_admin_port = var.wls_extern_ssl_admin_port
+  wls_admin_port            = var.wls_admin_port
+  wls_admin_ssl_port        = var.wls_admin_ssl_port
+  wls_domain_name           = format("%s_domain", local.service_name_prefix)
+  wls_server_startup_args   = var.wls_server_startup_args
+  wls_existing_vcn_id       = var.wls_existing_vcn_id
+  wls_vcn_cidr              = var.wls_vcn_cidr != "" ? var.wls_vcn_cidr : element(concat(module.network-vcn.*.vcn_cidr, tolist([""])), 0)
+  wls_version               = var.wls_version
+  wls_edition               = var.wls_edition
+  num_vm_instances          = var.wls_node_count
+  resource_name_prefix      = var.service_name
 
   is_idcs_selected      = var.is_idcs_selected
   idcs_host             = var.idcs_host
@@ -612,7 +620,7 @@ module "observability-logging" {
   source = "./modules/observability/logging"
   count  = var.use_oci_logging ? 1 : 0
 
-  compartment_id                        = var.compartment_id
+  compartment_id                        = var.compartment_ocid
   oci_managed_instances_principal_group = element(concat(module.policies[*].oci_managed_instances_principal_group, [""]), 0)
   service_prefix_name                   = local.service_name_prefix
   create_policies                       = var.create_policies
