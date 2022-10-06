@@ -1866,6 +1866,8 @@ variables:
   listing_id:
     type: string
 
+  # tenancy_ocid, compartment_ocid, and user_ocid are predefined variables. Do not change them.
+
   tenancy_ocid:
     type: string
     title: Tenancy ID
