@@ -412,7 +412,7 @@ module "fss" {
   source = "./modules/fss"
   count  = var.existing_fss_id == "" && var.add_fss ? 1 : 0
 
-  compartment_id      = var.fss_compartment_id
+  compartment_id      = var.compartment_ocid
   availability_domain = var.fss_availability_domain
 
   vcn_id                 = local.vcn_id
