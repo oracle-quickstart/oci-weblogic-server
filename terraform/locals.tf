@@ -51,24 +51,24 @@ locals {
     ["Standard Edition", "Enterprise Edition", "Suite Edition"],
   )
 
-  new_lb_ip                  = !var.add_load_balancer || local.add_existing_load_balancer ? "" : element(coalescelist(module.load-balancer[0].wls_loadbalancer_ip_addresses, [""]), 0)
+  new_lb_ip                  = !var.add_load_balancer || local.use_existing_lb ? "" : element(coalescelist(module.load-balancer[0].wls_loadbalancer_ip_addresses, [""]), 0)
   new_lb_id                  = element(concat(module.load-balancer[*].wls_loadbalancer_id, [""]), 0)
-  existing_lb_ip             = local.add_existing_load_balancer && local.valid_existing_lb ? local.existing_lb_object_as_list[0].ip_addresses[0] : ""
+  existing_lb_ip             = local.use_existing_lb && local.valid_existing_lb ? local.existing_lb_object_as_list[0].ip_addresses[0] : ""
   existing_lb_object_as_list = [for lb in data.oci_load_balancer_load_balancers.existing_load_balancers_data_source.load_balancers[*] : lb if lb.id == var.existing_load_balancer_id]
   valid_existing_lb          = length(local.existing_lb_object_as_list) == 1
-  add_existing_load_balancer = var.add_load_balancer && var.existing_load_balancer_id != ""
-  lb_backendset_name         = local.add_existing_load_balancer ? var.backendset_name_for_existing_load_balancer : "${local.service_name_prefix}-lb-backendset"
-  existing_lb_subnet_1_id    = local.add_existing_load_balancer && local.valid_existing_lb ? local.existing_lb_object_as_list[0].subnet_ids[0] : ""
-  existing_lb_subnet_2_id    = local.add_existing_load_balancer && local.valid_existing_lb ? (var.is_lb_private ? "" : (length(local.existing_lb_object_as_list[0].subnet_ids) > 1 ? local.existing_lb_object_as_list[0].subnet_ids[1] : "")) : ""
+  use_existing_lb            = var.add_load_balancer && var.existing_load_balancer_id != ""
+  lb_backendset_name         = local.use_existing_lb ? var.backendset_name_for_existing_load_balancer : "${local.service_name_prefix}-lb-backendset"
+  existing_lb_subnet_1_id    = local.use_existing_lb && local.valid_existing_lb ? local.existing_lb_object_as_list[0].subnet_ids[0] : ""
+  existing_lb_subnet_2_id    = local.use_existing_lb && local.valid_existing_lb ? (var.is_lb_private ? "" : (length(local.existing_lb_object_as_list[0].subnet_ids) > 1 ? local.existing_lb_object_as_list[0].subnet_ids[1] : "")) : ""
   new_lb_subnet_2_id         = var.is_lb_private ? "" : var.lb_subnet_2_id
-  lb_subnet_2_id             = local.add_existing_load_balancer ? local.existing_lb_subnet_2_id : local.new_lb_subnet_2_id
+  lb_subnet_2_id             = local.use_existing_lb ? local.existing_lb_subnet_2_id : local.new_lb_subnet_2_id
 
   lb_subnet_1_name = var.is_lb_private ? "lbprist1" : "lbpubst1"
   lb_subnet_2_name = var.is_lb_private ? "lbprist2" : "lbpubst2"
 
 
-  lb_id = local.add_existing_load_balancer ? var.existing_load_balancer_id : local.new_lb_id
-  lb_ip = local.add_existing_load_balancer ? local.existing_lb_ip : local.new_lb_ip
+  lb_id = local.use_existing_lb ? var.existing_load_balancer_id : local.new_lb_id
+  lb_ip = local.use_existing_lb ? local.existing_lb_ip : local.new_lb_ip
 
   admin_ip_address      = var.assign_weblogic_public_ip ? module.compute.instance_public_ips[0] : module.compute.instance_private_ips[0]
   admin_console_app_url = format("https://%s:%s/console", local.admin_ip_address, var.wls_extern_ssl_admin_port)

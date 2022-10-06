@@ -76,7 +76,7 @@ module "network-vcn-config" {
 
 module "network-lb-nsg" {
   source         = "./modules/network/nsg"
-  count          = local.add_existing_load_balancer ? 0 : var.add_load_balancer && var.lb_subnet_1_cidr != "" ? 1 : 0
+  count          = local.use_existing_lb ? 0 : var.add_load_balancer && var.lb_subnet_1_cidr != "" ? 1 : 0
   compartment_id = local.network_compartment_id
   vcn_id         = local.vcn_id
   nsg_name       = "${local.service_name_prefix}-lb-nsg"
@@ -142,7 +142,7 @@ module "network-compute-managed-nsg" {
 /* Create primary subnet for Load balancer only */
 module "network-lb-subnet-1" {
   source          = "./modules/network/subnet"
-  count           = local.add_existing_load_balancer ? 0 : var.add_load_balancer && var.lb_subnet_1_id == "" ? 1 : 0
+  count           = local.use_existing_lb ? 0 : var.add_load_balancer && var.lb_subnet_1_id == "" ? 1 : 0
   compartment_id  = local.network_compartment_id
   vcn_id          = local.vcn_id
   dhcp_options_id = module.network-vcn-config[0].dhcp_options_id
@@ -603,7 +603,7 @@ module "load-balancer-backends" {
 
   resource_name_prefix = local.service_name_prefix
   load_balancer_id     = var.add_load_balancer ? (var.existing_load_balancer_id != "" ? var.existing_load_balancer_id : element(coalescelist(module.load-balancer[*].wls_loadbalancer_id, [""]), 0)) : ""
-  use_existing_lb      = local.add_existing_load_balancer
+  use_existing_lb      = local.use_existing_lb
   lb_backendset_name   = local.lb_backendset_name
   num_vm_instances     = var.wls_node_count
   instance_private_ips = module.compute.instance_private_ips
