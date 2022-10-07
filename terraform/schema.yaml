@@ -241,165 +241,128 @@ groupings:
       #- ${wls_ocpu_count}
 
 outputs:
-  Virtual_Cloud_Network_Id:
+  virtual_cloud_network_id:
     type: ocid
     title: Virtual Cloud Network Id
-  Is_VCN_Peered:
+  is_vcn_peered:
     type: link
     title: Is VCN Peered
     visible: false
-  WebLogic_Subnet_Id:
-    type: link
-    title: WebLogic Subnet Id
-    visible: false
-  WebLogic_Server_Administration_Console:
+  weblogic_server_administration_console:
     type: link
     title: WebLogic Server Administration Console
-  WebLogic_Instances:
+  weblogic_instances:
     type: json
     title: WebLogic Instances
-  Loadbalancer_Subnets_Id:
-    type: link
-    title: Loadbalancer Subnets Id
-    visible: false
-  Load_Balancer_Id:
+  load_balancer_id:
     type: ocid
     title: Load balancer Id
-  Load_Balancer_Ip:
+  load_balancer_ip:
     type: copyableString
     title: Load Balancer IP
-  Fusion_Middleware_Control_Console:
+  fusion_middleware_control_console:
     type: link
     title: Fusion Middleware Control Console
-  Provisioning_Status:
+  provisioning_status:
     type: link
     title: Provisioning Status
     visible: false
-  Sample_Application_protected_by_IDCS:
+  sample_application:
+    type: link
+    title: Sample Application
+  sample_application_protected_by_idcs:
     type: link
     title: Sample Application Protected By IDCS
-  Virtual_Cloud_Network_CIDR:
+  virtual_cloud_network_cidr:
     type: link
     title: Virtual Cloud Network CIDR
-  WebLogic_Version:
+  weblogic_version:
     type: link
     title: WebLogic Version
-  JDK_Version:
+  jdk_version:
     type: link
     title: JDK Version
-  Bastion_Instance_Id:
+  bastion_instance_id:
     type: ocid
     title: Instance Id
-  Bastion_Instance_Public_IP:
+  bastion_instance_public_ip:
     type: copyableString
     title: Public Ip
-  SSH_Command:
+  ssh_command:
     type: copyableString
     title: SSH Command
-  SSH_Command_With_Dynamic_Port_Forwarding:
+  ssh_command_with_dynamic_port_forwarding:
     type: copyableString
     title: SSH Command with Dynamic Port Forwarding
-  FSS_System_Id:
+  fss_system_id:
     type: ocid
     title: File System Id
-  Mount_Target_Id:
+  mount_target_id:
     type: ocid
     title: Mount Target Id
-  Listing_Version:
+  listing_version:
     type: copyableString
     title: Marketplace Listing Version
-  Resource_Identifier_Value:
+  resource_identifier_value:
     type: copyableString
     title: Stack Resources System Tag
-  WebLogic_Agent_Configuration_Id:
+  weblogic_agent_configuration_id:
     type: ocid
     title: WebLogic Log Agent Configuration Id
     visible: false
-  WebLogic_Log_Group_Id:
+  weblogic_log_group_id:
     type: ocid
     title: WebLogic Log Group Id
-  WebLogic_Log_Id:
+  weblogic_log_id:
     type: ocid
     title: WebLogic Log Id
-  Autoscaling_ScaleOut_Monitoring_Alarm_Id:
+  autoscaling_scaleout_monitoring_alarm_id:
     type: ocid
     title: Autoscaling ScaleOut Monitoring Alarm Id
-  Autoscaling_ScaleIn_Monitoring_Alarm_Id:
+  autoscaling_scalein_monitoring_alarm_id:
     type: ocid
     title: Autoscaling ScaleIn Monitoring Alarm Id
-  Autoscaling_Function_Application_Id:
+  autoscaling_function_application_id:
     type: ocid
     title: Autoscaling Function Application Id
-  Autoscaling_ScaleOut_Notification_Topic_Id:
-    type: ocid
-    title: Autoscaling_ScaleOut_Notification_Topic_Id
-    visible: false
-  Autoscaling_ScaleIn_Notification_Topic_Id:
-    type: ocid
-    title: Autoscaling ScaleIn Notification Topic Id
-    visible: false
-  Autoscaling_Email_Notification_Topic_Id:
-    type: ocid
-    title: Autoscaling Email Notification Topic Id
-    visible: false
-  Autoscaling_Email_Topic_Email_Subscription_Id:
-    type: ocid
-    title: Autoscaling Email Topic Email Subscription Id
-    visible: false
-  Autoscaling_Scaleout_Function_Repo_Id:
-    type: ocid
-    title: Autoscaling Scaleout Function Repo Id
-    visible: false
-  Autoscaling_Scalein_Function_Repo_Id:
-    type: ocid
-    title: Autoscaling Scalein Function Repo Id
-    visible: false
-  Autoscaling_OrmJobCompletionHandler_Function_Repo_Id:
-    type: ocid
-    title: Autoscaling OrmJobCompletionHandler Function Repo Id
-    visible: false
-  WebLogic_Autoscaling_Log_Id:
-    type: ocid
-    title: WebLogic Autoscaling Log Id
-    visible: false
 
 outputGroups:
   - title: WebLogic
     outputs:
-      - ${WebLogic_Server_Administration_Console}
-      - ${Sample_Application}
-      - ${Fusion_Middleware_Control_Console}
-      - ${Sample_Application_protected_by_IDCS}
-      - ${WebLogic_Version}
-      - ${WebLogic_Instances}
-      - ${JDK_Version}
+      - ${weblogic_server_administration_console}
+      - ${sample_application}
+      - ${fusion_middleware_control_console}
+      - ${sample_application_protected_by_idcs}
+      - ${weblogic_version}
+      - ${weblogic_instances}
+      - ${jdk_version}
   - title: Networking
     outputs:
-      - ${Virtual_Cloud_Network_Id}
-      - ${Load_Balancer_Id}
-      - ${Virtual_Cloud_Network_CIDR}
-      - ${Load_Balancer_Ip}
+      - ${virtual_cloud_network_id}
+      - ${load_balancer_id}
+      - ${virtual_cloud_network_cidr}
+      - ${load_balancer_ip}
   - title: Bastion
     outputs:
-      - ${Bastion_Instance_Id}
-      - ${SSH_Command}
-      - ${Bastion_Instance_Public_IP}
-      - ${SSH_Command_With_Dynamic_Port_Forwarding}
+      - ${bastion_instance_id}
+      - ${ssh_command}
+      - ${bastion_instance_public_ip}
+      - ${ssh_command_with_dynamic_port_forwarding}
   - title: File Storage
     outputs:
-      - ${FSS_System_Id}
-      - ${Mount_Target_Id}
+      - ${fss_system_id}
+      - ${mount_target_id}
   - title: Observability
     outputs:
-      - ${WebLogic_Log_Group_Id}
-      - ${WebLogic_Log_Id}
-      - ${Autoscaling_ScaleOut_Monitoring_Alarm_Id}
-      - ${Autoscaling_ScaleIn_Monitoring_Alarm_Id}
-      - ${Autoscaling_Function_Application_Id}
+      - ${weblogic_log_group_id}
+      - ${weblogic_log_id}
+      - ${autoscaling_scaleout_monitoring_alarm_id}
+      - ${autoscaling_scalein_monitoring_alarm_id}
+      - ${autoscaling_function_application_id}
   - title: Listing
     outputs:
-      - ${Listing_Version}
-      - ${Resource_Identifier_Value}
+      - ${listing_version}
+      - ${resource_identifier_value}
 
 variables:
   # WLS Instance Configuration

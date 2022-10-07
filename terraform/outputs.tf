@@ -66,7 +66,7 @@ output "fusion_middleware_control_console" {
   value = local.fmw_console_app_url
 }
 
-output "sample_application_url" {
+output "sample_application" {
   value = local.sample_app_url
 }
 
@@ -108,4 +108,16 @@ output "ssh_command_with_dynamic_port_forwarding" {
 
 output "resource_identifier_value" {
   value = compact(concat([module.system-tags.dg_tag_value], local.user_defined_tag_values))
+}
+
+output "autoscaling_scaleout_monitoring_alarm_id" {
+  value = element(concat(module.observability-autoscaling[*].scaleout_monitoring_alarm, [""]), 0)
+}
+
+output "autoscaling_scalein_monitoring_alarm_id" {
+  value = element(concat(module.observability-autoscaling[*].scalein_monitoring_alarm, [""]), 0)
+}
+
+output "autoscaling_function_application_id" {
+  value = element(concat(module.observability-autoscaling[*].autoscaling_function_application_id, [""]), 0)
 }
