@@ -53,7 +53,6 @@ groupings:
   - title: "WebLogic Server Compute Instance"
     variables:
       - ${instance_shape}
-      - ${wls_ocpu_count}
       - ${wls_node_count}
       - ${wls_node_count_limit}
       #- ${image_mode}
@@ -221,7 +220,6 @@ groupings:
       - ${wait_time_wls_vnc_dns_resolver}
       - ${atp_db_existing_vcn_id}
       - ${wls_admin_port_source_cidr}
-      #- ${wls_ocpu_count}
 
 outputs:
   virtual_cloud_network_id:
@@ -369,40 +367,13 @@ variables:
       compartmentId: ${compartment_ocid}
 
   instance_shape:
-    type: oci:core:instanceshape:name
+    type: oci:core:instanceshapewithflex:name
     title: Compute Shape
     description: The shape for WebLogic Server compute instances. When scaled-out, the changes to instance shape will apply only to the added nodes.
     required: true
-    default: VM.Standard.E4.Flex
     dependsOn:
       compartmentId: ${compartment_ocid}
       imageId: ${instance_image_id}
-
-  wls_ocpu_count:
-    type: integer
-    title: OCPU Count
-    description: The number of OCPU count for instances. Only required for VM.Standard.E3.Flex, VM.Standard.E4.Flex, VM.Optimized3.Flex, and  VM.Standard3.Flex Shapes. The maximum number of ocpus for VM.Standard.E3.Flex and VM.Standard.E4.Flex is 64 while VM.Optimized3.Flex shape supports maximum of 18 ocpus. When scaled-out, the changes in OCPU count will apply only to the added nodes.
-    minimum: 1
-    maximum: 64
-    multipleOf: 1
-    default: 1
-    required: true
-    dependsOn:
-      instance_shape: ${instance_shape}
-    visible:
-      or:
-        - eq:
-          - ${instance_shape}
-          - "VM.Standard.E3.Flex"
-        - eq:
-          - ${instance_shape}
-          - "VM.Standard.E4.Flex"
-        - eq:
-          - ${instance_shape}
-          - "VM.Optimized3.Flex"
-        - eq:
-          - ${instance_shape}
-          - "VM.Standard3.Flex"
 
   ssh_public_key:
     type: oci:core:ssh:publickey
@@ -1071,7 +1042,7 @@ variables:
             - eq:
                 - ${subnet_type}
                 - "Use Private Subnet"
-    type: oci:core:instanceshape:name
+    type: oci:core:instanceshapewithflex:name
     title: Bastion Host Shape
     description: The shape for bastion compute instance.
     required: true

@@ -8,7 +8,7 @@ data "oci_identity_fault_domains" "wls_fault_domains" {
 
 data "template_file" "ad_names" {
   count    = length(data.oci_identity_availability_domains.ADs.availability_domains)
-  template = (length(regexall("^.*Flex", var.instance_shape)) > 0 || (tonumber(lookup(data.oci_limits_limit_values.compute_shape_service_limits[count.index].limit_values[0], "value")) > 0)) ? lookup(data.oci_identity_availability_domains.ADs.availability_domains[count.index], "name") : ""
+  template =  (length(regexall("^.*Flex", var.instance_shape.instanceShape))>0 || length(regexall("^BM.*", var.instance_shape.instanceShape))>0  || (tonumber(lookup(data.oci_limits_limit_values.compute_shape_service_limits[count.index].limit_values[0], "value")) > 0))?lookup(data.oci_identity_availability_domains.ADs.availability_domains[count.index], "name"):""
 }
 
 data "oci_identity_availability_domains" "ADs" {
@@ -21,8 +21,7 @@ data "oci_limits_limit_values" "compute_shape_service_limits" {
   service_name   = "compute"
 
   availability_domain = lookup(data.oci_identity_availability_domains.ADs.availability_domains[count.index], "name")
-
-  name = length(regexall("^.*Flex", var.instance_shape)) > 0 ? "" : format("%s-count", replace(var.instance_shape, ".", "-"))
+  name = length(regexall("^.*Flex", var.instance_shape.instanceShape))>0 || length(regexall("^BM.*", var.instance_shape.instanceShape))>0 ?"":format("%s-count",replace(var.instance_shape.instanceShape, ".", "-"))
 }
 
 data "template_file" "key_script" {
@@ -43,7 +42,7 @@ data "oci_core_shapes" "oci_shapes" {
   availability_domain = lookup(data.oci_identity_availability_domains.ADs.availability_domains[count.index], "name")
   filter {
     name   = "name"
-    values = [var.instance_shape]
+    values = [var.instance_shape.instanceShape]
   }
 }
 

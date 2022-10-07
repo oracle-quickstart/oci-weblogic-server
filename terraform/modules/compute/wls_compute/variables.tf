@@ -135,14 +135,8 @@ variable "bootstrap_file" {
 }
 
 variable "instance_shape" {
-  type        = string
+  type        = map(string)
   description = "The OCI VM shape used to create the compute instance"
-}
-
-variable "wls_ocpu_count" {
-  type        = number
-  description = "OCPU count for compute instance"
-  default     = 1
 }
 
 #TODO (robesanc): This variable is used but I do not understand its purpose

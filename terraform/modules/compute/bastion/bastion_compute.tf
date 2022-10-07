@@ -8,7 +8,7 @@ resource "oci_core_instance" "wls-bastion-instance" {
 
   compartment_id = var.compartment_id
   display_name   = var.instance_name
-  shape          = var.instance_shape
+  shape          = var.instance_shape.instanceShape
 
   defined_tags  = var.tags.defined_tags
   freeform_tags = var.tags.freeform_tags
@@ -20,8 +20,12 @@ resource "oci_core_instance" "wls-bastion-instance" {
     nsg_ids                = var.bastion_nsg_id
   }
 
-  shape_config {
-    ocpus = local.ocpus
+  dynamic "shape_config" {
+    for_each = length(regexall("^.*Flex", var.instance_shape.instanceShape)) > 0 ? [1] : []
+    content {
+      ocpus         = var.instance_shape.ocpus
+      memory_in_gbs = var.instance_shape.memory
+    }
   }
 
   metadata = {

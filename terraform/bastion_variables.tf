@@ -14,9 +14,13 @@ variable "existing_bastion_instance_id" {
 }
 
 variable "bastion_instance_shape" {
-  type        = string
+  type = map(string)
   description = "Shape of bastion VM instances"
-  default     = "VM.Standard2.1"
+  default = {
+    "instanceShape" = "VM.Standard.E4.Flex",
+    "ocpus"         = "1",
+    "memory"        = "16"
+  }
 }
 
 variable "bastion_ssh_private_key" {
