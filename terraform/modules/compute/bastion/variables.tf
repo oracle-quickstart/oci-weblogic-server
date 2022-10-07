@@ -30,11 +30,7 @@ variable "region" {
 
 variable "instance_shape" {
   type        = map(string)
-  description = "The shape of the bastion instance. For example: VM.Standard2.2"
-  validation {
-    condition     = var.instance_shape != ""
-    error_message = "WLSC-ERROR: The value for instance_shape cannot be empty."
-  }
+  description = "The map containing shape, ocpus, and memory of the bastion instance"
 }
 
 variable "instance_name" {

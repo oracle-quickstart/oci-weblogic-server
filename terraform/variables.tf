@@ -49,7 +49,7 @@ variable "service_tags" {
 
 variable "instance_shape" {
   type        = map(string)
-  description = "shape of weblogic VM instances"
+  description = "The OCI VM shape for WebLogic VM instances"
   default = {
     "instanceShape" = "VM.Standard.E4.Flex",
     "ocpus"         = "1",

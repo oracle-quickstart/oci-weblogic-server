@@ -15,12 +15,12 @@ variable "existing_bastion_instance_id" {
 
 variable "bastion_instance_shape" {
   type = map(string)
+  description = "Shape of bastion VM instances"
   default = {
     "instanceShape" = "VM.Standard.E4.Flex",
     "ocpus"         = "1",
     "memory"        = "16"
   }
-  description = "default shape of bastion VM instances"
 }
 
 variable "bastion_ssh_private_key" {
