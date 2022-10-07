@@ -8,7 +8,7 @@ resource "oci_core_instance" "these" {
   availability_domain = each.value.availability_domain
   compartment_id      = each.value.compartment_id
   display_name        = each.value.display_name
-  shape               = each.value.shape
+  shape               = each.value.shape.instanceShape
 
   defined_tags  = each.value.defined_tags
   freeform_tags = each.value.freeform_tags
@@ -21,8 +21,12 @@ resource "oci_core_instance" "these" {
     nsg_ids          = each.value.compute_nsg_ids
   }
 
-  shape_config {
-    ocpus = each.value.ocpus
+  dynamic "shape_config" {
+    for_each = length(regexall("^.*Flex", each.value.shape.instanceShape)) > 0 ? [1] : []
+    content {
+      ocpus         = each.value.shape.ocpus
+      memory_in_gbs = each.value.shape.memory
+    }
   }
 
   source_details {
