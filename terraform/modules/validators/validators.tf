@@ -40,6 +40,10 @@ locals {
   invalid_dynamic_group_msg   = "WLSC-ERROR: The value for Dynamic Group [dynamic_group_id] is not valid. The value must begin with ocid1 followed by resource type, e.g. ocid1.dynamicgroup."
   validate_dynamic_group_ocid = local.invalid_dynamic_group ? local.validators_msg_map[local.invalid_dynamic_group_msg] : null
 
+  invalid_vm_count = (var.num_vm_instances < 1) || (var.num_vm_instances > var.wls_node_count_limit)
+  num_vm_instances_msg      = "WLSC-ERROR: The value for wls_node_count=[${var.num_vm_instances}] is not valid. The permissible value cannot exceed the value wls_node_count_limit=[${var.wls_node_count_limit}]."
+  validate_num_vm_instances = local.invalid_vm_count ? local.validators_msg_map[local.num_vm_instances_msg] : null
+
 }
 
 

@@ -1,7 +1,7 @@
 # Copyright (c) 2022, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
-variable "tenancy_id" {
+variable "tenancy_ocid" {
   type        = string
   description = "The OCID of the tenancy where the WebLogic for OCI stack will be created"
 }
@@ -11,7 +11,7 @@ variable "region" {
   description = "The region where the WebLogic for OCI stack will be created"
 }
 
-variable "compartment_id" {
+variable "compartment_ocid" {
   type        = string
   description = "The OCID of the compartment where new resources for the the WebLogic for OCI stack will be created"
 }
@@ -35,7 +35,7 @@ variable "create_policies" {
 variable "generate_dg_tag" {
   type        = bool
   description = "Set to true to generate defined tags for dynamic group definition."
-  default     = false
+  default     = true
 }
 
 variable "service_tags" {
@@ -45,11 +45,6 @@ variable "service_tags" {
   })
   description = "Tags to be applied to all resources that support tag created by the WebLogic for OCI stack"
   default     = { freeformTags = {}, definedTags = {} }
-}
-
-variable "tf_script_version" {
-  type        = string
-  description = "The version of the provisioning scripts located in the OCI image used to create the WebLogic compute instances"
 }
 
 variable "instance_shape" {

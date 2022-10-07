@@ -11,25 +11,25 @@ variable "use_bastion_marketplace_image" {
 variable "bastion_image_id" {
   type        = string
   description = "The OCID of the marketplace bastion image"
-  default     = ""
+  default     = "ocid1.image.oc1..aaaaaaaaoa3exyconrosq5czu5xoryd5ahau5s5ocuc7gnknexqpe6zme6mq"
 }
 
 variable "bastion_listing_id" {
   type        = string
   description = "The OCID of the marketplace bastion image listing"
-  default     = ""
+  default     = "ocid1.appcataloglisting.oc1..aaaaaaaacicjx6jviqczqow567tadr5ju7iy2m4vx6opyra6thql55n2nnvq"
 }
 
 variable "bastion_listing_resource_version" {
   type        = string
   description = "The OCID of the marketplace bastion image listing resource version"
-  default     = ""
+  default     = "21.4.3-211213203402"
 }
 
 variable "use_marketplace_image" {
   type        = bool
   description = "Set to true if using a marketplace Weblogic instance image, to create the marketplace subscriptions"
-  default     = true
+  default     = false
 }
 
 variable "instance_image_id" {
