@@ -7,7 +7,7 @@ variable "instance_params" {
     availability_domain = string
     compartment_id      = string
     display_name        = string
-    shape               = string
+    shape               = map(string)
 
     defined_tags  = map(string)
     freeform_tags = map(string)
@@ -17,8 +17,6 @@ variable "instance_params" {
     assign_public_ip  = string
     hostname_label    = string
     compute_nsg_ids   = list(string)
-
-    ocpus = number
 
     source_type = string
     source_id   = string

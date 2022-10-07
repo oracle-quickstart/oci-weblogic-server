@@ -29,21 +29,11 @@ variable "region" {
 }
 
 variable "instance_shape" {
-  type        = string
+  type        = map(string)
   description = "The shape of the bastion instance. For example: VM.Standard2.2"
   validation {
     condition     = var.instance_shape != ""
     error_message = "WLSC-ERROR: The value for instance_shape cannot be empty."
-  }
-}
-
-variable "ocpu_count" {
-  type        = number
-  description = "The number of ocpus for the compute instance. This variable is not used if the instance shape is not a Flex shape"
-  default     = 1
-  validation {
-    condition     = var.ocpu_count > 0
-    error_message = "WLSC-ERROR: The value for ocpu_count must be greater than 0."
   }
 }
 

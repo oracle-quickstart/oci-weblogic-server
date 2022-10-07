@@ -21,7 +21,7 @@ data "oci_core_shapes" "oci_shapes" {
   availability_domain = var.availability_domain
   filter {
     name   = "name"
-    values = [var.instance_shape]
+    values = [var.instance_shape.instanceShape]
   }
 }
 

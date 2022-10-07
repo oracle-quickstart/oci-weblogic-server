@@ -30,7 +30,7 @@ data "oci_core_subnet" "bastion_subnet" {
 
 data "template_file" "ad_names" {
   count    = length(data.oci_identity_availability_domains.ADs.availability_domains)
-  template = (length(regexall("^.*Flex", var.instance_shape)) > 0 || length(regexall("^BM.*", var.instance_shape)) > 0 || (tonumber(lookup(data.oci_limits_limit_values.compute_shape_service_limits[count.index].limit_values[0], "value")) > 0)) ? lookup(data.oci_identity_availability_domains.ADs.availability_domains[count.index], "name") : ""
+  template = (length(regexall("^.*Flex", var.instance_shape.instanceShape)) > 0 || length(regexall("^BM.*", var.instance_shape.instanceShape))>0  ||(tonumber(lookup(data.oci_limits_limit_values.compute_shape_service_limits[count.index].limit_values[0], "value")) > 0)) ? lookup(data.oci_identity_availability_domains.ADs.availability_domains[count.index], "name") : ""
 }
 
 data "oci_identity_availability_domains" "ADs" {
@@ -47,7 +47,7 @@ data "oci_limits_limit_values" "compute_shape_service_limits" {
   availability_domain = lookup(data.oci_identity_availability_domains.ADs.availability_domains[count.index], "name")
   #format of name field -vm-standard2-2-count
   #ignore flex shapes
-  name = length(regexall("^.*Flex", var.instance_shape)) > 0 || length(regexall("^BM.*", var.instance_shape)) > 0 ? "" : format("%s-count", replace(var.instance_shape, ".", "-"))
+  name = length(regexall("^.*Flex", var.instance_shape.instanceShape))> 0 || length(regexall("^BM.*", var.instance_shape.instanceShape))>0 ? "" : format("%s-count", replace(var.instance_shape.instanceShape, ".", "-"))
 }
 
 data "oci_load_balancer_load_balancers" "existing_load_balancers_data_source" {

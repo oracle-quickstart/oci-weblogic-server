@@ -49,8 +49,6 @@ module "wls-instances" {
     hostname_label    = "${local.host_label}-${x}"
     compute_nsg_ids   = length(var.compute_nsg_ids) != 0 ? x == 0 ? var.compute_nsg_ids : [element(var.compute_nsg_ids, 1)] : []
 
-    ocpus = length(regexall("^.*Flex", var.instance_shape)) == 0 ? lookup(data.oci_core_shapes.oci_shapes[x % length(local.ad_names)].shapes[0], "ocpus") : var.wls_ocpu_count
-
     source_type = "image"
     source_id   = var.instance_image_id
 

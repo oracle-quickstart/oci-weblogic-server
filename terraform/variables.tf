@@ -48,13 +48,11 @@ variable "service_tags" {
 }
 
 variable "instance_shape" {
-  type        = string
-  description = "The OCI VM shape for WebLogic VM instances"
-  default     = "VM.Standard.E4.Flex"
-}
-
-variable "wls_ocpu_count" {
-  type        = number
-  description = "OCPU count for Weblogic instance"
-  default     = 1
+  type        = map(string)
+  description = "shape of weblogic VM instances"
+  default     = {
+    "instanceShape" = "VM.Standard.E4.Flex",
+    "ocpus" = "1",
+    "memory" = "16"
+  }
 }
