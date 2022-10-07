@@ -91,7 +91,7 @@ create_14110_bundle()
 {
   cp -Rf ${SCRIPT_DIR}/../terraform/modules ${SCRIPT_DIR}/../terraform/*.tf ${SCRIPT_DIR}/../terraform/version.txt ${SCRIPT_DIR}/../terraform/schema_14110.yaml ${TMP_BUILD}
   cp -f ${SCRIPT_DIR}/../terraform/orm/orm_provider.tf ${TMP_BUILD}/provider.tf
-  sed -i '' 's/12.2.1.4/14.1.1.0/' ${TMP_BUILD}/weblogic_variables.tf
+  sed -i'' 's/12.2.1.4/14.1.1.0/' ${TMP_BUILD}/weblogic_variables.tf
   (cd ${TMP_BUILD}; zip -r ${SCRIPT_DIR}/binaries/wlsoci-resource-manager-ee-14110.zip *; rm -Rf ${TMP_BUILD}/*)
 } 
 
