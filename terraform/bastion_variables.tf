@@ -14,11 +14,11 @@ variable "existing_bastion_instance_id" {
 }
 
 variable "bastion_instance_shape" {
-  type        = map(string)
-  default     = {
+  type = map(string)
+  default = {
     "instanceShape" = "VM.Standard.E4.Flex",
-    "ocpus" = "1",
-    "memory" = "16"
+    "ocpus"         = "1",
+    "memory"        = "16"
   }
   description = "default shape of bastion VM instances"
 }
