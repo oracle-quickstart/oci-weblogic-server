@@ -71,7 +71,7 @@ data "oci_core_service_gateways" "service_gateways" {
 }
 
 data "oci_core_internet_gateways" "internet_gateways" {
-  compartment_id = var.network_compartment_id
+  compartment_id = local.network_compartment_id
   vcn_id         = local.vcn_id
 }
 
