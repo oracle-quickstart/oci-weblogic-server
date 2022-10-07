@@ -76,7 +76,7 @@ module "network-vcn-config" {
 
 module "network-lb-nsg" {
   source         = "./modules/network/nsg"
-  count          = var.add_load_balancer && var.lb_subnet_1_cidr != "" ? 1 : 0
+  count          = local.use_existing_lb ? 0 : var.add_load_balancer && var.lb_subnet_1_cidr != "" ? 1 : 0
   compartment_id = local.network_compartment_id
   vcn_id         = local.vcn_id
   nsg_name       = "${local.service_name_prefix}-lb-nsg"
@@ -142,7 +142,7 @@ module "network-compute-managed-nsg" {
 /* Create primary subnet for Load balancer only */
 module "network-lb-subnet-1" {
   source          = "./modules/network/subnet"
-  count           = local.add_existing_load_balancer ? 0 : var.add_load_balancer && var.lb_subnet_1_id == "" ? 1 : 0
+  count           = local.use_existing_lb ? 0 : var.add_load_balancer && var.lb_subnet_1_id == "" ? 1 : 0
   compartment_id  = local.network_compartment_id
   vcn_id          = local.vcn_id
   dhcp_options_id = module.network-vcn-config[0].dhcp_options_id
@@ -353,6 +353,7 @@ module "validators" {
   idcs_client_secret_id = var.idcs_client_secret_id
   idcs_cloudgate_port   = var.idcs_cloudgate_port
 
+  network_compartment_id       = local.network_compartment_id
   existing_vcn_id              = var.wls_existing_vcn_id
   wls_subnet_cidr              = var.wls_subnet_cidr
   lb_subnet_1_cidr             = var.lb_subnet_1_cidr
@@ -361,9 +362,8 @@ module "validators" {
   is_bastion_instance_required = var.is_bastion_instance_required
   existing_bastion_instance_id = var.existing_bastion_instance_id
   bastion_ssh_private_key      = var.bastion_ssh_private_key
-  add_load_balancer            = var.add_load_balancer
-  existing_load_balancer_id    = var.existing_load_balancer_id
-  use_existing_subnets         = local.use_existing_subnets
+
+  use_existing_subnets = local.use_existing_subnets
 
   wls_subnet_id     = var.wls_subnet_id
   lb_subnet_1_id    = var.lb_subnet_1_id
@@ -373,7 +373,13 @@ module "validators" {
   vcn_name            = var.wls_vcn_name
   use_regional_subnet = local.use_regional_subnet
 
-  is_lb_private = var.is_lb_private
+  add_load_balancer                          = var.add_load_balancer
+  is_lb_private                              = var.is_lb_private
+  existing_load_balancer_id                  = var.existing_load_balancer_id
+  existing_load_balancer_found               = length(local.existing_lb_object_as_list) == 1
+  backendset_name_for_existing_load_balancer = var.backendset_name_for_existing_load_balancer
+  existing_lb_subnet_1_id                    = local.existing_lb_subnet_1_id
+  existing_lb_subnet_2_id                    = local.existing_lb_subnet_2_id
 
   add_fss                          = var.add_fss
   fss_availability_domain          = (var.add_existing_fss && var.add_existing_mount_target) ? data.oci_file_storage_file_systems.file_systems[0].file_systems[0].availability_domain : ""
@@ -603,17 +609,14 @@ module "load-balancer-backends" {
   source = "./modules/lb/backends"
   count  = var.add_load_balancer ? 1 : 0
 
-  health_check_url     = "/"
-  instance_private_ips = module.compute.instance_private_ips
-  lb_port              = var.wls_ms_extern_port #TODO: change name of this variable lb_port to be more descriptive
-  load_balancer_id     = var.add_load_balancer ? (var.existing_load_balancer_id != "" ? var.existing_load_balancer_id : element(coalescelist(module.load-balancer[*].wls_loadbalancer_id, [""]), 0)) : ""
-  num_vm_instances     = var.wls_node_count
   resource_name_prefix = local.service_name_prefix
-  # TODO: check if we can add support to tags
-  /*tags = {
-    defined_tags = local.defined_tags
-    freeform_tags = local.free_form_tags
-  }*/
+  load_balancer_id     = var.add_load_balancer ? (var.existing_load_balancer_id != "" ? var.existing_load_balancer_id : element(coalescelist(module.load-balancer[*].wls_loadbalancer_id, [""]), 0)) : ""
+  use_existing_lb      = local.use_existing_lb
+  lb_backendset_name   = local.lb_backendset_name
+  num_vm_instances     = var.wls_node_count
+  instance_private_ips = module.compute.instance_private_ips
+  backend_port         = var.is_idcs_selected ? var.idcs_cloudgate_port : var.wls_ms_extern_port
+  health_check_url     = var.is_idcs_selected ? "/cloudgate" : "/"
 }
 
 module "observability-logging" {
