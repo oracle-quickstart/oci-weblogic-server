@@ -386,11 +386,10 @@ variables:
       compartmentId: ${compartment_ocid}
 
   instance_shape:
-    type: oci:core:instanceshape:name
+    type: oci:core:instanceshapewithflex:name
     title: Compute Shape
     description: The shape for WebLogic Server compute instances. When scaled-out, the changes to instance shape will apply only to the added nodes.
     required: true
-    default: VM.Standard.E4.Flex
     dependsOn:
       compartmentId: ${compartment_ocid}
       imageId: ${instance_image_id}
@@ -1077,7 +1076,7 @@ variables:
             - eq:
                 - ${subnet_type}
                 - "Use Private Subnet"
-    type: oci:core:instanceshape:name
+    type: oci:core:instanceshapewithflex:name
     title: Bastion Host Shape
     description: The shape for bastion compute instance.
     required: true
