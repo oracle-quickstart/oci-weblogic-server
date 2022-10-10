@@ -1927,13 +1927,13 @@ variables:
       and:
         - ${orm_create_mode}
         - ${add_JRF}
-        - not:
-          - ${use_oci_db_connection_string}
         - or:
           - and:
               - eq:
                   - ${db_strategy}
                   - "Database System"
+              - not:
+                  - ${use_oci_db_connection_string}
               - or:
                   - ${create_new_vcn}
                   - and:
