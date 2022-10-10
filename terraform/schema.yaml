@@ -26,17 +26,7 @@ groupings:
       - ${wls_admin_secret_compartment_id}
       - ${wls_admin_password_id}
       - ${add_JRF}
-      - ${deploy_sample_app}
-      - ${wls_server_startup_args}
-      - ${configure_wls_ports}
-      - ${wls_nm_port}
-      - ${wls_extern_admin_port}
-      - ${wls_extern_ssl_admin_port}
-      - ${wls_cluster_mc_port}
-      - ${wls_ms_extern_port}
-      - ${wls_ms_extern_ssl_port}
-      - ${allow_manual_domain_extension}
-      #Begin JRF fields
+      #Start of JRF fields
       - ${db_strategy}
       - ${atp_db_compartment_id}
       - ${atp_db_id}
@@ -61,6 +51,17 @@ groupings:
       - ${oci_db_password_id}
       - ${oci_db_port}
       - ${ocidb_existing_vcn_add_seclist}
+      #End of JRF fields
+      - ${deploy_sample_app}
+      - ${wls_server_startup_args}
+      - ${configure_wls_ports}
+      - ${wls_nm_port}
+      - ${wls_extern_admin_port}
+      - ${wls_extern_ssl_admin_port}
+      - ${wls_cluster_mc_port}
+      - ${wls_ms_extern_port}
+      - ${wls_ms_extern_ssl_port}
+      - ${allow_manual_domain_extension}
 
   - title: "Virtual Cloud Networking"
     variables:
