@@ -60,7 +60,6 @@ groupings:
       - ${wls_availability_domain_name}
       - ${wls_subnet_id}
       - ${wls_subnet_cidr}
-      - ${wls_admin_port_source_cidr}
       - ${existing_admin_server_nsg_id}
       - ${existing_managed_server_nsg_id}
 
@@ -173,7 +172,6 @@ groupings:
       - ${listing_resource_version}
       - ${wls_version}
       - ${log_level}
-      - ${atp_db_wallet_password}
       #- ${instance_image_id}
       - ${marketplace_source_images}
       - ${use_regional_subnet}
@@ -181,7 +179,6 @@ groupings:
       - ${bastion_image_id}
       - ${bastion_listing_id}
       - ${bastion_listing_resource_version}
-      - ${use_local_vcn_peering}
       - ${existing_bastion_instance_id}
       - ${bastion_ssh_private_key}
       - ${wls_admin_port}
@@ -206,11 +203,6 @@ groupings:
       - ${atp_db_level}
       - ${atp_db_password_id}
       - ${db_strategy}
-      - ${disable_infra_db_vcn_peering}
-      - ${disable_app_db_vcn_peering}
-      - ${wls_dns_subnet_cidr}
-      - ${oci_db_dns_subnet_cidr}
-      - ${dns_instance_shape}
       - ${wls_expose_admin_port}
       - ${mount_path}
       - ${oci_db_connection_string}
@@ -224,171 +216,134 @@ groupings:
       - ${terms_and_conditions}
       - ${generate_dg_tag}
       - ${existing_export_path_id}
-      - ${vcn_strategy}
       - ${db_vcn_lpg_id}
       - ${wait_time_wls_vnc_dns_resolver}
       - ${atp_db_existing_vcn_id}
+      - ${wls_admin_port_source_cidr}
 
 outputs:
-  Virtual_Cloud_Network_Id:
+  virtual_cloud_network_id:
     type: ocid
     title: Virtual Cloud Network Id
-  Is_VCN_Peered:
+  is_vcn_peered:
     type: link
     title: Is VCN Peered
     visible: false
-  WebLogic_Subnet_Id:
-    type: link
-    title: WebLogic Subnet Id
-    visible: false
-  WebLogic_Server_Administration_Console:
+  weblogic_server_administration_console:
     type: link
     title: WebLogic Server Administration Console
-  WebLogic_Instances:
+  weblogic_instances:
     type: json
     title: WebLogic Instances
-  Loadbalancer_Subnets_Id:
-    type: link
-    title: Loadbalancer Subnets Id
-    visible: false
-  Load_Balancer_Id:
+  load_balancer_id:
     type: ocid
     title: Load balancer Id
-  Load_Balancer_Ip:
+  load_balancer_ip:
     type: copyableString
     title: Load Balancer IP
-  Fusion_Middleware_Control_Console:
+  fusion_middleware_control_console:
     type: link
     title: Fusion Middleware Control Console
-  Provisioning_Status:
+  provisioning_status:
     type: link
     title: Provisioning Status
     visible: false
-  Sample_Application_protected_by_IDCS:
+  sample_application:
+    type: link
+    title: Sample Application
+  sample_application_protected_by_idcs:
     type: link
     title: Sample Application Protected By IDCS
-  Virtual_Cloud_Network_CIDR:
+  virtual_cloud_network_cidr:
     type: link
     title: Virtual Cloud Network CIDR
-  WebLogic_Version:
+  weblogic_version:
     type: link
     title: WebLogic Version
-  JDK_Version:
+  jdk_version:
     type: link
     title: JDK Version
-  Bastion_Instance_Id:
+  bastion_instance_id:
     type: ocid
     title: Instance Id
-  Bastion_Instance_Public_IP:
+  bastion_instance_public_ip:
     type: copyableString
     title: Public Ip
-  SSH_Command:
+  ssh_command:
     type: copyableString
     title: SSH Command
-  SSH_Command_With_Dynamic_Port_Forwarding:
+  ssh_command_with_dynamic_port_forwarding:
     type: copyableString
     title: SSH Command with Dynamic Port Forwarding
-  FSS_System_Id:
+  fss_system_id:
     type: ocid
     title: File System Id
-  Mount_Target_Id:
+  mount_target_id:
     type: ocid
     title: Mount Target Id
-  Listing_Version:
+  listing_version:
     type: copyableString
     title: Marketplace Listing Version
-  Resource_Identifier_Value:
+  resource_identifier_value:
     type: copyableString
     title: Stack Resources System Tag
-  WebLogic_Agent_Configuration_Id:
+  weblogic_agent_configuration_id:
     type: ocid
     title: WebLogic Log Agent Configuration Id
     visible: false
-  WebLogic_Log_Group_Id:
+  weblogic_log_group_id:
     type: ocid
     title: WebLogic Log Group Id
-  WebLogic_Log_Id:
+  weblogic_log_id:
     type: ocid
     title: WebLogic Log Id
-  Autoscaling_ScaleOut_Monitoring_Alarm_Id:
+  autoscaling_scaleout_monitoring_alarm_id:
     type: ocid
     title: Autoscaling ScaleOut Monitoring Alarm Id
-  Autoscaling_ScaleIn_Monitoring_Alarm_Id:
+  autoscaling_scalein_monitoring_alarm_id:
     type: ocid
     title: Autoscaling ScaleIn Monitoring Alarm Id
-  Autoscaling_Function_Application_Id:
+  autoscaling_function_application_id:
     type: ocid
     title: Autoscaling Function Application Id
-  Autoscaling_ScaleOut_Notification_Topic_Id:
-    type: ocid
-    title: Autoscaling_ScaleOut_Notification_Topic_Id
-    visible: false
-  Autoscaling_ScaleIn_Notification_Topic_Id:
-    type: ocid
-    title: Autoscaling ScaleIn Notification Topic Id
-    visible: false
-  Autoscaling_Email_Notification_Topic_Id:
-    type: ocid
-    title: Autoscaling Email Notification Topic Id
-    visible: false
-  Autoscaling_Email_Topic_Email_Subscription_Id:
-    type: ocid
-    title: Autoscaling Email Topic Email Subscription Id
-    visible: false
-  Autoscaling_Scaleout_Function_Repo_Id:
-    type: ocid
-    title: Autoscaling Scaleout Function Repo Id
-    visible: false
-  Autoscaling_Scalein_Function_Repo_Id:
-    type: ocid
-    title: Autoscaling Scalein Function Repo Id
-    visible: false
-  Autoscaling_OrmJobCompletionHandler_Function_Repo_Id:
-    type: ocid
-    title: Autoscaling OrmJobCompletionHandler Function Repo Id
-    visible: false
-  WebLogic_Autoscaling_Log_Id:
-    type: ocid
-    title: WebLogic Autoscaling Log Id
-    visible: false
 
 outputGroups:
   - title: WebLogic
     outputs:
-      - ${WebLogic_Server_Administration_Console}
-      - ${Sample_Application}
-      - ${Fusion_Middleware_Control_Console}
-      - ${Sample_Application_protected_by_IDCS}
-      - ${WebLogic_Version}
-      - ${WebLogic_Instances}
-      - ${JDK_Version}
+      - ${weblogic_server_administration_console}
+      - ${sample_application}
+      - ${fusion_middleware_control_console}
+      - ${sample_application_protected_by_idcs}
+      - ${weblogic_version}
+      - ${weblogic_instances}
+      - ${jdk_version}
   - title: Networking
     outputs:
-      - ${Virtual_Cloud_Network_Id}
-      - ${Load_Balancer_Id}
-      - ${Virtual_Cloud_Network_CIDR}
-      - ${Load_Balancer_Ip}
+      - ${virtual_cloud_network_id}
+      - ${load_balancer_id}
+      - ${virtual_cloud_network_cidr}
+      - ${load_balancer_ip}
   - title: Bastion
     outputs:
-      - ${Bastion_Instance_Id}
-      - ${SSH_Command}
-      - ${Bastion_Instance_Public_IP}
-      - ${SSH_Command_With_Dynamic_Port_Forwarding}
+      - ${bastion_instance_id}
+      - ${ssh_command}
+      - ${bastion_instance_public_ip}
+      - ${ssh_command_with_dynamic_port_forwarding}
   - title: File Storage
     outputs:
-      - ${FSS_System_Id}
-      - ${Mount_Target_Id}
+      - ${fss_system_id}
+      - ${mount_target_id}
   - title: Observability
     outputs:
-      - ${WebLogic_Log_Group_Id}
-      - ${WebLogic_Log_Id}
-      - ${Autoscaling_ScaleOut_Monitoring_Alarm_Id}
-      - ${Autoscaling_ScaleIn_Monitoring_Alarm_Id}
-      - ${Autoscaling_Function_Application_Id}
+      - ${weblogic_log_group_id}
+      - ${weblogic_log_id}
+      - ${autoscaling_scaleout_monitoring_alarm_id}
+      - ${autoscaling_scalein_monitoring_alarm_id}
+      - ${autoscaling_function_application_id}
   - title: Listing
     outputs:
-      - ${Listing_Version}
-      - ${Resource_Identifier_Value}
+      - ${listing_version}
+      - ${resource_identifier_value}
 
 variables:
   # WLS Instance Configuration
@@ -638,16 +593,6 @@ variables:
     title: "Create a Virtual Cloud Network"
     description: "Create a new Virtual Cloud Network and subnets"
 
-  vcn_strategy:
-    type: enum
-    title: Virtual Cloud Network Strategy
-    description: Create or use an existing VCN. If you use an existing VCN, <a target="_blank" href="https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/you-begin-oracle-weblogic-cloud.html#GUID-E9B66B15-30A3-4D00-B031-F9ADDD1AB46E">validate the existing network setup</a>.
-    enum:
-      - "Create New VCN"
-      - "Use Existing VCN"
-    required: true
-    default: "Use Existing VCN"
-
   create_new_subnets:
     visible:
       and:
@@ -667,7 +612,6 @@ variables:
     required: false
     default: ${compartment_ocid}
 
-  # WLS Advanced Configuration Option
   add_fss:
     type: boolean
     default: false
@@ -1127,40 +1071,7 @@ variables:
     required: true
     dependsOn:
       compartmentId: ${network_compartment_id}
-      vcnId: ${wls_existing_vcn_id} 
-
-  # WLS admin console port configuration for public subnet -remove this as it hidden and public subnets are not created anymore
-  wls_expose_admin_port:
-    visible:
-      and:
-        - ${orm_create_mode}
-        - and:
-            - ${create_new_subnets}
-            - eq:
-                - ${subnet_type}
-                - "Use Public Subnet"
-
-    type: boolean
-    default: false
-    title: Enable Access to Administration Console
-
-  # remove this as it hidden and public subnets are not created anymore
-  wls_admin_port_source_cidr:
-    visible:
-      and:
-        - ${orm_create_mode}
-        - and:
-            - ${wls_expose_admin_port}
-            - and:
-                - ${create_new_subnets}
-                - eq:
-                    - ${subnet_type}
-                    - "Use Public Subnet"
-    type: string
-    default: 0.0.0.0/0
-    pattern: "^(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\\/(3[0-2]|[1-2]?[0-9])$"
-    title:  Source CIDR
-    required: true
+      vcnId: ${wls_existing_vcn_id}
 
   existing_admin_server_nsg_id:
     visible:
@@ -1180,7 +1091,7 @@ variables:
     dependsOn:
       compartmentId: ${network_compartment_id}
       vcnId: ${wls_existing_vcn_id}
-      
+
   existing_managed_server_nsg_id:
     visible:
       and:
@@ -1657,7 +1568,7 @@ variables:
     minLength: 1
     maxLength: 1024
     title: IDCS Tenant
-    description: The ID of your Identity Cloud Service tenant, which typically has the format idcs-&lt;guid&gt;, and is part of the host name that you use to access Identity Cloud Service
+    description: The ID of your Identity Cloud Service tenant, which typically has the format idcs-{guid}, and is part of the host name that you use to access Identity Cloud Service
     required: true
 
   idcs_client_id:
