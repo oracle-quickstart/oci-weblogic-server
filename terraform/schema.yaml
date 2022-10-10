@@ -26,20 +26,7 @@ groupings:
       - ${wls_admin_secret_compartment_id}
       - ${wls_admin_password_id}
       - ${add_JRF}
-      - ${deploy_sample_app}
-      - ${wls_server_startup_args}
-      - ${use_advanced_wls_instance_config}
-      - ${wls_nm_port}
-      - ${wls_extern_admin_port}
-      - ${wls_extern_ssl_admin_port}
-      - ${wls_cluster_mc_port}
-      - ${wls_ms_extern_port}
-      - ${wls_ms_extern_ssl_port}
-      - ${allow_manual_domain_extension}
-
-  - title: "Database for JRF"
-    visible: ${add_JRF}
-    variables:
+      #Start of JRF fields
       - ${db_strategy}
       - ${atp_db_compartment_id}
       - ${atp_db_id}
@@ -64,6 +51,17 @@ groupings:
       - ${oci_db_password_id}
       - ${oci_db_port}
       - ${ocidb_existing_vcn_add_seclist}
+      #End of JRF fields
+      - ${deploy_sample_app}
+      - ${wls_server_startup_args}
+      - ${configure_wls_ports}
+      - ${wls_nm_port}
+      - ${wls_extern_admin_port}
+      - ${wls_extern_ssl_admin_port}
+      - ${wls_cluster_mc_port}
+      - ${wls_ms_extern_port}
+      - ${wls_ms_extern_ssl_port}
+      - ${allow_manual_domain_extension}
 
   - title: "Virtual Cloud Networking"
     variables:
@@ -77,14 +75,6 @@ groupings:
       - ${subnet_type}
       - ${subnet_span}
       - ${add_existing_nsg}
-
-  - title: "Local VCN Peering"
-    visible:
-      and:
-        - ${add_JRF}
-        - not:
-          - ${use_oci_db_connection_string}
-    variables:
       - ${db_vcn_lpg_id}
 
   - title: "WebLogic Server Compute Instance"
@@ -466,20 +456,18 @@ variables:
     dependsOn:
       compartmentId: ${wls_admin_secret_compartment_id}
 
-  # WLS Advanced Configuration Option
-  use_advanced_wls_instance_config:
+  configure_wls_ports:
     visible: ${orm_create_mode}
     type: boolean
     default: false
     title: "Configure Ports"
     description: Configure the ports for administration server, managed server and cluster. It is optional, if not changed, default ports will be used. See <a target="_blank" href="https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/default-ports.html">configure ports</a>.
 
-
   wls_nm_port:
     visible:
       and:
         - ${orm_create_mode}
-        - ${use_advanced_wls_instance_config}
+        - ${configure_wls_ports}
     type: integer
     default: 5556
     minimum: 1024
@@ -493,7 +481,7 @@ variables:
     visible:
       and:
         - ${orm_create_mode}
-        - ${use_advanced_wls_instance_config}
+        - ${configure_wls_ports}
     type: integer
     default: 7001
     minimum: 1024
@@ -507,7 +495,7 @@ variables:
     visible:
       and:
         - ${orm_create_mode}
-        - ${use_advanced_wls_instance_config}
+        - ${configure_wls_ports}
     type: integer
     default: 7002
     minimum: 1024
@@ -521,7 +509,7 @@ variables:
     visible:
       and:
         - ${orm_create_mode}
-        - ${use_advanced_wls_instance_config}
+        - ${configure_wls_ports}
     type: integer
     default: 5555
     minimum: 1024
@@ -535,7 +523,7 @@ variables:
     visible:
       and:
         - ${orm_create_mode}
-        - ${use_advanced_wls_instance_config}
+        - ${configure_wls_ports}
     type: integer
     default: 7003
     minimum: 1024
@@ -549,7 +537,7 @@ variables:
     visible:
       and:
         - ${orm_create_mode}
-        - ${use_advanced_wls_instance_config}
+        - ${configure_wls_ports}
     type: integer
     default: 7004
     minimum: 1024
@@ -1519,7 +1507,10 @@ variables:
     description: Deploy the Java Required Files (JRF) components and create the JRF schemas on the selected database
 
   db_strategy:
-    visible: ${orm_create_mode}
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${add_JRF}
     type: enum
     title: Database Strategy
     description: Choose the database strategy for WebLogic Server
@@ -1533,6 +1524,7 @@ variables:
     visible:
       and:
         - ${orm_create_mode}
+        - ${add_JRF}
         - and:
             - not:
                 - ${create_new_vcn}
@@ -1548,6 +1540,7 @@ variables:
     visible:
       and:
         - ${orm_create_mode}
+        - ${add_JRF}
         - ${use_oci_db_connection_string}
         - eq:
             - ${db_strategy}
@@ -1565,6 +1558,7 @@ variables:
     visible:
       and:
         - ${orm_create_mode}
+        - ${add_JRF}
         - eq:
             - ${db_strategy}
             - "Autonomous Transaction Processing Database"
@@ -1577,6 +1571,7 @@ variables:
     visible:
       and:
         - ${orm_create_mode}
+        - ${add_JRF}
         - eq:
             - ${db_strategy}
             - "Autonomous Transaction Processing Database"
@@ -1591,6 +1586,7 @@ variables:
     visible:
       and:
         - ${orm_create_mode}
+        - ${add_JRF}
         - eq:
             - ${db_strategy}
             - "Autonomous Transaction Processing Database"
@@ -1604,6 +1600,7 @@ variables:
     visible:
       and:
         - ${orm_create_mode}
+        - ${add_JRF}
         - eq:
             - ${db_strategy}
             - "Autonomous Transaction Processing Database"
@@ -1618,6 +1615,7 @@ variables:
     visible:
       and:
         - ${orm_create_mode}
+        - ${add_JRF}
         - eq:
             - ${db_strategy}
             - "Autonomous Transaction Processing Database"
@@ -1634,6 +1632,7 @@ variables:
     visible:
       and:
         - ${orm_create_mode}
+        - ${add_JRF}
         - eq:
             - ${db_strategy}
             - "Autonomous Transaction Processing Database"
@@ -1646,6 +1645,7 @@ variables:
     visible:
       and:
         - ${orm_create_mode}
+        - ${add_JRF}
         - and:
             - eq:
                 - ${db_strategy}
@@ -1661,6 +1661,7 @@ variables:
     visible:
       and:
         - ${orm_create_mode}
+        - ${add_JRF}
         - and:
             - eq:
                 - ${db_strategy}
@@ -1678,6 +1679,7 @@ variables:
     visible:
       and:
         - ${orm_create_mode}
+        - ${add_JRF}
         - and:
             - eq:
                 - ${db_strategy}
@@ -1696,6 +1698,7 @@ variables:
     visible:
       and:
         - ${orm_create_mode}
+        - ${add_JRF}
         - and:
             - ${create_policies}
             - or:
@@ -1713,6 +1716,7 @@ variables:
     visible:
       and:
         - ${orm_create_mode}
+        - ${add_JRF}
         - and:
             - eq:
                 - ${db_strategy}
@@ -1731,6 +1735,7 @@ variables:
     visible:
       and:
         - ${orm_create_mode}
+        - ${add_JRF}
         - and:
             - eq:
                 - ${db_strategy}
@@ -1751,6 +1756,7 @@ variables:
     visible:
       and:
         - ${orm_create_mode}
+        - ${add_JRF}
         - and:
             - eq:
                 - ${db_strategy}
@@ -1770,6 +1776,7 @@ variables:
     visible:
       and:
         - ${orm_create_mode}
+        - ${add_JRF}
         - and:
             - eq:
                 - ${db_strategy}
@@ -1790,6 +1797,7 @@ variables:
     visible:
       and:
         - ${orm_create_mode}
+        - ${add_JRF}
         - and:
             - eq:
                 - ${db_strategy}
@@ -1808,6 +1816,7 @@ variables:
     visible:
       and:
         - ${orm_create_mode}
+        - ${add_JRF}
         - and:
             - eq:
                 - ${db_strategy}
@@ -1828,6 +1837,7 @@ variables:
     visible:
       and:
         - ${orm_create_mode}
+        - ${add_JRF}
         - and:
             - or:
                 - ${create_new_vcn}
@@ -1851,6 +1861,7 @@ variables:
     visible:
       and:
         - ${orm_create_mode}
+        - ${add_JRF}
         - eq:
             - ${db_strategy}
             - "Database System"
@@ -1867,6 +1878,7 @@ variables:
     visible:
       and:
         - ${orm_create_mode}
+        - ${add_JRF}
         - and:
             - eq:
                 - ${db_strategy}
@@ -1885,6 +1897,7 @@ variables:
     visible:
       and:
         - ${orm_create_mode}
+        - ${add_JRF}
         - eq:
             - ${db_strategy}
             - "Database System"
@@ -1898,6 +1911,7 @@ variables:
     visible:
       and:
         - ${orm_create_mode}
+        - ${add_JRF}
         - eq:
             - ${db_strategy}
             - "Database System"
@@ -1912,11 +1926,14 @@ variables:
     visible:
       and:
         - ${orm_create_mode}
+        - ${add_JRF}
         - or:
           - and:
               - eq:
                   - ${db_strategy}
                   - "Database System"
+              - not:
+                  - ${use_oci_db_connection_string}
               - or:
                   - ${create_new_vcn}
                   - and:

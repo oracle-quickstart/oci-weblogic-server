@@ -28,7 +28,7 @@ groupings:
       - ${wls_14c_jdk_version}
       - ${deploy_sample_app}
       - ${wls_server_startup_args}
-      - ${use_advanced_wls_instance_config}
+      - ${configure_wls_ports}
       - ${wls_nm_port}
       - ${wls_extern_admin_port}
       - ${wls_extern_ssl_admin_port}
@@ -460,20 +460,18 @@ variables:
     required: true
     default: "jdk8"
 
-  # WLS Advanced Configuration Option
-  use_advanced_wls_instance_config:
+  configure_wls_ports:
     visible: ${orm_create_mode}
     type: boolean
     default: false
     title: "Configure Ports"
     description: Configure the ports for administration server, managed server and cluster. It is optional, if not changed, default ports will be used. See <a target="_blank" href="https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/default-ports.html">configure ports</a>.
 
-
   wls_nm_port:
     visible:
       and:
         - ${orm_create_mode}
-        - ${use_advanced_wls_instance_config}
+        - ${configure_wls_ports}
     type: integer
     default: 5556
     minimum: 1024
@@ -487,7 +485,7 @@ variables:
     visible:
       and:
         - ${orm_create_mode}
-        - ${use_advanced_wls_instance_config}
+        - ${configure_wls_ports}
     type: integer
     default: 7001
     minimum: 1024
@@ -501,7 +499,7 @@ variables:
     visible:
       and:
         - ${orm_create_mode}
-        - ${use_advanced_wls_instance_config}
+        - ${configure_wls_ports}
     type: integer
     default: 7002
     minimum: 1024
@@ -515,7 +513,7 @@ variables:
     visible:
       and:
         - ${orm_create_mode}
-        - ${use_advanced_wls_instance_config}
+        - ${configure_wls_ports}
     type: integer
     default: 5555
     minimum: 1024
@@ -529,7 +527,7 @@ variables:
     visible:
       and:
         - ${orm_create_mode}
-        - ${use_advanced_wls_instance_config}
+        - ${configure_wls_ports}
     type: integer
     default: 7003
     minimum: 1024
@@ -543,7 +541,7 @@ variables:
     visible:
       and:
         - ${orm_create_mode}
-        - ${use_advanced_wls_instance_config}
+        - ${configure_wls_ports}
     type: integer
     default: 7004
     minimum: 1024
