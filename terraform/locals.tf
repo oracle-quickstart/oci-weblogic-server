@@ -142,4 +142,15 @@ locals {
 
   existing_compute_nsg_ids = var.add_existing_nsg ? [var.existing_admin_server_nsg_id, var.existing_managed_server_nsg_id] : []
   compute_nsg_ids          = local.use_existing_subnets ? local.existing_compute_nsg_ids : concat(module.network-compute-admin-nsg[0].nsg_id, module.network-compute-managed-nsg[0].nsg_id)
+
+  # TODO: remove these two vars when UI uses control with flex shape
+  instance_shape = {
+    "instanceShape" = var.instance_shape,
+    "ocpus"         = var.wls_ocpu_count
+  }
+
+  bastion_instance_shape = {
+    "instanceShape" = var.bastion_instance_shape,
+    "ocpus"         = 1
+  }
 }
