@@ -1,9 +1,9 @@
 # Copyright (c) 2022, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
-resource "oci_core_network_security_group_security_rule" "wls_ssh_ingress_security_rule" {
+resource "oci_core_network_security_group_security_rule" "bastion_ingress_security_rule" {
 
-    network_security_group_id = element(var.nsg_ids["admin_nsg_id"],0)
+    network_security_group_id = element(var.nsg_ids["bastion_nsg_id"],0)
     direction = "INGRESS"
     protocol = "6"
 
@@ -104,9 +104,9 @@ resource "oci_core_network_security_group_security_rule" "lb_ingress_security_ru
   }
 }
 
-resource "oci_core_network_security_group_security_rule" "bastion_ingress_security_rule" {
+resource "oci_core_network_security_group_security_rule" "wls_bastion_ingress_security_rule" {
   count          = var.existing_bastion_instance_id == "" && var.is_bastion_instance_required ? 1 : 0
-  network_security_group_id = element(var.nsg_ids["bastion_nsg_id"],0)
+  network_security_group_id = element(var.nsg_ids["managed_nsg_id"],0)
   direction = "INGRESS"      
   protocol = "all"
 
@@ -115,7 +115,7 @@ resource "oci_core_network_security_group_security_rule" "bastion_ingress_securi
   stateless   = false
 }
 
-resource "oci_core_network_security_group_security_rule" "existing_bastion_ingress_security_rule" {
+resource "oci_core_network_security_group_security_rule" "wls_existing_bastion_ingress_security_rule" {
   count          = var.existing_bastion_instance_id != "" && var.is_bastion_instance_required ? 1 : 0
   network_security_group_id = element(var.nsg_ids["managed_nsg_id"],0)
   direction = "INGRESS"
