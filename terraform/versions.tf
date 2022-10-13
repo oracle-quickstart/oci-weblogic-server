@@ -9,20 +9,19 @@ terraform {
       version = "4.96.0"
     }
     random = {
-      version = "3.3.2"
+      version = "~>3.4.3"
     }
     template = {
-      version = "2.2.0"
+      version = "~>2.2.0"
     }
     tls = {
-      version = "4.0.1"
+      version = "~>4.0.3"
     }
     time = {
-      version = "0.7.2"
+      version = "~>0.9.0"
     }
     null = {
-      version = "3.1.1"
+      version = "~>3.1.1"
     }
   }
-
 }
