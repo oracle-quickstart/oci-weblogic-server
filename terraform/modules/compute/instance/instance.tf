@@ -24,8 +24,9 @@ resource "oci_core_instance" "these" {
   dynamic "shape_config" {
     for_each = length(regexall("^.*Flex", each.value.shape.instanceShape)) > 0 ? [1] : []
     content {
-      ocpus         = each.value.shape.ocpus
-      memory_in_gbs = each.value.shape.memory
+      ocpus = each.value.shape.ocpus
+      # TODO: uncomment this when UI uses control with flex shape
+      #memory_in_gbs = each.value.shape.memory
     }
   }
 

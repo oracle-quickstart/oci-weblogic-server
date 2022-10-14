@@ -1,6 +1,18 @@
 # Copyright (c) 2022, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
+# Variable used in UI only
+variable "create_new_subnets" {
+  type    = bool
+  default = false
+}
+
+# Variable used in UI only
+variable "create_new_vcn" {
+  type    = bool
+  default = false
+}
+
 variable "network_compartment_id" {
   type        = string
   description = "The OCID of the compartment for network resources. Leave it blank to use the the same compartment for both compute and network resources"
@@ -67,6 +79,34 @@ variable "add_load_balancer" {
   default     = false
 }
 
+# Variable used in UI only
+variable "load_balancer_strategy_new_subnet" {
+  type        = string
+  description = "Indicate if you cant to create a new load balancer or use an existing load balancer"
+  default     = "Create New Load Balancer"
+}
+
+# Variable used in UI only
+variable "load_balancer_strategy_existing_subnet" {
+  type        = string
+  description = "Indicate if you cant to create a new load balancer or use an existing load balancer"
+  default     = "Create New Load Balancer"
+}
+
+# Variable used in UI only
+variable "lb_subnet_1_availability_domain_name" {
+  type        = string
+  description = "Availability domain for load balancer when using AD-specific subnets"
+  default     = ""
+}
+
+# Variable used in UI only
+variable "lb_subnet_2_availability_domain_name" {
+  type        = string
+  description = "Availability domain for load balancer when using AD-specific subnets"
+  default     = ""
+}
+
 variable "existing_load_balancer_id" {
   type        = string
   description = "The OCID of an existing load balancer. If set, use the existing load balancer and add the stack nodes to the backend set of the existing load balancer. Set add_load_balancer to true in order for this value to take effect"
@@ -77,6 +117,13 @@ variable "backendset_name_for_existing_load_balancer" {
   type        = string
   default     = ""
   description = "Existing load balancer backend set name"
+}
+
+# Variable used in UI only
+variable "add_lb_reserved_public_ip_id" {
+  description = "Set to true to use a reserved public IP for load balancer"
+  type        = bool
+  default     = false
 }
 
 variable "lb_reserved_public_ip_id" {

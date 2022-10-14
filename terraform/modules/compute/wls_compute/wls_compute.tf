@@ -79,6 +79,7 @@ module "wls-instances" {
       wls_cluster_name                   = var.wls_cluster_name
       wls_cluster_mc_port                = var.wls_cluster_mc_port
       wls_machine_name                   = var.wls_machine_name
+      wls_server_startup_args            = var.wls_server_startup_args
       total_vm_count                     = var.num_vm_instances
       assign_public_ip                   = var.assign_public_ip
       wls_existing_vcn_id                = var.wls_existing_vcn_id
@@ -186,13 +187,26 @@ module "wls-instances" {
       export_path = var.export_path
       add_fss     = var.add_fss
 
-      use_apm_service           = var.use_apm_service
-      apm_domain_compartment_id = var.apm_domain_compartment_id
-      apm_domain_id             = var.apm_domain_id
-      apm_private_data_key_name = var.apm_private_data_key_name
-      apm_agent_installer_path  = var.apm_agent_installer_path
-      apm_agent_path            = var.apm_agent_path
-      use_autoscaling           = var.use_autoscaling ? "Metric" : "None"
+      use_apm_service                = var.use_apm_service
+      apm_domain_compartment_id      = var.apm_domain_compartment_id
+      apm_domain_id                  = var.apm_domain_id
+      apm_private_data_key_name      = var.apm_private_data_key_name
+      apm_agent_installer_path       = var.apm_agent_installer_path
+      apm_agent_path                 = var.apm_agent_path
+      use_autoscaling                = var.use_autoscaling ? "Metric" : "None"
+      stack_compartment_id           = var.compartment_id
+      scalein_notification_topic_id  = var.use_autoscaling ? var.scalein_notification_topic_id : ""
+      scaleout_notification_topic_id = var.use_autoscaling ? var.scaleout_notification_topic_id : ""
+      ocir_url                       = var.use_autoscaling ? var.ocir_url : ""
+      ocir_user                      = var.use_autoscaling ? var.ocir_user : ""
+      ocir_auth_token_id             = var.use_autoscaling ? var.ocir_auth_token_id : ""
+      fn_repo_path                   = var.use_autoscaling ? var.fn_repo_path : ""
+      fn_application_id              = var.use_autoscaling ? var.fn_application_id : ""
+      #Metadata tags are in the form:
+      #{tagkey1=tagval1, tagkey2=tagval2, ...}
+      defined_tags       = join(",", [for key, value in local.defined_tags : "${key}=${value}"])
+      freeform_tags      = join(",", [for key, value in var.tags.freeform_tags : "${key}=${value}"])
+      defined_system_tag = join(",", [for key, value in var.tags.defined_tags : "${key}=${value}"])
     }
 
     are_legacy_imds_endpoints_disabled = var.disable_legacy_metadata_endpoint

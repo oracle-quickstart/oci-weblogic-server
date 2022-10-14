@@ -1,6 +1,27 @@
 # Copyright (c) 2022, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
+# Variable used in UI only
+variable "add_JRF" {
+  type        = bool
+  description = "Set to true to create WebLogic domain with JRF"
+  default     = false
+}
+
+# Variable used in UI only
+variable "db_strategy" {
+  type        = string
+  description = "The type of database to use for a JRF domain."
+  default     = "No Database"
+}
+
+# Variable used in UI only
+variable "use_oci_db_connection_string" {
+  type        = bool
+  description = "Set to true to use a connection string to connect to the database"
+  default     = false
+}
+
 variable "oci_db_connection_string" {
   type        = string
   description = "Oracle database connection string to connect to database. Example: //<scan_hostname>.<host_domain_name>:<db_port>/<pdb_or_sid>.<Host Domain Name>"
@@ -41,6 +62,13 @@ variable "oci_db_network_compartment_id" {
 variable "oci_db_dbsystem_id" {
   type        = string
   description = "The OCID of the OCI database system"
+  default     = ""
+}
+
+# Variable used in UI only
+variable "oci_db_dbhome_id" {
+  type        = string
+  description = "The OCID of the OCI database home"
   default     = ""
 }
 
