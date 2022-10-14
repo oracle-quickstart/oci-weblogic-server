@@ -220,6 +220,7 @@ groupings:
       - ${wait_time_wls_vnc_dns_resolver}
       - ${atp_db_existing_vcn_id}
       - ${wls_admin_port_source_cidr}
+      - ${wlsoci_vmscripts_zip_bundle_path}
 
 outputs:
   virtual_cloud_network_id:
