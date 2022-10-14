@@ -13,7 +13,7 @@ locals {
   network_compartment_id      = var.network_compartment_id == "" ? var.compartment_ocid : var.network_compartment_id
 
   #dynamic group is based on the system generated tags for DG
-  create_dg_tags     = var.create_policies && var.generate_dg_tag # Only create dynamic group tags when create policies and generate dg tag is true
+  create_dg_tags     = var.create_policies && var.generate_dg_tag && var.mode == "PROD" # Only create dynamic group tags in PROD mode when create policies and generate dg tag is true
   dg_system_tags_key = local.create_dg_tags ? format("%s.%s", module.system-tags.tag_namespace, module.system-tags.dg_tag_key) : ""
   dynamic_group_rule = local.create_dg_tags ? format("%s.%s.%s='%s'", "tag", local.dg_system_tags_key, "value", module.system-tags.dg_tag_value) : length(var.service_tags.definedTags) > 0 ? format("tag.%s.value='%s'", keys(var.service_tags.definedTags)[0], values(var.service_tags.definedTags)[0]) : ""
   dg_defined_tags    = local.create_dg_tags ? zipmap([local.dg_system_tags_key], [module.system-tags.dg_tag_value]) : {}
