@@ -13,15 +13,23 @@ variable "existing_bastion_instance_id" {
   default     = ""
 }
 
+# TODO: remove this when UI uses control with flex shape
 variable "bastion_instance_shape" {
-  type        = map(string)
+  type        = string
   description = "Shape of bastion VM instances"
-  default = {
-    "instanceShape" = "VM.Standard.E4.Flex",
-    "ocpus"         = "1",
-    "memory"        = "16"
-  }
+  default     = "VM.Standard2.1"
 }
+
+# TODO: uncomment this when UI uses control with flex shape
+#variable "bastion_instance_shape" {
+#  type = map(string)
+#  description = "Shape of bastion VM instances"
+#  default = {
+#    "instanceShape" = "VM.Standard.E4.Flex",
+#    "ocpus"         = "1",
+#    "memory"        = "16"
+#  }
+#}
 
 variable "bastion_ssh_private_key" {
   type        = string

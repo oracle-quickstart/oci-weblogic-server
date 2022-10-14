@@ -17,6 +17,13 @@ variable "wls_node_count" {
   default     = "1"
 }
 
+variable "wls_node_count_limit" {
+  type        = number
+  description = "Maximum number of WebLogic managed servers"
+  default     = "8"
+}
+
+
 variable "wls_admin_user" {
   type        = string
   description = "Name of WebLogic administration user"
@@ -25,6 +32,13 @@ variable "wls_admin_user" {
     condition     = replace(var.wls_admin_user, "/^[a-zA-Z][a-zA-Z0-9]{7,127}/", "0") == "0"
     error_message = "WLSC-ERROR: The value for wls_admin_user provided should be alphanumeric and length should be between 8 and 128 characters."
   }
+}
+
+# Variable used in UI only
+variable "wls_admin_secret_compartment_id" {
+  type        = string
+  description = "The OCID of the compartment of the vault secret with the password for WebLogic admin user"
+  default     = ""
 }
 
 variable "wls_admin_password_id" {
@@ -164,6 +178,11 @@ variable "wls_nm_port" {
   }
 }
 
+variable "allow_manual_domain_extension" {
+  type        = bool
+  description = "If true, when new nodes are added, the domain will not be extended to include the node. You must manually add the managed servers to your domain configuration after updating the stack"
+  default     = false
+}
 
 variable "deploy_sample_app" {
   type        = bool

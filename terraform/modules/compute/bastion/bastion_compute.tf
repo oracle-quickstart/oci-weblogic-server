@@ -23,8 +23,9 @@ resource "oci_core_instance" "wls-bastion-instance" {
   dynamic "shape_config" {
     for_each = length(regexall("^.*Flex", var.instance_shape.instanceShape)) > 0 ? [1] : []
     content {
-      ocpus         = var.instance_shape.ocpus
-      memory_in_gbs = var.instance_shape.memory
+      ocpus = var.instance_shape.ocpus
+      # TODO: uncomment this when UI uses control with flex shape
+      #memory_in_gbs = var.instance_shape.memory
     }
   }
 
@@ -45,7 +46,7 @@ resource "oci_core_instance" "wls-bastion-instance" {
     create = "10m"
   }
 
-   lifecycle {
+  lifecycle {
     ignore_changes = [defined_tags, freeform_tags]
   }
 }
@@ -61,7 +62,7 @@ resource "oci_core_public_ip" "reserved_public_ip" {
   defined_tags  = var.tags.defined_tags
   freeform_tags = var.tags.freeform_tags
 
-   lifecycle {
+  lifecycle {
     ignore_changes = [defined_tags, freeform_tags]
   }
 }

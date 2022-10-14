@@ -80,6 +80,7 @@ groupings:
   - title: "WebLogic Server Compute Instance"
     variables:
       - ${instance_shape}
+      - ${wls_ocpu_count}
       - ${wls_node_count}
       - ${wls_node_count_limit}
       #- ${image_mode}
@@ -179,10 +180,8 @@ groupings:
   - title: "Hidden Variables"
     visible: false
     variables:
-      - ${tenancy_id}
       - ${tenancy_ocid}
       - ${region}
-      - ${compartment_id}
       - ${compartment_ocid}
       - ${mode}
       - ${wls_subnet_name}
@@ -212,7 +211,6 @@ groupings:
       - ${wls_admin_ssl_port}
       - ${wls_ms_port}
       - ${wls_ms_ssl_port}
-      - ${volume_name}
       - ${wls_expose_admin_port}
       - ${mount_path}
       - ${alarm_severity}
@@ -375,13 +373,42 @@ variables:
       compartmentId: ${compartment_ocid}
 
   instance_shape:
-    type: oci:core:instanceshapewithflex:name
+    type: oci:core:instanceshape:name
+    #type: oci:core:instanceshapewithflex:name
     title: Compute Shape
     description: The shape for WebLogic Server compute instances. When scaled-out, the changes to instance shape will apply only to the added nodes.
     required: true
+    default: VM.Standard.E4.Flex
     dependsOn:
       compartmentId: ${compartment_ocid}
       imageId: ${instance_image_id}
+
+  # TODO: remove this when UI uses control with flex shape
+  wls_ocpu_count:
+    type: integer
+    title: OCPU Count
+    description: The number of OCPU count for instances. Only required for VM.Standard.E3.Flex, VM.Standard.E4.Flex, VM.Optimized3.Flex, and  VM.Standard3.Flex Shapes. The maximum number of ocpus for VM.Standard.E3.Flex and VM.Standard.E4.Flex is 64 while VM.Optimized3.Flex shape supports maximum of 18 ocpus. When scaled-out, the changes in OCPU count will apply only to the added nodes.
+    minimum: 1
+    maximum: 64
+    multipleOf: 1
+    default: 1
+    required: true
+    dependsOn:
+      instance_shape: ${instance_shape}
+    visible:
+      or:
+        - eq:
+          - ${instance_shape}
+          - "VM.Standard.E3.Flex"
+        - eq:
+          - ${instance_shape}
+          - "VM.Standard.E4.Flex"
+        - eq:
+          - ${instance_shape}
+          - "VM.Optimized3.Flex"
+        - eq:
+          - ${instance_shape}
+          - "VM.Standard3.Flex"
 
   ssh_public_key:
     type: oci:core:ssh:publickey
@@ -571,18 +598,13 @@ variables:
     description: 'When nodes are added to an existing stack, the domain configuration is not modified. You must manually add the managed servers to your domain configuration after updating the stack. This field applies only to editing an existing stack and not to creating a new one. NOTE: Autoscaling feature if previously enabled, will be disabled, if this option is selected.'
 
   wls_server_startup_args:
-    visible:
-      - not:
-          - ${orm_create_mode}
     type: string
     title: WebLogic Server Startup Arguments
     description: Server Startup Arguments are used for providing arguments to the Java Virtual Machine for WebLogic Server instances. When scaled-out, the changes to server startup arguments will apply only to the added nodes.
     required: false
 
   create_new_vcn:
-    visible:
-      and:
-        - ${orm_create_mode}
+    visible: ${orm_create_mode}
     type: boolean
     default: false
     title: "Create a Virtual Cloud Network"
@@ -1037,7 +1059,8 @@ variables:
             - eq:
                 - ${subnet_type}
                 - "Use Private Subnet"
-    type: oci:core:instanceshapewithflex:name
+    type: oci:core:instanceshape:name
+    #type: oci:core:instanceshapewithflex:name
     title: Bastion Host Shape
     description: The shape for bastion compute instance.
     required: true
@@ -1324,7 +1347,6 @@ variables:
   lb_subnet_1_id:
     visible:
       and:
-        - ${orm_create_mode}
         - or:
             - ${add_load_balancer}
             - ${is_idcs_selected}
@@ -2119,7 +2141,6 @@ variables:
   existing_fss_id:
     visible:
       and:
-        - ${orm_create_mode}
         - ${add_fss}
         - ${add_existing_fss}
         - not:
@@ -2143,121 +2164,6 @@ variables:
     description: The Oracle Cloud Identifier (OCID) of your existing export.
     pattern: ^$|^ocid1.export.*$
     required: true
-
-  # Hidden Variables
-  mount_path:
-    type: string
-    title: Mount Path on the WebLogic Server instances
-    description: The path to mount FSS on the WebLogic Server instances
-
-  mode:
-    type: enum
-    title: Terraform mode
-    description: Select Terraform mode for development or production. In development mode, local VM scripts zip is seeded on WLS VMs.
-    enum:
-      - PROD
-      - DEV
-    default: PROD
-
-  wls_subnet_name:
-    type: string
-    default: 'wls-subnet'
-    title: WebLogic Server Subnet Name
-    description: The name of the new subnet to create for WebLogic Server compute instances. This field is required only if you want to use an existing VCN.
-
-  lb_subnet_1_name:
-    type: string
-    default: 'lb-subnet-1'
-    title: Load Balancer Subnet Name
-    description: The name of the new subnet to create for the load balancer.
-
-  lb_subnet_2_name:
-    type: string
-    default: 'lb-subnet-2'
-    title: Load Balancer Subnet 2 Name
-    description: The name of the subnet to create for the second load balancer node. This field is required only if you are not using regional subnets.
-
-  user_id:
-    type: string
-
-  private_key_path:
-    type: string
-
-  fingerprint:
-    type: string
-
-  wls_edition:
-    type: string
-
-  use_regional_subnet:
-    type: boolean
-
-  use_marketplace_image:
-    type: boolean
-    default: true
-
-  use_bastion_marketplace_image:
-    type: boolean
-    default: true
-
-  listing_resource_version:
-    type: string
-
-  listing_id:
-    type: string
-
-  # tenancy_ocid, compartment_ocid, and user_ocid are predefined variables. Do not change them.
-
-  tenancy_ocid:
-    type: string
-    title: Tenancy ID
-    description: The Oracle Cloud Identifier (OCID) for your tenancy
-    required: true
-
-  region:
-    type: oci:identity:region:name
-    title: Region
-    description: The region in which to create all resources
-    required: true
-
-  log_level:
-    type: enum
-    title: Log Level
-    description: Log level
-    enum:
-      - DEBUG
-      - INFO
-    default: INFO
-
-  bastion_image_id:
-    type: string
-    title: Base Linux Instance OCID
-    description: The Oracle Cloud Identifier (OCID) for PIC image
-
-  bastion_listing_id:
-    type: string
-    title: Base Linux  Marketplace listing Id
-    description: The Base Linux  Marketplace listing Id for PIC image
-
-  bastion_listing_resource_version:
-    type: string
-    title: Base Linux  Marketplace listing version
-    description: The Base Linux  Marketplace listing version for PIC image
-
-  compartment_ocid:
-    type: oci:identity:compartment:id
-    title: WebLogic Server Compartment
-    description: The compartment in which to create the WebLogic Server compute instances
-    required: true
-
-  wls_version:
-    type: enum
-    title: Weblogic Server Version
-    description: The version of WebLogic Server to provision
-    enum:
-      - 12.2.1.4
-      - 14.1.1.0
-    default: 12.2.1.4
 
   use_oci_logging:
     type: boolean
@@ -2326,7 +2232,7 @@ variables:
         - ${use_apm_service}
         - ${use_autoscaling}
     type: oci:apm:domain:id
-    title: "Application Performance Monitoring Domain ID"
+    title: "Application Performance Monitoring Domain"
     description: "The Application Performance Monitoring domain used by this WebLogic instance"
     required: true
     dependsOn:
@@ -2453,28 +2359,6 @@ variables:
     minimum: 0
     required: true
 
-  scale_target_node_count_1:
-    visible: false
-    type: integer
-    title: "Target WebLogic Server Node Count 1"
-    description: "Desired number of WebLogic instances"
-    minimum: 1
-    maximum: 30
-    multipleOf: 1
-    default: 1
-    required: true
-
-  scale_target_node_count_2:
-    visible: false
-    type: integer
-    title: "Target WebLogic Server Node Count 2"
-    description: "Desired number of WebLogic instances"
-    minimum: 1
-    maximum: 30
-    multipleOf: 1
-    default: 1
-    required: false
-
 # Common autoscaling UI
   ocir_user:
     visible:
@@ -2527,3 +2411,118 @@ variables:
     description: Email address to which scaling notifications are sent
     pattern: ^$|^(?!^[.+&'_-]*@.*$)(^[_\w\d+&'-]+(\.[_\w\d+&'-]*)*@[\w\d-]+(\.[\w\d-]+)*\.(([\d]{1,3})|([\w]{2,}))$)$
     required: false
+
+  # Hidden Variables
+  mount_path:
+    type: string
+    title: Mount Path on the WebLogic Server instances
+    description: The path to mount FSS on the WebLogic Server instances
+
+  mode:
+    type: enum
+    title: Terraform mode
+    description: Select Terraform mode for development or production. In development mode, local VM scripts zip is seeded on WLS VMs.
+    enum:
+      - PROD
+      - DEV
+    default: PROD
+
+  wls_subnet_name:
+    type: string
+    default: 'wls-subnet'
+    title: WebLogic Server Subnet Name
+    description: The name of the new subnet to create for WebLogic Server compute instances. This field is required only if you want to use an existing VCN.
+
+  lb_subnet_1_name:
+    type: string
+    default: 'lb-subnet-1'
+    title: Load Balancer Subnet Name
+    description: The name of the new subnet to create for the load balancer.
+
+  lb_subnet_2_name:
+    type: string
+    default: 'lb-subnet-2'
+    title: Load Balancer Subnet 2 Name
+    description: The name of the subnet to create for the second load balancer node. This field is required only if you are not using regional subnets.
+
+  user_id:
+    type: string
+
+  private_key_path:
+    type: string
+
+  fingerprint:
+    type: string
+
+  wls_edition:
+    type: string
+
+  use_regional_subnet:
+    type: boolean
+
+  use_marketplace_image:
+    type: boolean
+    default: true
+
+  use_bastion_marketplace_image:
+    type: boolean
+    default: true
+
+  listing_resource_version:
+    type: string
+
+  listing_id:
+    type: string
+
+  # tenancy_ocid, compartment_ocid, and user_ocid are predefined variables. Do not change them.
+
+  tenancy_ocid:
+    type: string
+    title: Tenancy ID
+    description: The Oracle Cloud Identifier (OCID) for your tenancy
+    required: true
+
+  region:
+    type: oci:identity:region:name
+    title: Region
+    description: The region in which to create all resources
+    required: true
+
+  log_level:
+    type: enum
+    title: Log Level
+    description: Log level
+    enum:
+      - DEBUG
+      - INFO
+    default: INFO
+
+  bastion_image_id:
+    type: string
+    title: Base Linux Instance OCID
+    description: The Oracle Cloud Identifier (OCID) for PIC image
+
+  bastion_listing_id:
+    type: string
+    title: Base Linux  Marketplace listing Id
+    description: The Base Linux  Marketplace listing Id for PIC image
+
+  bastion_listing_resource_version:
+    type: string
+    title: Base Linux  Marketplace listing version
+    description: The Base Linux  Marketplace listing version for PIC image
+
+  compartment_ocid:
+    type: oci:identity:compartment:id
+    title: WebLogic Server Compartment
+    description: The compartment in which to create the WebLogic Server compute instances
+    required: true
+
+  wls_version:
+    type: enum
+    title: Weblogic Server Version
+    description: The version of WebLogic Server to provision
+    enum:
+      - 12.2.1.4
+      - 14.1.1.0
+    default: 12.2.1.4

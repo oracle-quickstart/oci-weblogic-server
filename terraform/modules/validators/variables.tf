@@ -100,7 +100,6 @@ variable "idcs_cloudgate_port" {
 variable "wls_subnet_id" {
   type        = string
   description = "The OCID of the subnet for the WebLogic instances. Leave it blank if a new subnet will be created by the stack"
-  default     = ""
 }
 
 variable "add_load_balancer" {
@@ -298,25 +297,21 @@ variable "atp_db_existing_vcn_id" {
 variable "add_fss" {
   type        = bool
   description = "Add file system storage to WebLogic Server instances"
-  default     = false
 }
 
 variable "fss_compartment_id" {
   type        = string
   description = "The OCID of the compartment where the file system exists"
-  default     = ""
 }
 
 variable "fss_availability_domain" {
   type        = string
   description = "The name of the availability domain where the file system and mount target exists"
-  default     = ""
 }
 
 variable "existing_fss_id" {
   type        = string
   description = "The OCID of your existing file system"
-  default     = ""
   validation {
     condition     = var.existing_fss_id == "" || length(regexall("^ocid1.filesystem.*$", var.existing_fss_id)) > 0
     error_message = "WLSC-ERROR: The value for existing_fss_id should be blank or start with \"ocid1.filesystem.\"."
@@ -335,7 +330,6 @@ variable "mount_target_subnet_id" {
 variable "mount_target_id" {
   type        = string
   description = "The OCID of the mount target for File Shared System"
-  default     = ""
   validation {
     condition     = var.mount_target_id == "" || length(regexall("^ocid1.mounttarget.*$", var.mount_target_id)) > 0
     error_message = "WLSC-ERROR: The value for mount_target_id should be blank or start with \"ocid1.mounttarget.\"."
@@ -354,13 +348,11 @@ variable "mount_target_compartment_id" {
 variable "mount_target_subnet_cidr" {
   type        = string
   description = "CIDR value of  the subnet to be used for FSS mount target"
-  default     = ""
 }
 
 variable "mount_target_availability_domain" {
   type        = string
   description = "The name of the availability domain where the mount target exists"
-  default     = ""
 }
 
 variable "create_policies" {
@@ -396,7 +388,6 @@ variable "apm_private_data_key_name" {
 variable "use_autoscaling" {
   type        = bool
   description = "Indicating that autoscaling is enabled"
-  default     = false
 }
 
 variable "wls_metric" {
@@ -407,37 +398,31 @@ variable "wls_metric" {
 variable "min_threshold_percent" {
   type        = number
   description = "Minimum threshold in percentage for the metric"
-  default     = 0
 }
 
 variable "max_threshold_percent" {
   type        = number
   description = "Maximum threshold in percentage for the metric"
-  default     = 0
 }
 
 variable "min_threshold_counter" {
   type        = number
   description = "Minimum threshold count for the metric"
-  default     = 0
 }
 
 variable "max_threshold_counter" {
   type        = number
   description = "Maximum threshold count for the metric"
-  default     = 0
 }
 
 variable "ocir_auth_token_id" {
   type        = string
   description = "Secrets Oracle Cloud ID (OCID) for Oracle Cloud Infrastructure Registry authorization token"
-  default     = ""
 }
 
 variable "use_existing_subnets" {
   type        = bool
   description = "Set to true if the existing subnets are used to create VCN config"
-  default     = false
 }
 
 variable "tags" {
@@ -449,15 +434,13 @@ variable "tags" {
 }
 
 variable "wls_node_count_limit" {
-  type    = number
+  type        = number
   description = "Maximum number of WebLogic managed servers"
-  default = "8"
 }
 
 variable "num_vm_instances" {
   type        = number
   description = "Number of WebLogic managed servers. One VM per managed server will be created"
-  default     = "1"
 }
 
 variable "generate_dg_tag" {
