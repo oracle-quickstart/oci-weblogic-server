@@ -443,9 +443,9 @@ variable "num_vm_instances" {
   description = "Number of WebLogic managed servers. One VM per managed server will be created"
 }
 
-variable "generate_dg_tag" {
+variable "create_dg_tags" {
   type        = bool
-  description = "Set to true to generate defined tags for dynamic group definition"
+  description = "Flag to create defined tags for dynamic group definition"
 }
 
 variable "service_tags" {
