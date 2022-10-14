@@ -113,7 +113,6 @@ groupings:
       - ${mount_target_id}
       - ${mount_target_compartment_id}
       - ${mount_target_subnet_id}
-      - ${fss_compartment_id}
       - ${existing_mount_target_nsg_id}
 
   - title: "OCI Logging"
@@ -684,25 +683,6 @@ variables:
       description: The compartment where you have existing mount target
       required: true
       default: ${compartment_ocid}
-
-  fss_compartment_id:
-    visible:
-      and:
-        - ${add_fss}
-        - not:
-            - ${add_existing_fss}
-        - not:
-            - ${add_existing_mount_target}
-        - and:
-            - not:
-                - ${create_new_vcn}
-            - not:
-                - ${create_new_subnets}
-            - ${create_new_subnets}
-    type: oci:identity:compartment:id
-    required: true
-    title: Existing File System Compartment
-    description: The compartment where the file system exists
 
   existing_mount_target_nsg_id:
     visible:
