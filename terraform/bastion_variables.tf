@@ -14,7 +14,7 @@ variable "existing_bastion_instance_id" {
 }
 
 variable "bastion_instance_shape" {
-  type = map(string)
+  type        = map(string)
   description = "Shape of bastion VM instances"
   default = {
     "instanceShape" = "VM.Standard.E4.Flex",
