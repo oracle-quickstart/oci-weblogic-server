@@ -400,19 +400,24 @@ module "validators" {
   apm_domain_id             = var.apm_domain_id
   apm_private_data_key_name = var.apm_private_data_key_name
 
-  use_autoscaling       = var.use_autoscaling
-  wls_metric            = var.wls_metric
+  use_autoscaling = var.use_autoscaling
+  wls_metric      = var.wls_metric
+
   ocir_auth_token_id    = var.ocir_auth_token_id
   max_threshold_counter = var.max_threshold_counter
   max_threshold_percent = var.max_threshold_percent
   min_threshold_counter = var.min_threshold_counter
   min_threshold_percent = var.min_threshold_percent
-  generate_dg_tag       = var.generate_dg_tag
-  service_tags          = var.service_tags
+
+  create_dg_tags = local.create_dg_tags
+  service_tags   = var.service_tags
   tags = {
     defined_tags  = local.defined_tags
     freeform_tags = local.free_form_tags
   }
+
+  wlsoci_vmscripts_zip_bundle_path = var.wlsoci_vmscripts_zip_bundle_path
+  mode                             = var.mode
 }
 
 module "fss" {
@@ -577,6 +582,9 @@ module "compute" {
     }
   }
 
+  // Dev or Prod mode
+  mode = var.mode
+
   log_group_id    = element(concat(module.observability-common[*].log_group_id, [""]), 0)
   use_oci_logging = var.use_oci_logging
 
@@ -648,4 +656,7 @@ module "provisioners" {
   bastion_host                 = !var.is_bastion_instance_required ? "" : var.existing_bastion_instance_id == "" ? module.bastion[0].public_ip : data.oci_core_instance.existing_bastion_instance[0].public_ip
   bastion_host_private_key     = !var.is_bastion_instance_required ? "" : var.existing_bastion_instance_id == "" ? module.bastion[0].bastion_private_ssh_key : file(var.bastion_ssh_private_key)
   is_bastion_instance_required = var.is_bastion_instance_required
+
+  mode                             = var.mode
+  wlsoci_vmscripts_zip_bundle_path = var.wlsoci_vmscripts_zip_bundle_path
 }

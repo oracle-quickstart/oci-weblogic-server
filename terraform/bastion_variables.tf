@@ -19,6 +19,7 @@ variable "bastion_instance_shape" {
   description = "Shape of bastion VM instances"
   default     = "VM.Standard2.1"
 }
+
 # TODO: uncomment this when UI uses control with flex shape
 #variable "bastion_instance_shape" {
 #  type = map(string)
