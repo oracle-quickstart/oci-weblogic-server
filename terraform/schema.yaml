@@ -134,13 +134,12 @@ groupings:
       - ${add_existing_fss}
       - ${fss_availability_domain}
       - ${existing_fss_id}
-      - ${export_fss_id}
+      - ${existing_export_path_id}
       - ${add_existing_mount_target}
-      - ${mount_target_subnet_cidr}
-      - ${mount_target_id}
       - ${mount_target_compartment_id}
+      - ${mount_target_id}
       - ${mount_target_subnet_id}
-      - ${fss_compartment_id}
+      - ${mount_target_subnet_cidr}
       - ${existing_mount_target_nsg_id}
 
   - title: "OCI Logging"
@@ -221,12 +220,10 @@ groupings:
       - ${image_mode}
       - ${terms_and_conditions}
       - ${generate_dg_tag}
-      - ${existing_export_path_id}
       - ${wait_time_wls_vnc_dns_resolver}
       - ${wls_14c_jdk_version}
       - ${wls_admin_port_source_cidr}
       - ${wlsoci_vmscripts_zip_bundle_path}
-      - ${fss_compartment_id}
 
 outputs:
   virtual_cloud_network_id:
@@ -667,40 +664,18 @@ variables:
     visible:
       and:
         - ${add_fss}
+        - ${add_existing_mount_target}
         - not:
-            - ${add_existing_mount_target}
+            - and:
+                - ${add_existing_mount_target}
+                - ${add_existing_fss}
         - not:
-            - {add_existing_fss}
-        - and:
-            - not:
-                - ${create_new_vcn}
-            - not:
-                - ${create_new_subnets}
-            - ${create_new_subnets}
+            - ${create_new_vcn}
       type: oci:identity:compartment:id
       title: Mount Target Compartment
       description: The compartment where you have existing mount target
-      required: true
       default: ${compartment_ocid}
-
-  fss_compartment_id:
-    visible:
-      and:
-        - ${add_fss}
-        - not:
-            - ${add_existing_fss}
-        - not:
-            - ${add_existing_mount_target}
-        - and:
-            - not:
-                - ${create_new_vcn}
-            - not:
-                - ${create_new_subnets}
-            - ${create_new_subnets}
-    type: oci:identity:compartment:id
-    required: true
-    title: Existing File System Compartment
-    description: The compartment where the file system exists
+      required: true
 
   existing_mount_target_nsg_id:
     visible:
@@ -860,10 +835,6 @@ variables:
     visible:
       and:
         - ${add_fss}
-        - not:
-            - ${add_existing_fss}
-        - not:
-            - ${add_existing_mount_target}
         - and:
             - or:
                 - ${create_new_vcn}
@@ -917,10 +888,6 @@ variables:
       and:
         - ${orm_create_mode}
         - ${add_fss}
-        - not:
-            - ${add_existing_fss}
-        - not:
-            - ${add_existing_mount_target}
         - not:
             - ${create_new_subnets}
         - not:
@@ -2114,8 +2081,6 @@ variables:
         - not:
             - ${add_existing_fss}
         - not:
-            - ${add_existing_mount_target}
-        - not:
             - eq:
                 - ${subnet_span}
                 - "AD Specific Subnet"
@@ -2156,7 +2121,7 @@ variables:
     pattern: ^$|^ocid1.filesystem.*$
     required: true
 
-  export_fss_id:
+  existing_export_path_id:
     visible:
       and:
         - ${orm_create_mode}
