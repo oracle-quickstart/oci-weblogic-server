@@ -273,3 +273,14 @@ variable "use_marketplace_image" {
   description = "Set to true if the image subscription is used for provisioning"
   default     = true
 }
+
+variable "mp_ucm_listing_id" {
+  type        = string
+  description = "marketplace UCM image listing id"
+}
+
+variable "mp_ucm_listing_resource_version" {
+  type        = string
+  description = "marketplace UCM image listing resource version"
+}
+

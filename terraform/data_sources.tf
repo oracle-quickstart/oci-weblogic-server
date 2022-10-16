@@ -144,12 +144,6 @@ data "oci_objectstorage_namespace" "object_namespace" {
 data "oci_identity_regions" "all_regions" {
 }
 
-data "oci_core_image" "ucm_image" {
-  count = var.ucm_instance_image_id != "" ? 1 : 0
-  #Required
-  image_id = var.ucm_instance_image_id
-}
-
 data "oci_database_autonomous_database" "atp_db" {
   count                  = local.is_atp_db ? 1 : 0
   autonomous_database_id = var.atp_db_id
@@ -162,6 +156,12 @@ data "oci_database_db_systems" "ocidb_db_systems" {
     name   = "id"
     values = [var.oci_db_dbsystem_id]
   }
+}
+
+data "oci_core_image" "ucm_image" {
+  count = var.ucm_instance_image_id != "" ? 1 : 0
+  #Required
+  image_id = var.ucm_instance_image_id
 }
 
 data "oci_core_instances" "ucm_instances" {
@@ -184,3 +184,21 @@ data "oci_core_instances" "ucm_instances" {
     values = ["RUNNING", "STOPPED"]
   }
 }
+
+data "oci_core_instances" "provisioned_instances" {
+  #Required
+  compartment_id = var.compartment_ocid
+
+  #filter the instances based on stack prefix
+  filter{
+    name = "display_name"
+    values = ["${local.service_name_prefix}-wls-*"]
+    regex = true
+  }
+  #filter only the running instances, we need to consider stopped case also
+  filter {
+    name = "state"
+    values = ["RUNNING", "STOPPED"]
+  }
+}
+

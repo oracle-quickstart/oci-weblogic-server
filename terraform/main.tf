@@ -418,6 +418,14 @@ module "validators" {
 
   wlsoci_vmscripts_zip_bundle_path = var.wlsoci_vmscripts_zip_bundle_path
   mode                             = var.mode
+
+  image_mode                   = var.image_mode
+  instance_image_id               = var.instance_image_id
+  ucm_instance_image_id        = var.ucm_instance_image_id
+  terms_and_conditions            = var.terms_and_conditions
+  ucm_instance_count              = length(data.oci_core_instances.ucm_instances.instances.*.display_name)
+  provisioned_node_count          = length(data.oci_core_instances.provisioned_instances.instances.*.display_name)
+  use_marketplace_image           = var.use_marketplace_image
 }
 
 module "fss" {
@@ -507,7 +515,7 @@ module "compute" {
   assign_public_ip       = var.assign_weblogic_public_ip
   availability_domain    = local.wls_availability_domain
   compartment_id         = var.compartment_ocid
-  instance_image_id      = var.instance_image_id
+  instance_image_id      = local.vm_instance_image_id
   instance_shape         = local.instance_shape
   network_compartment_id = var.network_compartment_id
   wls_subnet_cidr        = local.wls_subnet_cidr
@@ -606,6 +614,9 @@ module "compute" {
   use_marketplace_image       = var.use_marketplace_image
   mp_listing_id               = var.listing_id
   mp_listing_resource_version = var.listing_resource_version
+
+  mp_ucm_listing_id               = var.ucm_listing_id
+  mp_ucm_listing_resource_version = var.ucm_listing_resource_version
 
   tags = {
     defined_tags    = local.defined_tags
