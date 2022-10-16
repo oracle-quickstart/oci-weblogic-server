@@ -31,12 +31,6 @@ variable "existing_export_path_id" {
   default     = ""
 }
 
-variable "fss_compartment_id" {
-  type        = string
-  description = "The OCID of the compartment where the file system exists"
-  default     = ""
-}
-
 variable "add_existing_fss" {
   type        = bool
   description = "Use an existing file system"

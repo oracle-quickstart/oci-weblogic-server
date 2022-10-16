@@ -10,6 +10,7 @@ locals {
 
   bastion_availability_domain = var.bastion_subnet_id != "" ? (var.use_regional_subnet ? var.wls_availability_domain_name != "" ? var.wls_availability_domain_name : local.ad_names[0] : data.oci_core_subnet.bastion_subnet[0].availability_domain) : (var.use_regional_subnet ? var.wls_availability_domain_name != "" ? var.wls_availability_domain_name : local.ad_names[0] : var.wls_availability_domain_name)
   wls_availability_domain     = var.use_regional_subnet ? (var.wls_availability_domain_name == "" ? local.ad_names[0] : var.wls_availability_domain_name) : (var.wls_subnet_id == "" ? var.wls_availability_domain_name : data.oci_core_subnet.wls_subnet[0].availability_domain)
+  fss_availability_domain     = var.use_regional_subnet ? (var.fss_availability_domain == "" ? local.ad_names[0] : var.fss_availability_domain) : (var.mount_target_subnet_id == "" ? var.fss_availability_domain : data.oci_core_subnet.mount_target_subnet[0].availability_domain)
   network_compartment_id      = var.network_compartment_id == "" ? var.compartment_ocid : var.network_compartment_id
 
   #dynamic group is based on the system generated tags for DG

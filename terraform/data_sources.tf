@@ -87,7 +87,7 @@ data "oci_file_storage_file_systems" "file_systems" {
 
   #Required
   availability_domain = var.fss_availability_domain
-  compartment_id      = var.fss_compartment_id
+  compartment_id      = var.compartment_ocid
 
   id = var.existing_fss_id
 }

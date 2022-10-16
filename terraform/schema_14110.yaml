@@ -109,10 +109,10 @@ groupings:
       - ${existing_fss_id}
       - ${export_fss_id}
       - ${add_existing_mount_target}
-      - ${mount_target_subnet_cidr}
-      - ${mount_target_id}
       - ${mount_target_compartment_id}
+      - ${mount_target_id}
       - ${mount_target_subnet_id}
+      - ${mount_target_subnet_cidr}
       - ${existing_mount_target_nsg_id}
 
   - title: "OCI Logging"
@@ -669,21 +669,18 @@ variables:
     visible:
       and:
         - ${add_fss}
+        - ${add_existing_mount_target}
         - not:
-            - ${add_existing_mount_target}
+            - and:
+                - ${add_existing_mount_target}
+                - ${add_existing_fss}
         - not:
-            - {add_existing_fss}
-        - and:
-            - not:
-                - ${create_new_vcn}
-            - not:
-                - ${create_new_subnets}
-            - ${create_new_subnets}
-      type: oci:identity:compartment:id
-      title: Mount Target Compartment
-      description: The compartment where you have existing mount target
-      required: true
-      default: ${compartment_ocid}
+            - ${create_new_vcn}
+    type: oci:identity:compartment:id
+    title: Mount Target Compartment
+    description: The compartment where you have existing mount target
+    default: ${compartment_ocid}
+    required: true
 
   existing_mount_target_nsg_id:
     visible:
@@ -843,10 +840,6 @@ variables:
     visible:
       and:
         - ${add_fss}
-        - not:
-            - ${add_existing_fss}
-        - not:
-            - ${add_existing_mount_target}
         - and:
             - or:
                 - ${create_new_vcn}
@@ -900,10 +893,6 @@ variables:
       and:
         - ${orm_create_mode}
         - ${add_fss}
-        - not:
-            - ${add_existing_fss}
-        - not:
-            - ${add_existing_mount_target}
         - not:
             - ${create_new_subnets}
         - not:
@@ -1634,7 +1623,9 @@ variables:
         - not:
             - ${add_existing_fss}
         - not:
-            - ${add_existing_mount_target}
+            - eq:
+                - ${subnet_span}
+                - "AD Specific Subnet"
     type: oci:identity:availabilitydomain:name
     title: FSS Availability Domain
     description: The name of the availability domain in which to create the file system and mount target.

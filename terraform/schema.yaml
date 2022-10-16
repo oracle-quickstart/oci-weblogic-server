@@ -226,6 +226,7 @@ groupings:
       - ${wls_14c_jdk_version}
       - ${wls_admin_port_source_cidr}
       - ${wlsoci_vmscripts_zip_bundle_path}
+      - ${fss_compartment_id}
 
 outputs:
   virtual_cloud_network_id:
@@ -2114,6 +2115,10 @@ variables:
             - ${add_existing_fss}
         - not:
             - ${add_existing_mount_target}
+        - not:
+            - eq:
+                - ${subnet_span}
+                - "AD Specific Subnet"
     type: oci:identity:availabilitydomain:name
     title: FSS Availability Domain
     description: The name of the availability domain in which to create the file system and mount target.

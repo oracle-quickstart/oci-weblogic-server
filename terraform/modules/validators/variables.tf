@@ -299,11 +299,6 @@ variable "add_fss" {
   description = "Add file system storage to WebLogic Server instances"
 }
 
-variable "fss_compartment_id" {
-  type        = string
-  description = "The OCID of the compartment where the file system exists"
-}
-
 variable "fss_availability_domain" {
   type        = string
   description = "The name of the availability domain where the file system and mount target exists"

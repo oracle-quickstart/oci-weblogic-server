@@ -390,7 +390,6 @@ module "validators" {
   mount_target_id                  = var.mount_target_id
   existing_fss_id                  = var.existing_fss_id
   mount_target_availability_domain = var.add_existing_mount_target ? data.oci_file_storage_mount_targets.mount_targets[0].mount_targets[0].availability_domain : ""
-  fss_compartment_id               = var.fss_compartment_id
 
   create_policies  = var.create_policies
   use_oci_logging  = var.use_oci_logging
@@ -425,7 +424,7 @@ module "fss" {
   count  = var.existing_fss_id == "" && var.add_fss ? 1 : 0
 
   compartment_id      = var.compartment_ocid
-  availability_domain = var.fss_availability_domain
+  availability_domain = local.fss_availability_domain
 
   vcn_id                 = local.vcn_id
   vcn_cidr               = var.wls_vcn_cidr != "" ? var.wls_vcn_cidr : data.oci_core_vcn.wls_vcn[0].cidr_block
