@@ -17,9 +17,9 @@ output "fss_system_id" {
   value = var.existing_fss_id != "" ? var.existing_fss_id : (var.add_fss ? module.fss[0].fss_id : "")
 }
 
-output "mount_target_id" {
-  value = var.mount_target_id != "" ? var.mount_target_id : (var.add_fss ? module.fss[0].mount_target_id : "")
-}
+#output "mount_target_id" {
+#  value = var.mount_target_id != "" ? var.mount_target_id : (var.add_fss ? module.fss[0].mount_target_id : "")
+#}
 
 output "load_balancer_id" {
   value = local.lb_id

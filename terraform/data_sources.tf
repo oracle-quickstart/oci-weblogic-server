@@ -86,7 +86,7 @@ data "oci_file_storage_file_systems" "file_systems" {
   count = var.existing_fss_id != "" ? 1 : 0
 
   #Required
-  availability_domain = var.fss_availability_domain
+  availability_domain = local.fss_availability_domain
   compartment_id      = var.compartment_ocid
 
   id = var.existing_fss_id
@@ -96,7 +96,7 @@ data "oci_file_storage_mount_targets" "mount_targets" {
   count = var.mount_target_id != "" ? 1 : 0
 
   #Required
-  availability_domain = var.fss_availability_domain
+  availability_domain = local.fss_availability_domain
   compartment_id      = var.mount_target_compartment_id
 
   id = var.mount_target_id
@@ -111,7 +111,7 @@ data "oci_file_storage_exports" "export" {
 data "oci_file_storage_mount_targets" "mount_target_by_export_set" {
   count = var.existing_fss_id != "" ? 1 : 0
   #Required
-  availability_domain = var.fss_availability_domain
+  availability_domain = local.fss_availability_domain
   compartment_id      = var.compartment_ocid
   export_set_id       = data.oci_file_storage_exports.export[0].export_set_id
 }
