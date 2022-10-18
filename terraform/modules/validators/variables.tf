@@ -60,7 +60,11 @@ variable "lb_subnet_1_cidr" {
   type        = string
   description = "CIDR for loadbalancer subnet"
 }
-variable "network_compartment_id" {}
+
+variable "network_compartment_id" {
+  type        = string
+  description = "The OCID of the compartment for network resources. Leave it blank to use the the same compartment for both compute and network resources"
+}
 
 variable "existing_vcn_id" {
   type        = string
@@ -499,4 +503,9 @@ variable "ucm_instance_count" {
 variable "provisioned_node_count" {
   type = number
   description = "Number of provisioned WebLogic instances"
+}
+
+variable "wls_edition" {
+  type        = string
+  description = "The WebLogic edition to be installed in this compute instance. Accepted values are: SE, EE, SUITE"
 }

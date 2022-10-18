@@ -103,7 +103,7 @@ replace_12214_variables()
 
 replace_14110_variables()
 {
-  sed -i '/variable "generate_dg_tag" {/!b;n;n;n;cdefault = false' ${TMP_BUILD}/variables.tf
+  #sed -i '/variable "generate_dg_tag" {/!b;n;n;n;cdefault = false' ${TMP_BUILD}/variables.tf
   sed -i '/variable "wls_version" {/!b;n;n;n;cdefault = \"14.1.1.0\"' ${TMP_BUILD}/weblogic_variables.tf
 }
 

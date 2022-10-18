@@ -29,40 +29,41 @@ variable "bastion_listing_resource_version" {
 variable "use_marketplace_image" {
   type        = bool
   description = "Set to true if using a marketplace Weblogic instance image, to create the marketplace subscriptions"
-  default     = false
+  default     = true
 }
 
 variable "instance_image_id" {
   type        = string
   description = "The OCID of the compute image used to create the WebLogic compute instances"
+  default     = "ocid1.image.oc1..aaaaaaaabt372q3zrl7q4jzpm2qzpegm72cgez3c5bms6226im4jw4waqoeq"
 }
 
 variable "listing_id" {
   type        = string
   description = "The OCID of the marketplace admin image listing"
-  default     = ""
+  default     = "ocid1.appcataloglisting.oc1..aaaaaaaawd5ti5ldjzdppppi675onvo3mvjcwt64jjey7rib3beau2ngkl2q"
 }
 
 variable "listing_resource_version" {
   type        = string
   description = "The OCID of the marketplace admin image listing resource version"
-  default     = ""
+  default     = "22.3.1-ol7.9-22.01.24-220802-1"
 }
 
 variable "ucm_instance_image_id" {
   type        = string
   description = "The OCID of the marketplace admin image which is used for provisioning"
-  default     = ""
+  default     = "ocid1.image.oc1..aaaaaaaahf6nk2bkbuy43lhkphhrljxqigqhaswlvbdegybf4zh43sfih6gq"
 }
 
 variable "ucm_listing_id" {
   type        = string
   description = "The OCID of the marketplace admin image listing"
-  default     = ""
+  default     = "ocid1.appcataloglisting.oc1..aaaaaaaa653zc2e4fsem5hhwinmfgnv3xp4dmbq6c6gvf45okxf6xz3smhiq"
 }
 
 variable "ucm_listing_resource_version" {
   type        = string
   description = "The OCID of the marketplace admin image listing resource version"
-  default     = ""
+  default     = "22.3.1-ol7.9-22.01.24-220802-1"
 }
