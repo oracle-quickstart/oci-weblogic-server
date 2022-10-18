@@ -195,6 +195,10 @@ variable "oci_db_compartment_id" {
     error_message = "WLSC-ERROR: The value for oci_db_compartment_id should be blank or start with \"ocid1.compartment.\"."
   }
 }
+variable "oci_db_network_compartment_id" {
+  type        = string
+  description = "The OCID of the compartment in which the DB System VCN is found"
+}
 variable "oci_db_existing_vcn_id" {
   type        = string
   description = "The OCID of the VCN of the OCI database, if JRF with OCI DB is used"

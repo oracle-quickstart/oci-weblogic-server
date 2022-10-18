@@ -338,6 +338,7 @@ module "validators" {
   oci_db_connection_string      = var.oci_db_connection_string
   oci_db_database_id            = var.oci_db_database_id
   oci_db_dbsystem_id            = var.oci_db_dbsystem_id
+  oci_db_network_compartment_id = local.oci_db_network_compartment_id
   oci_db_existing_vcn_id        = var.oci_db_existing_vcn_id
   oci_db_pdb_service_name       = var.oci_db_pdb_service_name
   is_atp_db                     = local.is_atp_db
