@@ -4,9 +4,9 @@
 locals {
   service_name_prefix = replace(var.service_name, "/[^a-zA-Z0-9]/", "")
 
-  home_region = lookup(data.oci_identity_regions.home_region.regions[0], "name")
-  ad_names    = compact(data.template_file.ad_names.*.rendered)
-  export_path = format("/%s", var.service_name)
+  home_region          = lookup(data.oci_identity_regions.home_region.regions[0], "name")
+  ad_names             = compact(data.template_file.ad_names.*.rendered)
+  export_path          = format("/%s", var.service_name)
   vm_instance_image_id = var.terms_and_conditions ? var.ucm_instance_image_id : var.instance_image_id
 
   bastion_availability_domain = var.bastion_subnet_id != "" ? (var.use_regional_subnet ? var.wls_availability_domain_name != "" ? var.wls_availability_domain_name : local.ad_names[0] : data.oci_core_subnet.bastion_subnet[0].availability_domain) : (var.use_regional_subnet ? var.wls_availability_domain_name != "" ? var.wls_availability_domain_name : local.ad_names[0] : var.wls_availability_domain_name)

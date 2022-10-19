@@ -419,14 +419,14 @@ module "validators" {
   wlsoci_vmscripts_zip_bundle_path = var.wlsoci_vmscripts_zip_bundle_path
   mode                             = var.mode
 
-  image_mode                   = var.image_mode
-  instance_image_id               = var.instance_image_id
-  ucm_instance_image_id        = var.ucm_instance_image_id
-  terms_and_conditions            = var.terms_and_conditions
-  ucm_instance_count              = length(data.oci_core_instances.ucm_instances.instances.*.display_name)
-  provisioned_node_count          = length(data.oci_core_instances.provisioned_instances.instances.*.display_name)
-  use_marketplace_image           = var.use_marketplace_image
-  wls_edition                     = var.wls_edition
+  image_mode             = var.image_mode
+  instance_image_id      = var.instance_image_id
+  ucm_instance_image_id  = var.ucm_instance_image_id
+  terms_and_conditions   = var.terms_and_conditions
+  ucm_instance_count     = length(data.oci_core_instances.ucm_instances.instances.*.display_name)
+  provisioned_node_count = length(data.oci_core_instances.provisioned_instances.instances.*.display_name)
+  use_marketplace_image  = var.use_marketplace_image
+  wls_edition            = var.wls_edition
 }
 
 module "fss" {

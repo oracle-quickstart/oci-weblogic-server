@@ -190,14 +190,14 @@ data "oci_core_instances" "provisioned_instances" {
   compartment_id = var.compartment_ocid
 
   #filter the instances based on stack prefix
-  filter{
-    name = "display_name"
+  filter {
+    name   = "display_name"
     values = ["${local.service_name_prefix}-wls-*"]
-    regex = true
+    regex  = true
   }
   #filter only the running instances, we need to consider stopped case also
   filter {
-    name = "state"
+    name   = "state"
     values = ["RUNNING", "STOPPED"]
   }
 }
