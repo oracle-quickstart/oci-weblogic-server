@@ -332,19 +332,21 @@ module "validators" {
   db_user                       = local.db_user
   db_password_id                = local.db_password_id
   db_vcn_lpg_id                 = var.db_vcn_lpg_id
+  db_network_compartment_id     = local.db_network_compartment_id
   is_vcn_peering                = local.is_vcn_peering
   is_oci_db                     = local.is_oci_db
   oci_db_compartment_id         = local.oci_db_compartment_id
   oci_db_connection_string      = var.oci_db_connection_string
   oci_db_database_id            = var.oci_db_database_id
   oci_db_dbsystem_id            = var.oci_db_dbsystem_id
-  oci_db_network_compartment_id = local.oci_db_network_compartment_id
+  #oci_db_network_compartment_id = local.oci_db_network_compartment_id
   oci_db_existing_vcn_id        = var.oci_db_existing_vcn_id
   oci_db_pdb_service_name       = var.oci_db_pdb_service_name
   is_atp_db                     = local.is_atp_db
   atp_db_id                     = var.atp_db_id
   atp_db_compartment_id         = var.atp_db_compartment_id
   atp_db_level                  = var.atp_db_level
+  #atp_db_network_compartment_id = local.atp_db_network_compartment_id
   atp_db_existing_vcn_id        = var.atp_db_existing_vcn_id
   is_atp_with_private_endpoints = local.is_atp_with_private_endpoints
 
