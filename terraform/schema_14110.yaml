@@ -171,7 +171,7 @@ groupings:
       - ${listing_resource_version}
       - ${wls_version}
       - ${log_level}
-      - ${instance_image_id}
+      #- ${instance_image_id}
       - ${marketplace_source_images}
       - ${use_regional_subnet}
       - ${assign_weblogic_public_ip}
