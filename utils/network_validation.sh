@@ -513,7 +513,7 @@ This script is used to validate existing subnets, and optionally network securit
   -d, --ocidbid       OCI Database System OCID
   -t, --atpdbid       ATP Database OCID
   -b, --bastionsubnet Bastion Subnet OCID
-  -i, --bastionip     Bastion Host IP.  Provide this if using existing bastion or new bastion with reserved IP
+  -i, --bastionip     Bastion Host IP. Provide this if using existing bastion or new bastion with reserved IP
   -l, --lbsubnet      Load Balancer Subnet OCID
   -f, --fsssubnet     File Storage Service (FSS) Mount Target Subnet OCID
   -a, --adminsrvnsg   OCID of the Network Security Group (NSG) for the administration server (Required if using NSGs instead of security lists)
