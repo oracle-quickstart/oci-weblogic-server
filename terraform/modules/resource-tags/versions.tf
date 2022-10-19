@@ -4,7 +4,13 @@
 terraform {
   required_providers {
     oci = {
-      source = "oracle/oci"
+      source = "hashicorp/oci"
+    }
+    random = {
+      source = "hashicorp/random"
+    }
+    time = {
+      source = "hashicorp/time"
     }
   }
 }
