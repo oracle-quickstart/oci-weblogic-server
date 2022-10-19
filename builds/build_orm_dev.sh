@@ -96,13 +96,13 @@ create_14110_bundle()
   (cd ${TMP_BUILD}; zip -r ${SCRIPT_DIR}/binaries/wlsoci-resource-manager-ee-14110.zip *; rm -Rf ${TMP_BUILD}/*)
 } 
 
-#need to change to false after tag fix
+#need to change it to false after RM UI fix
 replace_12214_variables()
 {
   sed -i '/variable "generate_dg_tag" {/!b;n;n;n;cdefault = true' ${TMP_BUILD}/variables.tf
 }
 
-#need to change to false after tag fix
+#need to change it to false after RM UI fix
 replace_14110_variables()
 {
   sed -i '/variable "generate_dg_tag" {/!b;n;n;n;cdefault = true' ${TMP_BUILD}/variables.tf
