@@ -26,7 +26,7 @@ ADMIN_HTTP_PORT=7001
 ADMIN_HTTPS_PORT=7002
 WLS_SUBNET_OCID=""
 BASTION_SUBNET_OCID=""
-BASTION_HOST_IP_CIDR=""
+BASTION_HOST_IP=""
 LB_SUBNET_OCID=""
 FSS_SUBNET_OCID=""
 ADMIN_SRV_NSG_OCID=""
@@ -82,7 +82,7 @@ function in_cidr_range() {
 }
 
 ####################################################
-# Validates if one of service or nat gateways exist in the specified private subnet.
+# Validates if one of service or nat gateways exist in the VCN of the specified private subnet.
 #
 # Returns:
 #   0|1
@@ -112,7 +112,7 @@ function validate_service_or_nat_gw_exist() {
       return
     fi
 
-    # WLS subnet should be using either NAT or service gateway or both in its routetable
+    # WLS subnet should be using either NAT or service gateway or both in its route table
     rt_ocid=$(oci network subnet get --subnet-id ${WLS_SUBNET_OCID} | jq -r '.data["route-table-id"]')
     rt_rules=$(oci network route-table get --rt-id ${rt_ocid} | jq -r '.data["route-rules"]')
     rt_rules_count=$(echo $rt_rules | jq '.|length')
@@ -286,9 +286,9 @@ function check_udp_port_open_in_seclist_or_nsg() {
     do
       ingress_protocol=$(echo $ingress_rules | jq -r --arg i "$i" '.[$i|tonumber].protocol')
       ingress_source=$(echo $ingress_rules | jq -r --arg i "$i" '.[$i|tonumber].source')
-      tcp_options=$(echo $ingress_rules | jq -r --arg i "$i" '.[$i|tonumber]["tcp-options"]')
-      port_min=$(echo $ingress_rules | jq -r --arg i "$i" '.[$i|tonumber]["tcp-options"]["destination-port-range"].min')
-      port_max=$(echo $ingress_rules | jq -r --arg i "$i" '.[$i|tonumber]["tcp-options"]["destination-port-range"].max')
+      udp_options=$(echo $ingress_rules | jq -r --arg i "$i" '.[$i|tonumber]["udp-options"]')
+      port_min=$(echo $ingress_rules | jq -r --arg i "$i" '.[$i|tonumber]["udp-options"]["destination-port-range"].min')
+      port_max=$(echo $ingress_rules | jq -r --arg i "$i" '.[$i|tonumber]["udp-options"]["destination-port-range"].max')
 
       source_in_cidr_range=1
       if [[ $source = "0.0.0.0/0" ]]
@@ -303,7 +303,7 @@ function check_udp_port_open_in_seclist_or_nsg() {
         source_in_cidr_range=$(in_cidr_range $ingress_source $source ; echo $?)
       fi
 
-      if [[ ($ingress_protocol = "all" || $ingress_protocol = $tcp_protocol ) && ( $tcp_options = "null" || ( $port -ge $port_min && $port -le $port_max ) ) && $source_in_cidr_range -eq 0 ]]
+      if [[ ($ingress_protocol = "all" || $ingress_protocol = $udp_protocol ) && ( $udp_options = "null" || ( $port -ge $port_min && $port -le $port_max ) ) && $source_in_cidr_range -eq 0 ]]
       then
          port_is_open=true
          echo 0
@@ -312,15 +312,17 @@ function check_udp_port_open_in_seclist_or_nsg() {
     done
   fi
 
-  echo 1
-}
+    echo 1
+  }
 
 ####################################################
-# Validates if the specified TCP port is open for the WLS subnet CIDR.
+# Validates if the specified destination TCP/UDP port is open for the specified subnet CIDR in the specified subnet.
 #
 # Args:
+#     subnet:       Subnet OCID
 #     port:         Destination port
 #     source_cidr:  Source CIDR
+#     protocol:     TCP(Default)/UDP
 #
 # Returns:
 #   0|1
@@ -358,49 +360,49 @@ function validate_subnet_port_access() {
 
 ####################################################
 # Validates if the ATP_PORT is open for the WLS subnet CIDR.
-# This is applicable for ATP with private endpoint only.
+# This is applicable for ATP DB with private endpoint only.
 # Args:
-#     subnet: ATP private endpoint subnet
-#     atp_id: ATP OCID to check port access
+#     subnet_id: ATP DB private endpoint subnet OCID
+#     atp_id: ATP DB OCID to check port access
 #     source_cidr: WLS subnet CIDR
 #
 # Returns:
 #   0|1
 ####################################################
-function validate_atp_port_access() {
+function validate_atpdb_port_access() {
   local port_found_open=1
-  local subnet=$1
+  local subnet_id=$1
   local atpdb_id=$2
   local source_cidr=$3
 
   nsg_list=$(oci db autonomous-database get --autonomous-database-id ${atpdb_id} | jq -c '.data["nsg-ids"]')
 
   if [[ $nsg_list = "null" ]]; then
-      #skip validation if nsg is not present (ATP has no private endpoint)
-      port_found_open=0
+    #skip validation if nsg is not present (ATP has no private endpoint)
+    port_found_open=0
   else
-      # Convert to bash array
-      declare -A nsg_list_array
+    # Convert to bash array
+    declare -A nsg_list_array
 
-      while IFS="=" read -r key value
-      do
-          nsg_list_array[$key]="$value"
-      done < <(jq -r 'to_entries|map("\(.key)=\(.value|tostring)")|.[]' <<< "$nsg_list")
+    while IFS="=" read -r key value
+    do
+      nsg_list_array[$key]="$value"
+    done < <(jq -r 'to_entries|map("\(.key)=\(.value|tostring)")|.[]' <<< "$nsg_list")
 
-      # Check the NSG ingress rules for specified destination port is open for access by source CIDR
-      for nsg_ocid in "${nsg_list_array[@]}"
-      do
-        if [[ $port_found_open -ne 0 ]]; then
-          port_found_open=$(check_tcp_port_open_in_seclist_or_nsg $nsg_ocid "${ATP_DB_PORT}" "$source_cidr" "nsg")
-        fi
-      done
-
-      if [[ port_found_open -ne 0 ]]; then
-          # If ATP port is not opened by NSG ingress rules, check subnet security list
-          # doc: "if you choose a subnet with a security list, the security rules for the database
-          # will be a union of the rules in the security list and the NSGs."
-          port_found_open=$(validate_subnet_port_access ${subnet} ${ATP_DB_PORT} ${source_cidr})
+    # Check the NSG ingress rules for specified destination port is open for access by source CIDR
+    for nsg_ocid in "${nsg_list_array[@]}"
+    do
+      if [[ $port_found_open -ne 0 ]]; then
+        port_found_open=$(check_tcp_port_open_in_seclist_or_nsg $nsg_ocid "${ATP_DB_PORT}" "$source_cidr" "nsg")
       fi
+    done
+
+    if [[ port_found_open -ne 0 ]]; then
+      # If ATP port is not opened by NSG ingress rules, check subnet security list
+      # doc: "if you choose a subnet with a security list, the security rules for the database
+      # will be a union of the rules in the security list and the NSGs."
+      port_found_open=$(validate_subnet_port_access ${subnet_id} ${ATP_DB_PORT} ${source_cidr})
+    fi
   fi
 
   echo $port_found_open
@@ -409,7 +411,7 @@ function validate_atp_port_access() {
 ####################################################
 # Validates if the DB_PORT is open for the WLS subnet CIDR.
 # Args:
-#     subnet: OCI DB subnet
+#     subnet_id: OCI DB subnet OCID
 #     db_id: OCI DB OCID to check port access
 #     source_cidr: WLS subnet CIDR
 #
@@ -425,27 +427,27 @@ function validate_ocidb_port_access() {
   nsg_list=$(oci db system get --db-system-id ${ocidb_id} | jq -c '.data["nsg-ids"]')
 
   if [[ $nsg_list != "null" ]]; then
-      # Convert to bash array
-      declare -A nsg_list_array
+    # Convert to bash array
+    declare -A nsg_list_array
 
-      while IFS="=" read -r key value
-      do
-          nsg_list_array[$key]="$value"
-      done < <(jq -r 'to_entries|map("\(.key)=\(.value|tostring)")|.[]' <<< "$nsg_list")
+    while IFS="=" read -r key value
+    do
+      nsg_list_array[$key]="$value"
+    done < <(jq -r 'to_entries|map("\(.key)=\(.value|tostring)")|.[]' <<< "$nsg_list")
 
-      # Check the NSG ingress rules for specified destination port is open for access by source CIDR
-      for nsg_ocid in "${nsg_list_array[@]}"
-      do
-        if [[ $port_found_open -ne 0 ]]; then
-          port_found_open=$(check_tcp_port_open_in_seclist_or_nsg $nsg_ocid "${DB_PORT}" "$source_cidr" "nsg")
-        fi
-      done
+    # Check the NSG ingress rules for specified destination port is open for access by source CIDR
+    for nsg_ocid in "${nsg_list_array[@]}"
+    do
+      if [[ $port_found_open -ne 0 ]]; then
+        port_found_open=$(check_tcp_port_open_in_seclist_or_nsg $nsg_ocid "${DB_PORT}" "$source_cidr" "nsg")
+      fi
+    done
   fi
   if [[ port_found_open -ne 0 ]]; then
   # If OCI DB port is not opened by NSG ingress rules, check subnet security list
   # doc: "if you choose a subnet with a security list, the security rules for the database
   # will be a union of the rules in the security list and the NSGs."
-  port_found_open=$(validate_subnet_port_access ${subnet} ${DB_PORT} ${source_cidr})
+  port_found_open=$(validate_subnet_port_access ${subnet_id} ${DB_PORT} ${source_cidr})
   fi
 
   echo $port_found_open
@@ -510,16 +512,18 @@ usage() {
 This script is used to validate existing subnets, and optionally network security groups, meet the pre-requisite for provisioning a WebLogic for OCI instance.
  ${bold}Options:${reset}
   -w, --wlssubnet     WebLogic Subnet OCID (Required)
+  -p, --http_port     WebLogic Admin Console http port (defaults to 7001)
+  -s, --https_port    WebLogic Admin Console https port (defaults to 7002)
   -d, --ocidbid       OCI Database System OCID
   -t, --atpdbid       ATP Database OCID
   -b, --bastionsubnet Bastion Subnet OCID
-  -i, --bastionipcidr Bastion Host IP CIDR (should be suffixed with /32). Provide this if using existing bastion or new bastion with reserved IP
+  -i, --bastionip     Bastion Host IP.  Provide this if using existing bastion or new bastion with reserved IP
   -l, --lbsubnet      Load Balancer Subnet OCID
   -f, --fsssubnet     File Storage Service (FSS) Mount Target Subnet OCID
   -a, --adminsrvnsg   OCID of the Network Security Group (NSG) for the administration server (Required if using NSGs instead of security lists)
   -m, --managedsrvnsg OCID of the Network Security Group (NSG) for the managed servers (Required if using NSGs instead of security lists)
-  -c, --lbnsg         OCID of the Network Security Group (NSG) for the load balancer
-  -s, --fssnsg        OCID of the Network Security Group (NSG) for the File Storage Service (FSS) mount target
+  -o, --lbnsg         OCID of the Network Security Group (NSG) for the load balancer
+  -e, --fssnsg        OCID of the Network Security Group (NSG) for the File Storage Service (FSS) mount target
   -n, --bastionnsg    OCID of the Network Security Group (NSG) for the bastion
       --debug         Runs script in BASH debug mode (set -x)
   -h, --help          Display this help and exit
@@ -572,16 +576,18 @@ while [[ $1 = -?* ]]; do
     -h|--help) usage >&2; exit 0 ;;
     --version) echo "$(basename $0) ${version}"; exit 0 ;;
     -w|--wlssubnet) shift; WLS_SUBNET_OCID=${1} ;;
+    -p|--http_port) shift; ADMIN_HTTP_PORT=${1} ;;
+    -s|--https_port) shift; ADMIN_HTTPS_PORT=${1} ;;
     -d|--ocidbid) shift; OCIDB_OCID=${1} ;;
     -t|--atpdbid) shift; ATPDB_OCID=${1} ;;
     -b|--bastionsubnet) shift; BASTION_SUBNET_OCID=${1} ;;
-    -i|--bastionipcidr) shift; BASTION_HOST_IP_CIDR=${1} ;;
+    -i|--bastionip) shift; BASTION_HOST_IP=${1} ;;
     -l|--lbsubnet) shift; LB_SUBNET_OCID=${1} ;;
     -f|--fsssubnet) shift; FSS_SUBNET_OCID=${1} ;;
     -a|--adminsrvnsg) shift; ADMIN_SRV_NSG_OCID=${1} ;;
     -m|--managedsrvnsg) shift; MANAGED_SRV_NSG_OCID=${1} ;;
-    -c|--lbnsg) shift; LB_NSG_OCID=${1} ;;
-    -s|--fssnsg) shift; FSS_NSG_OCID=${1} ;;
+    -o|--lbnsg) shift; LB_NSG_OCID=${1} ;;
+    -e|--fssnsg) shift; FSS_NSG_OCID=${1} ;;
     -n|--bastionnsg) shift; BASTION_NSG_OCID=${1} ;;
     --debug) debug=true;;
     --endopts) shift; break ;;
@@ -778,14 +784,14 @@ then
     # Check if DB port is open for access by WLS subnet CIDR in DB subnet/NSG
     res=$(validate_ocidb_port_access ${ocidb_subnet_ocid} ${OCIDB_OCID} ${wls_subnet_cidr_block})
     if [[ $res -ne 0 ]]; then
-      echo "ERROR: DB port ${DB_PORT} is not open for access by WLS Subnet CIDR [$wls_subnet_cidr_block] in DB Subnet [$ocidb_subnet_ocid]" or in DB NSG [$ocidb_nsg_ocid]
+      echo "ERROR: DB port ${DB_PORT} is not open for access by WLS Subnet CIDR [$wls_subnet_cidr_block] in DB Subnet [$ocidb_subnet_ocid] or in DB NSG [$ocidb_nsg_ocid]"
     fi
 
     # Check if DB subnet has 5 security lists
     sec_lists_count=$(oci network subnet get --subnet-id ${ocidb_subnet_ocid} | jq -c '.data["security-list-ids"] | length')
     if [[ $sec_lists_count -eq 5 && $res -ne 0 ]]
     then
-      echo "WARNING: Subnet security list limit reached for the DB subnet [${ocidb_subnet_ocid}]. 5 security lists are already associated with it and a new security list cannot be added. Ensure that one of the security rules opens the DB port ${DB_PORT} for WLS Subnet CIDR [$wls_subnet_cidr_block] in DB Subnet [$ocidb_subnet_ocid] or in DB NSG [$ocidb_nsg_ocid]. Also, when creating a stack, do not select the Create Database Security List option."
+      echo "WARNING: Subnet security list limit reached for the DB subnet [${ocidb_subnet_ocid}]. Five security lists are already associated with it and a new security list cannot be added. Ensure that one of the security rules opens the DB port ${DB_PORT} for WLS Subnet CIDR [$wls_subnet_cidr_block] in DB Subnet [$ocidb_subnet_ocid] or in DB NSG [$ocidb_nsg_ocid]. Also, when creating a stack, do not select the Create Database Security List option."
     fi
   fi
 fi
@@ -797,7 +803,7 @@ then
   atp_subnet_ocid=$(oci db autonomous-database get --autonomous-database-id ${ATPDB_OCID} | jq -r '.data["subnet-id"]')
   if [[ $atp_subnet_ocid != null ]]; then
     #skip validation if ATP has no private endpoint (no subnet-id)
-    res=$(validate_atp_port_access ${atp_subnet_ocid} ${ATPDB_OCID} ${wls_subnet_cidr_block})
+    res=$(validate_atpdb_port_access ${atp_subnet_ocid} ${ATPDB_OCID} ${wls_subnet_cidr_block})
     if [[ $res -ne 0 ]]; then
       echo "ERROR: ATP port ${ATP_DB_PORT} is not open for access by WLS Subnet CIDR [$wls_subnet_cidr_block] in ATP Subnet [${atp_subnet_ocid}]"
     fi
@@ -807,7 +813,7 @@ fi
 ### Validation - Only when Bastion subnet/NSG OCID or Bastion Host IP CIDR is provided) ###
 
 # Check if Bastion subnet/NSG has SSH port open for 0.0.0.0/0
-if [[ -n ${BASTION_SUBNET_OCID} || -n ${BASTION_HOST_IP_CIDR} ]]
+if [[ -n ${BASTION_SUBNET_OCID} || -n ${BASTION_HOST_IP} ]]
 then
   is_private_subnet=$(oci network subnet get --subnet-id ${WLS_SUBNET_OCID} | jq -r '.data["prohibit-public-ip-on-vnic"]')
 
@@ -836,8 +842,9 @@ then
 
     # Check if Bastion Host IP is a valid CIDR
     bastion_cidr_block=""
-    if [[ -n ${BASTION_HOST_IP_CIDR} ]]
+    if [[ -n ${BASTION_HOST_IP} ]]
     then
+      BASTION_HOST_IP_CIDR="$BASTION_HOST_IP/32"
       is_valid_cidr=$(is_valid_ip_cidr ${BASTION_HOST_IP_CIDR})
       if [[ $is_valid_cidr -ne 0 ]]
       then
@@ -851,12 +858,12 @@ then
     fi
 
     # Check if bastion Host IP CIDR or Bastion Subnet CIDR has access to SSH port on WLS subnet or Managed Server NSG
-    if [[ -z ${BASTION_NSG_OCID} ]]
+    if [[ -z ${ADMIN_SRV_NSG_OCID} && -z ${MANAGED_SRV_NSG_OCID} ]]
     then
       res=$(validate_subnet_port_access ${WLS_SUBNET_OCID} ${SSH_PORT} ${bastion_cidr_block})
       if [[ $res -ne 0 ]]
       then
-        echo "WARNING: SSH port ${SSH_PORT} is not open for access by Bastion Subnet CIDR [$bastion_cidr_block] in private WLS Subnet [$WLS_SUBNET_OCID]"
+        echo "WARNING: SSH port ${SSH_PORT} is not open for access by [$bastion_cidr_block] in private WLS Subnet [$WLS_SUBNET_OCID]"
       fi
     else
       if [[ -n ${ADMIN_SRV_NSG_OCID} && -n ${MANAGED_SRV_NSG_OCID} ]]
@@ -864,7 +871,7 @@ then
         res=$(check_tcp_port_open_in_seclist_or_nsg $MANAGED_SRV_NSG_OCID "${SSH_PORT}" "$bastion_cidr_block" "nsg")
         if [[ $res -ne 0 ]]
         then
-          echo "WARNING: SSH port ${SSH_PORT} is not open for access by Bastion Subnet CIDR [$bastion_cidr_block] in Managed Server NSG [$MANAGED_SRV_NSG_OCID]"
+          echo "WARNING: SSH port ${SSH_PORT} is not open for access by [$bastion_cidr_block] in Managed Server NSG [$MANAGED_SRV_NSG_OCID]"
         fi
       fi
     fi
