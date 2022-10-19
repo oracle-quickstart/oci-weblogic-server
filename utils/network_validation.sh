@@ -377,10 +377,7 @@ function validate_atpdb_port_access() {
 
   nsg_list=$(oci db autonomous-database get --autonomous-database-id ${atpdb_id} | jq -c '.data["nsg-ids"]')
 
-  if [[ $nsg_list = "null" ]]; then
-    #skip validation if nsg is not present (ATP has no private endpoint)
-    port_found_open=0
-  else
+  if [[ $nsg_list != "null" ]]; then
     # Convert to bash array
     declare -A nsg_list_array
 
@@ -396,13 +393,12 @@ function validate_atpdb_port_access() {
         port_found_open=$(check_tcp_port_open_in_seclist_or_nsg $nsg_ocid "${ATP_DB_PORT}" "$source_cidr" "nsg")
       fi
     done
-
-    if [[ port_found_open -ne 0 ]]; then
-      # If ATP port is not opened by NSG ingress rules, check subnet security list
-      # doc: "if you choose a subnet with a security list, the security rules for the database
-      # will be a union of the rules in the security list and the NSGs."
-      port_found_open=$(validate_subnet_port_access ${subnet_id} ${ATP_DB_PORT} ${source_cidr})
-    fi
+  fi
+  if [[ port_found_open -ne 0 ]]; then
+    # If ATP port is not opened by NSG ingress rules, check subnet security list
+    # doc: "if you choose a subnet with a security list, the security rules for the ATP database
+    # will be a union of the rules in the security list and the NSGs."
+    port_found_open=$(validate_subnet_port_access ${subnet_id} ${ATP_DB_PORT} ${source_cidr})
   fi
 
   echo $port_found_open
@@ -420,7 +416,7 @@ function validate_atpdb_port_access() {
 ####################################################
 function validate_ocidb_port_access() {
   local port_found_open=1
-  local subnet=$1
+  local subnet_id=$1
   local ocidb_id=$2
   local source_cidr=$3
 
@@ -796,16 +792,17 @@ then
   fi
 fi
 
-# Check if port for ATP with private endpoint is open for access by WLS subnet CIDR. The ATP has associated NSG.
-# No-op for ATP with no private endpoint (network security group is not present for ATP)
+### Validation - Only when ATP DB OCID is provided ###
+
 if [[ -n ${ATPDB_OCID} ]]
 then
   atp_subnet_ocid=$(oci db autonomous-database get --autonomous-database-id ${ATPDB_OCID} | jq -r '.data["subnet-id"]')
+  atp_nsg_ocid=$(oci db autonomous-database get --autonomous-database-id ${ATPDB_OCID} | jq -c '.data["nsg-ids"]')
   if [[ $atp_subnet_ocid != null ]]; then
-    #skip validation if ATP has no private endpoint (no subnet-id)
+    # Check if ATP DB port is open for access by WLS subnet CIDR in DB subnet/NSG
     res=$(validate_atpdb_port_access ${atp_subnet_ocid} ${ATPDB_OCID} ${wls_subnet_cidr_block})
     if [[ $res -ne 0 ]]; then
-      echo "ERROR: ATP port ${ATP_DB_PORT} is not open for access by WLS Subnet CIDR [$wls_subnet_cidr_block] in ATP Subnet [${atp_subnet_ocid}]"
+      echo "ERROR: ATP DB port ${ATP_DB_PORT} is not open for access by WLS Subnet CIDR [$wls_subnet_cidr_block] in ATP DB Subnet [${atp_subnet_ocid}] or in ATP DB NSG [$atp_nsg_ocid]"
     fi
   fi
 fi
