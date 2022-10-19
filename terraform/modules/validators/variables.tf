@@ -289,11 +289,6 @@ variable "is_atp_with_private_endpoints" {
   description = "Set to true if the ATP DB uses private endpoint for access control."
 }
 
-#variable "atp_db_network_compartment_id" {
-#  type        = string
-#  description = "The OCID of the compartment in which the ATP database VCN is found"
-#}
-
 variable "atp_db_existing_vcn_id" {
   type        = string
   description = "The OCID of the VCN of the ATP DB when using private endpoint."
