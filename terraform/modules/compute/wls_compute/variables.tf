@@ -284,3 +284,7 @@ variable "mp_ucm_listing_resource_version" {
   description = "marketplace UCM image listing resource version"
 }
 
+variable "is_ucm_image" {
+  type        = bool
+  description = "The metadata info to send it to instance to determine if its ucm image based instance or not"
+}

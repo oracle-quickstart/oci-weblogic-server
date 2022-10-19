@@ -170,8 +170,8 @@ data "oci_core_instances" "ucm_instances" {
 
   #filter the instances based on the UCM image and the stack prefix.
   filter {
-    name   = "source_details.source_id"
-    values = [var.ucm_instance_image_id]
+    name   = "metadata.is_ucm_image"
+    values = ["true"]
   }
   filter {
     name   = "display_name"
