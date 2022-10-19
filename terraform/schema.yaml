@@ -1134,7 +1134,7 @@ variables:
     type: boolean
     default: true
     title: Provision Load Balancer
-    description: Provision a load balancer in Oracle Cloud Infrastructure to distribute application traffic to the managed servers in the domain. Load balancer is required if authentication with IDCS is selected. If you select authentication with IDCS but do not select the Provision Load Balancer option, a load balancer will be provisioned.
+    description: Provision a load balancer in Oracle Cloud Infrastructure to distribute application traffic to the managed servers in the domain. Load balancer is required if authentication with IDCS is selected. If you select authentication with IDCS, a load balancer will be provisioned.
 
   load_balancer_strategy_new_subnet:
     visible:
@@ -2213,7 +2213,7 @@ variables:
     type: boolean
     default: false
     title: "Enable Application Performance Monitoring"
-    description: "Enable Application Performance Monitoring for WebLogic instances, which is required for automatic scaling of the stack. If you automatically scale the stack, you must not unselect the Enable Application Performance Monitoring option when editing the stack. If you select automatic scaling but do not select the Enable Application Performance Monitoring option, Application Performance Monitoring will be enabled."
+    description: "Enable Application Performance Monitoring for WebLogic instances, which is required for automatic scaling of the stack. If you automatically scale the stack, you must not unselect the Enable Application Performance Monitoring option when editing the stack. If you select automatic scaling, Application Performance Monitoring will be enabled."
 
   apm_domain_compartment_id:
     visible:
