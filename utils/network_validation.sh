@@ -440,10 +440,10 @@ function validate_ocidb_port_access() {
     done
   fi
   if [[ port_found_open -ne 0 ]]; then
-  # If OCI DB port is not opened by NSG ingress rules, check subnet security list
-  # doc: "if you choose a subnet with a security list, the security rules for the database
-  # will be a union of the rules in the security list and the NSGs."
-  port_found_open=$(validate_subnet_port_access ${subnet_id} ${DB_PORT} ${source_cidr})
+    # If OCI DB port is not opened by NSG ingress rules, check subnet security list
+    # doc: "if you choose a subnet with a security list, the security rules for the database
+    # will be a union of the rules in the security list and the NSGs."
+    port_found_open=$(validate_subnet_port_access ${subnet_id} ${DB_PORT} ${source_cidr})
   fi
 
   echo $port_found_open
