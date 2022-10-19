@@ -106,6 +106,7 @@ groupings:
     variables:
       - ${add_existing_fss}
       - ${fss_availability_domain}
+      - ${fss_compartment_id}
       - ${existing_fss_id}
       - ${existing_export_path_id}
       - ${add_existing_mount_target}
@@ -1629,6 +1630,19 @@ variables:
     dependsOn:
       compartmentId: ${compartment_ocid}
     required: true
+
+  fss_compartment_id:
+    visible:
+      and:
+        - ${add_fss}
+        - ${add_existing_fss}
+        - not:
+            - ${create_new_vcn}
+    type: oci:identity:compartment:id
+    required: true
+    title: Existing File System Compartment
+    description: The compartment where the file system exists
+    default: ${compartment_ocid}
 
   mount_target_id:
     visible:

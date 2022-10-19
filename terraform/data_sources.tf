@@ -87,7 +87,7 @@ data "oci_file_storage_file_systems" "file_systems" {
 
   #Required
   availability_domain = local.fss_availability_domain
-  compartment_id      = var.compartment_ocid
+  compartment_id      = var.fss_compartment_id
 
   id = var.existing_fss_id
 }
@@ -112,7 +112,7 @@ data "oci_file_storage_mount_targets" "mount_target_by_export_set" {
   count = var.existing_fss_id != "" ? 1 : 0
   #Required
   availability_domain = local.fss_availability_domain
-  compartment_id      = var.compartment_ocid
+  compartment_id      = var.fss_compartment_id
   export_set_id       = data.oci_file_storage_exports.export[0].export_set_id
 }
 

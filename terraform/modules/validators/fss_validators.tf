@@ -15,6 +15,8 @@ locals {
 
   missing_mount_target_subnet_id_msg      = "WLSC-ERROR: The value for mount target subnet id is required if existing subnets are required"
   validate_missing_mount_target_subnet_id = var.add_fss && var.use_existing_subnets && var.mount_target_subnet_id == "" && var.mount_target_subnet_cidr != "" ? local.validators_msg_map[local.missing_mount_target_subnet_id_msg] : null
-
+ 
+  invalid_existing_fss_id_msg        = "WLSC-ERROR: The existing file system should belongs to the fss availability domain"
+  validate_fss_mount_availability_domain = var.add_fss && var.existing_fss_id != "" && (var.existing_fss_id != data.oci_file_storage_file_systems.file_systems[0].file_systems[0].id) ? local.validators_msg_map[local.invalid_availability_domain_msg] : null
 }
 

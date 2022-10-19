@@ -390,6 +390,7 @@ module "validators" {
   mount_target_id                  = var.mount_target_id
   existing_fss_id                  = var.existing_fss_id
   mount_target_availability_domain = var.add_existing_mount_target ? data.oci_file_storage_mount_targets.mount_targets[0].mount_targets[0].availability_domain : ""
+  fss_compartment_id               = var.fss_compartment_id
 
   create_policies  = var.create_policies
   use_oci_logging  = var.use_oci_logging
