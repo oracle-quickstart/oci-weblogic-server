@@ -102,7 +102,6 @@ data "oci_file_storage_mount_targets" "mount_targets" {
   id = var.mount_target_id
 }
 
-
 data "oci_file_storage_exports" "export" {
   count = var.existing_fss_id != "" ? 1 : 0
   id    = var.existing_export_path_id

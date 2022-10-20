@@ -505,7 +505,7 @@ variable "wls_edition" {
   description = "The WebLogic edition to be installed in this compute instance. Accepted values are: SE, EE, SUITE"
 }
 
-variable "fss_id" {
-  type        = string
-  description = "The OCID of the existing file system that is derived from datasource"
+variable "availability_domain" {
+  type = string
+  description = "The name of the fss availability domain that user enters for providing existing fss id"
 }
