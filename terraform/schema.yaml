@@ -1134,7 +1134,7 @@ variables:
     type: boolean
     default: true
     title: Provision Load Balancer
-    description: Provision a load balancer in Oracle Cloud Infrastructure to distribute application traffic to the managed servers in the domain. Load balancer is required if authentication with IDCS is selected. If you select authentication with IDCS, a load balancer will be provisioned.
+    description: Provision a load balancer in Oracle Cloud Infrastructure to distribute application traffic to the managed servers in the domain.
 
   load_balancer_strategy_new_subnet:
     visible:
@@ -2006,7 +2006,7 @@ variables:
     type: boolean
     default: false
     title: Enable Authentication Using Identity Cloud Service
-    description: Authenticate WebLogic Server users against Oracle Identity Cloud Service (IDCS). If not selected, WebLogic Server uses the local identity store. If you enable Authentication Using Identity Cloud Service, you must select the option to Provision Load Balancer.
+    description: Authenticate WebLogic Server users against Oracle Identity Cloud Service (IDCS). If not selected, WebLogic Server uses the local identity store. If you select the check box, you must provision the load balancer.
     visible: ${orm_create_mode}
 
   idcs_host:
@@ -2213,7 +2213,7 @@ variables:
     type: boolean
     default: false
     title: "Enable Application Performance Monitoring"
-    description: "Enable Application Performance Monitoring for WebLogic instances, which is required for automatic scaling of the stack. If you automatically scale the stack, you must not unselect the Enable Application Performance Monitoring option when editing the stack. If you select automatic scaling, Application Performance Monitoring will be enabled."
+    description: "Enable Application Performance Monitoring for WebLogic instances, which is required for automatic scaling of the stack. If you automatically scale the stack, you must not unselect the Enable Application Performance Monitoring option when editing the stack."
 
   apm_domain_compartment_id:
     visible:
@@ -2255,7 +2255,7 @@ variables:
     type: boolean
     default: false
     title: "Enable Autoscaling"
-    description: "Enable Application Performance Monitoring and Auto Scaling of WebLogic Instances based on WebLogic Monitoring Metrics. If you select Autoscaling, you must select the Enable Application Performance Monitoring option above."
+    description: "Enable Auto Scaling of WebLogic Instances based on WebLogic Monitoring Metrics. If you select the check box,  Application Performance Monitoring will be enabled."
 
 # Metric based autoscaling UI
   wls_metric:
