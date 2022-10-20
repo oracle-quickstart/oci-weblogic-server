@@ -33,6 +33,10 @@ output "bastion_instance_public_ip" {
   value = local.bastion_public_ip
 }
 
+output "fss_id" {
+  value = var.existing_fss_id != "" ? data.oci_file_storage_file_systems.file_systems[0].file_systems[0].id : ""
+}
+
 output "weblogic_instances" {
   value = jsonencode(formatlist(
     "{ Instance Id:%s, Instance name:%s, Availability Domain:%s, Instance Shape:%s, Private IP:%s, Public IP:%s }",

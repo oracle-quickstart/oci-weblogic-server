@@ -504,3 +504,8 @@ variable "wls_edition" {
   type        = string
   description = "The WebLogic edition to be installed in this compute instance. Accepted values are: SE, EE, SUITE"
 }
+
+variable "fss_id" {
+  type        = string
+  description = "The OCID of the existing file system that is derived from datasource"
+}
