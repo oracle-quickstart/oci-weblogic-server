@@ -88,7 +88,7 @@ variable "wlsoci_vmscripts_zip_bundle_path" {
 
 variable "image_mode" {
   type        = string
-  description = "Type of image used for provisioning.Image type must be BYOL or UCM"
+  description = "Type of image used for provisioning. Image type must be BYOL or UCM"
   default     = "Oracle WebLogic Server BYOL Image"
 }
 
