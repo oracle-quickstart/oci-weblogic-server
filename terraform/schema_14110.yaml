@@ -1547,7 +1547,7 @@ variables:
     type: boolean
     default: false
     title: Enable Authentication Using Identity Cloud Service
-    description: Authenticate WebLogic Server users against Oracle Identity Cloud Service (IDCS). If not selected, WebLogic Server uses the local identity store. If you select the check box, you must provision the load balancer.
+    description: Authenticate WebLogic Server users against Oracle Identity Cloud Service (IDCS). If not selected, WebLogic Server uses the local identity store. If you select the check box, load balancer will be provisioned.
     visible: ${orm_create_mode}
 
   idcs_host:
