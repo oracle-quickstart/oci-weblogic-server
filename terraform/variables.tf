@@ -38,6 +38,13 @@ variable "generate_dg_tag" {
   default     = true
 }
 
+# Variable used in UI only
+variable "create_service_tag" {
+  type        = bool
+  description = "Set to true if you want to add tags to all resources that support tag created by the WebLogic for OCI stack"
+  default     = false
+}
+
 variable "service_tags" {
   type = object({
     freeformTags = map(any)
