@@ -77,6 +77,8 @@ locals {
 
   # VCN peering
   missing_db_vcn_lpg = var.is_vcn_peering ? var.db_vcn_lpg_id == "" : false
+  db_existing_vcn_id = var.is_vcn_peering ? var.is_atp_db ? var.atp_db_existing_vcn_id : var.oci_db_existing_vcn_id : ""
+  db_id              = var.is_vcn_peering ? var.is_atp_db ? var.atp_db_id : var.oci_db_dbsystem_id : ""
   invalid_db_vcn_lpg = var.is_vcn_peering ? length([for lpg in data.oci_core_local_peering_gateways.db_vcn_local_peering_gateways[0].local_peering_gateways[*] : lpg if lpg.id == var.db_vcn_lpg_id]) != 1 : false
 
   # Validations
@@ -131,7 +133,7 @@ locals {
   missing_db_vcn_lpg_msg      = "WLSC-ERROR: The value for db_vcn_lpg_id is required for VCN peering."
   validate_missing_db_vcn_lpg = local.missing_db_vcn_lpg ? local.validators_msg_map[local.missing_db_vcn_lpg_msg] : null
 
-  invalid_db_vcn_lpg_msg      = "WLSC-ERROR: The local peering gateway [${var.db_vcn_lpg_id}] is not in the existing vcn [${var.oci_db_existing_vcn_id}] of the OCI database [${var.oci_db_dbsystem_id}]"
+  invalid_db_vcn_lpg_msg      = "WLSC-ERROR: The local peering gateway [${var.db_vcn_lpg_id}] is not in the existing vcn [${local.db_existing_vcn_id}] of the database [${local.db_id}]"
   validate_db_vcn_lpg         = local.invalid_db_vcn_lpg ? local.validators_msg_map[local.invalid_db_vcn_lpg_msg] : null
 
 }

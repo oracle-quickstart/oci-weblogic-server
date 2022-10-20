@@ -118,6 +118,12 @@ variable "atp_db_password_id" {
   default     = ""
 }
 
+variable "atp_db_network_compartment_id" {
+  type        = string
+  description = "The OCID of the compartment in which the ATP database VCN is found"
+  default     = ""
+}
+
 variable "atp_db_existing_vcn_id" {
   type        = string
   description = "The OCID of the VCN used by the ATP database private endpoint"

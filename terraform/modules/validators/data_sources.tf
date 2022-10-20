@@ -13,7 +13,7 @@ data "oci_load_balancer_backend_sets" "existing_load_balancer_backend_set_data_s
 data "oci_core_local_peering_gateways" "db_vcn_local_peering_gateways" {
   count = var.is_vcn_peering ? 1 : 0
   #Required
-  compartment_id = var.oci_db_network_compartment_id
+  compartment_id = var.db_network_compartment_id
   #Optional
-  vcn_id = var.oci_db_existing_vcn_id
+  vcn_id = local.db_existing_vcn_id
 }
