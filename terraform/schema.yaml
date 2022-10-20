@@ -83,8 +83,8 @@ groupings:
       - ${wls_ocpu_count}
       - ${wls_node_count}
       - ${wls_node_count_limit}
-      #- ${image_mode}
-      #- ${terms_and_conditions}
+      - ${image_mode}
+      - ${terms_and_conditions}
       - ${wls_availability_domain_name}
       - ${wls_subnet_id}
       - ${wls_subnet_cidr}
@@ -218,8 +218,8 @@ groupings:
       - ${ucm_instance_image_id}
       - ${ucm_listing_id}
       - ${ucm_listing_resource_version}
-      - ${image_mode}
-      - ${terms_and_conditions}
+      #- ${image_mode}
+      #- ${terms_and_conditions}
       - ${generate_dg_tag}
       - ${existing_export_path_id}
       - ${wait_time_wls_vnc_dns_resolver}

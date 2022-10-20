@@ -260,16 +260,31 @@ variable "mode" {
 
 variable "mp_listing_id" {
   type        = string
-  description = "marketplace listing id"
+  description = "Marketplace listing id"
 }
 
 variable "mp_listing_resource_version" {
   type        = string
-  description = "marketplace listing resource version"
+  description = "Marketplace listing resource version"
 }
 
 variable "use_marketplace_image" {
   type        = bool
   description = "Set to true if the image subscription is used for provisioning"
   default     = true
+}
+
+variable "mp_ucm_listing_id" {
+  type        = string
+  description = "Marketplace UCM image listing id"
+}
+
+variable "mp_ucm_listing_resource_version" {
+  type        = string
+  description = "Marketplace UCM image listing resource version"
+}
+
+variable "is_ucm_image" {
+  type        = bool
+  description = "The metadata info to send it to instance to determine if its ucm image based instance or not"
 }
