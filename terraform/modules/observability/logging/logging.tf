@@ -9,7 +9,7 @@ locals {
   ]
   #The following expression generates a list of paths for servers from 1 to 30
   log_paths2 = [
-    for i in range(1,31):format("/u01/data/domains/%s_domain/servers/%s_server_%s/logs/%s_server_%s.log*", var.service_prefix_name, var.service_prefix_name, i, var.service_prefix_name, i)
+    for i in range(1, 31) : format("/u01/data/domains/%s_domain/servers/%s_server_%s/logs/%s_server_%s.log*", var.service_prefix_name, var.service_prefix_name, i, var.service_prefix_name, i)
   ]
   log_paths = concat(local.log_paths1, local.log_paths2)
 }

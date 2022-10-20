@@ -24,68 +24,68 @@ variable "tags" {
 }
 
 variable "subscription_protocol" {
-  type    = string
+  type        = string
   description = "The protocol used for the subscription"
-  default = "EMAIL"
+  default     = "EMAIL"
 }
 
 variable "subscription_endpoint" {
-  type = string
+  type        = string
   description = "A locator that corresponds to the subscription protocol"
 }
 
 variable "alarm_severity" {
-  type    = string
+  type        = string
   description = "The perceived type of response required when the alarm is in the FIRING state"
-  default = "CRITICAL"
+  default     = "CRITICAL"
 }
 
 variable "min_threshold_percent" {
-  type    = string
+  type        = string
   description = "Minimum threshold in percentage for the metric"
 }
 
 variable "max_threshold_percent" {
-  type    = string
+  type        = string
   description = "Maximum threshold in percentage for the metric"
 }
 
 variable "min_threshold_counter" {
-  type    = string
+  type        = string
   description = "Minimum threshold count for the metric"
 }
 
 variable "max_threshold_counter" {
-  type    = string
+  type        = string
   description = "Maximum threshold count for the metric"
 }
 
 variable "wls_metric" {
-  type = string
+  type        = string
   description = "Metric to use for triggering scaling actions. Default is metrics-based autoscaling"
 }
 
 variable "metric_compartment_id" {
-  type = string
+  type        = string
   description = "The OCID of the compartment where the metrics will be displayed"
 }
 
 variable "alarm_namspace" {
-  type    = string
+  type        = string
   description = "The source service or application emitting the metric that is evaluated by the alarm"
-  default = "oracle_apm_monitoring"
+  default     = "oracle_apm_monitoring"
 }
 
 variable "alarm_message_format" {
-  type    = string
+  type        = string
   description = "The format to use for notification messages sent from this alarm"
-  default = "ONS_OPTIMIZED"
+  default     = "ONS_OPTIMIZED"
 }
 
 variable "metric_interval" {
-  type    = string
+  type        = string
   description = "The metric interval time"
-  default = "1m"
+  default     = "1m"
 }
 
 variable "wls_subnet_id" {
@@ -106,22 +106,22 @@ variable "tenancy_id" {
 }
 
 variable "fn_application_name" {
-  type = string
+  type        = string
   description = "A user friendly function application name"
 }
 
 variable "fn_repo_name" {
-  type = string
+  type        = string
   description = "A user friendly function repository name"
 }
 
 variable "log_group_id" {
-  type = string
+  type        = string
   description = "The OCID of a log group to work with"
 }
 
 variable "create_policies" {
-  type    = bool
+  type        = bool
   description = "Set to true if the policies need to be created"
 }
 

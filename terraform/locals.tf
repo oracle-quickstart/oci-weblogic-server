@@ -44,7 +44,7 @@ locals {
   oci_db_compartment_id         = var.oci_db_compartment_id == "" ? local.network_compartment_id : var.oci_db_compartment_id
   oci_db_network_compartment_id = local.is_oci_db && var.oci_db_network_compartment_id == "" ? var.oci_db_compartment_id : var.oci_db_network_compartment_id
 
-  db_network_compartment_id     = local.is_atp_db ? local.atp_db_network_compartment_id : local.oci_db_network_compartment_id
+  db_network_compartment_id = local.is_atp_db ? local.atp_db_network_compartment_id : local.oci_db_network_compartment_id
 
   # Locals used by outputs
   bastion_public_ip = element(coalescelist(module.bastion[*].public_ip, data.oci_core_instance.existing_bastion_instance.*.public_ip, [""]), 0)

@@ -4,12 +4,12 @@
 resource "oci_core_network_security_group" "nsg" {
   #Required
   compartment_id = var.compartment_id
-  vcn_id = var.vcn_id
+  vcn_id         = var.vcn_id
 
   #Optional
-  display_name               = var.nsg_name
-  defined_tags               = var.tags.defined_tags
-  freeform_tags              = var.tags.freeform_tags
+  display_name  = var.nsg_name
+  defined_tags  = var.tags.defined_tags
+  freeform_tags = var.tags.freeform_tags
 
   lifecycle {
     ignore_changes = [defined_tags, freeform_tags]

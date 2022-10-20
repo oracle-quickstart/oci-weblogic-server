@@ -14,7 +14,7 @@ resource "oci_file_storage_mount_target" "mount_target" {
   display_name   = "${var.resource_name_prefix}-mntTarget"
   hostname_label = "${var.resource_name_prefix}-mntTarget"
 
-  defined_tags = var.tags.defined_tags
+  defined_tags  = var.tags.defined_tags
   freeform_tags = var.tags.freeform_tags
 
   lifecycle {
