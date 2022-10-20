@@ -20,6 +20,19 @@ groupings:
       - ${create_new_vcn}
       - ${add_fss}
 
+  - title: "Virtual Cloud Networking"
+    variables:
+      - ${network_compartment_id}
+      - ${wls_existing_vcn_id}
+      - ${wls_vcn_name}
+      - ${wls_vcn_cidr}
+      - ${create_new_subnets}
+      - ${existing_network_validated}
+      - ${subnet_compartment_id}
+      - ${subnet_type}
+      - ${subnet_span}
+      - ${add_existing_nsg}
+
   - title: "WebLogic Domain Configuration"
     variables:
       - ${wls_admin_user}
@@ -51,6 +64,7 @@ groupings:
       - ${oci_db_password_id}
       - ${oci_db_port}
       - ${ocidb_existing_vcn_add_seclist}
+      - ${db_vcn_lpg_id}
       #End of JRF fields
       - ${deploy_sample_app}
       - ${wls_server_startup_args}
@@ -62,20 +76,6 @@ groupings:
       - ${wls_ms_extern_port}
       - ${wls_ms_extern_ssl_port}
       - ${allow_manual_domain_extension}
-
-  - title: "Virtual Cloud Networking"
-    variables:
-      - ${network_compartment_id}
-      - ${wls_existing_vcn_id}
-      - ${wls_vcn_name}
-      - ${wls_vcn_cidr}
-      - ${create_new_subnets}
-      - ${existing_network_validated}
-      - ${subnet_compartment_id}
-      - ${subnet_type}
-      - ${subnet_span}
-      - ${add_existing_nsg}
-      - ${db_vcn_lpg_id}
 
   - title: "WebLogic Server Compute Instance"
     variables:
@@ -1103,7 +1103,7 @@ variables:
     type: boolean
     default: true
     title: Provision Load Balancer
-    description: Provision a load balancer in Oracle Cloud Infrastructure to distribute application traffic to the managed servers in the domain
+    description: Provision a load balancer in Oracle Cloud Infrastructure to distribute application traffic to the managed servers in the domain.
 
   load_balancer_strategy_new_subnet:
     visible:
@@ -1975,7 +1975,7 @@ variables:
     type: boolean
     default: false
     title: Enable Authentication Using Identity Cloud Service
-    description: Authenticate WebLogic Server users against Oracle Identity Cloud Service (IDCS). If not selected, WebLogic Server uses the local identity store. If you enable Authentication Using Identity Cloud Service, you must select the option to Provision Load Balancer.
+    description: Authenticate WebLogic Server users against Oracle Identity Cloud Service (IDCS). If not selected, WebLogic Server uses the local identity store. If you select the check box, load balancer will be provisioned.
     visible: ${orm_create_mode}
 
   idcs_host:
@@ -2239,7 +2239,7 @@ variables:
     type: boolean
     default: false
     title: "Enable Autoscaling"
-    description: "Enable Application Performance Monitoring and Auto Scaling of WebLogic Instances based on WebLogic Monitoring Metrics. If you select Autoscaling, you must select the Enable Application Performance Monitoring option above."
+    description: "Enable Auto Scaling of WebLogic Instances based on WebLogic Monitoring Metrics. If you select the check box,  Application Performance Monitoring will be enabled."
 
 # Metric based autoscaling UI
   wls_metric:

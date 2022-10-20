@@ -260,12 +260,12 @@ variable "mode" {
 
 variable "mp_listing_id" {
   type        = string
-  description = "marketplace listing id"
+  description = "Marketplace listing id"
 }
 
 variable "mp_listing_resource_version" {
   type        = string
-  description = "marketplace listing resource version"
+  description = "Marketplace listing resource version"
 }
 
 variable "use_marketplace_image" {
@@ -276,12 +276,12 @@ variable "use_marketplace_image" {
 
 variable "mp_ucm_listing_id" {
   type        = string
-  description = "marketplace UCM image listing id"
+  description = "Marketplace UCM image listing id"
 }
 
 variable "mp_ucm_listing_resource_version" {
   type        = string
-  description = "marketplace UCM image listing resource version"
+  description = "Marketplace UCM image listing resource version"
 }
 
 variable "is_ucm_image" {

@@ -26,7 +26,7 @@ locals {
   db_password_id                = local.is_atp_db ? var.atp_db_password_id : var.oci_db_password_id
   is_atp_db                     = trimspace(var.atp_db_id) != ""
   is_atp_with_private_endpoints = local.is_atp_db && (length(data.oci_database_autonomous_database.atp_db) != 0 ? data.oci_database_autonomous_database.atp_db[0].subnet_id != null : false)
-
+  atp_db_network_compartment_id = local.is_atp_db && var.atp_db_network_compartment_id == "" ? var.atp_db_compartment_id : var.atp_db_network_compartment_id
 
   atp_db = {
     is_atp         = local.is_atp_db
@@ -43,6 +43,8 @@ locals {
   is_oci_db                     = trimspace(var.oci_db_dbsystem_id) == "" ? false : true
   oci_db_compartment_id         = var.oci_db_compartment_id == "" ? local.network_compartment_id : var.oci_db_compartment_id
   oci_db_network_compartment_id = local.is_oci_db && var.oci_db_network_compartment_id == "" ? var.oci_db_compartment_id : var.oci_db_network_compartment_id
+
+  db_network_compartment_id     = local.is_atp_db ? local.atp_db_network_compartment_id : local.oci_db_network_compartment_id
 
   # Locals used by outputs
   bastion_public_ip = element(coalescelist(module.bastion[*].public_ip, data.oci_core_instance.existing_bastion_instance.*.public_ip, [""]), 0)

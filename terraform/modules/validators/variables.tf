@@ -199,6 +199,10 @@ variable "oci_db_compartment_id" {
     error_message = "WLSC-ERROR: The value for oci_db_compartment_id should be blank or start with \"ocid1.compartment.\"."
   }
 }
+variable "db_network_compartment_id" {
+  type        = string
+  description = "The OCID of the compartment in which the DB VCN is found"
+}
 variable "oci_db_existing_vcn_id" {
   type        = string
   description = "The OCID of the VCN of the OCI database, if JRF with OCI DB is used"
@@ -467,7 +471,7 @@ variable "wlsoci_vmscripts_zip_bundle_path" {
 
 variable image_mode {
   type = string
-  description = "Type of image used for provisioning.Image type must be BYOL or UCM"
+  description = "Type of image used for provisioning. Image type must be BYOL or UCM"
 }
 
 variable "terms_and_conditions" {
@@ -482,12 +486,12 @@ variable "instance_image_id" {
 
 variable "ucm_instance_image_id" {
   type        = string
-  description = "The OCID of the marketplace admin image which is used for provisioning"
+  description = "The OCID of the marketplace UCM image which will be used for provisioning"
 }
 
 variable "use_marketplace_image" {
   type        = bool
-  description = "Set to true if using a marketplace Weblogic instance image, to create the marketplace subscriptions"
+  description = "Set to true if using a marketplace WebLogic instance image, to create the marketplace subscriptions"
 }
 
 variable "ucm_instance_count" {

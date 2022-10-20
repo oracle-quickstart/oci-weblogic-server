@@ -332,6 +332,7 @@ module "validators" {
   db_user                       = local.db_user
   db_password_id                = local.db_password_id
   db_vcn_lpg_id                 = var.db_vcn_lpg_id
+  db_network_compartment_id     = local.db_network_compartment_id
   is_vcn_peering                = local.is_vcn_peering
   is_oci_db                     = local.is_oci_db
   oci_db_compartment_id         = local.oci_db_compartment_id
