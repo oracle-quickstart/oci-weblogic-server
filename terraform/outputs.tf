@@ -14,7 +14,7 @@ output "is_vcn_peered" {
 }
 
 output "fss_system_id" {
-  value = var.existing_fss_id != "" ? var.existing_fss_id : module.fss[0].fss_id
+  value = var.existing_fss_id != "" ? var.existing_fss_id : (var.add_fss ? module.fss[0].fss_id : "")
 }
 
 output "load_balancer_id" {
@@ -31,10 +31,6 @@ output "bastion_instance_id" {
 
 output "bastion_instance_public_ip" {
   value = local.bastion_public_ip
-}
-
-output "fss_id" {
-  value = var.existing_fss_id != "" ? data.oci_file_storage_file_systems.file_systems[0].file_systems[0].id : ""
 }
 
 output "weblogic_instances" {
