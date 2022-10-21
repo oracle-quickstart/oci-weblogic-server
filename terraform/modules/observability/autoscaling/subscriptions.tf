@@ -5,11 +5,11 @@ resource "oci_ons_subscription" "wlsc_email_topic_email_subscription" {
   count = var.subscription_endpoint != "" ? 1 : 0
   #Required
   compartment_id = var.compartment_id
-  endpoint = var.subscription_endpoint
-  protocol = var.subscription_protocol
-  topic_id = oci_ons_notification_topic.wlsc_email_notification_topic[count.index].id
+  endpoint       = var.subscription_endpoint
+  protocol       = var.subscription_protocol
+  topic_id       = oci_ons_notification_topic.wlsc_email_notification_topic[count.index].id
 
-  defined_tags = var.tags.defined_tags
+  defined_tags  = var.tags.defined_tags
   freeform_tags = var.tags.freeform_tags
 
   lifecycle {

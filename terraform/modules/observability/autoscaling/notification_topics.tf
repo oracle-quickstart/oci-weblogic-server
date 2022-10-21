@@ -6,7 +6,7 @@ resource "oci_ons_notification_topic" "wlsc_scaleout_notification_topic" {
   compartment_id = var.compartment_id
   name           = format("%s_scaleout_notification_topic", var.service_prefix_name)
 
-  defined_tags = var.tags.defined_tags
+  defined_tags  = var.tags.defined_tags
   freeform_tags = var.tags.freeform_tags
 
   lifecycle {
@@ -19,7 +19,7 @@ resource "oci_ons_notification_topic" "wlsc_scalein_notification_topic" {
   compartment_id = var.compartment_id
   name           = format("%s_scalein_notification_topic", var.service_prefix_name)
 
-  defined_tags = var.tags.defined_tags
+  defined_tags  = var.tags.defined_tags
   freeform_tags = var.tags.freeform_tags
 
   lifecycle {
@@ -34,7 +34,7 @@ resource "oci_ons_notification_topic" "wlsc_email_notification_topic" {
   compartment_id = var.compartment_id
   name           = format("%s_email_notification_topic", var.service_prefix_name)
 
-  defined_tags = var.tags.defined_tags
+  defined_tags  = var.tags.defined_tags
   freeform_tags = var.tags.freeform_tags
 
   lifecycle {

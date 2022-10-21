@@ -37,6 +37,6 @@ output "availability_domains" {
 }
 
 output "ssh_private_key_opc" {
-  value = module.compute-keygen.opc_keys["private_key_pem"]
-  description =  "The ssh private key in PEM format generated for the opc user"
+  value       = module.compute-keygen.opc_keys["private_key_pem"]
+  description = "The ssh private key in PEM format generated for the opc user"
 }

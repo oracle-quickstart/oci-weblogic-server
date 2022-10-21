@@ -2,7 +2,7 @@
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 resource "oci_logging_log" "wlsc_autoscaling_log" {
-  count        = var.use_oci_logging ? 1 : 0
+  count = var.use_oci_logging ? 1 : 0
   #Required
   display_name = format("%s_autoscaling_log", var.service_prefix_name)
   log_group_id = var.log_group_id
@@ -15,7 +15,7 @@ resource "oci_logging_log" "wlsc_autoscaling_log" {
     source {
       #Required
       category    = "invoke"
-      resource    =  oci_functions_application.wlsc_autoscaling_function_application.id
+      resource    = oci_functions_application.wlsc_autoscaling_function_application.id
       service     = "functions"
       source_type = "OCISERVICE"
     }
@@ -24,7 +24,7 @@ resource "oci_logging_log" "wlsc_autoscaling_log" {
     compartment_id = var.compartment_id
   }
 
-  defined_tags = var.tags.defined_tags
+  defined_tags  = var.tags.defined_tags
   freeform_tags = var.tags.freeform_tags
 
   lifecycle {

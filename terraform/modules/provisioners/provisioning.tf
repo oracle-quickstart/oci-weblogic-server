@@ -2,7 +2,7 @@
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 resource "null_resource" "status_check" {
-  count = var.is_bastion_instance_required ? var.num_vm_instances : 0
+  count      = var.is_bastion_instance_required ? var.num_vm_instances : 0
   depends_on = [null_resource.dev_mode_provisioning]
 
   // Connection setup for all WLS instances
@@ -121,7 +121,7 @@ resource "null_resource" "status_check" {
 }
 
 resource "null_resource" "print_service_info" {
-  count = var.is_bastion_instance_required ? var.num_vm_instances : 0
+  count      = var.is_bastion_instance_required ? var.num_vm_instances : 0
   depends_on = [null_resource.status_check]
 
   // Connection setup for all WLS instances
@@ -146,7 +146,7 @@ resource "null_resource" "print_service_info" {
 }
 
 resource "null_resource" "cleanup" {
-  count = var.is_bastion_instance_required ? var.num_vm_instances : 0
+  count      = var.is_bastion_instance_required ? var.num_vm_instances : 0
   depends_on = [null_resource.print_service_info]
 
 
@@ -171,7 +171,7 @@ resource "null_resource" "cleanup" {
 }
 
 resource "null_resource" "cleanup_bastion" {
-  count = var.is_bastion_instance_required && var.existing_bastion_instance_id == "" && !var.assign_public_ip ?1:0
+  count      = var.is_bastion_instance_required && var.existing_bastion_instance_id == "" && !var.assign_public_ip ? 1 : 0
   depends_on = [null_resource.cleanup]
 
   // Connection setup for all WLS instances
@@ -185,7 +185,7 @@ resource "null_resource" "cleanup_bastion" {
 
   # run this provisioner everytime new bastion is created during reapply
   triggers = {
-      ip_address = var.bastion_host
+    ip_address = var.bastion_host
   }
 
   provisioner "remote-exec" {

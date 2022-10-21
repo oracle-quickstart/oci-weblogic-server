@@ -20,7 +20,7 @@ locals {
   validate_autoscaling_enabled    = local.invalid_autoscaling_enabled ? local.validators_msg_map[local.invalid_autoscaling_enabled_msg] : null
 
   invalid_ocir_auth_token_id_msg = "WLSC-ERROR: The value for OCIR Authorization Token [ocir_auth_token_id] is not valid. The value must begin with ocid1 followed by resource type, e.g. ocid1.vaultsecret."
-  validate_ocir_auth_token_id    = var.use_autoscaling  && length(regexall("^ocid1.vaultsecret.", var.ocir_auth_token_id)) <= 0 ? local.validators_msg_map[local.invalid_ocir_auth_token_id_msg] : null
+  validate_ocir_auth_token_id    = var.use_autoscaling && length(regexall("^ocid1.vaultsecret.", var.ocir_auth_token_id)) <= 0 ? local.validators_msg_map[local.invalid_ocir_auth_token_id_msg] : null
 
   missing_lb_configured_msg = "WLSC-ERROR: Metrics based autoscaling requires the Load Balancer to distribute application traffic to the managed servers in the domain. Please edit the stack, configure the load balancer and apply the stack."
   validate_lb_configured    = var.use_autoscaling && !var.add_load_balancer ? local.validators_msg_map[local.missing_lb_configured_msg] : null

@@ -64,12 +64,12 @@ variable "ocir_auth_token_id" {
 }
 
 variable "fn_application_id" {
-  type = string
+  type        = string
   description = "The OCID of the function application"
 }
 
 variable "fn_repo_path" {
-  type = string
+  type        = string
   description = "The path of the function repository"
 }
 
@@ -80,11 +80,11 @@ variable "use_autoscaling" {
 }
 
 variable "scalein_notification_topic_id" {
-  type = string
+  type        = string
   description = "The OCID of the notification topic for scale in operation"
 }
 
 variable "scaleout_notification_topic_id" {
-  type = string
+  type        = string
   description = "The OCID of the notification topic for scale out operation"
 }

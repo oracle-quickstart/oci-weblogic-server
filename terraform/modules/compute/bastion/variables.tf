@@ -111,12 +111,12 @@ variable "tags" {
 }
 
 variable "mp_listing_id" {
-  type = string
+  type        = string
   description = "marketplace listing id"
 }
 
 variable "mp_listing_resource_version" {
-  type = string
+  type        = string
   description = "marketplace listing resource version"
 }
 

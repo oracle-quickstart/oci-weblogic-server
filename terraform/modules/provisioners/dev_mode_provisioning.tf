@@ -2,7 +2,7 @@
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 resource "null_resource" "dev_mode_provisioning" {
-  count = var.mode=="DEV" ? var.num_vm_instances : 0
+  count = var.mode == "DEV" ? var.num_vm_instances : 0
 
   // In production we will use the vmscripts.tar.gz already on the image.
   // In developer mode we will upload the vmscripts to the instance.

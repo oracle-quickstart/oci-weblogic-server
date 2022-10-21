@@ -16,27 +16,27 @@ variable "availability_domain" {
 }
 
 variable "vcn_id" {
-  type = string
+  type        = string
   description = "The OCID of the VCN  where the file system and mount target will be created"
 }
 
 variable "vcn_cidr" {
-  type = string
+  type        = string
   description = "The CIDR value of the VCN  where the file system and mount target will be created"
 }
 
 variable "export_path" {
-  type = string
+  type        = string
   description = "Path used to access the associated file system."
 }
 
 variable "mount_target_subnet_id" {
-  type = string
+  type        = string
   description = "The OCID of the subnet where the mount target exists"
 }
 
 variable "mount_target_id" {
-  type = string
+  type        = string
   description = "The OCID of the mount target for File Shared System"
 }
 
@@ -48,13 +48,13 @@ variable "mount_target_nsg_id" {
 
 variable "tags" {
   type = object({
-    defined_tags    = map(any),
-    freeform_tags   = map(any),
+    defined_tags  = map(any),
+    freeform_tags = map(any),
   })
   description = "Defined tags and freeform tags to be added to the File Shared System resources"
   default = {
-    defined_tags    = {},
-    freeform_tags   = {},
+    defined_tags  = {},
+    freeform_tags = {},
   }
 }
 

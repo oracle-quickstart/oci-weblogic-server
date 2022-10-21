@@ -5,7 +5,7 @@ data "oci_file_storage_mount_targets" "mount_target" {
   #Required
   availability_domain = var.availability_domain
   compartment_id      = var.compartment_id
-  id = var.mount_target_id != "" ? var.mount_target_id : join("", oci_file_storage_mount_target.mount_target.*.id)
+  id                  = var.mount_target_id != "" ? var.mount_target_id : join("", oci_file_storage_mount_target.mount_target.*.id)
 }
 
 data "oci_core_private_ip" "mount_target_private_ip" {

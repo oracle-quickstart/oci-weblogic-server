@@ -150,7 +150,7 @@ variable "add_fss" {
 }
 
 variable "use_autoscaling" {
-  type = bool
+  type        = bool
   description = "Indicating that autoscaling is enabled"
   default     = false
 }

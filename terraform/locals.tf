@@ -11,6 +11,7 @@ locals {
 
   bastion_availability_domain = var.bastion_subnet_id != "" ? (var.use_regional_subnet ? var.wls_availability_domain_name != "" ? var.wls_availability_domain_name : local.ad_names[0] : data.oci_core_subnet.bastion_subnet[0].availability_domain) : (var.use_regional_subnet ? var.wls_availability_domain_name != "" ? var.wls_availability_domain_name : local.ad_names[0] : var.wls_availability_domain_name)
   wls_availability_domain     = var.use_regional_subnet ? (var.wls_availability_domain_name == "" ? local.ad_names[0] : var.wls_availability_domain_name) : (var.wls_subnet_id == "" ? var.wls_availability_domain_name : data.oci_core_subnet.wls_subnet[0].availability_domain)
+  fss_availability_domain     = var.add_fss && local.use_existing_subnets && !var.use_regional_subnet ? data.oci_core_subnet.mount_target_subnet[0].availability_domain : var.fss_availability_domain
   network_compartment_id      = var.network_compartment_id == "" ? var.compartment_ocid : var.network_compartment_id
 
   #dynamic group is based on the system generated tags for DG
@@ -43,7 +44,7 @@ locals {
   oci_db_compartment_id         = var.oci_db_compartment_id == "" ? local.network_compartment_id : var.oci_db_compartment_id
   oci_db_network_compartment_id = local.is_oci_db && var.oci_db_network_compartment_id == "" ? var.oci_db_compartment_id : var.oci_db_network_compartment_id
 
-  db_network_compartment_id     = local.is_atp_db ? local.atp_db_network_compartment_id : local.oci_db_network_compartment_id
+  db_network_compartment_id = local.is_atp_db ? local.atp_db_network_compartment_id : local.oci_db_network_compartment_id
 
   # Locals used by outputs
   bastion_public_ip = element(coalescelist(module.bastion[*].public_ip, data.oci_core_instance.existing_bastion_instance.*.public_ip, [""]), 0)

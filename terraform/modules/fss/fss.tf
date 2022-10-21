@@ -7,8 +7,8 @@ resource "oci_file_storage_file_system" "file_system" {
   availability_domain = var.availability_domain
   compartment_id      = var.compartment_id
 
-  display_name = "${var.resource_name_prefix}-fss"
-  defined_tags = var.tags.defined_tags
+  display_name  = "${var.resource_name_prefix}-fss"
+  defined_tags  = var.tags.defined_tags
   freeform_tags = var.tags.freeform_tags
 
   lifecycle {

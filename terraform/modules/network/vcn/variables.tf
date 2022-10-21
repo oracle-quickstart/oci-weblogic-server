@@ -24,13 +24,13 @@ variable "wls_vcn_cidr" {
 
 variable "tags" {
   type = object({
-    defined_tags    = map(any),
-    freeform_tags   = map(any),
+    defined_tags  = map(any),
+    freeform_tags = map(any),
   })
   description = "Defined tags and freeform tags to be added to the VCN"
   default = {
-    defined_tags    = {},
-    freeform_tags   = {},
+    defined_tags  = {},
+    freeform_tags = {},
   }
 }
 
