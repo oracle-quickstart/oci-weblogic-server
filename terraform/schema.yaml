@@ -1948,7 +1948,6 @@ variables:
   db_vcn_lpg_id:
     visible:
       and:
-        - ${orm_create_mode}
         - ${add_JRF}
         - or:
           - and:
