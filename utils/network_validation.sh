@@ -34,6 +34,7 @@ MANAGED_SRV_NSG_OCID=""
 BASTION_NSG_OCID=""
 LB_NSG_OCID=""
 FSS_NSG_OCID=""
+LPG_OCID=""
 ALL_IPS="0.0.0.0/0"
 
 debug=false
@@ -512,6 +513,7 @@ This script is used to validate existing subnets, and optionally network securit
   -s, --https_port    WebLogic Admin Console https port (defaults to 7002)
   -d, --ocidbid       OCI Database System OCID
   -t, --atpdbid       ATP Database OCID
+  -g, --lpg           OCID of the Local Peering Gateway (LPG) in the DB VCN
   -b, --bastionsubnet Bastion Subnet OCID
   -i, --bastionip     Bastion Host IP. Provide this if using existing bastion or new bastion with reserved IP
   -l, --lbsubnet      Load Balancer Subnet OCID
@@ -576,6 +578,7 @@ while [[ $1 = -?* ]]; do
     -s|--https_port) shift; ADMIN_HTTPS_PORT=${1} ;;
     -d|--ocidbid) shift; OCIDB_OCID=${1} ;;
     -t|--atpdbid) shift; ATPDB_OCID=${1} ;;
+    -g|--lpg) shift; LPG_OCID=${1} ;;
     -b|--bastionsubnet) shift; BASTION_SUBNET_OCID=${1} ;;
     -i|--bastionip) shift; BASTION_HOST_IP=${1} ;;
     -l|--lbsubnet) shift; LB_SUBNET_OCID=${1} ;;
@@ -789,6 +792,20 @@ then
     then
       echo "WARNING: Subnet security list limit reached for the DB subnet [${ocidb_subnet_ocid}]. Five security lists are already associated with it and a new security list cannot be added. Ensure that one of the security rules opens the DB port ${DB_PORT} for WLS Subnet CIDR [$wls_subnet_cidr_block] in DB Subnet [$ocidb_subnet_ocid] or in DB NSG [$ocidb_nsg_ocid]. Also, when creating a stack, do not select the Create Database Security List option."
     fi
+
+    # Check if LPG is in OCI DB VCN & peering status is valid
+    if [[ -n ${LPG_OCID}  ]]
+    then
+      ocidb_vcn_ocid=$(oci network subnet get --subnet-id ${ocidb_subnet_ocid} | jq -c '.data["vcn-id"]')
+      lpg_vcn_ocid=$(oci network local-peering-gateway get --local-peering-gateway-id ${LPG_OCID} | jq -c '.data["vcn-id"]')
+      if [[ "${lpg_vcn_ocid//\"}" != "${ocidb_vcn_ocid//\"}" ]]; then
+        echo "ERROR: LPG [${LPG_OCID}] is not in OCI DB VCN [${ocidb_vcn_ocid}]"
+      fi
+      lpg_peering_status=$(oci network local-peering-gateway get --local-peering-gateway-id ${LPG_OCID} | jq -c '.data["peering-status"]')
+      if [[ "${lpg_peering_status//\"}" != "NEW" ]]; then
+        echo "ERROR: LPG [${LPG_OCID}] cannot be used to provision a new stack. The peering status is [${lpg_peering_status}]."
+      fi
+    fi
   fi
 fi
 
@@ -803,6 +820,20 @@ then
     res=$(validate_atpdb_port_access ${atp_subnet_ocid} ${ATPDB_OCID} ${wls_subnet_cidr_block})
     if [[ $res -ne 0 ]]; then
       echo "ERROR: ATP DB port ${ATP_DB_PORT} is not open for access by WLS Subnet CIDR [$wls_subnet_cidr_block] in ATP DB Subnet [${atp_subnet_ocid}] or in ATP DB NSG [$atp_nsg_ocid]"
+    fi
+
+    # Check if LPG is in ATP DB VCN & peering status is valid
+    if [[ -n ${LPG_OCID}  ]]
+    then
+      atp_vcn_ocid=$(oci network subnet get --subnet-id $atp_subnet_ocid | jq -r '.data["vcn-id"]')
+      lpg_vcn_ocid=$(oci network local-peering-gateway get --local-peering-gateway-id ${LPG_OCID} | jq -c '.data["vcn-id"]')
+      if [[ "${lpg_vcn_ocid//\"}" != "${atp_vcn_ocid//\"}" ]]; then
+        echo "ERROR: LPG [${LPG_OCID}] is not in ATP DB VCN [${atp_vcn_ocid}]"
+      fi
+      lpg_peering_status=$(oci network local-peering-gateway get --local-peering-gateway-id ${LPG_OCID} | jq -c '.data["peering-status"]')
+      if [[ "${lpg_peering_status//\"}" != "NEW" ]]; then
+        echo "ERROR: LPG [${LPG_OCID}] cannot be used to provision a new stack. The peering status is [${lpg_peering_status}]"
+      fi
     fi
   fi
 fi
