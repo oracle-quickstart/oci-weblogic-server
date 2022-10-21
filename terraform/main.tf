@@ -383,15 +383,15 @@ module "validators" {
   existing_lb_subnet_1_id                    = local.existing_lb_subnet_1_id
   existing_lb_subnet_2_id                    = local.existing_lb_subnet_2_id
 
-  add_fss                          = var.add_fss
-  fss_availability_domain          = var.add_existing_fss && var.existing_fss_id != "" ? data.oci_file_storage_file_systems.file_systems[0].file_systems[0].availability_domain : ""
-  availability_domain              = var.fss_availability_domain
-  mount_target_subnet_id           = var.mount_target_subnet_id
-  mount_target_subnet_cidr         = local.mount_target_subnet_cidr
-  mount_target_compartment_id      = var.mount_target_compartment_id
-  mount_target_id                  = var.mount_target_id
-  existing_fss_id                  = var.existing_fss_id
-  mount_target_availability_domain = var.add_existing_mount_target ? data.oci_file_storage_mount_targets.mount_targets[0].mount_targets[0].availability_domain : ""
+  add_fss                              = var.add_fss
+  fss_availability_domain_existing_fss = var.add_existing_fss && var.existing_fss_id != "" ? data.oci_file_storage_file_systems.file_systems[0].file_systems[0].availability_domain : ""
+  fss_availability_domain              = var.fss_availability_domain
+  mount_target_subnet_id               = var.mount_target_subnet_id
+  mount_target_subnet_cidr             = local.mount_target_subnet_cidr
+  mount_target_compartment_id          = var.mount_target_compartment_id
+  mount_target_id                      = var.mount_target_id
+  existing_fss_id                      = var.existing_fss_id
+  mount_target_availability_domain     = var.add_existing_mount_target ? data.oci_file_storage_mount_targets.mount_targets[0].mount_targets[0].availability_domain : ""
 
   create_policies  = var.create_policies
   use_oci_logging  = var.use_oci_logging

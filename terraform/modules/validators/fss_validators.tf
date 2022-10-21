@@ -14,6 +14,6 @@ locals {
   validate_missing_mount_target_subnet_id = var.add_fss && var.use_existing_subnets && var.mount_target_subnet_id == "" && var.mount_target_subnet_cidr != "" ? local.validators_msg_map[local.missing_mount_target_subnet_id_msg] : null
 
   invalid_existing_fss_id_msg = "WLSC-ERROR: The existing file system id should belong to the fss availability domain that user providers"
-  validate_existing_fss_id    = var.add_fss && var.existing_fss_id != "" && (var.fss_availability_domain != var.availability_domain) ? local.validators_msg_map[local.invalid_existing_fss_id_msg] : null
+  validate_existing_fss_id    = var.add_fss && var.existing_fss_id != "" && (var.fss_availability_domain_existing_fss != var.fss_availability_domain) ? local.validators_msg_map[local.invalid_existing_fss_id_msg] : null
 }
 

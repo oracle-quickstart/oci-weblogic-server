@@ -307,7 +307,7 @@ variable "add_fss" {
   description = "Add file system storage to WebLogic Server instances"
 }
 
-variable "fss_availability_domain" {
+variable "fss_availability_domain_existing_fss" {
   type        = string
   description = "The name of the availability domain where the file system and mount target exists"
 }
@@ -509,7 +509,7 @@ variable "wls_edition" {
   description = "The WebLogic edition to be installed in this compute instance. Accepted values are: SE, EE, SUITE"
 }
 
-variable "availability_domain" {
+variable "fss_availability_domain" {
   type        = string
-  description = "The name of the fss availability domain that user enters for providing existing fss id"
+  description = "The name of the fss availability domain that user enters for existing fss id"
 }
