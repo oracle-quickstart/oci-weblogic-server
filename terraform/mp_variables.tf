@@ -35,6 +35,7 @@ variable "use_marketplace_image" {
 variable "instance_image_id" {
   type        = string
   description = "The OCID of the compute image used to create the WebLogic compute instances"
+  default     = ""
 }
 
 variable "listing_id" {
