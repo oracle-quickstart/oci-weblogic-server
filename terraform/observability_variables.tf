@@ -19,6 +19,13 @@ variable "use_apm_service" {
   default     = false
 }
 
+# Variable used in UI only
+variable "apm_domain_compartment_id" {
+  type        = string
+  description = "The OCID of the compartment of the Application Performance Monitoring domain used by WebLogic instances"
+  default     = ""
+}
+
 variable "apm_domain_id" {
   type        = string
   description = "The OCID of the Application Performance Monitoring domain used by WebLogic instances"

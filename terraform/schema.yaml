@@ -2205,7 +2205,7 @@ variables:
         - ${use_autoscaling}
     type: oci:identity:compartment:id
     title: Application Performance Monitoring Domain Compartment
-    description: The compartment where you want to create the application performance monitoring domain.
+    description: The compartment where you have the Application Performance Monitoring domain to be used by this WebLogic instance.
     required: true
     default: ${compartment_ocid}
 

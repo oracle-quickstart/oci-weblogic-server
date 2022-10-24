@@ -191,15 +191,21 @@ groupings:
       - ${ocidb_existing_vcn_add_seclist}
       - ${oci_db_dbsystem_id}
       - ${oci_db_dbhome_id}
+      - ${oci_db_dbhome_major_version}
       - ${oci_db_database_id}
       - ${oci_db_pdb_service_name}
       - ${oci_db_user}
+      - ${oci_db_secret_compartment_id}
       - ${oci_db_password_id}
       - ${oci_db_port}
       - ${atp_db_compartment_id}
       - ${atp_db_id}
-      - ${atp_db_level}
+      - ${atp_db_uses_private_endpoint}
+      - ${atp_db_network_compartment_id}
+      - ${atp_db_existing_vcn_id}
+      - ${atp_db_secret_compartment_id}
       - ${atp_db_password_id}
+      - ${atp_db_level}
       - ${db_strategy}
       - ${wls_expose_admin_port}
       - ${mount_path}
@@ -215,7 +221,6 @@ groupings:
       - ${generate_dg_tag}
       - ${db_vcn_lpg_id}
       - ${wait_time_wls_vnc_dns_resolver}
-      - ${atp_db_existing_vcn_id}
       - ${wls_admin_port_source_cidr}
       - ${wlsoci_vmscripts_zip_bundle_path}
 
@@ -1745,7 +1750,7 @@ variables:
         - ${use_autoscaling}
     type: oci:identity:compartment:id
     title: Application Performance Monitoring Domain Compartment
-    description: The compartment where you want to create the application performance monitoring domain.
+    description: The compartment where you have the Application Performance Monitoring domain to be used by this WebLogic instance.
     required: true
     default: ${compartment_ocid}
 

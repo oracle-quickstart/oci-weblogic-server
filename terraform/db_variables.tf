@@ -35,6 +35,13 @@ variable "oci_db_user" {
 
 }
 
+# Variable used in UI only
+variable "oci_db_secret_compartment_id" {
+  type        = string
+  description = "The OCID of the compartment of the vault secret with the OCI database password"
+  default     = ""
+}
+
 variable "oci_db_password_id" {
   type        = string
   description = "The OCID of the vault secret with the password for the OCI database"
@@ -69,6 +76,13 @@ variable "oci_db_dbsystem_id" {
 variable "oci_db_dbhome_id" {
   type        = string
   description = "The OCID of the OCI database home"
+  default     = ""
+}
+
+# Variable used in UI only
+variable "oci_db_dbhome_major_version" {
+  type        = string
+  description = "Version of Database home in the DB System"
   default     = ""
 }
 
@@ -112,6 +126,13 @@ variable "atp_db_level" {
   }
 }
 
+# Variable used in UI only
+variable "atp_db_secret_compartment_id" {
+  type        = string
+  description = "The OCID of compartment of the vault secret containing the password for the ATP database"
+  default     = ""
+}
+
 variable "atp_db_password_id" {
   type        = string
   description = "The OCID of the vault secret containing the password for the ATP database"
@@ -128,6 +149,12 @@ variable "atp_db_existing_vcn_id" {
   type        = string
   description = "The OCID of the VCN used by the ATP database private endpoint"
   default     = ""
+}
+
+# Variable used in UI only
+variable "atp_db_uses_private_endpoint" {
+  type        = bool
+  description = "Indicates if the ATP database uses private endpoint for network access"
 }
 
 #This variable is used for both oci db and ATP with private subnet

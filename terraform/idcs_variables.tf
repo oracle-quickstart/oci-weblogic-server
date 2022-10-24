@@ -31,6 +31,13 @@ variable "idcs_client_id" {
   default     = ""
 }
 
+# Variable used in UI only
+variable "idcs_secret_compartment_id" {
+  type        = string
+  description = "The OCID of the compartment of the vault secret containing the confidential application password in IDCS"
+  default     = ""
+}
+
 variable "idcs_client_secret_id" {
   type        = string
   description = "The OCID of the vault secret containing the confidential application password in IDCS"
