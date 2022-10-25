@@ -518,7 +518,7 @@ module "compute" {
   availability_domain    = local.wls_availability_domain
   compartment_id         = var.compartment_ocid
   instance_image_id      = local.vm_instance_image_id
-  is_ucm_image           = var.terms_and_conditions ? true : false
+  is_ucm_image           = var.terms_and_conditions
   instance_shape         = local.instance_shape
   network_compartment_id = var.network_compartment_id
   wls_subnet_cidr        = local.wls_subnet_cidr
