@@ -19,6 +19,14 @@ variable "network_compartment_id" {
   default     = ""
 }
 
+# Variable used in UI only
+variable "subnet_compartment_id" {
+  type        = string
+  description = "The OCID of the compartment for existing subnets"
+  default     = ""
+
+}
+
 variable "wls_existing_vcn_id" {
   type        = string
   description = "The OCID of the existing VCN where the WebLogic servers and other resources will be created. If not specified, a new VCN is created"
@@ -263,4 +271,11 @@ variable "wait_time_wls_vnc_dns_resolver" {
     error_message = "WLSC-ERROR: The value for wait_time_wls_vnc_dns_resolver should be between 0 and 600 (10 minutes)."
   }
   default = 60
+}
+
+# Variable used in UI only
+variable "existing_network_validated" {
+  type        = string
+  description = "Confirm selected existing Virtual Cloud Network is validated using the network validation script by entering YES in the field."
+  default     = ""
 }

@@ -60,6 +60,13 @@ variable "wls_14c_jdk_version" {
   }
 }
 
+# Variable used in UI only
+variable "configure_wls_ports" {
+  type        = bool
+  description = "Configure the ports for administration server, managed server and cluster. It is optional, if not changed, default ports will be used"
+  default     = false
+}
+
 variable "wls_ms_port" {
   type        = number
   description = "The managed server port for T3 protocol"

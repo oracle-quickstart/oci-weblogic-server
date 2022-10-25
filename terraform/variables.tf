@@ -104,3 +104,13 @@ variable "terms_and_conditions" {
   description = "Terms and conditions for user to accept Oracle WebLogic Server Enterprise Edition UCM or Oracle WebLogic Suite UCM license agreement"
   default     = false
 }
+
+variable "log_level" {
+  type        = string
+  description = "The level of messages to be written to the provisioning logs. Allowed values: INFO, DEBUG"
+  default     = "INFO"
+  validation {
+    condition     = contains(["INFO", "DEBUG"], var.log_level)
+    error_message = "WLSC-ERROR: Allowed values for log_level are INFO, DEBUG."
+  }
+}

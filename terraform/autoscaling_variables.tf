@@ -61,6 +61,13 @@ variable "ocir_user" {
   default     = ""
 }
 
+# Variable used in UI only
+variable "ocir_auth_token_compartment_id" {
+  type        = string
+  description = "The OCID of the compartment of the vault secret with the OCIR authorization token"
+  default     = ""
+}
+
 variable "ocir_auth_token_id" {
   type        = string
   description = "Secrets Oracle Cloud ID (OCID) for Oracle Cloud Infrastructure Registry authorization token"
