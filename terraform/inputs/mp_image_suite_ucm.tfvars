@@ -1,6 +1,6 @@
 # Copyright (c) 2022, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
-listing_id               = "ocid1.appcataloglisting.oc1..aaaaaaaajl5w3d76x5vdc4n7oqjpsxh4jtwivclvvp6gj4em3kufju6sftga"
-listing_resource_version = "22.3.1-ol7.9-22.01.24-220802-1"
-instance_image_id        = "ocid1.image.oc1..aaaaaaaazl44izt4sh6yp76v354zcwstfiwu5ilfx2xguhxud5dhsxv325iq"
+listing_id               = "ocid1.appcataloglisting.oc1..aaaaaaaaq2vkow7zwkxg6ky4zxsnckdlfgtgmg7i4kkyev3y6zyo72mpkgza"
+listing_resource_version = "22.4.1-ol7.9-22.08.29-221015-1"
+instance_image_id        = "ocid1.image.oc1..aaaaaaaaf4ufoi2or6lf7cmoinuruykih2l4ax37ukmir54mnway7bmpbvtq"
