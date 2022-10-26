@@ -83,14 +83,14 @@ mkdir -p ${SCRIPT_DIR}/binaries/tmpbuild
 
 create_12214_bundle()
 {
-  cp -Rf ${SCRIPT_DIR}/../terraform/schema.yaml ${SCRIPT_DIR}/../terraform/modules ${SCRIPT_DIR}/../terraform/*.tf ${SCRIPT_DIR}/../terraform/version.txt ${TMP_BUILD}
+  cp -Rf ${SCRIPT_DIR}/../terraform/schema.yaml ${SCRIPT_DIR}/../terraform/modules ${SCRIPT_DIR}/../terraform/*.tf ${TMP_BUILD}
   cp -f ${SCRIPT_DIR}/../terraform/orm/orm_provider.tf ${TMP_BUILD}/provider.tf
   replace_12214_variables
   (cd ${TMP_BUILD}; zip -r ${SCRIPT_DIR}/binaries/wlsoci-resource-manager-ee-12214.zip *; rm -Rf ${TMP_BUILD}/*)
 }
 create_14110_bundle()
 {
-  cp -Rf ${SCRIPT_DIR}/../terraform/modules ${SCRIPT_DIR}/../terraform/*.tf ${SCRIPT_DIR}/../terraform/version.txt ${SCRIPT_DIR}/../terraform/schema_14110.yaml ${TMP_BUILD}
+  cp -Rf ${SCRIPT_DIR}/../terraform/modules ${SCRIPT_DIR}/../terraform/*.tf ${SCRIPT_DIR}/../terraform/schema_14110.yaml ${TMP_BUILD}
   cp -f ${SCRIPT_DIR}/../terraform/orm/orm_provider.tf ${TMP_BUILD}/provider.tf
   replace_14110_variables
   (cd ${TMP_BUILD}; zip -r ${SCRIPT_DIR}/binaries/wlsoci-resource-manager-ee-14110.zip *; rm -Rf ${TMP_BUILD}/*)
@@ -100,6 +100,7 @@ create_14110_bundle()
 replace_12214_variables()
 {
   sed -i '/variable "generate_dg_tag" {/!b;n;n;n;cdefault = false' ${TMP_BUILD}/variables.tf
+  sed -i '/variable "use_marketplace_image" {/!b;n;n;n;cuse_marketplace_image = false' ${TMP_BUILD}/mp_variables.tf
 }
 
 #need to change it to false after RM UI fix
@@ -107,6 +108,7 @@ replace_14110_variables()
 {
   sed -i '/variable "generate_dg_tag" {/!b;n;n;n;cdefault = false' ${TMP_BUILD}/variables.tf
   sed -i '/variable "wls_version" {/!b;n;n;n;cdefault = \"14.1.1.0\"' ${TMP_BUILD}/weblogic_variables.tf
+  sed -i '/variable "use_marketplace_image" {/!b;n;n;n;cuse_marketplace_image = false' ${TMP_BUILD}/mp_variables.tf
 }
 
 if [ "${CREATE_ALL_BUNDLES}" == "true" ]; then

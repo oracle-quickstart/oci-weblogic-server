@@ -114,3 +114,10 @@ variable "log_level" {
     error_message = "WLSC-ERROR: Allowed values for log_level are INFO, DEBUG."
   }
 }
+
+variable "tf_script_version" {
+  type        = string
+  description = "The version of the provisioning scripts located in the OCI image used to create the WebLogic compute instances"
+  default     = ""
+}
+

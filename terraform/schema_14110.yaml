@@ -223,6 +223,7 @@ groupings:
       - ${wait_time_wls_vnc_dns_resolver}
       - ${wls_admin_port_source_cidr}
       - ${wlsoci_vmscripts_zip_bundle_path}
+      - ${tf_script_version}
       #- ${use_autoscaling}
 
 outputs:
@@ -2001,6 +2002,9 @@ variables:
     type: string
 
   listing_id:
+    type: string
+
+  tf_script_version:
     type: string
 
   # tenancy_ocid, compartment_ocid, and user_ocid are predefined variables. Do not change them.

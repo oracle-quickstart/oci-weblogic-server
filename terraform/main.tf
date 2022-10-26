@@ -529,7 +529,7 @@ module "compute" {
   compute_nsg_ids        = local.compute_nsg_ids
 
   tenancy_id                    = var.tenancy_ocid
-  tf_script_version             = file(local.tf_version_file)
+  tf_script_version             = var.tf_script_version
   use_regional_subnet           = var.use_regional_subnet
   wls_14c_jdk_version           = var.wls_14c_jdk_version
   wls_admin_user                = var.wls_admin_user

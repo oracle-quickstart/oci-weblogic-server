@@ -71,7 +71,7 @@ output "sample_application_protected_by_idcs" {
 }
 
 output "listing_version" {
-  value = file(local.tf_version_file)
+  value = var.tf_script_version
 }
 
 output "provisioning_status" {
