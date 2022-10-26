@@ -115,70 +115,70 @@ mkdir -p ${SCRIPT_DIR}/binaries/tmpbuild
 
 create_ucm_ee_12214()
 {
-  cp -Rf ${SCRIPT_DIR}/../terraform/schema.yaml ${SCRIPT_DIR}/../terraform/modules ${SCRIPT_DIR}/../terraform/*.tf ${SCRIPT_DIR}/../terraform/version.txt ${TMP_BUILD}
+  cp -Rf ${SCRIPT_DIR}/../terraform/schema.yaml ${SCRIPT_DIR}/../terraform/modules ${SCRIPT_DIR}/../terraform/*.tf ${TMP_BUILD}
   cp -f ${SCRIPT_DIR}/../terraform/orm/orm_provider.tf ${TMP_BUILD}/provider.tf
   replace_ucm_ee_12214_variables
   (cd ${TMP_BUILD}; zip -r ${SCRIPT_DIR}/binaries/wlsoci-resource-manager-ee-ucm-mp-12214.zip *; rm -Rf ${TMP_BUILD}/*)
 }
 create_ucm_ee_14110()
 {
-  cp -Rf ${SCRIPT_DIR}/../terraform/modules ${SCRIPT_DIR}/../terraform/*.tf ${SCRIPT_DIR}/../terraform/version.txt ${SCRIPT_DIR}/../terraform/schema_14110.yaml ${TMP_BUILD}
+  cp -Rf ${SCRIPT_DIR}/../terraform/modules ${SCRIPT_DIR}/../terraform/*.tf ${SCRIPT_DIR}/../terraform/schema_14110.yaml ${TMP_BUILD}
   cp -f ${SCRIPT_DIR}/../terraform/orm/orm_provider.tf ${TMP_BUILD}/provider.tf
   replace_ucm_ee_14110_variables
   (cd ${TMP_BUILD}; zip -r ${SCRIPT_DIR}/binaries/wlsoci-resource-manager-ee-ucm-mp-14110.zip *; rm -Rf ${TMP_BUILD}/*)
 } 
 create_ucm_suite_12214()
 {
-  cp -Rf ${SCRIPT_DIR}/../terraform/modules ${SCRIPT_DIR}/../terraform/*.tf ${SCRIPT_DIR}/../terraform/version.txt ${SCRIPT_DIR}/../terraform/schema.yaml ${TMP_BUILD}
+  cp -Rf ${SCRIPT_DIR}/../terraform/modules ${SCRIPT_DIR}/../terraform/*.tf ${SCRIPT_DIR}/../terraform/schema.yaml ${TMP_BUILD}
   cp -f ${SCRIPT_DIR}/../terraform/orm/orm_provider.tf ${TMP_BUILD}/provider.tf
   replace_ucm_suite_12214_variables
   (cd ${TMP_BUILD}; zip -r ${SCRIPT_DIR}/binaries/wlsoci-resource-manager-suite-ucm-mp-12214.zip *; rm -Rf ${TMP_BUILD}/*)
 }  
 create_ucm_suite_14110()
 {
-  cp -Rf ${SCRIPT_DIR}/../terraform/modules ${SCRIPT_DIR}/../terraform/*.tf ${SCRIPT_DIR}/../terraform/version.txt ${SCRIPT_DIR}/../terraform/schema_14110.yaml ${TMP_BUILD}
+  cp -Rf ${SCRIPT_DIR}/../terraform/modules ${SCRIPT_DIR}/../terraform/*.tf ${SCRIPT_DIR}/../terraform/schema_14110.yaml ${TMP_BUILD}
   cp -f ${SCRIPT_DIR}/../terraform/orm/orm_provider.tf ${TMP_BUILD}/provider.tf
   replace_ucm_suite_14110_variables
   (cd ${TMP_BUILD}; zip -r ${SCRIPT_DIR}/binaries/wlsoci-resource-manager-suite-ucm-mp-14110.zip *; rm -Rf ${TMP_BUILD}/*)
 } 
 create_byol_ee_12214()
 {
-  cp -Rf ${SCRIPT_DIR}/../terraform/modules ${SCRIPT_DIR}/../terraform/*.tf ${SCRIPT_DIR}/../terraform/version.txt ${SCRIPT_DIR}/../terraform/schema.yaml ${TMP_BUILD}
+  cp -Rf ${SCRIPT_DIR}/../terraform/modules ${SCRIPT_DIR}/../terraform/*.tf ${SCRIPT_DIR}/../terraform/schema.yaml ${TMP_BUILD}
   cp -f ${SCRIPT_DIR}/../terraform/orm/orm_provider.tf ${TMP_BUILD}/provider.tf
   replace_byol_ee_12214_variables
   (cd ${TMP_BUILD}; zip -r ${SCRIPT_DIR}/binaries/wlsoci-resource-manager-ee-byol-mp-12214.zip *; rm -Rf ${TMP_BUILD}/*)
 }  
 create_byol_ee_14110()
 {
-  cp -Rf ${SCRIPT_DIR}/../terraform/modules ${SCRIPT_DIR}/../terraform/*.tf ${SCRIPT_DIR}/../terraform/version.txt ${SCRIPT_DIR}/../terraform/schema_14110.yaml ${TMP_BUILD}
+  cp -Rf ${SCRIPT_DIR}/../terraform/modules ${SCRIPT_DIR}/../terraform/*.tf ${SCRIPT_DIR}/../terraform/schema_14110.yaml ${TMP_BUILD}
   cp -f ${SCRIPT_DIR}/../terraform/orm/orm_provider.tf ${TMP_BUILD}/provider.tf
   replace_byol_ee_14110_variables
   (cd ${TMP_BUILD}; zip -r ${SCRIPT_DIR}/binaries/wlsoci-resource-manager-ee-byol-mp-14110.zip *; rm -Rf ${TMP_BUILD}/*)
 } 
 create_byol_suite_12214()
 {
-  cp -Rf ${SCRIPT_DIR}/../terraform/modules ${SCRIPT_DIR}/../terraform/*.tf ${SCRIPT_DIR}/../terraform/version.txt ${SCRIPT_DIR}/../terraform/schema.yaml ${TMP_BUILD}
+  cp -Rf ${SCRIPT_DIR}/../terraform/modules ${SCRIPT_DIR}/../terraform/*.tf ${SCRIPT_DIR}/../terraform/schema.yaml ${TMP_BUILD}
   cp -f ${SCRIPT_DIR}/../terraform/orm/orm_provider.tf ${TMP_BUILD}/provider.tf
   replace_byol_suite_12214_variables
   (cd ${TMP_BUILD}; zip -r ${SCRIPT_DIR}/binaries/wlsoci-resource-manager-suite-byol-mp-12214.zip *; rm -Rf ${TMP_BUILD}/*)
 } 
 create_byol_suite_14110()
 {
-  cp -Rf ${SCRIPT_DIR}/../terraform/modules ${SCRIPT_DIR}/../terraform/*.tf ${SCRIPT_DIR}/../terraform/version.txt ${SCRIPT_DIR}/../terraform/schema_14110.yaml ${TMP_BUILD}
+  cp -Rf ${SCRIPT_DIR}/../terraform/modules ${SCRIPT_DIR}/../terraform/*.tf ${SCRIPT_DIR}/../terraform/schema_14110.yaml ${TMP_BUILD}
   cp -f ${SCRIPT_DIR}/../terraform/orm/orm_provider.tf ${TMP_BUILD}/provider.tf
   replace_byol_suite_14110_variables
   (cd ${TMP_BUILD}; zip -r ${SCRIPT_DIR}/binaries/wlsoci-resource-manager-suite-byol-mp-14110.zip *; rm -Rf ${TMP_BUILD}/*)
 } 
 create_byol_standard_12214()
 {
-  cp -Rf ${SCRIPT_DIR}/../terraform/modules ${SCRIPT_DIR}/../terraform/*.tf ${SCRIPT_DIR}/../terraform/version.txt ${SCRIPT_DIR}/../terraform/schema.yaml ${TMP_BUILD}
+  cp -Rf ${SCRIPT_DIR}/../terraform/modules ${SCRIPT_DIR}/../terraform/*.tf ${SCRIPT_DIR}/../terraform/schema.yaml ${TMP_BUILD}
   cp -f ${SCRIPT_DIR}/../terraform/orm/orm_provider.tf ${TMP_BUILD}/provider.tf
   replace_byol_se_12214_variables
   (cd ${TMP_BUILD}; zip -r ${SCRIPT_DIR}/binaries/wlsoci-resource-manager-se-byol-mp-12214.zip *; rm -Rf ${TMP_BUILD}/*)
 }
 create_byol_standard_14110()
 {
-  cp -Rf ${SCRIPT_DIR}/../terraform/modules ${SCRIPT_DIR}/../terraform/*.tf ${SCRIPT_DIR}/../terraform/version.txt ${SCRIPT_DIR}/../terraform/schema_14110.yaml ${TMP_BUILD}
+  cp -Rf ${SCRIPT_DIR}/../terraform/modules ${SCRIPT_DIR}/../terraform/*.tf ${SCRIPT_DIR}/../terraform/schema_14110.yaml ${TMP_BUILD}
   cp -f ${SCRIPT_DIR}/../terraform/orm/orm_provider.tf ${TMP_BUILD}/provider.tf
   replace_byol_se_14110_variables
   (cd ${TMP_BUILD}; zip -r ${SCRIPT_DIR}/binaries/wlsoci-resource-manager-se-byol-mp-14110.zip *; rm -Rf ${TMP_BUILD}/*)
@@ -188,6 +188,7 @@ replace_byol_ee_12214_variables()
 {
   export TF_VAR_FILE=${SCRIPT_DIR}/../terraform/inputs/mp_image_ee_byol.tfvars
   get_mp_values
+  sed -i '/variable "tf_script_version" {/!b;n;n;n;cdefault = '"$tf_script_version"'' ${TMP_BUILD}/variables.tf
   sed -i '/variable "instance_image_id" {/!b;n;n;n;cdefault = '"$instance_image_id"'' ${TMP_BUILD}/mp_variables.tf
   sed -i '/variable "use_marketplace_image" {/!b;n;n;n;cdefault = '"true"'' ${TMP_BUILD}/mp_variables.tf
   sed -i '/variable "listing_id" {/!b;n;n;n;cdefault = '"$listing_id"'' ${TMP_BUILD}/mp_variables.tf
@@ -207,6 +208,7 @@ replace_byol_ee_14110_variables()
 {
   export TF_VAR_FILE=${SCRIPT_DIR}/../terraform/inputs/mp_image_ee_byol.tfvars
   get_mp_values
+  sed -i '/variable "tf_script_version" {/!b;n;n;n;cdefault = '"$tf_script_version"'' ${TMP_BUILD}/variables.tf
   sed -i '/variable "wls_version" {/!b;n;n;n;cdefault = \"14.1.1.0\"' ${TMP_BUILD}/weblogic_variables.tf
   sed -i '/variable "instance_image_id" {/!b;n;n;n;cdefault = '"$instance_image_id"'' ${TMP_BUILD}/mp_variables.tf
   sed -i '/variable "use_marketplace_image" {/!b;n;n;n;cdefault = '"true"'' ${TMP_BUILD}/mp_variables.tf
@@ -227,6 +229,7 @@ replace_byol_se_12214_variables()
 {
   export TF_VAR_FILE=${SCRIPT_DIR}/../terraform/inputs/mp_image_se_byol.tfvars
   get_mp_values
+  sed -i '/variable "tf_script_version" {/!b;n;n;n;cdefault = '"$tf_script_version"'' ${TMP_BUILD}/variables.tf
   sed -i 's/default     = "EE"/default     = "SE"/' ${TMP_BUILD}/edition.tf
   sed -i '/variable "instance_image_id" {/!b;n;n;n;cdefault = '"$instance_image_id"'' ${TMP_BUILD}/mp_variables.tf
   sed -i '/variable "use_marketplace_image" {/!b;n;n;n;cdefault = '"true"'' ${TMP_BUILD}/mp_variables.tf
@@ -241,6 +244,7 @@ replace_byol_se_14110_variables()
 {
   export TF_VAR_FILE=${SCRIPT_DIR}/../terraform/inputs/mp_image_se_byol.tfvars
   get_mp_values
+  sed -i '/variable "tf_script_version" {/!b;n;n;n;cdefault = '"$tf_script_version"'' ${TMP_BUILD}/variables.tf
   sed -i 's/default     = "EE"/default     = "SE"/' ${TMP_BUILD}/edition.tf
   sed -i '/variable "wls_version" {/!b;n;n;n;cdefault = \"14.1.1.0\"' ${TMP_BUILD}/weblogic_variables.tf
   sed -i '/variable "instance_image_id" {/!b;n;n;n;cdefault = '"$instance_image_id"'' ${TMP_BUILD}/mp_variables.tf
@@ -256,6 +260,7 @@ replace_byol_suite_12214_variables()
 {
   export TF_VAR_FILE=${SCRIPT_DIR}/../terraform/inputs/mp_image_suite_byol.tfvars
   get_mp_values
+  sed -i '/variable "tf_script_version" {/!b;n;n;n;cdefault = '"$tf_script_version"'' ${TMP_BUILD}/variables.tf
   sed -i 's/default     = "EE"/default     = "SUITE"/' ${TMP_BUILD}/edition.tf
   sed -i '/variable "instance_image_id" {/!b;n;n;n;cdefault = '"$instance_image_id"'' ${TMP_BUILD}/mp_variables.tf
   sed -i '/variable "use_marketplace_image" {/!b;n;n;n;cdefault = '"true"'' ${TMP_BUILD}/mp_variables.tf
@@ -276,6 +281,7 @@ replace_byol_suite_14110_variables()
 { 
   export TF_VAR_FILE=${SCRIPT_DIR}/../terraform/inputs/mp_image_suite_byol.tfvars
   get_mp_values
+  sed -i '/variable "tf_script_version" {/!b;n;n;n;cdefault = '"$tf_script_version"'' ${TMP_BUILD}/variables.tf
   sed -i 's/default     = "EE"/default     = "SUITE"/' ${TMP_BUILD}/edition.tf
   sed -i '/variable "wls_version" {/!b;n;n;n;cdefault = \"14.1.1.0\"' ${TMP_BUILD}/weblogic_variables.tf
   sed -i '/variable "instance_image_id" {/!b;n;n;n;cdefault = '"$instance_image_id"'' ${TMP_BUILD}/mp_variables.tf
@@ -297,6 +303,7 @@ replace_ucm_suite_12214_variables()
 {  
   export TF_VAR_FILE=${SCRIPT_DIR}/../terraform/inputs/mp_image_suite_byol.tfvars
   get_mp_values
+  sed -i '/variable "tf_script_version" {/!b;n;n;n;cdefault = '"$tf_script_version"'' ${TMP_BUILD}/variables.tf
   sed -i 's/default     = "EE"/default     = "SUITE"/' ${TMP_BUILD}/edition.tf
   sed -i '/variable "instance_image_id" {/!b;n;n;n;cdefault = '"$instance_image_id"'' ${TMP_BUILD}/mp_variables.tf
   sed -i '/variable "use_marketplace_image" {/!b;n;n;n;cdefault = '"true"'' ${TMP_BUILD}/mp_variables.tf
@@ -309,6 +316,7 @@ replace_ucm_suite_14110_variables()
 { 
   export TF_VAR_FILE=${SCRIPT_DIR}/../terraform/inputs/mp_image_suite_byol.tfvars
   get_mp_values
+  sed -i '/variable "tf_script_version" {/!b;n;n;n;cdefault = '"$tf_script_version"'' ${TMP_BUILD}/variables.tf
   sed -i 's/default     = "EE"/default     = "SUITE"/' ${TMP_BUILD}/edition.tf
   sed -i '/variable "wls_version" {/!b;n;n;n;cdefault = \"14.1.1.0\"' ${TMP_BUILD}/weblogic_variables.tf
   sed -i '/variable "instance_image_id" {/!b;n;n;n;cdefault = '"$instance_image_id"'' ${TMP_BUILD}/mp_variables.tf
@@ -322,6 +330,7 @@ replace_ucm_ee_12214_variables()
 {
   export TF_VAR_FILE=${SCRIPT_DIR}/../terraform/inputs/mp_image_ee_ucm.tfvars
   get_mp_values
+  sed -i '/variable "tf_script_version" {/!b;n;n;n;cdefault = '"$tf_script_version"'' ${TMP_BUILD}/variables.tf
   sed -i '/variable "instance_image_id" {/!b;n;n;n;cdefault = '"$instance_image_id"'' ${TMP_BUILD}/mp_variables.tf
   sed -i '/variable "use_marketplace_image" {/!b;n;n;n;cdefault = '"true"'' ${TMP_BUILD}/mp_variables.tf
   sed -i '/variable "listing_id" {/!b;n;n;n;cdefault = '"$listing_id"'' ${TMP_BUILD}/mp_variables.tf
@@ -333,6 +342,7 @@ replace_ucm_ee_14110_variables()
 {
   export TF_VAR_FILE=${SCRIPT_DIR}/../terraform/inputs/mp_image_ee_ucm.tfvars
   get_mp_values
+  sed -i '/variable "tf_script_version" {/!b;n;n;n;cdefault = '"$tf_script_version"'' ${TMP_BUILD}/variables.tf
   sed -i '/variable "wls_version" {/!b;n;n;n;cdefault = \"14.1.1.0\"' ${TMP_BUILD}/weblogic_variables.tf
   sed -i '/variable "instance_image_id" {/!b;n;n;n;cdefault = '"$instance_image_id"'' ${TMP_BUILD}/mp_variables.tf
   sed -i '/variable "use_marketplace_image" {/!b;n;n;n;cdefault = '"true"'' ${TMP_BUILD}/mp_variables.tf
@@ -344,6 +354,7 @@ replace_ucm_ee_14110_variables()
 
 get_mp_values()
 {
+  export tf_script_version=`cat ${TF_VAR_FILE} | grep -w "tf_script_version" | cut -d'=' -f2`
   export listing_id=`cat ${TF_VAR_FILE} | grep -w "listing_id" | cut -d'=' -f2`
   export listing_resource_version=`cat ${TF_VAR_FILE} | grep -w "listing_resource_version" | cut -d'=' -f2`
   export instance_image_id=`cat ${TF_VAR_FILE} | grep -w "instance_image_id" | cut -d'=' -f2`
