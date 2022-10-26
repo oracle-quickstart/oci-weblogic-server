@@ -18,9 +18,18 @@ mkdir -p ${SCRIPT_DIR}/binaries/tmpbuild
 
 create_cli_bundle()
 {
-  cp -Rf ${SCRIPT_DIR}/../terraform/modules ${SCRIPT_DIR}/../terraform/edition.tf ${SCRIPT_DIR}/../terraform/*.tf ${SCRIPT_DIR}/../terraform/version.txt ${SCRIPT_DIR}/../terraform/inputs ${TMP_BUILD}
+  cp -Rf ${SCRIPT_DIR}/../terraform/modules ${SCRIPT_DIR}/../terraform/edition.tf ${SCRIPT_DIR}/../terraform/*.tf ${SCRIPT_DIR}/../terraform/inputs ${TMP_BUILD}
+  replace_variables
   (cd ${TMP_BUILD}; zip -r ${SCRIPT_DIR}/binaries/wlsoci-terraform.zip *; rm -Rf ${TMP_BUILD}/*)
 }
+
+#need to change it to false after RM UI fix
+replace_variables()
+{
+  sed -i '/variable "generate_dg_tag" {/!b;n;n;n;cdefault = false' ${TMP_BUILD}/variables.tf
+  sed -i '/variable "use_marketplace_image" {/!b;n;n;n;cuse_marketplace_image = false' ${TMP_BUILD}/mp_variables.tf
+}
+
 
 create_cli_bundle
 

@@ -25,6 +25,7 @@ resource "oci_core_app_catalog_subscription" "wls_mp_image_subscription" {
   }
 }
 
+#Subscribe to the UCM market place image only from BYOL bundles
 resource "oci_core_app_catalog_listing_resource_version_agreement" "wls_mp_ucm_image_agreement" {
   count                    = var.use_marketplace_image && var.is_ucm_image ? 1 : 0
   listing_id               = var.mp_ucm_listing_id

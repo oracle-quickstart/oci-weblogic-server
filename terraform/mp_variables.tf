@@ -28,7 +28,7 @@ variable "bastion_listing_resource_version" {
 
 variable "use_marketplace_image" {
   type        = bool
-  description = "Set to true if using a marketplace Weblogic instance image, to create the marketplace subscriptions"
+  description = "Set to true if using a marketplace WebLogic instance image, to create the marketplace subscriptions"
   default     = true
 }
 
