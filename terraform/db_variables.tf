@@ -155,6 +155,7 @@ variable "atp_db_existing_vcn_id" {
 variable "atp_db_uses_private_endpoint" {
   type        = bool
   description = "Indicates if the ATP database uses private endpoint for network access"
+  default     = false
 }
 
 #This variable is used for both oci db and ATP with private subnet
