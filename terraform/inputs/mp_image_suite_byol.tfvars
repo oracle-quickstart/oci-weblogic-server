@@ -7,6 +7,6 @@ listing_id               = "ocid1.appcataloglisting.oc1..aaaaaaaajl5w3d76x5vdc4n
 listing_resource_version = "22.4.1-ol7.9-22.08.29-221015-1"
 instance_image_id        = "ocid1.image.oc1..aaaaaaaau26owsgk5wb456outso4w7khjg3h5i3nlko4ionpepu6ectawbma"
 
-ucm_listing_id               = "ocid1.appcataloglisting.oc1..aaaaaaaa653zc2e4fsem5hhwinmfgnv3xp4dmbq6c6gvf45okxf6xz3smhiq"
+ucm_listing_id               = "ocid1.appcataloglisting.oc1..aaaaaaaaq2vkow7zwkxg6ky4zxsnckdlfgtgmg7i4kkyev3y6zyo72mpkgza"
 ucm_listing_resource_version = "22.4.1-ol7.9-22.08.29-221015-1"
-ucm_instance_image_id        = "ocid1.image.oc1..aaaaaaaakygzs4drs6y3fa63axbgjs2abxgx5larzoklqyihmtul7ooegtnq"
+ucm_instance_image_id        = "ocid1.image.oc1..aaaaaaaaf4ufoi2or6lf7cmoinuruykih2l4ax37ukmir54mnway7bmpbvtq"
