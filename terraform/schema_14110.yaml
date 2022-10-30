@@ -944,12 +944,10 @@ variables:
     visible:
       and:
         - ${orm_create_mode}
-        - and:
-            - not:
-                - ${create_new_subnets}
+        - not:
             - eq:
                 - ${subnet_type}
-                - "Use Private Subnet"
+                - "Use Public Subnet"
     type: boolean
     default: true
     title: Provision Bastion Instance
