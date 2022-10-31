@@ -101,20 +101,6 @@ variable "load_balancer_strategy_existing_subnet" {
   default     = "Create New Load Balancer"
 }
 
-# Variable used in UI only
-variable "lb_subnet_1_availability_domain_name" {
-  type        = string
-  description = "Availability domain for load balancer when using AD-specific subnets"
-  default     = ""
-}
-
-# Variable used in UI only
-variable "lb_subnet_2_availability_domain_name" {
-  type        = string
-  description = "Availability domain for load balancer when using AD-specific subnets"
-  default     = ""
-}
-
 variable "existing_load_balancer_id" {
   type        = string
   description = "The OCID of an existing load balancer. If set, use the existing load balancer and add the stack nodes to the backend set of the existing load balancer. Set add_load_balancer to true in order for this value to take effect"
