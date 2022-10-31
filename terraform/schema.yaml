@@ -1632,7 +1632,7 @@ variables:
             - "Autonomous Transaction Processing Database"
     type: boolean
     default: false
-    title: Autonomous Database uses private endpoint
+    title: Database uses private endpoint
     description: The Autonomous Transaction Processing (ATP) database uses private endpoint for network access.
 
   atp_db_network_compartment_id:
