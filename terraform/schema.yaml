@@ -99,7 +99,7 @@ groupings:
       - ${bastion_instance_shape}
       - ${existing_bastion_nsg_id}
 
-  - title: "Load balancer"
+  - title: "Load Balancer"
     variables:
       - ${load_balancer_strategy_existing_subnet}
       - ${load_balancer_strategy_new_subnet}
@@ -419,7 +419,7 @@ variables:
 
   wls_availability_domain_name:
     type: oci:identity:availabilitydomain:name
-    title: Select Availability Domain for WebLogic Admin Server Instance
+    title: WebLogic Administration Server Availability Domain
     description: The availability domain in which to create the WebLogic administration server compute instance. If not specified, by default, the compute instance is created in availability domain 1.
     required: false
     dependsOn:
@@ -490,7 +490,7 @@ variables:
     type: boolean
     default: false
     title: "Configure Ports"
-    description: Configure the ports for administration server, managed server and cluster. It is optional, if not changed, default ports will be used. See <a target="_blank" href="https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/default-ports.html">configure ports</a>.
+    description: Configure the ports for administration server, managed server, and cluster. If not selected, default ports will be used. See <a target="_blank" href="https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/default-ports.html">Default Ports</a>.
 
   wls_nm_port:
     visible:
@@ -619,7 +619,7 @@ variables:
             - ${create_new_vcn}
     type: boolean
     default: false
-    title: "Create new subnets"
+    title: "Create New Subnets"
     description: "Create new subnets in the existing Virtual Cloud Network"
 
   network_compartment_id:
@@ -707,7 +707,7 @@ variables:
     type: string
     required: true
     title: Acknowledge if Existing Network is Validated
-    description: Confirm selected existing Virtual Cloud Network is validated using the network validation script by entering YES in the field. See <a target="_blank" href="https://docs.oracle.com/pls/topic/lookup?ctx=en/cloud/paas/weblogic-cloud/user&id=oci_network_validate">Validate Existing Network Setup</a>
+    description: Enter YES to confirm if existing Virtual Cloud Network you selected is validated using the network validation script. See <a target="_blank" href="https://docs.oracle.com/pls/topic/lookup?ctx=en/cloud/paas/weblogic-cloud/user&id=oci_network_validate">Validate Existing Network Setup</a>
     pattern: "^[yY][eE][sS]$"
     visible:
       and:
@@ -775,8 +775,8 @@ variables:
     type: boolean
     default: false
     required: true
-    title: "Existing Network Service Groups"
-    description: "Use/select existing Network Service Groups(NSG) for existing subnets"
+    title: "Existing Network Security Groups"
+    description: "Use existing Network Security Groups (NSG) for existing subnets"
 
 
   # WLS Network Configuration
@@ -1422,7 +1422,7 @@ variables:
                     - "Create New Load Balancer"
     type: integer
     title: Minimum Bandwidth for Flexible Load Balancer
-    description: Create flexible shape Load Balancer with minimum bandwidth. The minimum service limit is 10 Mbps.
+    description: Create flexible shape load balancer with minimum bandwidth. The minimum service limit is 10 Mbps.
     minimum: 10
     maximum: 8000
     default: 10
@@ -1458,7 +1458,7 @@ variables:
                     - "Create New Load Balancer"
     type: integer
     title: Maximum Bandwidth for Flexible Load Balancer
-    description: Create flexible shape Load Balancer with maximum bandwidth. The maximum service limit is 8000 Mbps. Check the service limits page in the Console to provide accurate service limits.
+    description: Create flexible shape load balancer with maximum bandwidth. The maximum service limit is 8000 Mbps. Check the service limits page in the Console to provide accurate service limits.
     minimum: 10
     maximum: 8000
     default: 400
@@ -1632,7 +1632,7 @@ variables:
             - "Autonomous Transaction Processing Database"
     type: boolean
     default: false
-    title: Autonomous Database uses private endpoint
+    title: Database uses private endpoint
     description: The Autonomous Transaction Processing (ATP) database uses private endpoint for network access.
 
   atp_db_network_compartment_id:
