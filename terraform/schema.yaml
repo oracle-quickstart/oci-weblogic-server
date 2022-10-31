@@ -1033,7 +1033,7 @@ variables:
       and:
         - ${orm_create_mode}
         - and:
-	        - or:
+            - or:
                 - ${is_bastion_instance_required}
                 - ${create_new_vcn}
                 - ${create_new_subnets}
