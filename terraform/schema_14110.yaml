@@ -81,9 +81,7 @@ groupings:
       - ${lb_reserved_public_ip_id}
       - ${lb_subnet_1_id}
       - ${lb_subnet_2_id}
-      - ${lb_subnet_1_availability_domain_name}
       - ${lb_subnet_1_cidr}
-      - ${lb_subnet_2_availability_domain_name}
       - ${lb_min_bandwidth}
       - ${lb_max_bandwidth}
       - ${existing_load_balancer_id}
@@ -1244,68 +1242,6 @@ variables:
     required: true
     description: The OCID of the reserved public IP address for the load balancer
     pattern: ^ocid1.publicip.*$
-
-  # check if these fields are any more relevant as we do not create AD subnets
-  lb_subnet_1_availability_domain_name:
-    visible:
-      and:
-        - or:
-            - ${add_load_balancer}
-            - ${is_idcs_selected}
-        - and:
-            - ${create_new_subnets}
-            - eq:
-                - ${subnet_span}
-                - "AD Specific Subnet"
-    type: oci:identity:availabilitydomain:name
-    dependsOn:
-      compartmentId: ${network_compartment_id}
-      hidePrivateSubnet: true
-      hidePublicSubnet: false
-      hideRegionalSubnet:
-        not:
-          - eq:
-              - ${subnet_span}
-              - "Regional Subnet"
-      hideAdSubnet:
-        not:
-          - eq:
-              - ${subnet_span}
-              - "AD Specific Subnet"
-    title: LB Availability Domain for subnet 1
-    description: The availability domain to use for the second load balancer node. This field is required only if you are using AD-specific subnets.
-    default: ''
-
-  # check if these fields are any more relevant as we do not create AD subnets
-  lb_subnet_2_availability_domain_name:
-    visible:
-      and:
-        - or:
-            - ${add_load_balancer}
-            - ${is_idcs_selected}
-        - and:
-            - ${create_new_subnets}
-            - eq:
-                - ${subnet_span}
-                - "AD Specific Subnet"
-    type: oci:identity:availabilitydomain:name
-    dependsOn:
-      compartmentId: ${network_compartment_id}
-      hidePrivateSubnet: true
-      hidePublicSubnet: false
-      hideRegionalSubnet:
-        not:
-          - eq:
-              - ${subnet_span}
-              - "Regional Subnet"
-      hideAdSubnet:
-        not:
-          - eq:
-              - ${subnet_span}
-              - "AD Specific Subnet"
-    title: LB Availability Domain for subnet 2
-    description: Select LB Availability Domain. Only required if provisioning with Load Balancer is selected.
-    default: ''
 
   lb_subnet_1_cidr:
     visible:
