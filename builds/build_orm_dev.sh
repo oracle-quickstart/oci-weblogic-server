@@ -14,10 +14,11 @@ help()
 {
   echo "Build the Oracle Resource Manager (ORM) bundles for developers to deploy in Marketplace"
   echo
-  echo "Arguments: build_orm_dev.sh -v|--version <12.2.1.4|14.1.1.0> --all"
+  echo "Arguments: build_orm_dev.sh -v|--version <12.2.1.4|14.1.1.0> -t|--scripts_version --all"
   echo "options:"
-  echo "-v, --version     WebLogic version. Supported values are 12.2.1.4 or 14.1.1.0. Optional when --all option is provided"
-  echo "--all             All bundles"
+  echo "-v, --version             WebLogic version. Supported values are 12.2.1.4 or 14.1.1.0. Optional when --all option is provided"
+  echo "-t, --scripts_version     VM scripts version"
+  echo "--all                     All bundles"
   echo
 }
 
@@ -37,6 +38,10 @@ do
             WLS_VERSION="$2"
 	    shift
             ;;
+        -t|--scripts_version)
+            SCRIPTS_VERSION="$2"
+            shift
+            ;;
         --all)
 	    CREATE_ALL_BUNDLES="true"
 	    break
@@ -52,8 +57,14 @@ done
 # validate the input parameters
 validate()
 {
+
+  if [ -z "${SCRIPTS_VERSION}" ]; then
+    echo "vm scripts version is not provided"
+    help
+    exit 1
+  fi
+
   if [ "${CREATE_ALL_BUNDLES}" == "true" ]; then
-     
      echo "Creating all bundles.."
      return
   fi
@@ -101,6 +112,7 @@ replace_12214_variables()
 {
   sed -i '/variable "generate_dg_tag" {/!b;n;n;n;cdefault = false' ${TMP_BUILD}/variables.tf
   sed -i '/variable "use_marketplace_image" {/!b;n;n;n;cdefault = false' ${TMP_BUILD}/mp_variables.tf
+  sed -i '/variable "tf_script_version" {/!b;n;n;n;cdefault = \"'"$SCRIPTS_VERSION"'\"' ${TMP_BUILD}/variables.tf
 }
 
 #need to change it to false after RM UI fix
@@ -109,6 +121,7 @@ replace_14110_variables()
   sed -i '/variable "generate_dg_tag" {/!b;n;n;n;cdefault = false' ${TMP_BUILD}/variables.tf
   sed -i '/variable "wls_version" {/!b;n;n;n;cdefault = \"14.1.1.0\"' ${TMP_BUILD}/weblogic_variables.tf
   sed -i '/variable "use_marketplace_image" {/!b;n;n;n;cdefault = false' ${TMP_BUILD}/mp_variables.tf
+  sed -i '/variable "tf_script_version" {/!b;n;n;n;cdefault = \"'"$SCRIPTS_VERSION"'\"' ${TMP_BUILD}/variables.tf
 }
 
 if [ "${CREATE_ALL_BUNDLES}" == "true" ]; then

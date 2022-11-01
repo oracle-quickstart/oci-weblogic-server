@@ -7,6 +7,56 @@
 # Build CLI bundle to run SRG dev tests                                                     #
 ############################################################
 
+############################################################
+# help                                                     #
+############################################################
+help()
+{
+  echo
+  echo "Arguments: build_cli.sh -t|--scripts_version"
+  echo "options:"
+  echo "-t, --scripts_version     VM scripts version"
+  echo
+}
+
+if [ $# -eq 0 ]; then
+    help
+    exit 1
+fi
+
+while [ $# -ne 0 ]
+do
+    case $1 in
+        -h|--help)
+            help
+            exit 0
+            ;;
+        -t|--scripts_version)
+            SCRIPTS_VERSION="$2"
+            shift
+            ;;
+        *)
+            help
+            exit 1
+            ;;
+    esac
+    shift
+done
+
+# validate the input parameters
+validate()
+{
+  if [ -z "${SCRIPTS_VERSION}" ]; then
+    echo "vm scripts version is not provided"
+    help
+    exit 1
+  fi
+}
+
+#Run validation for the input parameters
+validate
+
+
 cd $(dirname $0)
 SCRIPT_DIR=$(pwd)
 
@@ -28,6 +78,7 @@ replace_variables()
 {
   sed -i '/variable "generate_dg_tag" {/!b;n;n;n;cdefault = false' ${TMP_BUILD}/variables.tf
   sed -i '/variable "use_marketplace_image" {/!b;n;n;n;cdefault = false' ${TMP_BUILD}/mp_variables.tf
+  sed -i '/variable "tf_script_version" {/!b;n;n;n;cdefault = \"'"$SCRIPTS_VERSION"'\"' ${TMP_BUILD}/variables.tf
 }
 
 
