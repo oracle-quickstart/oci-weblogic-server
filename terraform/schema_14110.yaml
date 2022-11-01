@@ -11,13 +11,13 @@ groupings:
       - ${service_name}
       - ${ssh_public_key}
       - ${create_policies}
+      - ${create_new_vcn}
       - ${is_bastion_instance_required}
       - ${add_load_balancer}
       - ${is_idcs_selected}
       - ${use_oci_logging}
       - ${use_apm_service}
       - ${use_autoscaling}
-      - ${create_new_vcn}
       - ${add_fss}
 
   - title: "Virtual Cloud Networking"
@@ -945,9 +945,12 @@ variables:
         - and:
             - not:
                 - ${create_new_subnets}
-            - eq:
-                - ${subnet_type}
-                - "Use Private Subnet"
+            - not:
+                - ${create_new_vcn}
+            - not:
+                - eq:
+                    - ${subnet_type}
+                    - "Use Public Subnet"
     type: boolean
     default: true
     title: Provision Bastion Instance
@@ -955,18 +958,21 @@ variables:
 
   is_bastion_with_reserved_public_ip:
     visible:
-       and:
-          - ${is_bastion_instance_required}
-          - or:
-             - or:
+      and:
+        - or:
+            - ${is_bastion_instance_required}
+            - ${create_new_vcn}
+            - ${create_new_subnets}
+        - or:
+            - or:
                 - ${create_new_vcn}
                 - ${create_new_subnets}
-             - and:
+            - and:
                 - not:
                     - ${create_new_subnets}
                 - eq:
-                   - ${subnet_type}
-                   - "Use Private Subnet"
+                    - ${subnet_type}
+                    - "Use Private Subnet"
     type: boolean
     default: false
     title: Assign Reserved Public IP to Bastion Instance
@@ -982,9 +988,12 @@ variables:
     visible:
       and:
         - ${orm_create_mode}
-        - ${is_bastion_instance_required}
+        - or:
+            - ${is_bastion_instance_required}
+            - ${create_new_vcn}
+            - ${create_new_subnets}
         - and:
-             - or:
+            - or:
                 - ${create_new_vcn}
                 - ${create_new_subnets}
     type: string
@@ -1033,7 +1042,10 @@ variables:
       and:
         - ${orm_create_mode}
         - and:
-            - ${is_bastion_instance_required}
+            - or:
+                - ${is_bastion_instance_required}
+                - ${create_new_vcn}
+                - ${create_new_subnets}
             - eq:
                 - ${subnet_type}
                 - "Use Private Subnet"
