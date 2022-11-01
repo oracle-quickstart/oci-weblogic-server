@@ -32,8 +32,12 @@ locals {
 
   service_statements = compact([local.core_policy_statement1, local.core_policy_statement2, local.core_policy_statement3, local.network_policy_statement1, local.secrets_policy_statement1, local.secrets_policy_statement2, local.atp_policy_statement1, local.atp_policy_statement2, local.oci_db_policy_statement1, local.oci_db_policy_statement2, local.logging_policy, local.apm_domain_policy_statement, local.lb_policy_statement])
 
+  cloning_policy_statement1 = length(oci_identity_dynamic_group.wlsc_instance_principal_group) > 0 ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to read orm-stacks in compartment id ${var.compartment_id}" : ""
+  cloning_policy_statement2 = length(oci_identity_dynamic_group.wlsc_instance_principal_group) > 0 ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to inspect compartments in tenancy" : ""
+  cloning_policy_statement  = compact([local.cloning_policy_statement1, local.cloning_policy_statement2])
+
   #TODO: When other categories with more statements are added here, concat them with service_statements
-  policy_statements = concat(local.service_statements, [])
+  policy_statements = concat(local.service_statements, local.cloning_policy_statement, [])
 
   reserved_ips_info = var.compartment_id == "" ? [{ id = var.resource_name_prefix }] : []
 
