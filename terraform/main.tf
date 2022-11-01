@@ -39,7 +39,7 @@ module "network-vcn-config" {
   wls_admin_port_source_cidr = var.wls_admin_port_source_cidr
   wls_ms_content_port        = var.is_idcs_selected ? var.idcs_cloudgate_port : var.wls_ms_extern_ssl_port
 
-  wls_security_list_name       = !var.assign_weblogic_public_ip ? "bastion-security-list" : "wls-security-list"
+  wls_security_list_name       = !local.assign_weblogic_public_ip ? "bastion-security-list" : "wls-security-list"
   wls_subnet_cidr              = local.wls_subnet_cidr
   wls_ms_source_cidrs          = var.add_load_balancer ? [local.lb_subnet_1_subnet_cidr] : ["0.0.0.0/0"]
   load_balancer_min_value      = var.add_load_balancer ? var.wls_ms_extern_port : var.wls_ms_extern_ssl_port
@@ -213,7 +213,7 @@ module "policies" {
 
 module "bastion" {
   source              = "./modules/compute/bastion"
-  count               = (var.is_bastion_instance_required && var.existing_bastion_instance_id == "") ? 1 : 0
+  count               = (!local.assign_weblogic_public_ip && var.is_bastion_instance_required && var.existing_bastion_instance_id == "") ? 1 : 0
   availability_domain = local.bastion_availability_domain
   bastion_subnet_id   = var.bastion_subnet_id != "" ? var.bastion_subnet_id : module.network-bastion-subnet[0].subnet_id
 
@@ -666,9 +666,9 @@ module "provisioners" {
   host_ips                     = coalescelist(compact(module.compute.instance_public_ips), compact(module.compute.instance_private_ips), [""])
   num_vm_instances             = var.wls_node_count
   ssh_private_key              = module.compute.ssh_private_key_opc
-  assign_public_ip             = var.assign_weblogic_public_ip
-  bastion_host                 = !var.is_bastion_instance_required ? "" : var.existing_bastion_instance_id == "" ? module.bastion[0].public_ip : data.oci_core_instance.existing_bastion_instance[0].public_ip
-  bastion_host_private_key     = !var.is_bastion_instance_required ? "" : var.existing_bastion_instance_id == "" ? module.bastion[0].bastion_private_ssh_key : file(var.bastion_ssh_private_key)
+  assign_public_ip             = local.assign_weblogic_public_ip
+  bastion_host                 = local.assign_weblogic_public_ip || !var.is_bastion_instance_required ? "" : var.existing_bastion_instance_id == "" ? module.bastion[0].public_ip : data.oci_core_instance.existing_bastion_instance[0].public_ip
+  bastion_host_private_key     = local.assign_weblogic_public_ip || !var.is_bastion_instance_required ? "" : var.existing_bastion_instance_id == "" ? module.bastion[0].bastion_private_ssh_key : file(var.bastion_ssh_private_key)
   is_bastion_instance_required = var.is_bastion_instance_required
 
   mode                             = var.mode
