@@ -74,7 +74,7 @@ locals {
   lb_id = local.use_existing_lb ? var.existing_load_balancer_id : local.new_lb_id
   lb_ip = local.use_existing_lb ? local.existing_lb_ip : local.new_lb_ip
 
-  assign_weblogic_public_ip = var.assign_weblogic_public_ip || var.subnet_type == "Use Public Subnet" ? true : false
+  assign_weblogic_public_ip = var.assign_weblogic_public_ip || var.subnet_type == "Use Public Subnet"
 
   admin_ip_address      = local.assign_weblogic_public_ip ? module.compute.instance_public_ips[0] : module.compute.instance_private_ips[0]
   admin_console_app_url = format("https://%s:%s/console", local.admin_ip_address, var.wls_extern_ssl_admin_port)
@@ -88,7 +88,7 @@ locals {
     local.lb_ip,
   ) : ""
 
-  async_prov_mode = !var.is_bastion_instance_required ? "Asynchronous provisioning is enabled. Connect to each compute instance and confirm that the file /u01/data/domains/${format("%s_domain", local.service_name_prefix)}/provisioningCompletedMarker exists. Details are found in the file /u01/logs/provisioning.log." : ""
+  async_prov_mode = !local.assign_weblogic_public_ip && !var.is_bastion_instance_required ? "Asynchronous provisioning is enabled. Connect to each compute instance and confirm that the file /u01/data/domains/${format("%s_domain", local.service_name_prefix)}/provisioningCompletedMarker exists. Details are found in the file /u01/logs/provisioning.log." : ""
 
   jdk_labels  = { jdk7 = "JDK 7", jdk8 = "JDK 8", jdk11 = "JDK 11" }
   jdk_version = var.wls_version == "14.1.1.0" ? local.jdk_labels[var.wls_14c_jdk_version] : (var.wls_version == "11.1.1.7" ? local.jdk_labels["jdk7"] : local.jdk_labels["jdk8"])
