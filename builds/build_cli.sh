@@ -27,7 +27,7 @@ create_cli_bundle()
 replace_variables()
 {
   sed -i '/variable "generate_dg_tag" {/!b;n;n;n;cdefault = false' ${TMP_BUILD}/variables.tf
-  sed -i '/variable "use_marketplace_image" {/!b;n;n;n;cuse_marketplace_image = false' ${TMP_BUILD}/mp_variables.tf
+  sed -i '/variable "use_marketplace_image" {/!b;n;n;n;cdefault = false' ${TMP_BUILD}/mp_variables.tf
 }
 
 

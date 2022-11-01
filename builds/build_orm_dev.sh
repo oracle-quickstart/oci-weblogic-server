@@ -100,7 +100,7 @@ create_14110_bundle()
 replace_12214_variables()
 {
   sed -i '/variable "generate_dg_tag" {/!b;n;n;n;cdefault = false' ${TMP_BUILD}/variables.tf
-  sed -i '/variable "use_marketplace_image" {/!b;n;n;n;cuse_marketplace_image = false' ${TMP_BUILD}/mp_variables.tf
+  sed -i '/variable "use_marketplace_image" {/!b;n;n;n;cdefault = false' ${TMP_BUILD}/mp_variables.tf
 }
 
 #need to change it to false after RM UI fix
@@ -108,7 +108,7 @@ replace_14110_variables()
 {
   sed -i '/variable "generate_dg_tag" {/!b;n;n;n;cdefault = false' ${TMP_BUILD}/variables.tf
   sed -i '/variable "wls_version" {/!b;n;n;n;cdefault = \"14.1.1.0\"' ${TMP_BUILD}/weblogic_variables.tf
-  sed -i '/variable "use_marketplace_image" {/!b;n;n;n;cuse_marketplace_image = false' ${TMP_BUILD}/mp_variables.tf
+  sed -i '/variable "use_marketplace_image" {/!b;n;n;n;cdefault = false' ${TMP_BUILD}/mp_variables.tf
 }
 
 if [ "${CREATE_ALL_BUNDLES}" == "true" ]; then
