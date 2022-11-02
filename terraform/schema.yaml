@@ -632,7 +632,7 @@ variables:
     type: boolean
     default: false
     title: "Add File System"
-    description: "Add file system storage"
+    description: "Add file system"
 
   add_existing_mount_target:
     visible:
@@ -2349,7 +2349,7 @@ variables:
   mount_path:
     type: string
     title: Mount Path on the WebLogic Server instances
-    description: The path to mount File System on the WebLogic Server instances
+    description: The path to mount the file system on the WebLogic Server instances
 
   mode:
     type: enum
