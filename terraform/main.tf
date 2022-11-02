@@ -514,7 +514,7 @@ module "compute" {
   add_loadbalancer       = var.add_load_balancer
   is_lb_private          = var.is_lb_private
   load_balancer_id       = var.add_load_balancer ? (var.existing_load_balancer_id != "" ? var.existing_load_balancer_id : element(coalescelist(module.load-balancer[*].wls_loadbalancer_id, [""]), 0)) : ""
-  assign_public_ip       = var.assign_weblogic_public_ip
+  assign_public_ip       = local.assign_weblogic_public_ip
   availability_domain    = local.wls_availability_domain
   compartment_id         = var.compartment_ocid
   instance_image_id      = local.vm_instance_image_id
