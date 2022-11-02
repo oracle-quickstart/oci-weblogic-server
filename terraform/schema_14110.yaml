@@ -640,8 +640,8 @@ variables:
   add_fss:
     type: boolean
     default: false
-    title: "Add File System Storage"
-    description: "Add file system storage"
+    title: "Add File System"
+    description: "Add file system"
 
   add_existing_mount_target:
     visible:
@@ -1580,7 +1580,7 @@ variables:
                 - ${subnet_span}
                 - "AD Specific Subnet"
     type: oci:identity:availabilitydomain:name
-    title: FSS Availability Domain
+    title: File System Availability Domain
     description: The name of the availability domain in which to create the file system and mount target.
     dependsOn:
       compartmentId: ${compartment_ocid}
@@ -1894,7 +1894,7 @@ variables:
   mount_path:
     type: string
     title: Mount Path on the WebLogic Server instances
-    description: The path to mount FSS on the WebLogic Server instances
+    description: The path to mount the file system on the WebLogic Server instances
 
   mode:
     type: enum
