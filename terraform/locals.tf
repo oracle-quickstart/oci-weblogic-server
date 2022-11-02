@@ -34,7 +34,9 @@ locals {
     password_id    = var.atp_db_password_id
   }
   oci_db = {
+    is_oci_db                = local.is_oci_db
     password_id              = var.oci_db_password_id
+    compartment_id           = local.oci_db_compartment_id
     network_compartment_id   = local.oci_db_network_compartment_id
     existing_vcn_id          = var.oci_db_existing_vcn_id
     existing_vcn_add_seclist = local.is_oci_db ? var.ocidb_existing_vcn_add_seclist : false
