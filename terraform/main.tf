@@ -557,7 +557,8 @@ module "compute" {
   num_vm_instances              = var.wls_node_count
   resource_name_prefix          = var.service_name
 
-  is_bastion_instance_required = var.is_bastion_instance_required
+  is_bastion_instance_required       = var.is_bastion_instance_required
+  is_bastion_with_reserved_public_ip = var.is_bastion_with_reserved_public_ip
 
   is_idcs_selected      = var.is_idcs_selected
   idcs_host             = var.idcs_host
