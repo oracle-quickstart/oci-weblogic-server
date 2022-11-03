@@ -65,6 +65,7 @@ module "wls-instances" {
       network_compartment_id             = var.network_compartment_id
       wls_subnet_cidr                    = local.wls_subnet_cidr
       wls_edition                        = var.wls_edition
+      is_bastion_instance_required       = var.is_bastion_instance_required
 
       user_data            = data.template_cloudinit_config.config.rendered
       mode                 = var.mode

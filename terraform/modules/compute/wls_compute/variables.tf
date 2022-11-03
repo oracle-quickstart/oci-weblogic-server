@@ -181,12 +181,6 @@ variable "is_bastion_instance_required" {
   default     = false
 }
 
-variable "is_bastion_with_reserved_public_ip" {
-  type        = bool
-  description = "Set to true if a bastion instance with reserved public IP was created as part of the WebLogic for OCI stack"
-  default     = false
-}
-
 variable "domain_dir" {
   type        = string
   description = "The directory where the WebLogic domain will be created in the compute instance"
