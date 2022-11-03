@@ -837,7 +837,7 @@ variables:
   mount_target_subnet_cidr:
     visible:
       and:
-	- ${orm_create_mode}
+        - ${orm_create_mode}
         - ${add_fss}
         - and:
             - or:
@@ -2062,7 +2062,7 @@ variables:
   mount_target_id:
     visible:
       and:
-	- ${orm_create_mode}
+        - ${orm_create_mode}
         - ${add_fss}
         - ${add_existing_mount_target}
         - not:
@@ -2080,7 +2080,7 @@ variables:
   existing_fss_id:
     visible:
       and:
-	- ${orm_create_mode}
+        - ${orm_create_mode}
         - ${add_fss}
         - ${add_existing_fss}
         - not:
