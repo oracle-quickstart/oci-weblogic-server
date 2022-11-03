@@ -108,6 +108,7 @@ variable "oci_db" {
     compartment_id           = string
     network_compartment_id   = string
     existing_vcn_id          = string
+    oci_db_connection_string = string
     existing_vcn_add_seclist = bool
   })
   description = <<-EOT

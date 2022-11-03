@@ -39,6 +39,7 @@ locals {
     compartment_id           = local.oci_db_compartment_id
     network_compartment_id   = local.oci_db_network_compartment_id
     existing_vcn_id          = var.oci_db_existing_vcn_id
+    oci_db_connection_string = var.oci_db_connection_string
     existing_vcn_add_seclist = local.is_oci_db ? var.ocidb_existing_vcn_add_seclist : false
   }
 
