@@ -70,7 +70,7 @@ This script is to create Network Security Groups (NSGs) in existing subnets.
   -i, --bastionip     Bastion Host IP. Provide this if using existing bastion instance
   -l, --lbsubnet      LB Subnet OCID
   -a, --lbsubnet2     LB Subnet2 OCID (Provide this if using AD subnet)
-  -c, --cloudgateport Cloudgate Port (Provide this if using IDCS, default is 9999)
+  -c, --cloudgateport Provide this if using Load Balancer and IDCS, default is 9999.
   -f, --mntsubnet     Mount Target Subnet OCID
       --debug         Runs script in BASH debug mode (set -x)
   -h, --help          Display this help and exit
