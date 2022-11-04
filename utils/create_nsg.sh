@@ -17,7 +17,7 @@ DB_PORT=1521
 MS_HTTP_PORT=7003
 MS_HTTPS_PORT=7004
 LB_PORT=443
-CLOUDGATE_PORT=9999
+CLOUDGATE_PORT=""
 WLS_SUBNET_OCID=""
 DB_SUBNET_OCID=""
 BASTION_SUBNET_OCID=""
@@ -67,10 +67,10 @@ This script is to create Network Security Groups (NSGs) in existing subnets.
   -w, --wlssubnet     WebLogic Subnet OCID (Required)
   -d, --dbsubnet      DB Subnet OCID
   -b, --bastionsubnet Bastion Subnet OCID
-  -i, --bastionip     Bastion Host IP. Provide this if using existing bastion instance
+  -i, --bastionip     Bastion Host IP. Provide this if using existing bastion instance.
   -l, --lbsubnet      LB Subnet OCID
-  -a, --lbsubnet2     LB Subnet2 OCID (Provide this if using AD subnet)
-  -c, --cloudgateport Provide this if using Load Balancer and IDCS, default is 9999.
+  -a, --lbsubnet2     LB Subnet2 OCID. Provide this if using AD subnet.
+  -c, --cloudgateport Cloudgate port. Provide this port if using Load Balancer and IDCS. WebLogic for OCI uses port 9999 by default.
   -f, --mntsubnet     Mount Target Subnet OCID
       --debug         Runs script in BASH debug mode (set -x)
   -h, --help          Display this help and exit
@@ -125,7 +125,7 @@ while [[ $1 = -?* ]]; do
     -b|--bastionsubnet) shift; BASTION_SUBNET_OCID=${1} ;;
     -i|--bastionip) shift; BASTION_HOST_IP=${1} ;;
     -l|--lbsubnet) shift; LB_SUBNET_OCID=${1} ;;
-    -c|--cloudgateport) CLOUDGATE_PORT=${CLOUDGATE_PORT} ;;
+    -c|--cloudgateport) shift; CLOUDGATE_PORT=${1} ;;
     -a|--lbsubnet2) shift; LB_SUBNET2_OCID=${1} ;;
     -f|--mntsubnet) shift; MNT_SUBNET_OCID=${1} ;;
     --debug) debug=true;;
