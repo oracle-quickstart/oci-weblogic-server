@@ -4,7 +4,7 @@
 module "middleware-volume" {
   source = "../volume"
   bv_params = { for x in range(var.num_vm_instances) : "${var.resource_name_prefix}-mw-block-${x}" => {
-    ad             = var.use_regional_subnet ? local.ad_names[x % length(local.ad_names)] : var.availability_domain
+    ad             = var.use_regional_subnet ? local.ad_names[(x + local.admin_ad_index) % length(local.ad_names)] : var.availability_domain
     compartment_id = var.compartment_id
     display_name   = "${var.resource_name_prefix}-mw-block-${x}"
     bv_size        = var.volume_size
@@ -19,7 +19,7 @@ module "middleware-volume" {
 module "data-volume" {
   source = "../volume"
   bv_params = { for x in range(var.num_vm_instances) : "${var.resource_name_prefix}-data-block-${x}" => {
-    ad             = var.use_regional_subnet ? local.ad_names[x % length(local.ad_names)] : var.availability_domain
+    ad             = var.use_regional_subnet ? local.ad_names[(x + local.admin_ad_index) % length(local.ad_names)] : var.availability_domain
     compartment_id = var.compartment_id
     display_name   = "${var.resource_name_prefix}-data-block-${x}"
     bv_size        = var.volume_size
