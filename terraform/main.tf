@@ -410,8 +410,8 @@ module "validators" {
   min_threshold_counter = var.min_threshold_counter
   min_threshold_percent = var.min_threshold_percent
 
-  create_dg_tags = local.create_dg_tags
-  service_tags   = var.service_tags
+  generate_dg_tag = var.generate_dg_tag
+  service_tags    = var.service_tags
   tags = {
     defined_tags  = local.defined_tags
     freeform_tags = local.free_form_tags
@@ -557,7 +557,7 @@ module "compute" {
   num_vm_instances              = var.wls_node_count
   resource_name_prefix          = var.service_name
 
-  is_bastion_instance_required       = var.is_bastion_instance_required
+  is_bastion_instance_required = var.is_bastion_instance_required
 
   is_idcs_selected      = var.is_idcs_selected
   idcs_host             = var.idcs_host

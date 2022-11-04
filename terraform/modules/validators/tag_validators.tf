@@ -32,7 +32,7 @@ locals {
   size_check_defined_tags_msg = "WLSC-ERROR: The defined tag's value should not exceed 256 characters"
   validate_defined_tag_size   = length(local.size_check_defined_tags) != 0 ? local.validators_msg_map[local.size_check_defined_tags_msg] : null
 
-  set_dev_defined_tag          = !var.create_dg_tags && length(var.service_tags.definedTags) == 0
+  set_dev_defined_tag          = var.create_policies && !var.generate_dg_tag && length(var.service_tags.definedTags) == 0
   set_dev_defined_tag_msg      = "WLSC-ERROR: At least one defined tag is required if generate_dg_tag is false or mode is DEV."
   validate_set_dev_defined_tag = local.set_dev_defined_tag ? local.validators_msg_map[local.set_dev_defined_tag_msg] : null
 
