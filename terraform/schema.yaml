@@ -629,6 +629,7 @@ variables:
     default: ${compartment_ocid}
 
   add_fss:
+    visible: ${orm_create_mode}
     type: boolean
     default: false
     title: "Add File System"
@@ -664,6 +665,7 @@ variables:
   mount_target_compartment_id:
     visible:
       and:
+        - ${orm_create_mode}
         - ${add_fss}
         - ${add_existing_mount_target}
         - not:
@@ -835,6 +837,7 @@ variables:
   mount_target_subnet_cidr:
     visible:
       and:
+        - ${orm_create_mode}
         - ${add_fss}
         - and:
             - or:
@@ -2027,6 +2030,7 @@ variables:
   fss_availability_domain:
     visible:
       and:
+        - ${orm_create_mode}
         - ${add_fss}
         - not:
             - ${add_existing_fss}
@@ -2044,6 +2048,7 @@ variables:
   fss_compartment_id:
     visible:
       and:
+        - ${orm_create_mode}
         - ${add_fss}
         - ${add_existing_fss}
         - not:
@@ -2057,6 +2062,7 @@ variables:
   mount_target_id:
     visible:
       and:
+        - ${orm_create_mode}
         - ${add_fss}
         - ${add_existing_mount_target}
         - not:
@@ -2074,6 +2080,7 @@ variables:
   existing_fss_id:
     visible:
       and:
+        - ${orm_create_mode}
         - ${add_fss}
         - ${add_existing_fss}
         - not:
