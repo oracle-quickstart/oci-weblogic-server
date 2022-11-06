@@ -84,7 +84,7 @@ variable "assign_weblogic_public_ip" {
 variable "add_load_balancer" {
   type        = bool
   description = "If this variable is true and existing_load_balancer is blank, a new load balancer will be created for the stack. If existing_load_balancer_id is not blank, the specified load balancer will be used"
-  default     = false
+  default     = true
 }
 
 # Variable used in UI only
