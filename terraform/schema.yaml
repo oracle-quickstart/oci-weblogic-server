@@ -649,6 +649,22 @@ variables:
     title: "Existing Mount Target"
     description: "Use the existing mount target ID"
 
+  mount_target_compartment_id:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${add_fss}
+        - ${add_existing_mount_target}
+        - not:
+            - ${create_new_vcn}
+        - not:
+            - ${add_existing_fss}
+    type: oci:identity:compartment:id
+    required: true
+    title: Mount Target Compartment
+    description: The compartment where you have existing mount target
+    default: ${compartment_ocid}
+
   add_existing_fss:
     visible:
       and:
@@ -661,24 +677,6 @@ variables:
     default: false
     title: "Existing File System"
     description: "Use the existing file system"
-
-  mount_target_compartment_id:
-    visible:
-      and:
-        - ${orm_create_mode}
-        - ${add_fss}
-        - ${add_existing_mount_target}
-        - not:
-            - and:
-                - ${add_existing_mount_target}
-                - ${add_existing_fss}
-        - not:
-            - ${create_new_vcn}
-      type: oci:identity:compartment:id
-      title: Mount Target Compartment
-      description: The compartment where you have existing mount target
-      default: ${compartment_ocid}
-      required: true
 
   existing_mount_target_nsg_id:
     visible:
