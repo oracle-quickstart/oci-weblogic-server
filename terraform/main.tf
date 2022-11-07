@@ -206,7 +206,6 @@ module "policies" {
   apm_domain_compartment_id = local.apm_domain_compartment_id
   use_autoscaling           = var.use_autoscaling
   add_fss                   = var.add_fss
-  fss_compartment_id        = var.mount_target_compartment_id == "" ? var.compartment_ocid : var.mount_target_compartment_id
   add_load_balancer         = var.add_load_balancer
 }
 
