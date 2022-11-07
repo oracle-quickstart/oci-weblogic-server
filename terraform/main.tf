@@ -206,7 +206,6 @@ module "policies" {
   apm_domain_compartment_id = local.apm_domain_compartment_id
   use_autoscaling           = var.use_autoscaling
   add_fss                   = var.add_fss
-  fss_compartment_id        = var.mount_target_compartment_id == "" ? var.compartment_ocid : var.mount_target_compartment_id
   add_load_balancer         = var.add_load_balancer
 }
 
@@ -437,13 +436,14 @@ module "fss" {
   compartment_id      = var.compartment_ocid
   availability_domain = local.fss_availability_domain
 
-  vcn_id                 = local.vcn_id
-  vcn_cidr               = var.wls_vcn_cidr != "" ? var.wls_vcn_cidr : data.oci_core_vcn.wls_vcn[0].cidr_block
-  resource_name_prefix   = var.service_name
-  export_path            = local.export_path
-  mount_target_id        = var.mount_target_id
-  mount_target_subnet_id = local.use_existing_subnets ? var.mount_target_subnet_id : module.network-mount-target-private-subnet[0].subnet_id
-  mount_target_nsg_id    = var.mount_target_subnet_id != "" ? (var.add_existing_nsg ? [var.existing_mount_target_nsg_id] : []) : element(module.network-mount-target-nsg[*].nsg_id, 0)
+  vcn_id                      = local.vcn_id
+  vcn_cidr                    = var.wls_vcn_cidr != "" ? var.wls_vcn_cidr : data.oci_core_vcn.wls_vcn[0].cidr_block
+  resource_name_prefix        = var.service_name
+  export_path                 = local.export_path
+  mount_target_id             = var.mount_target_id
+  mount_target_compartment_id = var.mount_target_compartment_id == "" ? var.compartment_ocid : var.mount_target_compartment_id
+  mount_target_subnet_id      = local.use_existing_subnets ? var.mount_target_subnet_id : module.network-mount-target-private-subnet[0].subnet_id
+  mount_target_nsg_id         = var.mount_target_subnet_id != "" ? (var.add_existing_nsg ? [var.existing_mount_target_nsg_id] : []) : element(module.network-mount-target-nsg[*].nsg_id, 0)
   tags = {
     defined_tags  = local.defined_tags
     freeform_tags = local.free_form_tags

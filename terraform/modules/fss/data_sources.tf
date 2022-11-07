@@ -4,7 +4,7 @@
 data "oci_file_storage_mount_targets" "mount_target" {
   #Required
   availability_domain = var.availability_domain
-  compartment_id      = var.compartment_id
+  compartment_id      = var.mount_target_compartment_id
   id                  = var.mount_target_id != "" ? var.mount_target_id : join("", oci_file_storage_mount_target.mount_target.*.id)
 }
 
