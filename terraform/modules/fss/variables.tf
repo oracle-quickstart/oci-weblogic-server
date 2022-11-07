@@ -40,6 +40,11 @@ variable "mount_target_id" {
   description = "The OCID of the mount target for File Shared System"
 }
 
+variable "mount_target_compartment_id" {
+  type        = string
+  description = "The OCID of the compartment where the mount target exists"
+}
+
 variable "mount_target_nsg_id" {
   type        = list(any)
   description = "The list of NSG OCIDs associated with the mount target"

@@ -442,6 +442,7 @@ module "fss" {
   resource_name_prefix   = var.service_name
   export_path            = local.export_path
   mount_target_id        = var.mount_target_id
+  mount_target_compartment_id = var.mount_target_compartment_id == "" ? var.compartment_ocid : var.mount_target_compartment_id
   mount_target_subnet_id = local.use_existing_subnets ? var.mount_target_subnet_id : module.network-mount-target-private-subnet[0].subnet_id
   mount_target_nsg_id    = var.mount_target_subnet_id != "" ? (var.add_existing_nsg ? [var.existing_mount_target_nsg_id] : []) : element(module.network-mount-target-nsg[*].nsg_id, 0)
   tags = {

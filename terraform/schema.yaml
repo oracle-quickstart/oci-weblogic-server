@@ -2031,8 +2031,6 @@ variables:
         - ${orm_create_mode}
         - ${add_fss}
         - not:
-            - ${add_existing_fss}
-        - not:
             - eq:
                 - ${subnet_span}
                 - "AD Specific Subnet"
