@@ -195,19 +195,21 @@ module "policies" {
     defined_tags  = local.defined_tags
     freeform_tags = local.free_form_tags
   }
-  atp_db                    = local.atp_db
-  oci_db                    = local.oci_db
-  vcn_id                    = element(concat(module.network-vcn[*].vcn_id, [""]), 0)
-  wls_existing_vcn_id       = var.wls_existing_vcn_id
-  is_idcs_selected          = var.is_idcs_selected
-  idcs_client_secret_id     = var.idcs_client_secret_id
-  use_oci_logging           = var.use_oci_logging
-  use_apm_service           = var.use_apm_service
-  apm_domain_compartment_id = local.apm_domain_compartment_id
-  use_autoscaling           = var.use_autoscaling
-  ocir_auth_token_id        = var.ocir_auth_token_id
-  add_fss                   = var.add_fss
-  add_load_balancer         = var.add_load_balancer
+  atp_db                      = local.atp_db
+  oci_db                      = local.oci_db
+  vcn_id                      = element(concat(module.network-vcn[*].vcn_id, [""]), 0)
+  wls_existing_vcn_id         = var.wls_existing_vcn_id
+  is_idcs_selected            = var.is_idcs_selected
+  idcs_client_secret_id       = var.idcs_client_secret_id
+  use_oci_logging             = var.use_oci_logging
+  use_apm_service             = var.use_apm_service
+  apm_domain_compartment_id   = local.apm_domain_compartment_id
+  use_autoscaling             = var.use_autoscaling
+  ocir_auth_token_id          = var.ocir_auth_token_id
+  add_fss                     = var.add_fss
+  add_load_balancer           = var.add_load_balancer
+  fss_compartment_id          = var.fss_compartment_id == "" ? var.compartment_ocid : var.fss_compartment_id
+  mount_target_compartment_id = var.mount_target_compartment_id == "" ? var.compartment_ocid : var.mount_target_compartment_id
 }
 
 

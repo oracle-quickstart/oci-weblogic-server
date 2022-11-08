@@ -8,8 +8,8 @@ locals {
   functions_rule   = format("ALL {resource.type = 'fnfunc', resource.compartment.id='%s', %s}", var.compartment_id, var.dynamic_group_rule)
   network_vcn_id   = var.wls_existing_vcn_id != "" ? var.wls_existing_vcn_id : var.vcn_id
 
-  oci_db_connection_string  = trimspace(var.oci_db.oci_db_connection_string)
-  is_oci_db                 = var.oci_db.is_oci_db || local.oci_db_connection_string != ""
+  oci_db_connection_string = trimspace(var.oci_db.oci_db_connection_string)
+  is_oci_db                = var.oci_db.is_oci_db || local.oci_db_connection_string != ""
 
   # This policy with "use instances" verb is needed because there is code in the WebLogic for OCI compute image that updates metadata of the compute instance, when more than one VM nodes are created
   core_policy_statement1 = "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to use instances in compartment id ${var.compartment_id}"
@@ -69,15 +69,15 @@ locals {
   autoscaling_statement24 = var.use_autoscaling ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to manage cloudevents-rules in compartment id ${var.compartment_id}" : ""
   autoscaling_statement25 = var.use_autoscaling ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to use ons-topics in compartment id ${var.compartment_id}" : ""
   # TODO: Check if we need this.
-  autoscaling_statement26 = var.use_autoscaling ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to manage log-groups in compartment id ${var.compartment_id}" : ""
-  autoscaling_statement27 = var.use_autoscaling ? length(oci_identity_dynamic_group.wlsc_functions_principal_group) > 0 ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_functions_principal_group[0].name} to inspect dynamic-groups in tenancy" : "" : ""
-  autoscaling_statement28 = var.use_autoscaling ? length(oci_identity_dynamic_group.wlsc_functions_principal_group) > 0 ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_functions_principal_group[0].name} to manage policies in tenancy" : "" : ""
-  autoscaling_statement29 = var.use_autoscaling ? length(oci_identity_dynamic_group.wlsc_functions_principal_group) > 0 ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_functions_principal_group[0].name} to use tag-namespaces in tenancy" : "" : ""
-  autoscaling_atp_policy_statement     = (var.atp_db.is_atp && var.use_autoscaling) ? length(oci_identity_dynamic_group.wlsc_functions_principal_group) > 0 ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_functions_principal_group[0].name} to inspect autonomous-transaction-processing-family in compartment id ${var.atp_db.compartment_id}" : "" : ""
-  autoscaling_db_policy_statement     = (local.is_oci_db && var.use_autoscaling) ? length(oci_identity_dynamic_group.wlsc_functions_principal_group) > 0 ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_functions_principal_group[0].name} to inspect database-family in compartment id ${var.oci_db.compartment_id}" : "" : ""
-  autoscaling_fss_mount_target_policy_statement = (var.add_fss && var.use_autoscaling) ? length(oci_identity_dynamic_group.wlsc_functions_principal_group) > 0 ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_functions_principal_group[0].name} to manage mount-targets in compartment id ${var.fss_compartment_id}" : "" : ""
-  autoscaling_fss_file_system_policy_statement = (var.add_fss && var.use_autoscaling) ? length(oci_identity_dynamic_group.wlsc_functions_principal_group) > 0 ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_functions_principal_group[0].name} to manage file-systems in compartment id ${var.fss_compartment_id}" : "" : ""
-  autoscaling_fss_export_sets_policy_statement = (var.add_fss && var.use_autoscaling) ? length(oci_identity_dynamic_group.wlsc_functions_principal_group) > 0 ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_functions_principal_group[0].name} to manage export-sets in compartment id ${var.fss_compartment_id}" : "" : ""
+  autoscaling_statement26                       = var.use_autoscaling ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to manage log-groups in compartment id ${var.compartment_id}" : ""
+  autoscaling_statement27                       = var.use_autoscaling ? length(oci_identity_dynamic_group.wlsc_functions_principal_group) > 0 ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_functions_principal_group[0].name} to inspect dynamic-groups in tenancy" : "" : ""
+  autoscaling_statement28                       = var.use_autoscaling ? length(oci_identity_dynamic_group.wlsc_functions_principal_group) > 0 ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_functions_principal_group[0].name} to manage policies in tenancy" : "" : ""
+  autoscaling_statement29                       = var.use_autoscaling ? length(oci_identity_dynamic_group.wlsc_functions_principal_group) > 0 ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_functions_principal_group[0].name} to use tag-namespaces in tenancy" : "" : ""
+  autoscaling_atp_policy_statement              = (var.atp_db.is_atp && var.use_autoscaling) ? length(oci_identity_dynamic_group.wlsc_functions_principal_group) > 0 ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_functions_principal_group[0].name} to inspect autonomous-transaction-processing-family in compartment id ${var.atp_db.compartment_id}" : "" : ""
+  autoscaling_db_policy_statement               = (local.is_oci_db && var.use_autoscaling) ? length(oci_identity_dynamic_group.wlsc_functions_principal_group) > 0 ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_functions_principal_group[0].name} to inspect database-family in compartment id ${var.oci_db.compartment_id}" : "" : ""
+  autoscaling_fss_mount_target_policy_statement = (var.add_fss && var.use_autoscaling) ? length(oci_identity_dynamic_group.wlsc_functions_principal_group) > 0 ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_functions_principal_group[0].name} to manage mount-targets in compartment id ${var.mount_target_compartment_id}" : "" : ""
+  autoscaling_fss_file_system_policy_statement  = (var.add_fss && var.use_autoscaling) ? length(oci_identity_dynamic_group.wlsc_functions_principal_group) > 0 ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_functions_principal_group[0].name} to manage file-systems in compartment id ${var.fss_compartment_id}" : "" : ""
+  autoscaling_fss_export_sets_policy_statement  = (var.add_fss && var.use_autoscaling) ? length(oci_identity_dynamic_group.wlsc_functions_principal_group) > 0 ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_functions_principal_group[0].name} to manage export-sets in compartment id ${var.fss_compartment_id}" : "" : ""
 
   autoscaling_statements = compact([local.autoscaling_statement1, local.autoscaling_statement2,
     local.autoscaling_statement3, local.autoscaling_statement4, local.autoscaling_statement5,
