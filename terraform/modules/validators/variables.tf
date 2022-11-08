@@ -513,3 +513,13 @@ variable "fss_availability_domain" {
   type        = string
   description = "The name of the fss availability domain that user enters for existing fss id"
 }
+
+variable "lb_availability_domain_name1" {
+  type        = string
+  description = "The availability domain of the subnet for the primary load balancer"
+}
+
+variable "lb_availability_domain_name2" {
+  type        = string
+  description = "The availability domain of the subnet for the secondary load balancer. Only applicable if using AD subnets"
+}
