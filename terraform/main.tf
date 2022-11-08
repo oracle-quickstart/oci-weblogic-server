@@ -205,6 +205,7 @@ module "policies" {
   use_apm_service           = var.use_apm_service
   apm_domain_compartment_id = local.apm_domain_compartment_id
   use_autoscaling           = var.use_autoscaling
+  ocir_auth_token_id        = var.ocir_auth_token_id
   add_fss                   = var.add_fss
   add_load_balancer         = var.add_load_balancer
 }
