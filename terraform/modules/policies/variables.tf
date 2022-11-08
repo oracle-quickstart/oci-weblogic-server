@@ -28,6 +28,24 @@ variable "network_compartment_id" {
   }
 }
 
+variable "fss_compartment_id" {
+  type        = string
+  description = "The OCID of the compartment where the file system exists"
+  validation {
+    condition     = length(regexall("^ocid1.compartment.*$", var.fss_compartment_id)) > 0
+    error_message = "WLSC-ERROR: The value for fss_compartment_id should start with \"ocid1.compartment.\"."
+  }
+}
+
+variable "mount_target_compartment_id" {
+  type        = string
+  description = "The OCID of the compartment where the mount target exists"
+  validation {
+    condition     = length(regexall("^ocid1.compartment.*$", var.mount_target_compartment_id)) > 0
+    error_message = "WLSC-ERROR: The value for mount_target_compartment_id should start with \"ocid1.compartment.\"."
+  }
+}
+
 variable "vcn_id" {
   type        = string
   description = "The OCID of the VCN where the WebLogic VMs are located"
