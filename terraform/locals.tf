@@ -9,10 +9,12 @@ locals {
   export_path          = format("/%s", var.service_name)
   vm_instance_image_id = var.terms_and_conditions ? var.ucm_instance_image_id : var.instance_image_id
 
-  bastion_availability_domain = var.bastion_subnet_id != "" ? (var.use_regional_subnet ? var.wls_availability_domain_name != "" ? var.wls_availability_domain_name : local.ad_names[0] : data.oci_core_subnet.bastion_subnet[0].availability_domain) : (var.use_regional_subnet ? var.wls_availability_domain_name != "" ? var.wls_availability_domain_name : local.ad_names[0] : var.wls_availability_domain_name)
-  wls_availability_domain     = var.use_regional_subnet ? (var.wls_availability_domain_name == "" ? local.ad_names[0] : var.wls_availability_domain_name) : (var.wls_subnet_id == "" ? var.wls_availability_domain_name : data.oci_core_subnet.wls_subnet[0].availability_domain)
+  bastion_availability_domain  = var.bastion_subnet_id != "" ? (local.use_regional_subnet ? var.wls_availability_domain_name != "" ? var.wls_availability_domain_name : local.ad_names[0] : data.oci_core_subnet.bastion_subnet[0].availability_domain) : (local.use_regional_subnet ? var.wls_availability_domain_name != "" ? var.wls_availability_domain_name : local.ad_names[0] : var.wls_availability_domain_name)
+  wls_availability_domain      = local.use_regional_subnet ? (var.wls_availability_domain_name == "" ? local.ad_names[0] : var.wls_availability_domain_name) : (var.wls_subnet_id == "" ? var.wls_availability_domain_name : data.oci_core_subnet.wls_subnet[0].availability_domain)
+  lb_availability_domain_name1 = var.lb_subnet_1_id != "" ? (local.use_regional_subnet ? "" : data.oci_core_subnet.lb_subnet_1_id[0].availability_domain) : ""
+  lb_availability_domain_name2 = var.lb_subnet_2_id != "" ? (local.use_regional_subnet ? "" : data.oci_core_subnet.lb_subnet_2_id[0].availability_domain) : ""
   fss_availability_domain     = var.add_fss && local.use_existing_subnets && !var.use_regional_subnet && !var.add_existing_fss && !var.add_existing_mount_target ? data.oci_core_subnet.mount_target_subnet[0].availability_domain : var.fss_availability_domain
-  network_compartment_id      = var.network_compartment_id == "" ? var.compartment_ocid : var.network_compartment_id
+  network_compartment_id       = var.network_compartment_id == "" ? var.compartment_ocid : var.network_compartment_id
 
   #dynamic group is based on the system generated tags for DG
   create_dg_tags     = var.create_policies && var.generate_dg_tag && var.mode == "PROD" # Only create dynamic group tags in PROD mode when create policies and generate dg tag is true

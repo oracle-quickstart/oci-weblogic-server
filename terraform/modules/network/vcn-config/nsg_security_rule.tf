@@ -41,7 +41,7 @@ resource "oci_core_network_security_group_security_rule" "wls_ingress_security_r
 
 resource "oci_core_network_security_group_security_rule" "wls_ingress_internal_security_rule" {
 
-  network_security_group_id = element(var.nsg_ids["admin_nsg_id"], 0)
+  network_security_group_id = element(var.nsg_ids["managed_nsg_id"], 0)
   direction                 = "INGRESS"
   protocol                  = "6"
 
