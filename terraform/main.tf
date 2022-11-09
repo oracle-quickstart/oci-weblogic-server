@@ -104,7 +104,7 @@ module "network-bastion-nsg" {
 
 module "network-mount-target-nsg" {
   source         = "./modules/network/nsg"
-  count          = var.add_fss && var.mount_target_subnet_cidr != ""? 1 : 0
+  count          = var.add_fss && var.mount_target_subnet_cidr != "" ? 1 : 0
   compartment_id = local.network_compartment_id
   vcn_id         = local.vcn_id
   nsg_name       = "${local.service_name_prefix}-mount-target-nsg"
