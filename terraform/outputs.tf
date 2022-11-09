@@ -6,7 +6,7 @@ output "virtual_cloud_network_id" {
 }
 
 output "virtual_cloud_network_cidr" {
-  value = var.wls_existing_vcn_id != "" ? data.oci_core_vcn.wls_vcn.*.cidr_block : module.network-vcn[0].vcn_cidr
+  value = var.wls_vcn_name == "" ? data.oci_core_vcn.wls_vcn[0].cidr_block : element(concat(module.network-vcn.*.vcn_cidr, tolist([""])), 0)
 }
 
 output "is_vcn_peered" {
