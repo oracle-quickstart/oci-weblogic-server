@@ -28,6 +28,24 @@ variable "network_compartment_id" {
   }
 }
 
+variable "fss_compartment_id" {
+  type        = string
+  description = "The OCID of the compartment where the file system exists"
+  validation {
+    condition     = length(regexall("^ocid1.compartment.*$", var.fss_compartment_id)) > 0
+    error_message = "WLSC-ERROR: The value for fss_compartment_id should start with \"ocid1.compartment.\"."
+  }
+}
+
+variable "mount_target_compartment_id" {
+  type        = string
+  description = "The OCID of the compartment where the mount target exists"
+  validation {
+    condition     = length(regexall("^ocid1.compartment.*$", var.mount_target_compartment_id)) > 0
+    error_message = "WLSC-ERROR: The value for mount_target_compartment_id should start with \"ocid1.compartment.\"."
+  }
+}
+
 variable "vcn_id" {
   type        = string
   description = "The OCID of the VCN where the WebLogic VMs are located"
@@ -94,14 +112,19 @@ variable "atp_db" {
 
 variable "oci_db" {
   type = object({
+    is_oci_db                = bool
     password_id              = string
+    compartment_id           = string
     network_compartment_id   = string
     existing_vcn_id          = string
+    oci_db_connection_string = string
     existing_vcn_add_seclist = bool
   })
   description = <<-EOT
   oci_db = {
+    is_oci_db: "Indicates if an OCI database is used to store the schemas of a JRF WebLogic domain"
     password_id: "The OCID of the vault secret with the password of the database"
+    compartment_id: "The OCID of the compartment where the OCI database is located"
     network_compartment_id: "The OCID of the compartment in which the DB System VCN is found"
     existing_vcn_id: "The OCID of the DB system VCN"
     existing_vcn_add_seclist: "Set to true to add a security list to the database subnet (for OCI DB) when using existing VCN that allows connections from the WebLogic Server subnet"
@@ -144,6 +167,11 @@ variable "use_autoscaling" {
   type        = bool
   description = "Indicating that autoscaling is enabled"
   default     = false
+}
+
+variable "ocir_auth_token_id" {
+  type        = string
+  description = "Secrets Oracle Cloud ID (OCID) for Oracle Cloud Infrastructure Registry authorization token"
 }
 
 variable "add_load_balancer" {

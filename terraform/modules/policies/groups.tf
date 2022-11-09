@@ -12,3 +12,14 @@ resource "oci_identity_dynamic_group" "wlsc_instance_principal_group" {
   }
 }
 
+resource "oci_identity_dynamic_group" "wlsc_functions_principal_group" {
+  count          = var.use_autoscaling ? 1 : 0
+  compartment_id = var.tenancy_id
+  description    = "Dynamic group to allow OCI functions to call ORM stack APIs"
+  matching_rule  = local.functions_rule
+  name           = "${local.label_prefix}-functions-principal-group"
+  lifecycle {
+    ignore_changes = [matching_rule]
+  }
+}
+
