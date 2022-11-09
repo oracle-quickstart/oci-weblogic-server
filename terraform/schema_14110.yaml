@@ -864,7 +864,7 @@ variables:
         - not:
             - ${create_new_vcn}
         - not:
-          - ${create_new_subnets}
+            - ${create_new_subnets}
     type: oci:core:subnet:id
     dependsOn:
       vcnId: ${wls_existing_vcn_id}

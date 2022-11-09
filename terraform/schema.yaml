@@ -697,7 +697,7 @@ variables:
     description: "The pre-created NSG that should be attached to the mount target"
     required: true
     dependsOn:
-      compartmentId: ${mount_target_compartment_id}
+      compartmentId: ${network_compartment_id}
       vcnId: ${wls_existing_vcn_id}
 
   #Network Validation script execution acknowledgement
@@ -841,6 +841,10 @@ variables:
             - or:
                 - ${create_new_vcn}
                 - ${create_new_subnets}
+        - not:
+            - ${add_existing_fss}
+        - not:
+            - ${add_existing_mount_target}
     type: string
     default: 10.0.5.0/24
     pattern: "^(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\\/(3[0-2]|[1-2]?[0-9])$"
@@ -855,7 +859,7 @@ variables:
         - not:
             - ${create_new_vcn}
         - not:
-          - ${create_new_subnets}
+            - ${create_new_subnets}
     type: oci:core:subnet:id
     dependsOn:
       vcnId: ${wls_existing_vcn_id}
@@ -894,6 +898,10 @@ variables:
             - ${create_new_subnets}
         - not:
             - ${create_new_vcn}
+        - not:
+            - ${add_existing_fss}
+        - not:
+            - ${add_existing_mount_target}
     type: oci:core:subnet:id
     dependsOn:
       vcnId: ${wls_existing_vcn_id}
@@ -2031,9 +2039,14 @@ variables:
         - ${orm_create_mode}
         - ${add_fss}
         - not:
-            - eq:
-                - ${subnet_span}
-                - "AD Specific Subnet"
+            - and:
+                - eq:
+                    - ${subnet_span}
+                    - "AD Specific Subnet"
+                - not:
+                    - ${add_existing_fss}
+                - not:
+                    - ${add_existing_mount_target}
     type: oci:identity:availabilitydomain:name
     title: File System Availability Domain
     description: The name of the availability domain in which to create the file system and mount target.

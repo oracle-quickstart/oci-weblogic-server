@@ -58,6 +58,8 @@ module "network-vcn-config" {
   create_internet_gateway      = var.wls_vcn_name != ""
   lb_destination_cidr          = var.is_lb_private ? var.bastion_subnet_cidr : "0.0.0.0/0"
   add_fss                      = var.add_fss
+  add_existing_mount_target    = var.add_existing_mount_target
+  add_existing_fss             = var.add_existing_fss
   # If the module is empty (count is zero), an empty list is returned. If not, a list of lists of strings is returned.
   # By using flatten we make sure each entry in the map is a list of string, either with one element, or empty
   nsg_ids = {
@@ -102,7 +104,7 @@ module "network-bastion-nsg" {
 
 module "network-mount-target-nsg" {
   source         = "./modules/network/nsg"
-  count          = var.add_fss && var.mount_target_subnet_cidr != "" ? 1 : 0
+  count          = var.add_fss && var.mount_target_subnet_cidr != ""? 1 : 0
   compartment_id = local.network_compartment_id
   vcn_id         = local.vcn_id
   nsg_name       = "${local.service_name_prefix}-mount-target-nsg"
@@ -280,7 +282,7 @@ module "network-wls-public-subnet" {
 /* Create private subnet for FSS */
 module "network-mount-target-private-subnet" {
   source         = "./modules/network/subnet"
-  count          = var.add_fss && var.mount_target_subnet_id == "" ? 1 : 0
+  count          = var.add_fss && !var.add_existing_mount_target && !var.add_existing_fss && var.mount_target_subnet_id == "" ? 1 : 0
   compartment_id = local.network_compartment_id
   vcn_id         = local.vcn_id
 
@@ -442,8 +444,8 @@ module "fss" {
   export_path                 = local.export_path
   mount_target_id             = var.mount_target_id
   mount_target_compartment_id = var.mount_target_compartment_id == "" ? var.compartment_ocid : var.mount_target_compartment_id
-  mount_target_subnet_id      = local.use_existing_subnets ? var.mount_target_subnet_id : module.network-mount-target-private-subnet[0].subnet_id
-  mount_target_nsg_id         = var.mount_target_subnet_id != "" ? (var.add_existing_nsg ? [var.existing_mount_target_nsg_id] : []) : element(module.network-mount-target-nsg[*].nsg_id, 0)
+  mount_target_subnet_id      = local.use_existing_subnets ? var.mount_target_subnet_id : (var.add_existing_mount_target ? "" : module.network-mount-target-private-subnet[0].subnet_id)
+  mount_target_nsg_id         = var.mount_target_subnet_id != "" || var.add_existing_mount_target ? (var.add_existing_nsg ? [var.existing_mount_target_nsg_id] : []) : element(module.network-mount-target-nsg[*].nsg_id, 0)
   tags = {
     defined_tags  = local.defined_tags
     freeform_tags = local.free_form_tags
