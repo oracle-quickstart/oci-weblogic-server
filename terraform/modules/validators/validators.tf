@@ -19,9 +19,6 @@ locals {
 
   invalid_dynamic_group = (!var.create_policies && var.use_oci_logging) ? length(regexall("^ocid1.dynamicgroup.", var.dynamic_group_id)) == 0 : false
 
-
-  # TODO Add the Validations as new modules are added
-
   service_name_prefix_msg      = "WLSC-ERROR: The [service_name] min length is 1 and max length is 16 characters. It can only contain letters or numbers and must begin with a letter. Invalid service name: [${var.service_name}]"
   validate_service_name_prefix = local.invalid_service_name_prefix ? local.validators_msg_map[local.service_name_prefix_msg] : null
 
@@ -47,4 +44,12 @@ locals {
   invalid_vmscripts_zip_bundle  = var.mode == "DEV" && var.wlsoci_vmscripts_zip_bundle_path == ""
   vmscripts_zip_bundle_msg      = "WLSC-ERROR: The value for wlsoci vmscripts zip bundle path is not valid. The value must be obsolute path to vmscripts zip bundle."
   validate_vmscripts_zip_bundle = local.invalid_vmscripts_zip_bundle ? local.validators_msg_map[local.vmscripts_zip_bundle_msg] : null
+
+  missing_lb_availability_domains      = !var.use_regional_subnet && local.add_new_load_balancer && (var.is_lb_private ? var.lb_availability_domain_name1 == "" : (var.lb_availability_domain_name1 == "" || var.lb_availability_domain_name2 == ""))
+  lb_availability_domains_required_msg = "WLSC-ERROR: The values for lb_subnet_1_availability_domain_name and lb_subnet_2_availability_domain_name are required for AD specific subnets."
+  missing_lb_availability_domain_names = local.missing_lb_availability_domains ? local.validators_msg_map[local.lb_availability_domains_required_msg] : null
+
+  invalid_lb_availability_domain_indexes  = !var.use_regional_subnet && local.add_new_load_balancer && var.lb_availability_domain_name1 != "" && (var.lb_availability_domain_name1 == var.lb_availability_domain_name2)
+  lb_availability_domain_indexes_msg      = "WLSC-ERROR: The value for lb_subnet_1_availability_domain_name=[${var.lb_availability_domain_name1}] and lb_subnet_2_availability_domain_name=[${var.lb_availability_domain_name2}] cannot be same."
+  validate_lb_availability_domain_indexes = local.invalid_lb_availability_domain_indexes ? local.validators_msg_map[local.lb_availability_domain_indexes_msg] : null
 }
