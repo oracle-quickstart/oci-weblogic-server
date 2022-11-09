@@ -702,8 +702,8 @@ variables:
         - not:
             - ${add_existing_fss}
     type: oci:core:nsg:id
-    title: "Mount Target Network Security Group"
-    description: "The pre-created NSG that should be attached to the mount target"
+    title: "Network Security Group for Mount Target"
+    description: "The pre-created NSG that is assigned to the mount target"
     required: true
     dependsOn:
       compartmentId: ${mount_target_compartment_id}
@@ -1075,8 +1075,8 @@ variables:
                 - ${subnet_type}
                 - "Use Public Subnet"
     type: oci:core:nsg:id
-    title: "Bastion instance Network Security Group"
-    description: "The OCID of the pre-created NSG that should be attached to the bastion instance"
+    title: "Network Security Group for Bastion Host"
+    description: "The pre-created NSG that is assigned to the bastion instance"
     required: true
     dependsOn:
       compartmentId: ${network_compartment_id}
@@ -1094,8 +1094,8 @@ variables:
             - not:
                 - ${create_new_subnets}
     type: oci:core:nsg:id
-    title: "WebLogic admin server Network Security Group"
-    description: "The pre-created NSG that should be attached to the admin server"
+    title: "Network Security Group for WebLogic Administration Server Node"
+    description: "The pre-created NSG that is assigned to the virtual machine of the administration server node"
     required: true
     dependsOn:
       compartmentId: ${network_compartment_id}
@@ -1113,8 +1113,8 @@ variables:
             - not:
                 - ${create_new_subnets}
     type: oci:core:nsg:id
-    title: "WebLogic managed server Network Security Group"
-    description: "The pre-created NSG that should be attached to the managed server"
+    title: "Network Security Group for WebLogic Managed Server Node"
+    description: "The pre-created NSG that is assigned to the virtual machine of the managed server node"
     required: true
     dependsOn:
       compartmentId: ${network_compartment_id}
@@ -1436,8 +1436,8 @@ variables:
             - not:
                 - ${create_new_subnets}
     type: oci:core:nsg:id
-    title: "Load Balancer Network Security Group"
-    description: "The pre-created NSG that should be attached to the load balancer"
+    title: "Network Security Group for Load Balancer"
+    description: "The pre-created NSG that is assigned to the load balancer"
     required: true
     dependsOn:
       compartmentId: ${network_compartment_id}
