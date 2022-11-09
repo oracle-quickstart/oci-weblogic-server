@@ -28,6 +28,21 @@ data "oci_core_subnet" "bastion_subnet" {
   subnet_id = var.bastion_subnet_id
 }
 
+# For querying availability domains given subnet_id
+data "oci_core_subnet" "lb_subnet_1_id" {
+  count = var.lb_subnet_1_id == "" ? 0 : 1
+
+  #Required
+  subnet_id = var.lb_subnet_1_id
+}
+
+data "oci_core_subnet" "lb_subnet_2_id" {
+  count = var.lb_subnet_2_id == "" ? 0 : 1
+
+  #Required
+  subnet_id = var.lb_subnet_2_id
+}
+
 data "template_file" "ad_names" {
   count    = length(data.oci_identity_availability_domains.ADs.availability_domains)
   template = (length(regexall("^.*Flex", local.instance_shape.instanceShape)) > 0 || length(regexall("^BM.*", local.instance_shape.instanceShape)) > 0 || (tonumber(lookup(data.oci_limits_limit_values.compute_shape_service_limits[count.index].limit_values[0], "value")) > 0)) ? lookup(data.oci_identity_availability_domains.ADs.availability_domains[count.index], "name") : ""

@@ -369,10 +369,12 @@ module "validators" {
 
   use_existing_subnets = local.use_existing_subnets
 
-  wls_subnet_id     = var.wls_subnet_id
-  lb_subnet_1_id    = var.lb_subnet_1_id
-  lb_subnet_2_id    = ""
-  bastion_subnet_id = var.bastion_subnet_id
+  lb_availability_domain_name1 = local.lb_availability_domain_name1
+  lb_availability_domain_name2 = local.lb_availability_domain_name2
+  wls_subnet_id                = var.wls_subnet_id
+  lb_subnet_1_id               = var.lb_subnet_1_id
+  lb_subnet_2_id               = local.lb_subnet_2_id
+  bastion_subnet_id            = var.bastion_subnet_id
 
   vcn_name            = var.wls_vcn_name
   use_regional_subnet = local.use_regional_subnet
@@ -533,7 +535,7 @@ module "compute" {
 
   tenancy_id                    = var.tenancy_ocid
   tf_script_version             = var.tf_script_version
-  use_regional_subnet           = var.use_regional_subnet
+  use_regional_subnet           = local.use_regional_subnet
   wls_14c_jdk_version           = var.wls_14c_jdk_version
   wls_admin_user                = var.wls_admin_user
   wls_admin_password_id         = var.wls_admin_password_id
