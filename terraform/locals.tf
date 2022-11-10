@@ -100,8 +100,8 @@ locals {
 
   user_defined_tag_values = values(var.service_tags.definedTags)
 
-  ssh_proxyjump_access = local.assign_weblogic_public_ip ? "" : format("ssh -i <privateKey> -o ProxyCommand=\"ssh -i <privateKey> -W %s -p 22 opc@%s\" -p 22 %s", "%h:%p", local.bastion_public_ip, "opc@<wls_vm_private_ip>")
-  ssh_dp_fwd           = local.assign_weblogic_public_ip ? "" : format("ssh -i <privatekey> -C -D <local-port> opc@%s", local.bastion_public_ip)
+  ssh_proxyjump_access = local.assign_weblogic_public_ip || !var.is_bastion_instance_required ? "" : format("ssh -i <privateKey> -o ProxyCommand=\"ssh -i <privateKey> -W %s -p 22 opc@%s\" -p 22 %s", "%h:%p", local.bastion_public_ip, "opc@<wls_vm_private_ip>")
+  ssh_dp_fwd           = local.assign_weblogic_public_ip || !var.is_bastion_instance_required ? "" : format("ssh -i <privatekey> -C -D <local-port> opc@%s", local.bastion_public_ip)
 
   use_existing_subnets = var.wls_subnet_id == "" && var.lb_subnet_1_id == "" && var.lb_subnet_2_id == "" ? false : true
 
