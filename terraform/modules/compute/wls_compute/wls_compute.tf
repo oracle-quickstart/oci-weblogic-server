@@ -152,8 +152,9 @@ module "wls-instances" {
       atp_private_end_point = element(coalescelist(data.oci_database_autonomous_database.atp_db.*.private_endpoint, [""]), 0)
       atp_nsg_id            = local.is_atp_db ? data.template_file.atp_nsg_id[0].rendered : ""
 
-      # TODO (robesanc): These variables are hardcoded to allow creating instances without app db
+      # TODO: These variables are hardcoded to allow creating instances without app db. Remove them once app db code is removed from image
       is_atp_app_db       = "false"
+      appdb_user          = ""
       appdb_password_ocid = ""
 
       log_group_id    = var.log_group_id
