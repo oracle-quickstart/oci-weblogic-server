@@ -41,10 +41,10 @@ module "network-vcn-config" {
 
   wls_security_list_name       = !local.assign_weblogic_public_ip ? "bastion-security-list" : "wls-security-list"
   wls_subnet_cidr              = local.wls_subnet_cidr
-  wls_ms_source_cidrs          = var.add_load_balancer ? [local.lb_subnet_1_subnet_cidr] : ["0.0.0.0/0"]
-  load_balancer_min_value      = var.add_load_balancer ? var.wls_ms_extern_port : var.wls_ms_extern_ssl_port
-  load_balancer_max_value      = var.add_load_balancer ? var.wls_ms_extern_port : var.wls_ms_extern_ssl_port
-  create_load_balancer         = var.add_load_balancer
+  wls_ms_source_cidrs          = local.add_load_balancer ? [local.lb_subnet_1_subnet_cidr] : ["0.0.0.0/0"]
+  load_balancer_min_value      = local.add_load_balancer ? var.wls_ms_extern_port : var.wls_ms_extern_ssl_port
+  load_balancer_max_value      = local.add_load_balancer ? var.wls_ms_extern_port : var.wls_ms_extern_ssl_port
+  create_load_balancer         = local.add_load_balancer
   resource_name_prefix         = local.service_name_prefix
   bastion_subnet_cidr          = local.bastion_subnet_cidr
   is_bastion_instance_required = var.is_bastion_instance_required
@@ -76,7 +76,7 @@ module "network-vcn-config" {
 
 module "network-lb-nsg" {
   source         = "./modules/network/nsg"
-  count          = local.use_existing_lb ? 0 : var.add_load_balancer && var.lb_subnet_1_cidr != "" ? 1 : 0
+  count          = local.use_existing_lb ? 0 : local.add_load_balancer && var.lb_subnet_1_cidr != "" ? 1 : 0
   compartment_id = local.network_compartment_id
   vcn_id         = local.vcn_id
   nsg_name       = "${local.service_name_prefix}-lb-nsg"
@@ -142,7 +142,7 @@ module "network-compute-managed-nsg" {
 /* Create primary subnet for Load balancer only */
 module "network-lb-subnet-1" {
   source          = "./modules/network/subnet"
-  count           = local.use_existing_lb ? 0 : var.add_load_balancer && var.lb_subnet_1_id == "" ? 1 : 0
+  count           = local.use_existing_lb ? 0 : local.add_load_balancer && var.lb_subnet_1_id == "" ? 1 : 0
   compartment_id  = local.network_compartment_id
   vcn_id          = local.vcn_id
   dhcp_options_id = module.network-vcn-config[0].dhcp_options_id
@@ -207,7 +207,7 @@ module "policies" {
   use_autoscaling             = var.use_autoscaling
   ocir_auth_token_id          = var.ocir_auth_token_id
   add_fss                     = var.add_fss
-  add_load_balancer           = var.add_load_balancer
+  add_load_balancer           = local.add_load_balancer
   fss_compartment_id          = var.fss_compartment_id == "" ? var.compartment_ocid : var.fss_compartment_id
   mount_target_compartment_id = var.mount_target_compartment_id == "" ? var.compartment_ocid : var.mount_target_compartment_id
 }
@@ -379,7 +379,7 @@ module "validators" {
   vcn_name            = var.wls_vcn_name
   use_regional_subnet = local.use_regional_subnet
 
-  add_load_balancer                          = var.add_load_balancer
+  add_load_balancer                          = local.add_load_balancer
   is_lb_private                              = var.is_lb_private
   existing_load_balancer_id                  = var.existing_load_balancer_id
   existing_load_balancer_found               = length(local.existing_lb_object_as_list) == 1
@@ -457,7 +457,7 @@ module "fss" {
 
 module "load-balancer" {
   source = "./modules/lb/loadbalancer"
-  count  = (var.add_load_balancer && var.existing_load_balancer_id == "") ? 1 : 0
+  count  = (local.add_load_balancer && var.existing_load_balancer_id == "") ? 1 : 0
 
   compartment_id           = local.network_compartment_id
   lb_reserved_public_ip_id = compact([var.lb_reserved_public_ip_id])
@@ -516,9 +516,9 @@ module "observability-autoscaling" {
 
 module "compute" {
   source                 = "./modules/compute/wls_compute"
-  add_loadbalancer       = var.add_load_balancer
+  add_loadbalancer       = local.add_load_balancer
   is_lb_private          = var.is_lb_private
-  load_balancer_id       = var.add_load_balancer ? (var.existing_load_balancer_id != "" ? var.existing_load_balancer_id : element(coalescelist(module.load-balancer[*].wls_loadbalancer_id, [""]), 0)) : ""
+  load_balancer_id       = local.add_load_balancer ? (var.existing_load_balancer_id != "" ? var.existing_load_balancer_id : element(coalescelist(module.load-balancer[*].wls_loadbalancer_id, [""]), 0)) : ""
   assign_public_ip       = local.assign_weblogic_public_ip
   availability_domain    = local.wls_availability_domain
   compartment_id         = var.compartment_ocid
@@ -637,10 +637,10 @@ module "compute" {
 
 module "load-balancer-backends" {
   source = "./modules/lb/backends"
-  count  = var.add_load_balancer ? 1 : 0
+  count  = local.add_load_balancer ? 1 : 0
 
   resource_name_prefix = local.service_name_prefix
-  load_balancer_id     = var.add_load_balancer ? (var.existing_load_balancer_id != "" ? var.existing_load_balancer_id : element(coalescelist(module.load-balancer[*].wls_loadbalancer_id, [""]), 0)) : ""
+  load_balancer_id     = local.add_load_balancer ? (var.existing_load_balancer_id != "" ? var.existing_load_balancer_id : element(coalescelist(module.load-balancer[*].wls_loadbalancer_id, [""]), 0)) : ""
   use_existing_lb      = local.use_existing_lb
   lb_backendset_name   = local.lb_backendset_name
   num_vm_instances     = var.wls_node_count

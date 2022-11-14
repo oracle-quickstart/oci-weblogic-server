@@ -60,12 +60,17 @@ locals {
     ["Standard Edition", "Enterprise Edition", "Suite Edition"],
   )
 
-  new_lb_ip                  = !var.add_load_balancer || local.use_existing_lb ? "" : element(coalescelist(module.load-balancer[0].wls_loadbalancer_ip_addresses, [""]), 0)
+  # Add a load balancer if
+  # - User explicitly says he wants a load balancer, or
+  # - User selects IDCS, because IDCS requires a load balancer
+  add_load_balancer = var.add_load_balancer || var.is_idcs_selected
+
+  new_lb_ip                  = !local.add_load_balancer || local.use_existing_lb ? "" : element(coalescelist(module.load-balancer[0].wls_loadbalancer_ip_addresses, [""]), 0)
   new_lb_id                  = element(concat(module.load-balancer[*].wls_loadbalancer_id, [""]), 0)
   existing_lb_ip             = local.use_existing_lb && local.valid_existing_lb ? local.existing_lb_object_as_list[0].ip_addresses[0] : ""
   existing_lb_object_as_list = [for lb in data.oci_load_balancer_load_balancers.existing_load_balancers_data_source.load_balancers[*] : lb if lb.id == var.existing_load_balancer_id]
   valid_existing_lb          = length(local.existing_lb_object_as_list) == 1
-  use_existing_lb            = var.add_load_balancer && var.existing_load_balancer_id != ""
+  use_existing_lb            = local.add_load_balancer && var.existing_load_balancer_id != ""
   lb_backendset_name         = local.use_existing_lb ? var.backendset_name_for_existing_load_balancer : "${local.service_name_prefix}-lb-backendset"
   existing_lb_subnet_1_id    = local.use_existing_lb && local.valid_existing_lb ? local.existing_lb_object_as_list[0].subnet_ids[0] : ""
   existing_lb_subnet_2_id    = local.use_existing_lb && local.valid_existing_lb ? (var.is_lb_private ? "" : (length(local.existing_lb_object_as_list[0].subnet_ids) > 1 ? local.existing_lb_object_as_list[0].subnet_ids[1] : "")) : ""
@@ -83,11 +88,11 @@ locals {
 
   admin_ip_address      = local.assign_weblogic_public_ip ? module.compute.instance_public_ips[0] : module.compute.instance_private_ips[0]
   admin_console_app_url = format("https://%s:%s/console", local.admin_ip_address, var.wls_extern_ssl_admin_port)
-  sample_app_protocol   = var.add_load_balancer ? "https" : "http"
-  sample_app_url_lb_ip  = var.deploy_sample_app && var.add_load_balancer ? format("%s://%s/sample-app", local.sample_app_protocol, local.lb_ip) : ""
+  sample_app_protocol   = local.add_load_balancer ? "https" : "http"
+  sample_app_url_lb_ip  = var.deploy_sample_app && local.add_load_balancer ? format("%s://%s/sample-app", local.sample_app_protocol, local.lb_ip) : ""
   sample_app_url_wls_ip = var.deploy_sample_app ? format("https://%s:%s/sample-app", local.admin_ip_address, var.wls_ms_extern_ssl_port) : ""
-  sample_app_url        = var.wls_edition != "SE" ? (var.deploy_sample_app && var.add_load_balancer ? local.sample_app_url_lb_ip : local.sample_app_url_wls_ip) : ""
-  sample_idcs_app_url = var.deploy_sample_app && var.add_load_balancer && var.is_idcs_selected ? format(
+  sample_app_url        = var.wls_edition != "SE" ? (var.deploy_sample_app && local.add_load_balancer ? local.sample_app_url_lb_ip : local.sample_app_url_wls_ip) : ""
+  sample_idcs_app_url = var.deploy_sample_app && local.add_load_balancer && var.is_idcs_selected ? format(
     "%s://%s/__protected/idcs-sample-app",
     local.sample_app_protocol,
     local.lb_ip,
