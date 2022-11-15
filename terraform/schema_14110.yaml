@@ -1457,6 +1457,7 @@ variables:
     type: boolean
     title: Add Tags
     default: false
+    description: Add tags to the resources created by the WebLogic for OCI stack.
 
   service_tags:
     visible:
