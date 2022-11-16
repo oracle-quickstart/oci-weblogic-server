@@ -1444,7 +1444,6 @@ variables:
       vcnId: ${wls_existing_vcn_id}
 
   create_policies:
-    visible: ${orm_create_mode}
     type: boolean
     title: OCI Policies
     description: Create policies to read Secrets from Vault and manage Autonomous Transaction Processing Database (if applicable). Deselecting this option is for Advanced users only.  Before you deselect the check box, see <a target="_blank" href="https://docs.oracle.com/pls/topic/lookup?ctx=en/cloud/paas/weblogic-cloud&id=WLCUG-GUID-4E2AD7BF-592D-4C2C-AF66-D98CB26379A5">Create Root Policies</a> to create the required groups and relevant policies.
