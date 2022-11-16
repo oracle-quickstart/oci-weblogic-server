@@ -60,6 +60,7 @@ module "wls-instances" {
       total_vm_count                     = var.num_vm_instances
       assign_public_ip                   = var.assign_public_ip
       wls_existing_vcn_id                = var.wls_existing_vcn_id
+      mt_vcn_id                          = var.mt_vcn_id
       wls_subnet_ocid                    = var.subnet_id
       wls_vcn_cidr                       = var.wls_vcn_cidr
       network_compartment_id             = var.network_compartment_id

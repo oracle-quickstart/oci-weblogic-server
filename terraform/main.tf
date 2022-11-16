@@ -557,6 +557,7 @@ module "compute" {
   wls_domain_name               = format("%s_domain", local.service_name_prefix)
   wls_server_startup_args       = var.wls_server_startup_args
   wls_existing_vcn_id           = var.wls_existing_vcn_id
+  mt_vcn_id                     = var.mount_target_id != "" ? data.oci_core_subnet.mt_existing_subnet[0].vcn_id : (var.existing_fss_id != "" ? data.oci_core_subnet.mt_existing_subnet_by_export[0].vcn_id : "")
   wls_vcn_cidr                  = var.wls_vcn_cidr != "" ? var.wls_vcn_cidr : element(concat(module.network-vcn.*.vcn_cidr, tolist([""])), 0)
   wls_version                   = var.wls_version
   wls_edition                   = var.wls_edition

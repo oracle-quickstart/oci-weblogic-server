@@ -65,6 +65,12 @@ variable "wls_existing_vcn_id" {
   default     = ""
 }
 
+variable "mt_vcn_id" {
+  type        = string
+  description = "The OCID of the existing VCN where the mount target is located."
+  default     = ""
+}
+
 variable "wls_vcn_cidr" {
   type        = string
   description = "The CIDR of the VCN where the subnet the compute instance will be created is located"

@@ -149,6 +149,21 @@ if [ "$add_fss" == "true" ]; then
   mount_path=$(sudo su oracle -c 'python3 /opt/scripts/databag.py mount_path')
   export_path=$(sudo su oracle -c 'python3 /opt/scripts/databag.py export_path')
 
+  wls_existing_vcn_id=$(sudo su oracle -c 'python3 /opt/scripts/databag.py wls_existing_vcn_id')
+  mt_vcn_id=$(sudo su oracle -c 'python3 /opt/scripts/databag.py mt_vcn_id')
+
+  if [ $mt_vcn_id != "" ]; then
+    echo "Checking if mount target id is from the same vcn as network vcn " | log >> $log_file
+    if [ "$wls_existing_vcn_id" == "$mt_vcn_id" ]; then
+      echo "mount target id is from the same vcn as network vcn" | log >> $log_file
+    else
+      echo "mount target id is not from the same vcn as network vcn [$wls_existing_vcn_id, $mt_vcn_id]. Exiting" | log >> $log_file
+      #clean up script
+      /opt/scripts/tidyup.sh
+      exit 1
+    fi
+  fi
+
   echo "Executing fss mounting script" | log >> $log_file
   output=$(/opt/scripts/fss_mount.sh -i $mount_ip -p $mount_path -e $export_path 2>&1)
   exit_code=$?
