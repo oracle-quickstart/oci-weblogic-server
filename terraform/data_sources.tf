@@ -117,23 +117,19 @@ data "oci_file_storage_mount_targets" "mount_targets" {
   id = var.mount_target_id
 }
 
-data "oci_file_storage_exports" "export" {
-  count = var.existing_fss_id != "" ? 1 : 0
-  id    = var.existing_export_path_id
-}
 
-data "oci_file_storage_mount_targets" "mount_target_by_export_set" {
+data "oci_file_storage_mount_targets" "existing_mount_target" {
   count = var.existing_fss_id != "" ? 1 : 0
   #Required
   availability_domain = local.fss_availability_domain
-  compartment_id      = var.fss_compartment_id
-  export_set_id       = data.oci_file_storage_exports.export[0].export_set_id
+  compartment_id      = var.mount_target_compartment_id
+  id = var.mount_target_id
 }
 
 data "oci_core_private_ip" "mount_target_private_ips" {
   count = var.existing_fss_id != "" ? 1 : 0
   #Required
-  private_ip_id = data.oci_file_storage_mount_targets.mount_target_by_export_set[0].mount_targets[0].private_ip_ids[0]
+  private_ip_id = data.oci_file_storage_mount_targets.existing_mount_target[0].mount_targets[0].private_ip_ids[0]
 }
 
 data "oci_apm_apm_domain" "apm_domain" {
