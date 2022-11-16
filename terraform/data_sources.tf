@@ -152,11 +152,11 @@ data "oci_core_subnet" "mount_target_existing_subnet" {
   subnet_id = data.oci_file_storage_mount_targets.mount_targets[0].mount_targets[0].subnet_id
 }
 
-data "oci_core_subnet" "mount_target_existing_subnet_by_export" {
+data "oci_core_subnet" "mount_target_existing_subnet_by_fss" {
   count = var.existing_fss_id == "" ? 0 : 1
 
   #Required
-  subnet_id = data.oci_file_storage_mount_targets.mount_target_by_export_set[0].mount_targets[0].subnet_id
+  subnet_id = data.oci_file_storage_mount_targets.existing_mount_target[0].mount_targets[0].subnet_id
 }
 
 data "oci_objectstorage_namespace" "object_namespace" {
