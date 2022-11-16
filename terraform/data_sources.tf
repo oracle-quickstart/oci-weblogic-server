@@ -149,14 +149,14 @@ data "oci_core_vcn" "wls_vcn" {
   vcn_id = var.wls_existing_vcn_id
 }
 
-data "oci_core_subnet" "mt_existing_subnet" {
+data "oci_core_subnet" "mount_target_existing_subnet" {
   count = var.mount_target_id == "" ? 0 : 1
 
   #Required
   subnet_id = data.oci_file_storage_mount_targets.mount_targets[0].mount_targets[0].subnet_id
 }
 
-data "oci_core_subnet" "mt_existing_subnet_by_export" {
+data "oci_core_subnet" "mount_target_existing_subnet_by_export" {
   count = var.existing_fss_id == "" ? 0 : 1
 
   #Required

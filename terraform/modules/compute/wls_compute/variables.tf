@@ -65,7 +65,7 @@ variable "wls_existing_vcn_id" {
   default     = ""
 }
 
-variable "mt_vcn_id" {
+variable "mount_vcn_id" {
   type        = string
   description = "The OCID of the existing VCN where the mount target is located."
   default     = ""

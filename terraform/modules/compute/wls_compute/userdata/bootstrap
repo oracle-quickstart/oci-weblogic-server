@@ -150,14 +150,14 @@ if [ "$add_fss" == "true" ]; then
   export_path=$(sudo su oracle -c 'python3 /opt/scripts/databag.py export_path')
 
   wls_existing_vcn_id=$(sudo su oracle -c 'python3 /opt/scripts/databag.py wls_existing_vcn_id')
-  mt_vcn_id=$(sudo su oracle -c 'python3 /opt/scripts/databag.py mt_vcn_id')
+  mount_vcn_id=$(sudo su oracle -c 'python3 /opt/scripts/databag.py mount_vcn_id')
 
-  if [ $mt_vcn_id != "" ]; then
-    echo "Checking if mount target id is from the same vcn as network vcn " | log >> $log_file
-    if [ "$wls_existing_vcn_id" == "$mt_vcn_id" ]; then
-      echo "mount target id is from the same vcn as network vcn" | log >> $log_file
+  if [ $mount_vcn_id != "" ]; then
+    echo "Checking if the mount target and the WebLogic servers are in the same VCN" | log >> $log_file
+    if [ "$wls_existing_vcn_id" == "$mount_vcn_id" ]; then
+      echo "The mount target and the WebLogic servers are in the same VCN [$wls_existing_vcn_id]" | log >> $log_file
     else
-      echo "mount target id is not from the same vcn as network vcn [$wls_existing_vcn_id, $mt_vcn_id]. Exiting" | log >> $log_file
+      echo "The mount target is not in the same VCN as the WebLogic servers [$wls_existing_vcn_id, $mount_vcn_id]. Exiting" | log >> $log_file
       #clean up script
       /opt/scripts/tidyup.sh
       exit 1
