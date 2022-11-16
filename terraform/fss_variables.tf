@@ -25,12 +25,6 @@ variable "existing_fss_id" {
   default     = ""
 }
 
-variable "existing_export_path_id" {
-  type        = string
-  description = "The OCID of the existing export path"
-  default     = ""
-}
-
 variable "fss_compartment_id" {
   type        = string
   description = "The OCID of the compartment where the file system exists"
