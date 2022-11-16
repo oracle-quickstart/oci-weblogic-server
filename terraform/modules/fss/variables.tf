@@ -69,6 +69,6 @@ variable "resource_name_prefix" {
 }
 
 variable "existing_fss_id" {
-  type = string
+  type        = string
   description = "The OCID of the File System"
 }
