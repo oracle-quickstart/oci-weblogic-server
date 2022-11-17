@@ -113,7 +113,6 @@ data "oci_file_storage_mount_targets" "mount_targets" {
   #Required
   availability_domain = local.fss_availability_domain
   compartment_id      = var.mount_target_compartment_id
-
   id = var.mount_target_id
 }
 
