@@ -113,7 +113,7 @@ variable "atp_db" {
     is_atp_with_private_endpoints: "Indicates if the ATP database uses private endpoint for network access"
     network_compartment_id: "The OCID of the compartment in which the ATP database private endpoint VCN is found"
     existing_vcn_id: "The OCID of the VCN used by the ATP database private endpoint"
-    existing_vcn_add_seclist: "Set to true to add a security list to the network security group (for ATP with private endpoint) when using existing VCN that allows connections from the WebLogic Server subnet"
+    existing_vcn_add_seclist: "Set to true to add a security list to the network security group (for ATP with private endpoint) that allows connections from the WebLogic Server subnet"
   }
   EOT
 }
@@ -135,7 +135,7 @@ variable "oci_db" {
     compartment_id: "The OCID of the compartment where the OCI database is located"
     network_compartment_id: "The OCID of the compartment in which the DB System VCN is found"
     existing_vcn_id: "The OCID of the DB system VCN"
-    existing_vcn_add_seclist: "Set to true to add a security list to the database subnet (for OCI DB) when using existing VCN that allows connections from the WebLogic Server subnet"
+    existing_vcn_add_seclist: "Set to true to add a security list to the database subnet (for OCI DB) that allows connections from the WebLogic Server subnet"
   }
   EOT
 }
