@@ -5,7 +5,7 @@ resource "oci_file_storage_export" "mount_export" {
 
   #Required
   export_set_id  = oci_file_storage_export_set.mount_export_set.id
-  file_system_id = element(compact(tolist([var.existing_fss_id, join("",oci_file_storage_file_system.file_system.*.id)])),0)
+  file_system_id = element(compact(tolist([var.existing_fss_id, join("", oci_file_storage_file_system.file_system.*.id)])), 0)
   path           = var.export_path
 
   #Optional
