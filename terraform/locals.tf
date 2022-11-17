@@ -13,7 +13,7 @@ locals {
   wls_availability_domain      = local.use_regional_subnet ? (var.wls_availability_domain_name == "" ? local.ad_names[0] : var.wls_availability_domain_name) : (var.wls_subnet_id == "" ? var.wls_availability_domain_name : data.oci_core_subnet.wls_subnet[0].availability_domain)
   lb_availability_domain_name1 = var.lb_subnet_1_id != "" ? (local.use_regional_subnet ? "" : data.oci_core_subnet.lb_subnet_1_id[0].availability_domain) : ""
   lb_availability_domain_name2 = var.lb_subnet_2_id != "" ? (local.use_regional_subnet ? "" : data.oci_core_subnet.lb_subnet_2_id[0].availability_domain) : ""
-  fss_availability_domain      = var. add_fss ? (local.use_regional_subnet ? var.fss_availability_domain : (!var.add_existing_fss && !local.add_existing_mount_target ? data.oci_core_subnet.mount_target_subnet[0].availability_domain : var.fss_availability_domain)) : ""
+  fss_availability_domain      = var.add_fss ? (local.use_regional_subnet ? var.fss_availability_domain : (!var.add_existing_fss && !local.add_existing_mount_target ? data.oci_core_subnet.mount_target_subnet[0].availability_domain : var.fss_availability_domain)) : ""
   network_compartment_id       = var.network_compartment_id == "" ? var.compartment_ocid : var.network_compartment_id
 
   #dynamic group is based on the system generated tags for DG
