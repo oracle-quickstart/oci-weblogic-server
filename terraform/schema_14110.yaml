@@ -106,7 +106,6 @@ groupings:
       - ${fss_availability_domain}
       - ${fss_compartment_id}
       - ${existing_fss_id}
-      - ${existing_export_path_id}
       - ${add_existing_mount_target}
       - ${mount_target_compartment_id}
       - ${mount_target_id}
@@ -663,11 +662,11 @@ variables:
       and:
         - ${orm_create_mode}
         - ${add_fss}
-        - ${add_existing_mount_target}
+        - or:
+          - ${add_existing_mount_target}
+          - ${add_existing_fss}
         - not:
             - ${create_new_vcn}
-        - not:
-            - ${add_existing_fss}
     type: oci:identity:compartment:id
     required: true
     title: Mount Target Compartment
@@ -706,7 +705,7 @@ variables:
     description: "The pre-created NSG that is assigned to the mount target"
     required: true
     dependsOn:
-      compartmentId: ${mount_target_compartment_id}
+      compartmentId: ${network_compartment_id}
       vcnId: ${wls_existing_vcn_id}
 
   #Network Validation script execution acknowledgement
@@ -850,6 +849,10 @@ variables:
             - or:
                 - ${create_new_vcn}
                 - ${create_new_subnets}
+        - not:
+            - ${add_existing_fss}
+        - not:
+            - ${add_existing_mount_target}
     type: string
     default: 10.0.5.0/24
     pattern: "^(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\\/(3[0-2]|[1-2]?[0-9])$"
@@ -864,7 +867,7 @@ variables:
         - not:
             - ${create_new_vcn}
         - not:
-          - ${create_new_subnets}
+            - ${create_new_subnets}
     type: oci:core:subnet:id
     dependsOn:
       vcnId: ${wls_existing_vcn_id}
@@ -903,6 +906,10 @@ variables:
             - ${create_new_subnets}
         - not:
             - ${create_new_vcn}
+        - not:
+            - ${add_existing_fss}
+        - not:
+            - ${add_existing_mount_target}
     type: oci:core:subnet:id
     dependsOn:
       vcnId: ${wls_existing_vcn_id}
@@ -1578,9 +1585,14 @@ variables:
         - ${orm_create_mode}
         - ${add_fss}
         - not:
-            - eq:
-                - ${subnet_span}
-                - "AD Specific Subnet"
+            - and:
+                - eq:
+                    - ${subnet_span}
+                    - "AD Specific Subnet"
+                - not:
+                    - ${add_existing_fss}
+                - not:
+                    - ${add_existing_mount_target}
     type: oci:identity:availabilitydomain:name
     title: File System Availability Domain
     description: The name of the availability domain in which to create the file system and mount target.
@@ -1607,9 +1619,9 @@ variables:
       and:
         - ${orm_create_mode}
         - ${add_fss}
-        - ${add_existing_mount_target}
-        - not:
-            - ${add_existing_fss}
+        - or:
+          - ${add_existing_mount_target}
+          - ${add_existing_fss}
         - not:
             - ${create_new_vcn}
     type: oci:mount:target:id
@@ -1632,20 +1644,6 @@ variables:
     title: Existing File System ID
     description: The Oracle Cloud Identifier (OCID) of your existing file system. The existing file system must be in the same availability domain as the existing mount target.
     pattern: ^$|^ocid1.filesystem.*$
-    required: true
-
-  existing_export_path_id:
-    visible:
-      and:
-        - ${orm_create_mode}
-        - ${add_fss}
-        - ${add_existing_fss}
-        - not:
-            - ${create_new_vcn}
-    type: string
-    title: Existing Export ID
-    description: The Oracle Cloud Identifier (OCID) of your existing export.
-    pattern: ^$|^ocid1.export.*$
     required: true
 
   use_oci_logging:

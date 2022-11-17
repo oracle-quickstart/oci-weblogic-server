@@ -58,6 +58,8 @@ module "network-vcn-config" {
   create_internet_gateway      = var.wls_vcn_name != ""
   lb_destination_cidr          = var.is_lb_private ? var.bastion_subnet_cidr : "0.0.0.0/0"
   add_fss                      = var.add_fss
+  add_existing_mount_target    = local.add_existing_mount_target
+  add_existing_fss             = var.add_existing_fss
   # If the module is empty (count is zero), an empty list is returned. If not, a list of lists of strings is returned.
   # By using flatten we make sure each entry in the map is a list of string, either with one element, or empty
   nsg_ids = {
@@ -283,7 +285,7 @@ module "network-wls-public-subnet" {
 /* Create private subnet for FSS */
 module "network-mount-target-private-subnet" {
   source         = "./modules/network/subnet"
-  count          = var.add_fss && var.mount_target_subnet_id == "" ? 1 : 0
+  count          = var.add_fss && !local.add_existing_mount_target && !var.add_existing_fss && var.mount_target_subnet_id == "" ? 1 : 0
   compartment_id = local.network_compartment_id
   vcn_id         = local.vcn_id
 
@@ -395,7 +397,7 @@ module "validators" {
   mount_target_compartment_id          = var.mount_target_compartment_id
   mount_target_id                      = var.mount_target_id
   existing_fss_id                      = var.existing_fss_id
-  mount_target_availability_domain     = var.add_existing_mount_target ? data.oci_file_storage_mount_targets.mount_targets[0].mount_targets[0].availability_domain : ""
+  mount_target_availability_domain     = local.add_existing_mount_target ? data.oci_file_storage_mount_targets.mount_targets[0].mount_targets[0].availability_domain : ""
 
   create_policies  = var.create_policies
   use_oci_logging  = var.use_oci_logging
@@ -436,7 +438,7 @@ module "validators" {
 
 module "fss" {
   source = "./modules/fss"
-  count  = var.existing_fss_id == "" && var.add_fss ? 1 : 0
+  count  = var.add_fss ? 1 : 0
 
   compartment_id      = var.compartment_ocid
   availability_domain = local.fss_availability_domain
@@ -445,10 +447,11 @@ module "fss" {
   vcn_cidr                    = var.wls_vcn_cidr != "" ? var.wls_vcn_cidr : data.oci_core_vcn.wls_vcn[0].cidr_block
   resource_name_prefix        = var.service_name
   export_path                 = local.export_path
+  existing_fss_id             = var.existing_fss_id
   mount_target_id             = var.mount_target_id
   mount_target_compartment_id = var.mount_target_compartment_id == "" ? var.compartment_ocid : var.mount_target_compartment_id
-  mount_target_subnet_id      = local.use_existing_subnets ? var.mount_target_subnet_id : module.network-mount-target-private-subnet[0].subnet_id
-  mount_target_nsg_id         = var.mount_target_subnet_id != "" ? (var.add_existing_nsg ? [var.existing_mount_target_nsg_id] : []) : element(module.network-mount-target-nsg[*].nsg_id, 0)
+  mount_target_subnet_id      = local.use_existing_subnets ? var.mount_target_subnet_id : (local.add_existing_mount_target ? "" : module.network-mount-target-private-subnet[0].subnet_id)
+  mount_target_nsg_id         = var.mount_target_subnet_id != "" || local.add_existing_mount_target ? (var.add_existing_nsg ? [var.existing_mount_target_nsg_id] : []) : element(module.network-mount-target-nsg[*].nsg_id, 0)
   tags = {
     defined_tags  = local.defined_tags
     freeform_tags = local.free_form_tags
@@ -555,6 +558,7 @@ module "compute" {
   wls_domain_name               = format("%s_domain", local.service_name_prefix)
   wls_server_startup_args       = var.wls_server_startup_args
   wls_existing_vcn_id           = var.wls_existing_vcn_id
+  mount_vcn_id                  = var.mount_target_id != "" ? data.oci_core_subnet.mount_target_existing_subnet[0].vcn_id : (var.existing_fss_id != "" ? data.oci_core_subnet.mount_target_existing_subnet_by_fss[0].vcn_id : "")
   wls_vcn_cidr                  = var.wls_vcn_cidr != "" ? var.wls_vcn_cidr : element(concat(module.network-vcn.*.vcn_cidr, tolist([""])), 0)
   wls_version                   = var.wls_version
   wls_edition                   = var.wls_edition
@@ -578,7 +582,7 @@ module "compute" {
   add_fss     = var.add_fss
   mount_ip    = var.existing_fss_id != "" ? element(concat(data.oci_core_private_ip.mount_target_private_ips.*.ip_address, [""]), 0) : element(concat(module.fss[*].mount_ip, [""]), 0)
   mount_path  = var.mount_path
-  export_path = var.existing_export_path_id != "" ? element(concat(data.oci_file_storage_exports.export[*].exports[0].path, [""]), 0) : element(concat(module.fss[*].export_path, [""]), 0)
+  export_path = local.export_path
 
   db_existing_vcn_add_seclist = var.db_existing_vcn_add_secrule
   jrf_parameters = {

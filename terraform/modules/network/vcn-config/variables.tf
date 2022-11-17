@@ -211,3 +211,16 @@ variable "nsg_ids" {
     managed_nsg_id      = ""
   }
 }
+
+variable "add_existing_fss" {
+  type        = bool
+  description = "Use an existing file system"
+  default     = false
+}
+
+variable "add_existing_mount_target" {
+  type        = bool
+  description = "Add existing mount target to instances"
+  default     = false
+}
+
