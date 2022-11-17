@@ -580,7 +580,7 @@ module "compute" {
   mount_path  = var.mount_path
   export_path = var.existing_export_path_id != "" ? element(concat(data.oci_file_storage_exports.export[*].exports[0].path, [""]), 0) : element(concat(module.fss[*].export_path, [""]), 0)
 
-  db_existing_vcn_add_seclist = var.ocidb_existing_vcn_add_seclist
+  db_existing_vcn_add_seclist = var.db_existing_vcn_add_secrule
   jrf_parameters = {
     db_user        = local.db_user
     db_password_id = local.db_password_id

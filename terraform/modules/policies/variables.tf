@@ -97,15 +97,23 @@ variable "wls_admin_password_id" {
 
 variable "atp_db" {
   type = object({
-    is_atp         = bool
-    compartment_id = string
-    password_id    = string
+    is_atp                        = bool
+    password_id                   = string
+    compartment_id                = string
+    is_atp_with_private_endpoints = bool
+    network_compartment_id        = string
+    existing_vcn_id               = string
+    existing_vcn_add_seclist      = bool
   })
   description = <<-EOT
   atp_db = {
     is_atp: "Indicates if an ATP database is used to store the schemas of a JRF WebLogic domain"
-    compartment_id: "The OCID of the compartment where the ATP database is located"
     password_id: "The OCID of the vault secret with the password of the database"
+    compartment_id: "The OCID of the compartment where the ATP database is located"
+    is_atp_with_private_endpoints: "Indicates if the ATP database uses private endpoint for network access"
+    network_compartment_id: "The OCID of the compartment in which the ATP database private endpoint VCN is found"
+    existing_vcn_id: "The OCID of the VCN used by the ATP database private endpoint"
+    existing_vcn_add_seclist: "Set to true to add a security list to the network security group (for ATP with private endpoint) when using existing VCN that allows connections from the WebLogic Server subnet"
   }
   EOT
 }

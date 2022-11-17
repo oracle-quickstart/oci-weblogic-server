@@ -141,7 +141,7 @@ variable "atp_db_password_id" {
 
 variable "atp_db_network_compartment_id" {
   type        = string
-  description = "The OCID of the compartment in which the ATP database VCN is found"
+  description = "The OCID of the compartment in which the ATP database private endpoint VCN is found"
   default     = ""
 }
 
@@ -158,10 +158,9 @@ variable "atp_db_uses_private_endpoint" {
   default     = false
 }
 
-#This variable is used for both oci db and ATP with private subnet
-#NOTE: this has not been renamed to support future cloning support
-variable "ocidb_existing_vcn_add_seclist" {
+#This variable is used for both OCI database and ATP database with private endpoint
+variable "db_existing_vcn_add_secrule" {
   type        = bool
-  description = "Set to true to add a security list to the database subnet (for OCI DB) when using existing VCN or network security group (for ATP with private endpoint) that allows connections from the WebLogic Server subnet"
+  description = "Set to true to add a security list to the database subnet (for OCI DB) or a security rule to the network security group (for ATP with private endpoint) that allows connections from the WebLogic Server subnet"
   default     = true
 }

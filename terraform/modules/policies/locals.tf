@@ -22,6 +22,8 @@ locals {
   atp_policy_statement1     = (var.atp_db.is_atp && var.atp_db.password_id != "") ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to read secret-bundles in tenancy where target.secret.id = '${var.atp_db.password_id}'" : ""
   # This policy with "use autonomous-transaction-processing-family" verb is needed to download ATP db wallet
   atp_policy_statement2    = (var.atp_db.is_atp && var.atp_db.compartment_id != "") ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to use autonomous-transaction-processing-family in compartment id ${var.atp_db.compartment_id}" : ""
+  # This policy with "manage network-security-groups" verb is needed to add security rule in the ATP db(with private endpoint) NSG in the ATP db VCN
+  atp_policy_statement3    = (var.atp_db.is_atp_with_private_endpoints && var.atp_db.existing_vcn_add_seclist && var.atp_db.network_compartment_id != "") ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to manage network-security-groups in compartment id ${var.atp_db.network_compartment_id} where request.operation = 'AddNetworkSecurityGroupSecurityRules'" : ""
   oci_db_policy_statement1 = var.oci_db.password_id != "" ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to read secret-bundles in tenancy where target.secret.id = '${var.oci_db.password_id}'" : ""
   # This policy with "inspect virtual-network-family" verb is needed to read OCI DB VCN information like CIDR, etc, for VCN validation
   oci_db_policy_statement2 = (var.oci_db.network_compartment_id != "" && var.oci_db.existing_vcn_id != local.network_vcn_id) ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to inspect virtual-network-family in compartment id ${var.oci_db.network_compartment_id} where target.vcn.id = '${var.oci_db.existing_vcn_id}'" : ""
@@ -34,7 +36,7 @@ locals {
   # This policy with "use load_balancer" verb is needed to create load balancer for new vcn
   lb_policy_statement = var.add_load_balancer ? length(oci_identity_dynamic_group.wlsc_instance_principal_group) > 0 ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to use load-balancers in compartment id ${var.network_compartment_id}" : "" : ""
 
-  service_statements = compact([local.core_policy_statement1, local.core_policy_statement2, local.core_policy_statement3, local.network_policy_statement1, local.secrets_policy_statement1, local.secrets_policy_statement2, local.atp_policy_statement1, local.atp_policy_statement2, local.oci_db_policy_statement1, local.oci_db_policy_statement2, local.logging_policy, local.apm_domain_policy_statement, local.lb_policy_statement])
+  service_statements = compact([local.core_policy_statement1, local.core_policy_statement2, local.core_policy_statement3, local.network_policy_statement1, local.secrets_policy_statement1, local.secrets_policy_statement2, local.atp_policy_statement1, local.atp_policy_statement2, local.atp_policy_statement3, local.oci_db_policy_statement1, local.oci_db_policy_statement2, local.logging_policy, local.apm_domain_policy_statement, local.lb_policy_statement])
 
   cloning_policy_statement1 = "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to read orm-stacks in compartment id ${var.compartment_id}"
   cloning_policy_statement2 = "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to inspect compartments in tenancy"

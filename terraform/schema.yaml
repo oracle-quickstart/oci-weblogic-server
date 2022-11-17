@@ -63,7 +63,7 @@ groupings:
       - ${oci_db_secret_compartment_id}
       - ${oci_db_password_id}
       - ${oci_db_port}
-      - ${ocidb_existing_vcn_add_seclist}
+      - ${db_existing_vcn_add_secrule}
       - ${db_vcn_lpg_id}
       #End of JRF fields
       - ${deploy_sample_app}
@@ -1636,7 +1636,7 @@ variables:
     description: The compartment in which the DB System Virtual Cloud Network is found.
     default: ${compartment_ocid}
 
-  ocidb_existing_vcn_add_seclist:
+  db_existing_vcn_add_secrule:
     visible:
       and:
         - ${orm_create_mode}
@@ -1650,7 +1650,7 @@ variables:
     type: boolean
     default: true
     title: Create Database Security List
-    description: Add a security list to the DB subnet or Network Security Group for ATP Database with private endpoint that allows connections from the WebLogic Server subnet
+    description: Add a security list to the DB subnet or a security rule to the Network Security Group for ATP Database with private endpoint that allows connections from the WebLogic Server subnet
 
   # OCI DB Configuration
 
