@@ -68,5 +68,5 @@ variable "jrf_parameters" {
 //Add security list to existing db vcn
 variable "db_existing_vcn_add_seclist" {
   type        = bool
-  description = "Set to true to add a security list to the database subnet (for OCI DB) when using existing VCN or network security group (for ATP with private endpoint) that allows connections from the WebLogic Server subnet"
+  description = "Set to true to add a security list to the database subnet (for OCI DB) or a security rule to the network security group (for ATP with private endpoint) that allows connections from the WebLogic Server subnet"
 }

@@ -28,12 +28,16 @@ locals {
   db_password_id                = local.is_atp_db ? var.atp_db_password_id : var.oci_db_password_id
   is_atp_db                     = trimspace(var.atp_db_id) != ""
   is_atp_with_private_endpoints = local.is_atp_db && (length(data.oci_database_autonomous_database.atp_db) != 0 ? data.oci_database_autonomous_database.atp_db[0].subnet_id != null : false)
-  atp_db_network_compartment_id = local.is_atp_db && var.atp_db_network_compartment_id == "" ? var.atp_db_compartment_id : var.atp_db_network_compartment_id
+  atp_db_network_compartment_id = local.is_atp_with_private_endpoints && var.atp_db_network_compartment_id == "" ? var.atp_db_compartment_id : var.atp_db_network_compartment_id
 
   atp_db = {
-    is_atp         = local.is_atp_db
-    compartment_id = var.atp_db_compartment_id
-    password_id    = var.atp_db_password_id
+    is_atp                        = local.is_atp_db
+    password_id                   = var.atp_db_password_id
+    compartment_id                = var.atp_db_compartment_id
+    is_atp_with_private_endpoints = local.is_atp_with_private_endpoints
+    network_compartment_id        = local.atp_db_network_compartment_id
+    existing_vcn_id               = var.atp_db_existing_vcn_id
+    existing_vcn_add_seclist      = local.is_atp_with_private_endpoints ? var.db_existing_vcn_add_secrule : false
   }
   oci_db = {
     is_oci_db                = local.is_oci_db
@@ -42,14 +46,14 @@ locals {
     network_compartment_id   = local.oci_db_network_compartment_id
     existing_vcn_id          = var.oci_db_existing_vcn_id
     oci_db_connection_string = var.oci_db_connection_string
-    existing_vcn_add_seclist = local.is_oci_db ? var.ocidb_existing_vcn_add_seclist : false
+    existing_vcn_add_seclist = local.is_oci_db ? var.db_existing_vcn_add_secrule : false
   }
 
   is_oci_db                     = trimspace(var.oci_db_dbsystem_id) == "" ? false : true
   oci_db_compartment_id         = var.oci_db_compartment_id == "" ? local.network_compartment_id : var.oci_db_compartment_id
   oci_db_network_compartment_id = local.is_oci_db && var.oci_db_network_compartment_id == "" ? var.oci_db_compartment_id : var.oci_db_network_compartment_id
 
-  db_network_compartment_id = local.is_atp_db ? local.atp_db_network_compartment_id : local.oci_db_network_compartment_id
+  db_network_compartment_id = local.is_atp_with_private_endpoints ? local.atp_db_network_compartment_id : local.oci_db_network_compartment_id
 
   # Locals used by outputs
   bastion_public_ip = element(coalescelist(module.bastion[*].public_ip, data.oci_core_instance.existing_bastion_instance.*.public_ip, [""]), 0)

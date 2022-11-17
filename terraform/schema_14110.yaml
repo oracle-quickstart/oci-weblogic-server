@@ -186,7 +186,7 @@ groupings:
       - ${oci_db_compartment_id}
       - ${oci_db_network_compartment_id}
       - ${oci_db_existing_vcn_id}
-      - ${ocidb_existing_vcn_add_seclist}
+      - ${db_existing_vcn_add_secrule}
       - ${oci_db_dbsystem_id}
       - ${oci_db_dbhome_id}
       - ${oci_db_dbhome_major_version}
