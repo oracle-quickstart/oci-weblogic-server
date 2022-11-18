@@ -98,7 +98,7 @@ locals {
   sample_app_protocol   = local.add_load_balancer ? "https" : "http"
   sample_app_url_lb_ip  = local.deploy_sample_app && local.add_load_balancer ? format("%s://%s/sample-app", local.sample_app_protocol, local.lb_ip) : ""
   sample_app_url_wls_ip = local.deploy_sample_app ? format("https://%s:%s/sample-app", local.admin_ip_address, var.wls_ms_extern_ssl_port) : ""
-  sample_app_url        = local.deploy_sample_app && local.add_load_balancer ? local.sample_app_url_lb_ip : local.sample_app_url_wls_ip) : ""
+  sample_app_url        = local.deploy_sample_app ? (local.add_load_balancer ? local.sample_app_url_lb_ip : local.sample_app_url_wls_ip) : ""
   sample_idcs_app_url = local.deploy_sample_app && local.add_load_balancer && var.is_idcs_selected ? format(
     "%s://%s/__protected/idcs-sample-app",
     local.sample_app_protocol,
