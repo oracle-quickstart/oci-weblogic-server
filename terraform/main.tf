@@ -566,6 +566,8 @@ module "compute" {
   num_vm_instances              = var.wls_node_count
   resource_name_prefix          = var.service_name
 
+  deploy_sample_app = local.deploy_sample_app
+
   is_bastion_instance_required = var.is_bastion_instance_required
 
   is_idcs_selected      = var.is_idcs_selected
