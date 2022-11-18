@@ -403,7 +403,7 @@ module "validators" {
   use_oci_logging  = var.use_oci_logging
   dynamic_group_id = var.dynamic_group_id
 
-  use_apm_service           = var.use_apm_service
+  use_apm_service           = local.use_apm_service
   apm_domain_id             = var.apm_domain_id
   apm_private_data_key_name = var.apm_private_data_key_name
 
@@ -610,7 +610,7 @@ module "compute" {
   log_group_id    = element(concat(module.observability-common[*].log_group_id, [""]), 0)
   use_oci_logging = var.use_oci_logging
 
-  use_apm_service           = var.use_apm_service
+  use_apm_service           = local.use_apm_service
   apm_domain_compartment_id = local.apm_domain_compartment_id
   apm_domain_id             = var.apm_domain_id
   apm_private_data_key_name = var.apm_private_data_key_name
