@@ -90,6 +90,9 @@ locals {
 
   assign_weblogic_public_ip = var.assign_weblogic_public_ip || var.subnet_type == "Use Public Subnet"
 
+  // Deploy sample-app only if the edition is not SE
+  deploy_sample_app = (var.deploy_sample_app && var.wls_edition != "SE")
+
   admin_ip_address      = local.assign_weblogic_public_ip ? module.compute.instance_public_ips[0] : module.compute.instance_private_ips[0]
   admin_console_app_url = format("https://%s:%s/console", local.admin_ip_address, var.wls_extern_ssl_admin_port)
   sample_app_protocol   = local.add_load_balancer ? "https" : "http"
