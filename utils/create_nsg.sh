@@ -396,6 +396,37 @@ EOF
       echo -e "Adding IDCS Security Rule to access CLOUD GATE port in Managed Server Network Security Group $managed_server_nsg_ocid..."
       oci network nsg rules add --nsg-id $managed_server_nsg_ocid --security-rules file://$IDCS_RULES_FILE
     fi
+
+    # Create security rule for IDCS - Open CLOUDGATE GATE PORT from LB AD subnet2 in MANAGED SERVER NSG
+    if [[ -n $lbsubnet_availability_domain  && $is_private_lb = false ]]
+    then
+       if [[ -n ${LB_SUBNET2_OCID} ]]
+       then
+         lbsubnet2_cidr_block=$(oci network subnet get --subnet-id "${LB_SUBNET2_OCID}" | jq -r '.data["cidr-block"]')
+         IDCS_RULES_FILE2=$(mktemp)
+         cat > ${IDCS_RULES_FILE2} << EOF
+         [{
+           "description": "TCP traffic for cloudgate port",
+           "direction": "INGRESS",
+           "isStateless": "false",
+           "protocol": "6",
+           "sourceType": "CIDR_BLOCK",
+           "source": "$lbsubnet2_cidr_block",
+           "tcpOptions": {
+             "destinationPortRange": {
+               "min": "$CLOUDGATE_PORT",
+               "max": "$CLOUDGATE_PORT"
+             }
+           }
+         }]
+EOF
+         if [[ -n $managed_server_nsg_ocid ]]
+         then
+           echo -e "Adding IDCS Security Rule to access CLOUD GATE port in Managed Server Network Security Group $managed_server_nsg_ocid..."
+           oci network nsg rules add --nsg-id $managed_server_nsg_ocid --security-rules file://$IDCS_RULES_FILE2
+         fi
+       fi
+    fi
   fi
   # Load Balancer NSG
   network_security_group_name="load_balancer_nsg"
@@ -450,7 +481,7 @@ EOF
                     }]
 EOF
               echo -e "Adding LB Security Rules to access MS HTTP port for AD subnet in Admin Server Network Security Group $admin_server_nsg_ocid..."
-              oci network nsg rules add --nsg-id $admin_server_nsg_ocid --security-rules file://$WLS_MS_RULES_FILE2
+              oci network nsg rules add --nsg-id $managed_server_nsg_ocid --security-rules file://$WLS_MS_RULES_FILE2
             fi
         fi
     fi
