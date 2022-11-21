@@ -1651,16 +1651,21 @@ variables:
         - and:
             - ${create_policies}
             - or:
-                - ${create_new_vcn}
-                - not:
-                    - ${use_oci_db_connection_string}
+                - and:
+                    - eq:
+                        - ${db_strategy}
+                        - "Autonomous Transaction Processing Database"
+                    - ${atp_db_uses_private_endpoint}
+                - and:
+                    - eq:
+                        - ${db_strategy}
+                        - "Database System"
     type: boolean
     default: true
     title: Create Database Security List
     description: Add a security list to the DB subnet or a security rule to the Network Security Group for ATP Database with private endpoint that allows connections from the WebLogic Server subnet
 
   # OCI DB Configuration
-
   oci_db_compartment_id:
     visible:
       and:
