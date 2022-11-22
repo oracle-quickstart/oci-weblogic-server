@@ -4,20 +4,20 @@
 service_name = "nonjrf1"
 
 ### Public/private keys used on the instance
-ssh_public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDOOVKYC3NI6FQd63NTlEGhvGuk7+H69VCYXLC6JGIhaNQGb0DnEukcDVlONInrY0OFKD1NYFGPwuh+C65mgv3af+fCerUedWZwFKzuo+vNikQ9DOI7OIpCN3YHgZW43OmK51G2hfmi7QFjyNpJdUkw2GQb+IlP3lVAF4cQ5Pf1LZfn8oJVfDpAlZuIqR5MBDcoi/dNEO2a6o+Wm5tCOrkTuOLjOFqdWG0ugAsZyz/KwIZL9/ks4AGeM+RrJr8KA6Ck4XlSG62sMD4ph5GZSXQYsvodJjypC8XnAb6nW5LHEq6KYSooG/UBgzUVW0bsxFQoHO1nGtzZmn0KJd5Gu3rt xperiment"
+ssh_public_key = "<ssh_public_key>"
 
 ### Set to true to create OCI IAM policies and dynamic groups required by the WebLogic for OCI stack
 create_policies = true
 generate_dg_tag = true
 
 ### Network vcn resource parameters required to create new vcn
-network_compartment_id = "ocid1.compartment.oc1..aaaaaaaameasabragpehfwnzuxowgxyatkqguqghxynzigzyg7fse6nuatoq"
+network_compartment_id = "ocid1.compartment.xxxxxxxxxxxxxx"
 wls_vcn_name           = "nonjrf1"
 wls_vcn_cidr           = "10.0.0.0/16"
 
 ### WebLogic credentials to login to the console
 wls_admin_user        = "weblogic"
-wls_admin_password_id = "ocid1.vaultsecret.oc1.iad.amaaaaaadogctgiawbobt2uytzu5m7b3waltjnwswsqutyjdzvbhvvzomqpa"
+wls_admin_password_id = "ocid1.vaultsecret.xxxxxxxxxxxxxxx
 
 ### WebLogic server compute instance parameters
 instance_shape = "VM.Standard.E4.Flex"
