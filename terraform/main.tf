@@ -204,7 +204,7 @@ module "policies" {
   is_idcs_selected            = var.is_idcs_selected
   idcs_client_secret_id       = var.idcs_client_secret_id
   use_oci_logging             = var.use_oci_logging
-  use_apm_service             = var.use_apm_service
+  use_apm_service             = local.use_apm_service
   apm_domain_compartment_id   = local.apm_domain_compartment_id
   use_autoscaling             = var.use_autoscaling
   ocir_auth_token_id          = var.ocir_auth_token_id

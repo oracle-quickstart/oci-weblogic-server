@@ -123,7 +123,7 @@ data "oci_core_private_ip" "mount_target_private_ips" {
 }
 
 data "oci_apm_apm_domain" "apm_domain" {
-  count = var.use_apm_service ? 1 : 0
+  count = local.use_apm_service ? 1 : 0
 
   #Required
   apm_domain_id = var.apm_domain_id
