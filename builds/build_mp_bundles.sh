@@ -186,7 +186,7 @@ create_byol_standard_14110()
 
 replace_byol_ee_12214_variables()
 {
-  export TF_VAR_FILE=${SCRIPT_DIR}/../terraform/inputs/mp_image_ee_byol.tfvars
+  export TF_VAR_FILE=${SCRIPT_DIR}/../terraform/solutions/mp/mp_image_ee_byol.tfvars
   get_mp_values
   sed -i '/variable "tf_script_version" {/!b;n;n;n;cdefault = '"$tf_script_version"'' ${TMP_BUILD}/variables.tf
   sed -i '/variable "instance_image_id" {/!b;n;n;n;cdefault = '"$instance_image_id"'' ${TMP_BUILD}/mp_variables.tf
@@ -206,7 +206,7 @@ replace_byol_ee_12214_variables()
 }
 replace_byol_ee_14110_variables()
 {
-  export TF_VAR_FILE=${SCRIPT_DIR}/../terraform/inputs/mp_image_ee_byol.tfvars
+  export TF_VAR_FILE=${SCRIPT_DIR}/../terraform/solutions/mp/mp_image_ee_byol.tfvars
   get_mp_values
   sed -i '/variable "tf_script_version" {/!b;n;n;n;cdefault = '"$tf_script_version"'' ${TMP_BUILD}/variables.tf
   sed -i '/variable "wls_version" {/!b;n;n;n;cdefault = \"14.1.1.0\"' ${TMP_BUILD}/weblogic_variables.tf
@@ -227,7 +227,7 @@ replace_byol_ee_14110_variables()
 }
 replace_byol_se_12214_variables()
 {
-  export TF_VAR_FILE=${SCRIPT_DIR}/../terraform/inputs/mp_image_se_byol.tfvars
+  export TF_VAR_FILE=${SCRIPT_DIR}/../terraform/solutions/mp/mp_image_se_byol.tfvars
   get_mp_values
   sed -i '/variable "tf_script_version" {/!b;n;n;n;cdefault = '"$tf_script_version"'' ${TMP_BUILD}/variables.tf
   sed -i 's/default     = "EE"/default     = "SE"/' ${TMP_BUILD}/edition.tf
@@ -242,7 +242,7 @@ replace_byol_se_12214_variables()
 }
 replace_byol_se_14110_variables()
 {
-  export TF_VAR_FILE=${SCRIPT_DIR}/../terraform/inputs/mp_image_se_byol.tfvars
+  export TF_VAR_FILE=${SCRIPT_DIR}/../terraform/solutions/mp/mp_image_se_byol.tfvars
   get_mp_values
   sed -i '/variable "tf_script_version" {/!b;n;n;n;cdefault = '"$tf_script_version"'' ${TMP_BUILD}/variables.tf
   sed -i 's/default     = "EE"/default     = "SE"/' ${TMP_BUILD}/edition.tf
@@ -258,7 +258,7 @@ replace_byol_se_14110_variables()
 }
 replace_byol_suite_12214_variables()
 {
-  export TF_VAR_FILE=${SCRIPT_DIR}/../terraform/inputs/mp_image_suite_byol.tfvars
+  export TF_VAR_FILE=${SCRIPT_DIR}/../terraform/solutions/mp/mp_image_suite_byol.tfvars
   get_mp_values
   sed -i '/variable "tf_script_version" {/!b;n;n;n;cdefault = '"$tf_script_version"'' ${TMP_BUILD}/variables.tf
   sed -i 's/default     = "EE"/default     = "SUITE"/' ${TMP_BUILD}/edition.tf
@@ -279,7 +279,7 @@ replace_byol_suite_12214_variables()
 }
 replace_byol_suite_14110_variables()
 { 
-  export TF_VAR_FILE=${SCRIPT_DIR}/../terraform/inputs/mp_image_suite_byol.tfvars
+  export TF_VAR_FILE=${SCRIPT_DIR}/../terraform/solutions/mp/mp_image_suite_byol.tfvars
   get_mp_values
   sed -i '/variable "tf_script_version" {/!b;n;n;n;cdefault = '"$tf_script_version"'' ${TMP_BUILD}/variables.tf
   sed -i 's/default     = "EE"/default     = "SUITE"/' ${TMP_BUILD}/edition.tf
@@ -301,7 +301,7 @@ replace_byol_suite_14110_variables()
 }
 replace_ucm_suite_12214_variables()
 {  
-  export TF_VAR_FILE=${SCRIPT_DIR}/../terraform/inputs/mp_image_suite_byol.tfvars
+  export TF_VAR_FILE=${SCRIPT_DIR}/../terraform/solutions/mp/mp_image_suite_byol.tfvars
   get_mp_values
   sed -i '/variable "tf_script_version" {/!b;n;n;n;cdefault = '"$tf_script_version"'' ${TMP_BUILD}/variables.tf
   sed -i 's/default     = "EE"/default     = "SUITE"/' ${TMP_BUILD}/edition.tf
@@ -314,7 +314,7 @@ replace_ucm_suite_12214_variables()
 }
 replace_ucm_suite_14110_variables()
 { 
-  export TF_VAR_FILE=${SCRIPT_DIR}/../terraform/inputs/mp_image_suite_byol.tfvars
+  export TF_VAR_FILE=${SCRIPT_DIR}/../terraform/solutions/mp/mp_image_suite_byol.tfvars
   get_mp_values
   sed -i '/variable "tf_script_version" {/!b;n;n;n;cdefault = '"$tf_script_version"'' ${TMP_BUILD}/variables.tf
   sed -i 's/default     = "EE"/default     = "SUITE"/' ${TMP_BUILD}/edition.tf
@@ -328,7 +328,7 @@ replace_ucm_suite_14110_variables()
 }
 replace_ucm_ee_12214_variables()
 {
-  export TF_VAR_FILE=${SCRIPT_DIR}/../terraform/inputs/mp_image_ee_ucm.tfvars
+  export TF_VAR_FILE=${SCRIPT_DIR}/../terraform/solutions/mp/mp_image_ee_ucm.tfvars
   get_mp_values
   sed -i '/variable "tf_script_version" {/!b;n;n;n;cdefault = '"$tf_script_version"'' ${TMP_BUILD}/variables.tf
   sed -i '/variable "instance_image_id" {/!b;n;n;n;cdefault = '"$instance_image_id"'' ${TMP_BUILD}/mp_variables.tf
@@ -340,7 +340,7 @@ replace_ucm_ee_12214_variables()
 }
 replace_ucm_ee_14110_variables()
 {
-  export TF_VAR_FILE=${SCRIPT_DIR}/../terraform/inputs/mp_image_ee_ucm.tfvars
+  export TF_VAR_FILE=${SCRIPT_DIR}/../terraform/solutions/mp/mp_image_ee_ucm.tfvars
   get_mp_values
   sed -i '/variable "tf_script_version" {/!b;n;n;n;cdefault = '"$tf_script_version"'' ${TMP_BUILD}/variables.tf
   sed -i '/variable "wls_version" {/!b;n;n;n;cdefault = \"14.1.1.0\"' ${TMP_BUILD}/weblogic_variables.tf
