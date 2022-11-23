@@ -10,17 +10,17 @@ locals {
   validate_existing_lb_must_use_existing_subnets = local.use_existing_load_balancer && !var.use_existing_subnets ? local.validators_msg_map[local.existing_lb_must_use_existing_subnets_msg] : null
 
   lb_subnet_1_id_from_datasource = [for subnet in data.oci_core_subnets.existing_vcn_subnets_data_source.subnets[*] : subnet.id if subnet.id == var.existing_lb_subnet_1_id]
-  # set to true if lb subnet_1 is present in the list of subnet for the existing vcn of the stack
-  valid_existing_lb_subnet_1 = local.use_existing_load_balancer && local.lb_subnet_1_id_from_datasource != "" ? local.lb_subnet_1_id_from_datasource != "" : false
+  # set to true if lb subnet_1 is present in the list of subnet for the existing vcn of the stack or if not using existing load balancer
+  valid_existing_lb_subnet_1 = local.use_existing_load_balancer ? length(local.lb_subnet_1_id_from_datasource) != 0 : true
 
   existing_lb_subnet_1_not_in_existing_vcn_of_stack_msg = "WLSC-ERROR: The load balancer [${var.existing_load_balancer_id}] subnet_1 [${var.existing_lb_subnet_1_id}] is not in the the existing vcn [${var.existing_vcn_id}] for the stack"
   validate_existing_lb_vcn_subnet_1                     = local.use_existing_load_balancer && !local.valid_existing_lb_subnet_1 ? local.validators_msg_map[local.existing_lb_subnet_1_not_in_existing_vcn_of_stack_msg] : null
 
   lb_subnet_2_id_from_datasource = [for subnet in data.oci_core_subnets.existing_vcn_subnets_data_source.subnets[*] : subnet.id if subnet.id == var.existing_lb_subnet_2_id]
-  # set to true if lb subnet_2 is present in the list of subnet for the existing vcn of the stack
-  valid_existing_lb_subnet_2 = local.use_existing_load_balancer && local.lb_subnet_2_id_from_datasource != "" ? local.lb_subnet_2_id_from_datasource != "" : false
+  # set to true if lb subnet_2 is present in the list of subnet for the existing vcn of the stack, or if is empty (for regional lb), or if not using existing load balancer
+  valid_existing_lb_subnet_2 = var.existing_lb_subnet_2_id == "" ? true : local.use_existing_load_balancer ? length(local.lb_subnet_2_id_from_datasource) != 0 : true
 
-  existing_lb_subnet_2_not_in_existing_vcn_of_stack_msg = "WLSC-ERROR: The load balancer [${var.existing_load_balancer_id}] subnet_2 [${var.existing_lb_subnet_2_id}] is not in the the existing vcn [${var.existing_vcn_id}] for the stack"
+  existing_lb_subnet_2_not_in_existing_vcn_of_stack_msg = "WLSC-ERROR: The load balancer [${var.existing_load_balancer_id}] subnet_2 [${var.existing_lb_subnet_2_id}] is not in the existing vcn [${var.existing_vcn_id}] for the stack"
   validate_existing_lb_vcn_subnet_2                     = local.use_existing_load_balancer && !local.valid_existing_lb_subnet_2 ? local.validators_msg_map[local.existing_lb_subnet_2_not_in_existing_vcn_of_stack_msg] : null
 
   # verify that the backend set name is non-empty
