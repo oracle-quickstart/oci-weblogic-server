@@ -13,8 +13,8 @@ locals {
 
   # This policy with "use instances" verb is needed because there is code in the WebLogic for OCI compute image that updates metadata of the compute instance, when more than one VM nodes are created
   core_policy_statement1 = "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to use instances in compartment id ${var.compartment_id}"
-  core_policy_statement2 = "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to inspect volumes in compartment id ${var.compartment_id}"
-  core_policy_statement3 = "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to inspect volume-attachments in compartment id ${var.compartment_id}"
+  core_policy_statement2 = "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to manage volumes in compartment id ${var.compartment_id}"
+  core_policy_statement3 = "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to manage volume-attachments in compartment id ${var.compartment_id}"
   # This policy with "inspect virtual-network-family" verb is needed to read VCN information like CIDR, etc, for VCN validation
   network_policy_statement1 = var.network_compartment_id != "" ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to inspect virtual-network-family in compartment id ${var.network_compartment_id}" : ""
   secrets_policy_statement1 = "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to read secret-bundles in tenancy where target.secret.id = '${var.wls_admin_password_id}'"
