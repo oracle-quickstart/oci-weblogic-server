@@ -1850,8 +1850,8 @@ variables:
             - ${db_strategy}
             - "Database System"
     type: oci:identity:compartment:id
-    title: OCI DB Secret Compartment
-    description: The compartment where you have the OCI database secret
+    title: OCI DB Admin Secret Compartment
+    description: The compartment where you have the OCI DB administration secret
     required: true
     default: ${compartment_ocid}
 
