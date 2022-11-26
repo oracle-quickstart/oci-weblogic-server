@@ -201,8 +201,8 @@ replace_byol_ee_12214_variables()
   sed -i 's/#- ${terms_and_conditions}/- ${terms_and_conditions}/' ${TMP_BUILD}/schema.yaml
   sed -i ':a;$!{N;ba};s/- ${image_mode}/#- ${image_mode}/2' ${TMP_BUILD}/schema.yaml
   sed -i ':a;$!{N;ba};s/- ${terms_and_conditions}/#- ${terms_and_conditions}/2' ${TMP_BUILD}/schema.yaml
-  sed -i '/main_mktpl_image/ { n; s/ocid = ""/ocid = '"${instance_image_id}"'/; }' ${TMP_BUILD}/oci_images.tf
-  sed -i '/ucm_image/ { n; s/ocid = ""/ocid = '"${ucm_instance_image_id}"'/; }' ${TMP_BUILD}/oci_images.tf
+  sed -i '/main_mktpl_image/ { n; s/ocid                  = ""/ocid = '"${instance_image_id}"'/; }' ${TMP_BUILD}/oci_images.tf
+  sed -i '/ucm_image/ { n; s/ocid                  = ""/ocid = '"${ucm_instance_image_id}"'/; }' ${TMP_BUILD}/oci_images.tf
 }
 replace_byol_ee_14110_variables()
 {
@@ -222,8 +222,8 @@ replace_byol_ee_14110_variables()
   sed -i 's/#- ${terms_and_conditions}/- ${terms_and_conditions}/' ${TMP_BUILD}/schema_14110.yaml
   sed -i ':a;$!{N;ba};s/- ${image_mode}/#- ${image_mode}/2' ${TMP_BUILD}/schema_14110.yaml
   sed -i ':a;$!{N;ba};s/- ${terms_and_conditions}/#- ${terms_and_conditions}/2' ${TMP_BUILD}/schema_14110.yaml
-  sed -i '/main_mktpl_image/ { n; s/ocid = ""/ocid = '"${instance_image_id}"'/; }' ${TMP_BUILD}/oci_images.tf
-  sed -i '/ucm_image/ { n; s/ocid = ""/ocid = '"${ucm_instance_image_id}"'/; }' ${TMP_BUILD}/oci_images.tf
+  sed -i '/main_mktpl_image/ { n; s/ocid                  = ""/ocid = '"${instance_image_id}"'/; }' ${TMP_BUILD}/oci_images.tf
+  sed -i '/ucm_image/ { n; s/ocid                  = ""/ocid = '"${ucm_instance_image_id}"'/; }' ${TMP_BUILD}/oci_images.tf
 }
 replace_byol_se_12214_variables()
 {
@@ -238,7 +238,10 @@ replace_byol_se_12214_variables()
   sed -i 's/#- ${instance_image_id}/- ${instance_image_id}/' ${TMP_BUILD}/schema.yaml
   sed -i 's/#- ${use_autoscaling}/- ${use_autoscaling}/' ${TMP_BUILD}/schema.yaml
   sed -i ':a;$!{N;ba};s/- ${use_autoscaling}/#- ${use_autoscaling}/1' ${TMP_BUILD}/schema.yaml
-  sed -i '/main_mktpl_image/ { n; s/ocid = ""/ocid = '"${instance_image_id}"'/; }' ${TMP_BUILD}/oci_images.tf
+  sed -i '/main_mktpl_image/ { n; s/ocid                  = ""/ocid = '"${instance_image_id}"'/; }' ${TMP_BUILD}/oci_images.tf
+  export TF_VAR_FILE=${SCRIPT_DIR}/../terraform/inputs/mp_image_ee_byol.tfvars
+  get_mp_values
+  sed -i '/ucm_image/ { n; s/ocid                  = ""/ocid = '"${ucm_instance_image_id}"'/; }' ${TMP_BUILD}/oci_images.tf
 }
 replace_byol_se_14110_variables()
 {
@@ -254,7 +257,10 @@ replace_byol_se_14110_variables()
   sed -i 's/#- ${instance_image_id}/- ${instance_image_id}/' ${TMP_BUILD}/schema_14110.yaml
   sed -i 's/#- ${use_autoscaling}/- ${use_autoscaling}/' ${TMP_BUILD}/schema_14110.yaml
   sed -i ':a;$!{N;ba};s/- ${use_autoscaling}/#- ${use_autoscaling}/1' ${TMP_BUILD}/schema_14110.yaml
-  sed -i '/main_mktpl_image/ { n; s/ocid = ""/ocid = '"${instance_image_id}"'/; }' ${TMP_BUILD}/oci_images.tf
+  sed -i '/main_mktpl_image/ { n; s/ocid                  = ""/ocid = '"${instance_image_id}"'/; }' ${TMP_BUILD}/oci_images.tf
+  export TF_VAR_FILE=${SCRIPT_DIR}/../terraform/inputs/mp_image_ee_byol.tfvars
+  get_mp_values
+  sed -i '/ucm_image/ { n; s/ocid                  = ""/ocid = '"${ucm_instance_image_id}"'/; }' ${TMP_BUILD}/oci_images.tf
 }
 replace_byol_suite_12214_variables()
 {
@@ -274,8 +280,8 @@ replace_byol_suite_12214_variables()
   sed -i 's/#- ${terms_and_conditions}/- ${terms_and_conditions}/' ${TMP_BUILD}/schema.yaml
   sed -i ':a;$!{N;ba};s/- ${image_mode}/#- ${image_mode}/2' ${TMP_BUILD}/schema.yaml
   sed -i ':a;$!{N;ba};s/- ${terms_and_conditions}/#- ${terms_and_conditions}/2' ${TMP_BUILD}/schema.yaml
-  sed -i '/main_mktpl_image/ { n; s/ocid = ""/ocid = '"${instance_image_id}"'/; }' ${TMP_BUILD}/oci_images.tf
-  sed -i '/ucm_image/ { n; s/ocid = ""/ocid = '"${ucm_instance_image_id}"'/; }' ${TMP_BUILD}/oci_images.tf
+  sed -i '/main_mktpl_image/ { n; s/ocid                  = ""/ocid = '"${instance_image_id}"'/; }' ${TMP_BUILD}/oci_images.tf
+  sed -i '/ucm_image/ { n; s/ocid                  = ""/ocid = '"${ucm_instance_image_id}"'/; }' ${TMP_BUILD}/oci_images.tf
 }
 replace_byol_suite_14110_variables()
 { 
@@ -296,8 +302,8 @@ replace_byol_suite_14110_variables()
   sed -i 's/#- ${terms_and_conditions}/- ${terms_and_conditions}/' ${TMP_BUILD}/schema_14110.yaml
   sed -i ':a;$!{N;ba};s/- ${image_mode}/#- ${image_mode}/2' ${TMP_BUILD}/schema_14110.yaml
   sed -i ':a;$!{N;ba};s/- ${terms_and_conditions}/#- ${terms_and_conditions}/2' ${TMP_BUILD}/schema_14110.yaml
-  sed -i '/main_mktpl_image/ { n; s/ocid = ""/ocid = '"${instance_image_id}"'/; }' ${TMP_BUILD}/oci_images.tf
-  sed -i '/ucm_image/ { n; s/ocid = ""/ocid = '"${ucm_instance_image_id}"'/; }' ${TMP_BUILD}/oci_images.tf
+  sed -i '/main_mktpl_image/ { n; s/ocid                  = ""/ocid = '"${instance_image_id}"'/; }' ${TMP_BUILD}/oci_images.tf
+  sed -i '/ucm_image/ { n; s/ocid                  = ""/ocid = '"${ucm_instance_image_id}"'/; }' ${TMP_BUILD}/oci_images.tf
 }
 replace_ucm_suite_12214_variables()
 {  
@@ -310,7 +316,10 @@ replace_ucm_suite_12214_variables()
   sed -i '/variable "listing_id" {/!b;n;n;n;cdefault = '"$listing_id"'' ${TMP_BUILD}/mp_variables.tf
   sed -i '/variable "listing_resource_version" {/!b;n;n;n;cdefault = '"$listing_resource_version"'' ${TMP_BUILD}/mp_variables.tf
   sed -i 's/#- ${instance_image_id}/- ${instance_image_id}/' ${TMP_BUILD}/schema.yaml
-  sed -i '/main_mktpl_image/ { n; s/ocid = ""/ocid = '"${instance_image_id}"'/; }' ${TMP_BUILD}/oci_images.tf
+  sed -i '/main_mktpl_image/ { n; s/ocid                  = ""/ocid = '"${instance_image_id}"'/; }' ${TMP_BUILD}/oci_images.tf
+  export TF_VAR_FILE=${SCRIPT_DIR}/../terraform/inputs/mp_image_suite_byol.tfvars
+  get_mp_values
+  sed -i '/ucm_image/ { n; s/ocid                  = ""/ocid = '"${ucm_instance_image_id}"'/; }' ${TMP_BUILD}/oci_images.tf
 }
 replace_ucm_suite_14110_variables()
 { 
@@ -324,7 +333,10 @@ replace_ucm_suite_14110_variables()
   sed -i '/variable "listing_id" {/!b;n;n;n;cdefault = '"$listing_id"'' ${TMP_BUILD}/mp_variables.tf
   sed -i '/variable "listing_resource_version" {/!b;n;n;n;cdefault = '"$listing_resource_version"'' ${TMP_BUILD}/mp_variables.tf
   sed -i 's/#- ${instance_image_id}/- ${instance_image_id}/' ${TMP_BUILD}/schema_14110.yaml
-  sed -i '/main_mktpl_image/ { n; s/ocid = ""/ocid = '"${instance_image_id}"'/; }' ${TMP_BUILD}/oci_images.tf
+  sed -i '/main_mktpl_image/ { n; s/ocid                  = ""/ocid = '"${instance_image_id}"'/; }' ${TMP_BUILD}/oci_images.tf
+  export TF_VAR_FILE=${SCRIPT_DIR}/../terraform/inputs/mp_image_suite_byol.tfvars
+  get_mp_values
+  sed -i '/ucm_image/ { n; s/ocid                  = ""/ocid = '"${ucm_instance_image_id}"'/; }' ${TMP_BUILD}/oci_images.tf
 }
 replace_ucm_ee_12214_variables()
 {
@@ -336,7 +348,10 @@ replace_ucm_ee_12214_variables()
   sed -i '/variable "listing_id" {/!b;n;n;n;cdefault = '"$listing_id"'' ${TMP_BUILD}/mp_variables.tf
   sed -i '/variable "listing_resource_version" {/!b;n;n;n;cdefault = '"$listing_resource_version"'' ${TMP_BUILD}/mp_variables.tf
   sed -i 's/#- ${instance_image_id}/- ${instance_image_id}/' ${TMP_BUILD}/schema.yaml
-  sed -i '/main_mktpl_image/ { n; s/ocid = ""/ocid = '"${instance_image_id}"'/; }' ${TMP_BUILD}/oci_images.tf
+  sed -i '/main_mktpl_image/ { n; s/ocid                  = ""/ocid = '"${instance_image_id}"'/; }' ${TMP_BUILD}/oci_images.tf
+  export TF_VAR_FILE=${SCRIPT_DIR}/../terraform/inputs/mp_image_ee_byol.tfvars
+  get_mp_values
+  sed -i '/ucm_image/ { n; s/ocid                  = ""/ocid = '"${ucm_instance_image_id}"'/; }' ${TMP_BUILD}/oci_images.tf
 }
 replace_ucm_ee_14110_variables()
 {
@@ -349,7 +364,10 @@ replace_ucm_ee_14110_variables()
   sed -i '/variable "listing_id" {/!b;n;n;n;cdefault = '"$listing_id"'' ${TMP_BUILD}/mp_variables.tf
   sed -i '/variable "listing_resource_version" {/!b;n;n;n;cdefault = '"$listing_resource_version"'' ${TMP_BUILD}/mp_variables.tf
   sed -i 's/#- ${instance_image_id}/- ${instance_image_id}/' ${TMP_BUILD}/schema_14110.yaml
-  sed -i '/main_mktpl_image/ { n; s/ocid = ""/ocid = '"${instance_image_id}"'/; }' ${TMP_BUILD}/oci_images.tf
+  sed -i '/main_mktpl_image/ { n; s/ocid                  = ""/ocid = '"${instance_image_id}"'/; }' ${TMP_BUILD}/oci_images.tf
+  export TF_VAR_FILE=${SCRIPT_DIR}/../terraform/inputs/mp_image_ee_byol.tfvars
+  get_mp_values
+  sed -i '/ucm_image/ { n; s/ocid                  = ""/ocid = '"${ucm_instance_image_id}"'/; }' ${TMP_BUILD}/oci_images.tf
 }
 
 get_mp_values()
