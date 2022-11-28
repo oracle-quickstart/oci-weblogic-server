@@ -90,13 +90,16 @@ locals {
 
   assign_weblogic_public_ip = var.assign_weblogic_public_ip || var.subnet_type == "Use Public Subnet"
 
+  // Deploy sample-app only if the edition is not SE
+  deploy_sample_app = (var.deploy_sample_app && var.wls_edition != "SE")
+
   admin_ip_address      = local.assign_weblogic_public_ip ? module.compute.instance_public_ips[0] : module.compute.instance_private_ips[0]
   admin_console_app_url = format("https://%s:%s/console", local.admin_ip_address, var.wls_extern_ssl_admin_port)
   sample_app_protocol   = local.add_load_balancer ? "https" : "http"
-  sample_app_url_lb_ip  = var.deploy_sample_app && local.add_load_balancer ? format("%s://%s/sample-app", local.sample_app_protocol, local.lb_ip) : ""
-  sample_app_url_wls_ip = var.deploy_sample_app ? format("https://%s:%s/sample-app", local.admin_ip_address, var.wls_ms_extern_ssl_port) : ""
-  sample_app_url        = var.wls_edition != "SE" ? (var.deploy_sample_app && local.add_load_balancer ? local.sample_app_url_lb_ip : local.sample_app_url_wls_ip) : ""
-  sample_idcs_app_url = var.deploy_sample_app && local.add_load_balancer && var.is_idcs_selected ? format(
+  sample_app_url_lb_ip  = local.deploy_sample_app && local.add_load_balancer ? format("%s://%s/sample-app", local.sample_app_protocol, local.lb_ip) : ""
+  sample_app_url_wls_ip = local.deploy_sample_app ? format("https://%s:%s/sample-app", local.admin_ip_address, var.wls_ms_extern_ssl_port) : ""
+  sample_app_url        = local.deploy_sample_app ? (local.add_load_balancer ? local.sample_app_url_lb_ip : local.sample_app_url_wls_ip) : ""
+  sample_idcs_app_url = local.deploy_sample_app && local.add_load_balancer && var.is_idcs_selected ? format(
     "%s://%s/__protected/idcs-sample-app",
     local.sample_app_protocol,
     local.lb_ip,
@@ -145,7 +148,10 @@ locals {
     var.wls_extern_ssl_admin_port,
   ) : ""
 
-  apm_domain_compartment_id = var.use_apm_service ? lookup(data.oci_apm_apm_domain.apm_domain[0], "compartment_id") : ""
+  use_apm_service = (var.use_apm_service || var.use_autoscaling)
+  apm_domain_compartment_id = local.use_apm_service ? lookup(data.oci_apm_apm_domain.apm_domain[0], "compartment_id") : ""
+
+
 
   ocir_namespace = data.oci_objectstorage_namespace.object_namespace.namespace
 

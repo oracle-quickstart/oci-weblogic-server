@@ -1186,12 +1186,11 @@ variables:
             - eq:
                 - ${load_balancer_strategy_existing_subnet}
                 - "Use Existing Load Balancer"
-    type: oci:loadbalancer:loadbalancer:id
+    type: string
+    pattern: ^ocid1.loadbalancer.*$
     title: Existing Load Balancer ID
     description: The OCID of the existing load balancer. If you use an existing load balancer, the WebLogic Server nodes are added to the backend set of the existing load balancer.
     required: true
-    dependsOn:
-      compartmentId: ${network_compartment_id}
 
   backendset_name_for_existing_load_balancer:
     visible:

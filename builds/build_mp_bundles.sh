@@ -301,7 +301,7 @@ replace_byol_suite_14110_variables()
 }
 replace_ucm_suite_12214_variables()
 {  
-  export TF_VAR_FILE=${SCRIPT_DIR}/../terraform/inputs/mp_image_suite_byol.tfvars
+  export TF_VAR_FILE=${SCRIPT_DIR}/../terraform/inputs/mp_image_suite_ucm.tfvars
   get_mp_values
   sed -i '/variable "tf_script_version" {/!b;n;n;n;cdefault = '"$tf_script_version"'' ${TMP_BUILD}/variables.tf
   sed -i 's/default     = "EE"/default     = "SUITE"/' ${TMP_BUILD}/edition.tf
@@ -314,7 +314,7 @@ replace_ucm_suite_12214_variables()
 }
 replace_ucm_suite_14110_variables()
 { 
-  export TF_VAR_FILE=${SCRIPT_DIR}/../terraform/inputs/mp_image_suite_byol.tfvars
+  export TF_VAR_FILE=${SCRIPT_DIR}/../terraform/inputs/mp_image_suite_ucm.tfvars
   get_mp_values
   sed -i '/variable "tf_script_version" {/!b;n;n;n;cdefault = '"$tf_script_version"'' ${TMP_BUILD}/variables.tf
   sed -i 's/default     = "EE"/default     = "SUITE"/' ${TMP_BUILD}/edition.tf

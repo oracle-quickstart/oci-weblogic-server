@@ -116,23 +116,14 @@ data "oci_file_storage_mount_targets" "mount_targets" {
   id                  = var.mount_target_id
 }
 
-
-data "oci_file_storage_mount_targets" "existing_mount_target" {
-  count = var.existing_fss_id != "" ? 1 : 0
-  #Required
-  availability_domain = local.fss_availability_domain
-  compartment_id      = var.mount_target_compartment_id
-  id                  = var.mount_target_id
-}
-
 data "oci_core_private_ip" "mount_target_private_ips" {
   count = var.existing_fss_id != "" ? 1 : 0
   #Required
-  private_ip_id = data.oci_file_storage_mount_targets.existing_mount_target[0].mount_targets[0].private_ip_ids[0]
+  private_ip_id = data.oci_file_storage_mount_targets.mount_targets[0].mount_targets[0].private_ip_ids[0]
 }
 
 data "oci_apm_apm_domain" "apm_domain" {
-  count = var.use_apm_service ? 1 : 0
+  count = local.use_apm_service ? 1 : 0
 
   #Required
   apm_domain_id = var.apm_domain_id
@@ -149,13 +140,6 @@ data "oci_core_subnet" "mount_target_existing_subnet" {
 
   #Required
   subnet_id = data.oci_file_storage_mount_targets.mount_targets[0].mount_targets[0].subnet_id
-}
-
-data "oci_core_subnet" "mount_target_existing_subnet_by_fss" {
-  count = var.existing_fss_id == "" ? 0 : 1
-
-  #Required
-  subnet_id = data.oci_file_storage_mount_targets.existing_mount_target[0].mount_targets[0].subnet_id
 }
 
 data "oci_objectstorage_namespace" "object_namespace" {

@@ -204,7 +204,7 @@ module "policies" {
   is_idcs_selected            = var.is_idcs_selected
   idcs_client_secret_id       = var.idcs_client_secret_id
   use_oci_logging             = var.use_oci_logging
-  use_apm_service             = var.use_apm_service
+  use_apm_service             = local.use_apm_service
   apm_domain_compartment_id   = local.apm_domain_compartment_id
   use_autoscaling             = var.use_autoscaling
   ocir_auth_token_id          = var.ocir_auth_token_id
@@ -403,7 +403,7 @@ module "validators" {
   use_oci_logging  = var.use_oci_logging
   dynamic_group_id = var.dynamic_group_id
 
-  use_apm_service           = var.use_apm_service
+  use_apm_service           = local.use_apm_service
   apm_domain_id             = var.apm_domain_id
   apm_private_data_key_name = var.apm_private_data_key_name
 
@@ -558,13 +558,15 @@ module "compute" {
   wls_domain_name               = format("%s_domain", local.service_name_prefix)
   wls_server_startup_args       = var.wls_server_startup_args
   wls_existing_vcn_id           = var.wls_existing_vcn_id
-  mount_vcn_id                  = var.mount_target_id != "" ? data.oci_core_subnet.mount_target_existing_subnet[0].vcn_id : (var.existing_fss_id != "" ? data.oci_core_subnet.mount_target_existing_subnet_by_fss[0].vcn_id : "")
+  mount_vcn_id                  = var.mount_target_id != "" ? data.oci_core_subnet.mount_target_existing_subnet[0].vcn_id : ""
   wls_vcn_cidr                  = var.wls_vcn_cidr != "" ? var.wls_vcn_cidr : element(concat(module.network-vcn.*.vcn_cidr, tolist([""])), 0)
   wls_version                   = var.wls_version
   wls_edition                   = var.wls_edition
   allow_manual_domain_extension = var.allow_manual_domain_extension
   num_vm_instances              = var.wls_node_count
   resource_name_prefix          = var.service_name
+
+  deploy_sample_app = local.deploy_sample_app
 
   is_bastion_instance_required = var.is_bastion_instance_required
 
@@ -610,7 +612,7 @@ module "compute" {
   log_group_id    = element(concat(module.observability-common[*].log_group_id, [""]), 0)
   use_oci_logging = var.use_oci_logging
 
-  use_apm_service           = var.use_apm_service
+  use_apm_service           = local.use_apm_service
   apm_domain_compartment_id = local.apm_domain_compartment_id
   apm_domain_id             = var.apm_domain_id
   apm_private_data_key_name = var.apm_private_data_key_name
