@@ -22,3 +22,9 @@ variable "tags" {
     freeform_tags = {}
   }
 }
+
+variable "add_delay" {
+  type = bool
+  default = false
+  description = "Add delay to log group creation for OCI policy to be effective"
+}
