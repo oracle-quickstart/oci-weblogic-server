@@ -484,6 +484,7 @@ module "observability-common" {
 
   compartment_id      = var.compartment_ocid
   service_prefix_name = local.service_name_prefix
+  add_delay           = var.use_autoscaling
 }
 
 module "observability-autoscaling" {
