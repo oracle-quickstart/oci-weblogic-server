@@ -1,4 +1,4 @@
-# Copyright (c) 2022, Oracle and/or its affiliates.
+# Copyright (c) 2022, 2023, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 locals {
@@ -45,11 +45,15 @@ locals {
   vmscripts_zip_bundle_msg      = "WLSC-ERROR: The value for wlsoci vmscripts zip bundle path is not valid. The value must be obsolute path to vmscripts zip bundle."
   validate_vmscripts_zip_bundle = local.invalid_vmscripts_zip_bundle ? local.validators_msg_map[local.vmscripts_zip_bundle_msg] : null
 
-  missing_lb_availability_domains      = !var.use_regional_subnet && local.add_new_load_balancer && (var.is_lb_private ? var.lb_availability_domain_name1 == "" : (var.lb_availability_domain_name1 == "" || var.lb_availability_domain_name2 == ""))
+  new_ad_subnets = !var.use_regional_subnet && !var.use_existing_subnets
+  new_ad_subnets_not_supported_msg = "WLSC-ERROR: Creating new AD specific subnets is not supported."
+  new_ad_subnets_not_supported = local.new_ad_subnets ? local.validators_msg_map[local.new_ad_subnets_not_supported_msg] : null
+
+  missing_lb_availability_domains      = !var.use_regional_subnet && var.use_existing_subnets && local.add_new_load_balancer && (var.is_lb_private ? var.lb_availability_domain_name1 == "" : (var.lb_availability_domain_name1 == "" || var.lb_availability_domain_name2 == ""))
   lb_availability_domains_required_msg = "WLSC-ERROR: The values for lb_subnet_1_availability_domain_name and lb_subnet_2_availability_domain_name are required for AD specific subnets."
   missing_lb_availability_domain_names = local.missing_lb_availability_domains ? local.validators_msg_map[local.lb_availability_domains_required_msg] : null
 
-  invalid_lb_availability_domain_indexes  = !var.use_regional_subnet && local.add_new_load_balancer && var.lb_availability_domain_name1 != "" && (var.lb_availability_domain_name1 == var.lb_availability_domain_name2)
+  invalid_lb_availability_domain_indexes  = !var.use_regional_subnet && var.use_existing_subnets && local.add_new_load_balancer && var.lb_availability_domain_name1 != "" && (var.lb_availability_domain_name1 == var.lb_availability_domain_name2)
   lb_availability_domain_indexes_msg      = "WLSC-ERROR: The value for lb_subnet_1_availability_domain_name=[${var.lb_availability_domain_name1}] and lb_subnet_2_availability_domain_name=[${var.lb_availability_domain_name2}] cannot be same."
   validate_lb_availability_domain_indexes = local.invalid_lb_availability_domain_indexes ? local.validators_msg_map[local.lb_availability_domain_indexes_msg] : null
 }
