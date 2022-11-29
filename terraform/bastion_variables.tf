@@ -17,7 +17,7 @@ variable "existing_bastion_instance_id" {
 variable "bastion_instance_shape" {
   type        = string
   description = "Shape of bastion VM instances"
-  default     = "VM.Standard2.1"
+  default     = "VM.Standard.E4.Flex"
 }
 
 # TODO: uncomment this when UI uses control with flex shape
