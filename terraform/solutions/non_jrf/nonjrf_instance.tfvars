@@ -17,13 +17,13 @@ wls_vcn_cidr           = "10.0.0.0/16"
 
 ### WebLogic credentials to login to the console
 wls_admin_user        = "weblogic"
-wls_admin_password_id = "ocid1.vaultsecret.xxxxxxxxxxxxxxx
+wls_admin_password_id = "ocid1.vaultsecret.xxxxxxxxxxxxxxx"
 
 ### WebLogic server compute instance parameters
 instance_shape = "VM.Standard.E4.Flex"
 wls_version    = "14.1.1.0"
-wls_ocpu_count               = "1"
-wls_node_count               = "2"
+wls_ocpu_count               = 1
+wls_node_count               = 2
 wls_availability_domain_name = "HiGv:US-ASHBURN-AD-2"
 wls_subnet_cidr              = "10.0.2.0/24"
 
@@ -33,4 +33,4 @@ bastion_subnet_cidr          = "10.0.1.0/24"
 bastion_instance_shape       = "VM.Standard2.1"
 
 ### Logging parameter to enable logging service integration for WebLogic instances
-use_oci_logging = "true"
+use_oci_logging = true
