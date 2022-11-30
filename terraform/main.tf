@@ -537,28 +537,33 @@ module "compute" {
   ssh_public_key         = var.ssh_public_key
   compute_nsg_ids        = local.compute_nsg_ids
 
-  tenancy_id                    = var.tenancy_ocid
-  tf_script_version             = var.tf_script_version
-  use_regional_subnet           = local.use_regional_subnet
-  wls_14c_jdk_version           = var.wls_14c_jdk_version
-  wls_admin_user                = var.wls_admin_user
-  wls_admin_password_id         = var.wls_admin_password_id
-  wls_admin_server_name         = format("%s_adminserver", local.service_name_prefix)
-  wls_ms_server_name            = format("%s_server_", local.service_name_prefix)
-  wls_nm_port                   = var.wls_nm_port
-  wls_ms_port                   = var.wls_ms_port
-  wls_ms_ssl_port               = var.wls_ms_ssl_port
-  wls_ms_extern_ssl_port        = var.wls_ms_extern_ssl_port
-  wls_ms_extern_port            = var.wls_ms_extern_port
-  wls_cluster_name              = format("%s_cluster", local.service_name_prefix)
-  wls_machine_name              = format("%s_machine_", local.service_name_prefix)
-  wls_extern_admin_port         = var.wls_extern_admin_port
-  wls_extern_ssl_admin_port     = var.wls_extern_ssl_admin_port
-  wls_admin_port                = var.wls_admin_port
-  wls_admin_ssl_port            = var.wls_admin_ssl_port
-  wls_domain_name               = format("%s_domain", local.service_name_prefix)
-  wls_server_startup_args       = var.wls_server_startup_args
-  wls_existing_vcn_id           = var.wls_existing_vcn_id
+  tenancy_id                = var.tenancy_ocid
+  tf_script_version         = var.tf_script_version
+  use_regional_subnet       = local.use_regional_subnet
+  wls_14c_jdk_version       = var.wls_14c_jdk_version
+  wls_admin_user            = var.wls_admin_user
+  wls_admin_password_id     = var.wls_admin_password_id
+  wls_admin_server_name     = format("%s_adminserver", local.service_name_prefix)
+  wls_ms_server_name        = format("%s_server_", local.service_name_prefix)
+  wls_nm_port               = var.wls_nm_port
+  wls_ms_port               = var.wls_ms_port
+  wls_ms_ssl_port           = var.wls_ms_ssl_port
+  wls_ms_extern_ssl_port    = var.wls_ms_extern_ssl_port
+  wls_ms_extern_port        = var.wls_ms_extern_port
+  wls_cluster_name          = format("%s_cluster", local.service_name_prefix)
+  wls_machine_name          = format("%s_machine_", local.service_name_prefix)
+  wls_extern_admin_port     = var.wls_extern_admin_port
+  wls_extern_ssl_admin_port = var.wls_extern_ssl_admin_port
+  wls_admin_port            = var.wls_admin_port
+  wls_admin_ssl_port        = var.wls_admin_ssl_port
+  wls_domain_name           = format("%s_domain", local.service_name_prefix)
+  wls_server_startup_args   = var.wls_server_startup_args
+  wls_existing_vcn_id       = var.wls_existing_vcn_id
+
+  #The following two are for adding a dependency on the peering module
+  wls_vcn_peering_dns_resolver_id           = element(flatten(concat(module.vcn-peering[*].wls_vcn_dns_resolver_id, [""])), 0)
+  wls_vcn_peering_route_table_attachment_id = local.assign_weblogic_public_ip ? element(flatten(concat(module.vcn-peering[*].wls_vcn_public_route_table_attachment_id, [""])), 0) : element(flatten(concat(module.vcn-peering[*].wls_vcn_private_route_table_attachment_id, [""])), 0)
+
   mount_vcn_id                  = var.mount_target_id != "" ? data.oci_core_subnet.mount_target_existing_subnet[0].vcn_id : ""
   wls_vcn_cidr                  = var.wls_vcn_cidr != "" ? var.wls_vcn_cidr : element(concat(module.network-vcn.*.vcn_cidr, tolist([""])), 0)
   wls_version                   = var.wls_version
