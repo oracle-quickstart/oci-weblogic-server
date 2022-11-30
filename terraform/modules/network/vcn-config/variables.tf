@@ -47,6 +47,12 @@ variable "wls_admin_port_source_cidr" {
   description = "The CIDR value of the wls admin source port"
 }
 
+variable "assign_backend_public_ip" {
+  type = string
+  description = "Indicates if the WebLogic Server VMs will have a public IP address"
+  default = false
+}
+
 // Optional params
 
 /*

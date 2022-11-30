@@ -2,8 +2,29 @@
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 resource "oci_core_network_security_group_security_rule" "bastion_ingress_security_rule" {
+  count = var.is_bastion_instance_required && !var.assign_backend_public_ip ? 1 : 0
 
   network_security_group_id = element(var.nsg_ids["bastion_nsg_id"], 0)
+  direction                 = "INGRESS"
+  protocol                  = "6"
+
+
+  source      = "0.0.0.0/0"
+  source_type = "CIDR_BLOCK"
+  stateless   = false
+
+  tcp_options {
+    destination_port_range {
+      max = 22
+      min = 22
+    }
+  }
+}
+
+resource "oci_core_network_security_group_security_rule" "wls_public_ingress_security_rule" {
+  count = var.assign_backend_public_ip ? 1 : 0
+
+  network_security_group_id = element(var.nsg_ids["managed_nsg_id"], 0)
   direction                 = "INGRESS"
   protocol                  = "6"
 
@@ -105,7 +126,7 @@ resource "oci_core_network_security_group_security_rule" "lb_ingress_security_ru
 }
 
 resource "oci_core_network_security_group_security_rule" "wls_bastion_ingress_security_rule" {
-  count                     = var.existing_bastion_instance_id == "" && var.is_bastion_instance_required ? 1 : 0
+  count                     = var.existing_bastion_instance_id == "" && var.is_bastion_instance_required && !var.assign_backend_public_ip ? 1 : 0
   network_security_group_id = element(var.nsg_ids["managed_nsg_id"], 0)
   direction                 = "INGRESS"
   protocol                  = "all"
@@ -116,7 +137,7 @@ resource "oci_core_network_security_group_security_rule" "wls_bastion_ingress_se
 }
 
 resource "oci_core_network_security_group_security_rule" "wls_existing_bastion_ingress_security_rule" {
-  count                     = var.existing_bastion_instance_id != "" && var.is_bastion_instance_required ? 1 : 0
+  count                     = var.existing_bastion_instance_id != "" && var.is_bastion_instance_required && !var.assign_backend_public_ip ? 1 : 0
   network_security_group_id = element(var.nsg_ids["managed_nsg_id"], 0)
   direction                 = "INGRESS"
   protocol                  = "all"

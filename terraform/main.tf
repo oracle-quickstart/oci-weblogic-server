@@ -38,6 +38,7 @@ module "network-vcn-config" {
   wls_expose_admin_port      = var.wls_expose_admin_port
   wls_admin_port_source_cidr = var.wls_admin_port_source_cidr
   wls_ms_content_port        = var.is_idcs_selected ? var.idcs_cloudgate_port : var.wls_ms_extern_ssl_port
+  assign_backend_public_ip   = local.assign_weblogic_public_ip
 
   wls_security_list_name       = !local.assign_weblogic_public_ip ? "bastion-security-list" : "wls-security-list"
   wls_subnet_cidr              = local.wls_subnet_cidr
@@ -56,7 +57,7 @@ module "network-vcn-config" {
   create_nat_gateway           = var.is_idcs_selected && var.wls_vcn_name != ""
   create_service_gateway       = var.wls_vcn_name != ""
   create_internet_gateway      = var.wls_vcn_name != ""
-  lb_destination_cidr          = var.is_lb_private ? var.bastion_subnet_cidr : "0.0.0.0/0"
+  lb_destination_cidr          = var.is_lb_private ? local.bastion_subnet_cidr : "0.0.0.0/0"
   add_fss                      = var.add_fss
   add_existing_mount_target    = local.add_existing_mount_target
   add_existing_fss             = var.add_existing_fss
@@ -78,7 +79,7 @@ module "network-vcn-config" {
 
 module "network-lb-nsg" {
   source         = "./modules/network/nsg"
-  count          = local.use_existing_lb ? 0 : local.add_load_balancer && var.lb_subnet_1_cidr != "" ? 1 : 0
+  count          = local.use_existing_lb ? 0 : local.add_load_balancer && local.lb_subnet_1_subnet_cidr != "" ? 1 : 0
   compartment_id = local.network_compartment_id
   vcn_id         = local.vcn_id
   nsg_name       = "${local.service_name_prefix}-lb-nsg"
@@ -91,7 +92,7 @@ module "network-lb-nsg" {
 
 module "network-bastion-nsg" {
   source         = "./modules/network/nsg"
-  count          = var.is_bastion_instance_required && var.existing_bastion_instance_id == "" && var.bastion_subnet_cidr != "" ? 1 : 0
+  count          = var.is_bastion_instance_required && var.existing_bastion_instance_id == "" && local.bastion_subnet_cidr != "" ? 1 : 0
   compartment_id = local.network_compartment_id
   vcn_id         = local.vcn_id
   nsg_name       = "${local.service_name_prefix}-bastion-nsg"
@@ -104,7 +105,7 @@ module "network-bastion-nsg" {
 
 module "network-mount-target-nsg" {
   source         = "./modules/network/nsg"
-  count          = var.add_fss && var.mount_target_subnet_cidr != "" ? 1 : 0
+  count          = var.add_fss && local.mount_target_subnet_cidr != "" ? 1 : 0
   compartment_id = local.network_compartment_id
   vcn_id         = local.vcn_id
   nsg_name       = "${local.service_name_prefix}-mount-target-nsg"
@@ -117,7 +118,7 @@ module "network-mount-target-nsg" {
 
 module "network-compute-admin-nsg" {
   source         = "./modules/network/nsg"
-  count          = var.wls_subnet_cidr != "" ? 1 : 0
+  count          = local.wls_subnet_cidr != "" ? 1 : 0
   compartment_id = local.network_compartment_id
   vcn_id         = local.vcn_id
   nsg_name       = "${local.service_name_prefix}-admin-server-nsg"
@@ -130,7 +131,7 @@ module "network-compute-admin-nsg" {
 
 module "network-compute-managed-nsg" {
   source         = "./modules/network/nsg"
-  count          = var.wls_subnet_cidr != "" ? 1 : 0
+  count          = local.wls_subnet_cidr != "" ? 1 : 0
   compartment_id = local.network_compartment_id
   vcn_id         = local.vcn_id
   nsg_name       = "${local.service_name_prefix}-managed-server-nsg"
@@ -363,7 +364,7 @@ module "validators" {
   existing_vcn_id              = var.wls_existing_vcn_id
   wls_subnet_cidr              = var.wls_subnet_cidr
   lb_subnet_1_cidr             = var.lb_subnet_1_cidr
-  bastion_subnet_cidr          = var.bastion_subnet_cidr
+  bastion_subnet_cidr          = local.bastion_subnet_cidr
   assign_public_ip             = local.assign_weblogic_public_ip
   is_bastion_instance_required = var.is_bastion_instance_required
   existing_bastion_instance_id = var.existing_bastion_instance_id
