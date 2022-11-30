@@ -49,8 +49,8 @@ variable "wls_admin_port_source_cidr" {
 
 variable "assign_backend_public_ip" {
   type = string
-  description = "TBD"
-  #default = false
+  description = "Indicates if the WebLogic Server VMs will have a public IP address"
+  default = false
 }
 
 // Optional params
