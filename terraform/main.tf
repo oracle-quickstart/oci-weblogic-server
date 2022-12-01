@@ -79,7 +79,7 @@ module "network-vcn-config" {
 
 module "network-lb-nsg" {
   source         = "./modules/network/nsg"
-  count          = local.use_existing_lb ? 0 : local.add_load_balancer && local.lb_subnet_1_subnet_cidr != "" ? 1 : 0
+  count          = local.use_existing_lb ? 0 : local.add_load_balancer && !local.use_existing_subnets && local.lb_subnet_1_subnet_cidr != "" ? 1 : 0
   compartment_id = local.network_compartment_id
   vcn_id         = local.vcn_id
   nsg_name       = "${local.service_name_prefix}-lb-nsg"
@@ -92,7 +92,7 @@ module "network-lb-nsg" {
 
 module "network-bastion-nsg" {
   source         = "./modules/network/nsg"
-  count          = var.is_bastion_instance_required && var.existing_bastion_instance_id == "" && local.bastion_subnet_cidr != "" ? 1 : 0
+  count          = var.is_bastion_instance_required && var.existing_bastion_instance_id == "" && !local.use_existing_subnets && local.bastion_subnet_cidr != "" ? 1 : 0
   compartment_id = local.network_compartment_id
   vcn_id         = local.vcn_id
   nsg_name       = "${local.service_name_prefix}-bastion-nsg"
@@ -105,7 +105,7 @@ module "network-bastion-nsg" {
 
 module "network-mount-target-nsg" {
   source         = "./modules/network/nsg"
-  count          = var.add_fss && local.mount_target_subnet_cidr != "" ? 1 : 0
+  count          = var.add_fss && !local.use_existing_subnets && local.mount_target_subnet_cidr != "" ? 1 : 0
   compartment_id = local.network_compartment_id
   vcn_id         = local.vcn_id
   nsg_name       = "${local.service_name_prefix}-mount-target-nsg"
@@ -118,7 +118,7 @@ module "network-mount-target-nsg" {
 
 module "network-compute-admin-nsg" {
   source         = "./modules/network/nsg"
-  count          = local.wls_subnet_cidr != "" ? 1 : 0
+  count          = !local.use_existing_subnets && local.wls_subnet_cidr != "" ? 1 : 0
   compartment_id = local.network_compartment_id
   vcn_id         = local.vcn_id
   nsg_name       = "${local.service_name_prefix}-admin-server-nsg"
@@ -131,7 +131,7 @@ module "network-compute-admin-nsg" {
 
 module "network-compute-managed-nsg" {
   source         = "./modules/network/nsg"
-  count          = local.wls_subnet_cidr != "" ? 1 : 0
+  count          = !local.use_existing_subnets && local.wls_subnet_cidr != "" ? 1 : 0
   compartment_id = local.network_compartment_id
   vcn_id         = local.vcn_id
   nsg_name       = "${local.service_name_prefix}-managed-server-nsg"
@@ -169,8 +169,8 @@ module "network-bastion-subnet" {
   count              = !local.assign_weblogic_public_ip && var.bastion_subnet_id == "" && var.is_bastion_instance_required && var.existing_bastion_instance_id == "" ? 1 : 0
   compartment_id     = local.network_compartment_id
   vcn_id             = local.vcn_id
-  dhcp_options_id    = module.network-vcn-config[0].dhcp_options_id
-  route_table_id     = module.network-vcn-config[0].route_table_id
+  dhcp_options_id    = length(module.network-vcn-config) > 0 ? module.network-vcn-config[0].dhcp_options_id : ""
+  route_table_id     = length(module.network-vcn-config) > 0 ? module.network-vcn-config[0].route_table_id : ""
   subnet_name        = "${local.service_name_prefix}-${var.bastion_subnet_name}"
   dns_label          = "${var.bastion_subnet_name}-${substr(uuid(), -7, -1)}"
   cidr_block         = local.bastion_subnet_cidr
@@ -236,7 +236,7 @@ module "bastion" {
     freeform_tags = local.free_form_tags
   }
   is_bastion_with_reserved_public_ip = var.is_bastion_with_reserved_public_ip
-  bastion_nsg_id                     = var.bastion_subnet_id != "" ? (var.add_existing_nsg ? [var.existing_bastion_nsg_id] : []) : element(module.network-bastion-nsg[*].nsg_id, 0)
+  bastion_nsg_id                     = var.bastion_subnet_id != "" ? (var.add_existing_nsg ? [var.existing_bastion_nsg_id] : []) : flatten(module.network-bastion-nsg[*].nsg_id)
 
   use_bastion_marketplace_image = var.use_bastion_marketplace_image
   mp_listing_id                 = var.bastion_listing_id
