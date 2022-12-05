@@ -1435,11 +1435,9 @@ variables:
             - eq:
                 - ${load_balancer_strategy_new_subnet}
                 - "Create New Load Balancer"
-            - and:
-                - not:
-                    - eq:
-                        - ${load_balancer_strategy_existing_subnet}
-                        - "Use Existing Load Balancer"
+            - eq:
+                - ${load_balancer_strategy_existing_subnet}
+                - "Create New Load Balancer"
     type: oci:core:nsg:id
     title: "Network Security Group for Load Balancer"
     description: "The pre-created NSG that is assigned to the load balancer"
