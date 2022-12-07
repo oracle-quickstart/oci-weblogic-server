@@ -654,7 +654,7 @@ variables:
             - ${create_new_vcn}
     type: boolean
     default: false
-    title: "Add existing Mount Target"
+    title: "Add Existing Mount Target"
     description: "Use the existing mount target"
 
   mount_target_compartment_id:
