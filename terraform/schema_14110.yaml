@@ -1625,7 +1625,7 @@ variables:
             - ${create_new_vcn}
     type: oci:mount:target:id
     title: "Existing Mount Target"
-    description: "The existing mount target to select from FSS availability domain and mount target compartment"
+    description: "The existing mount target to select from file system availability domain and mount target compartment"
     dependsOn:
       compartmentId: ${mount_target_compartment_id}
       availabilityDomain: ${fss_availability_domain}
