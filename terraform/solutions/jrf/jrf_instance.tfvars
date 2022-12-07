@@ -12,7 +12,7 @@ generate_dg_tag = true
 
 ### Existing Network VCN resource parameters
 network_compartment_id = "ocid1.compartment.xxxxxxxxxxxxxx"
-wls_existing_vcn_id	= "ocid1.vcn.xxxxxxxxxxxxxxx"
+wls_existing_vcn_id = "ocid1.vcn.xxxxxxxxxxxxxxx"
 
 ### WebLogic credentials to login to the console
 wls_admin_user = "weblogic"
