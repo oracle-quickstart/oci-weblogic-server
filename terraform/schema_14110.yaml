@@ -654,8 +654,8 @@ variables:
             - ${create_new_vcn}
     type: boolean
     default: false
-    title: "Existing Mount Target"
-    description: "Use the existing mount target ID"
+    title: "Add existing Mount Target"
+    description: "Use the existing mount target"
 
   mount_target_compartment_id:
     visible:
@@ -1624,8 +1624,8 @@ variables:
         - not:
             - ${create_new_vcn}
     type: oci:mount:target:id
-    title: Existing Mount Target ID
-    description: The Oracle Cloud Identifier (OCID) of your existing mount target. The existing mount target must be in the same subnet which is already present in the chosen VCN.
+    title: Existing Mount Target
+    description: "The existing mount target to select from FSS availability domain and mount target compartment"
     dependsOn:
       compartmentId: ${mount_target_compartment_id}
       availabilityDomain: ${fss_availability_domain}
