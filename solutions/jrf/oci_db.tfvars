@@ -10,4 +10,4 @@ oci_db_user = "SYS"
 oci_db_password_id = "ocid1.vaultsecret.xxxxxxxxxxxxxxx"
 oci_db_network_compartment_id = "ocid1.compartment.xxxxxxxxxxxxxxx"
 oci_db_existing_vcn_id = "ocid1.vcn.xxxxxxxxxxxxxxxa"
-db_existing_vcn_add_secrule = "true"
+db_existing_vcn_add_secrule = true

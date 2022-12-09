@@ -29,4 +29,4 @@ wls_subnet_id = "ocid1.subnet.xxxxxxxxxxxxxxx"
 ### Bastion parameters to create new bastion instance
 is_bastion_instance_required = true
 bastion_subnet_id = "ocid1.subnet.xxxxxxxxxxxxxxx"
-bastion_instance_shape = "VM.Standard2.1"
+bastion_instance_shape = "VM.Standard.E4.Flex"
