@@ -1432,6 +1432,12 @@ variables:
                 - ${create_new_vcn}
             - not:
                 - ${create_new_subnets}
+            - eq:
+                - ${load_balancer_strategy_new_subnet}
+                - "Create New Load Balancer"
+            - eq:
+                - ${load_balancer_strategy_existing_subnet}
+                - "Create New Load Balancer"
     type: oci:core:nsg:id
     title: "Network Security Group for Load Balancer"
     description: "The pre-created NSG that is assigned to the load balancer"
@@ -2047,7 +2053,7 @@ variables:
                     - ${add_existing_mount_target}
     type: oci:identity:availabilitydomain:name
     title: File System Availability Domain
-    description: The name of the availability domain in which to create the file system and mount target.
+    description: "The name of the availability domain for the file system and mount target"
     dependsOn:
       compartmentId: ${compartment_ocid}
     required: true
