@@ -311,12 +311,19 @@ These terraform scripts are licensed under the Universal Permissive License 1.0.
 There are two licensing options available:
 
 ### Universal Credits Model (UCM)
-The listing in OCI Marketplace can be found here: https://cloudmarketplace.oracle.com/marketplace/en_US/listing/67812026
-When deploying using UCM, the Essbase license in governed by the following Licensing terms: https://cloudmarketplace.oracle.com/marketplace/content?contentId=70514770&render=inline
+The listings in OCI Marketplace can be found here:
+- Oracle WebLogic Server Enterprise Edition UCM: https://cloudmarketplace.oracle.com/marketplace/en_US/listing/72493372
+- Oracle WebLogic Suite UCM: https://cloudmarketplace.oracle.com/marketplace/en_US/listing/72492657
+
+When deploying using UCM, the WebLogic for OCI license in governed by the following Licensing terms: https://cloudmarketplace.oracle.com/marketplace/content?contentId=70514770&render=inline
 
 ### Bring Your Own License (BYOL)
-The listing in OCI Marketplace can be found here: https://cloudmarketplace.oracle.com/marketplace/en_US/listing/63497640
-When deploying using BYOL, the Essbase license is governed by the following Licensing terms: https://cloudmarketplace.oracle.com/marketplace/content?contentId=18088784&render=inline
+The listing in OCI Marketplace can be found here: 
+- Oracle WebLogic Server Standard Edition BYOL: https://cloudmarketplace.oracle.com/marketplace/en_US/listing/63497640
+- Oracle WebLogic Server Enterprise Edition BYOL: https://cloudmarketplace.oracle.com/marketplace/en_US/listing/63497374
+- Oracle WebLogic Suite BYOL: https://cloudmarketplace.oracle.com/marketplace/en_US/listing/63498586
+
+When deploying using BYOL, the WebLogic for OCI license is governed by the following Licensing terms: https://cloudmarketplace.oracle.com/marketplace/content?contentId=18088784&render=inline
 
 
 [wlsoci]: https://docs.oracle.com/en/cloud/paas/weblogic-cloud/index.html
