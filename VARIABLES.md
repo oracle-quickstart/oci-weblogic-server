@@ -32,7 +32,7 @@ Review the [variables.tf](./terraform/variables.tf) file for more details.
 You can create a new VCN for your stack, or you can use an existing VCN, but create new subnets, or you can use existing
 subnets for your stack. If you use existing subnets, you can use security lists to control network traffic between resources
 of the stack, or you can use network security groups (NSG). To use one of these options, you use variables from the
-[variables.tf](./terraform/variables.tf) file.
+[network_variables.tf](./terraform/network_variables.tf) file.
 
 If you want to create a new VCN, you can set these variables:
 ```terraform

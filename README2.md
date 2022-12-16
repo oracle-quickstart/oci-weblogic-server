@@ -8,14 +8,15 @@ Oracle WebLogic Server for OCI is available as a set of applications in the [Ora
 After launching one of these applications, you use a simple wizard interface to configure and provision your domains along
 with any supporting cloud resources like compute instances, networks and load balancers.
 
-This Quick Start is an alternative to deploy a Oracle WebLogic Server for OCI stack, that can be used to automate the creation
-of WebLogic domains in OCI. You can use the Oracle Cloud Infrastructure [Resource Manager (ORM)][orm] or the Terraform CLI.
+This Quick Start is an alternative to deploy an Oracle WebLogic Server for OCI stack, that can be used to automate the creation
+of WebLogic domains in OCI. You can use the Oracle Cloud Infrastructure [Resource Manager (ORM)][orm] or the Terraform
+command-line interface (CLI).
 
 For more details on deploying the Oracle WebLogic Server for OCI stack on Oracle Cloud Infrastructure, visit the
 "Using Oracle WebLogic Server for OCI" [guide](https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/index.html).
 
 
-### Full Topology
+## Full Topology
 
 ![Full Topology Diagram](./images/image-full_topology.png)
 
@@ -43,15 +44,15 @@ the pre-requisite steps to using Oracle WebLogic Server for OCI.
 
 For pre-requisites specific to Terraform CLI and ORM, see their corresponding section.
 
-## Using the Marketplace
+## Create Stack Using the Marketplace
 
 To create, manage and destroy a WebLogic for OCI stack using the Marketplace, follow the instructions in the
 [documentation](https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/create-stack1.html).
 
-## Using the Terraform command line tool
+## Create Stack Using the Terraform CLI
 
 You need to install the following software in your computer to create a stack using Terraform CLI:
- - [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
+ - [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git). Install the latest version
  - [Terraform](https://www.terraform.io/). The scripts in this Quick Start requires Terraform version >= 1.1.2, < 1.2.0
 
 First, get a local copy of this repo. You can make that with the commands:
@@ -81,7 +82,7 @@ $
 
 *NOTE*: All the `terraform` commands must be run from the `terraform` directory.
 
-Now, initialize the directory with the module in it. This makes the module aware of the OCI provider. You can do this by
+Next, initialize the directory with the module in it. This makes the module aware of the OCI provider. You can do this by
 running:
 
 ```bash
@@ -168,13 +169,21 @@ commands will detect it and remind you to do so if necessary.
 
 ```
 
-### Configure
+### Configure variables for the stack
 
-First, you need to configure the WebLogic edition, and the license to use when creating the stack. You can select the
-[BYOL license](#bring-your-own-license-byol) or the [UCM license](#universal-credits-model-ucm). To configure the edition
-and license:
-- Copy the file `mp_image_<edition>_<license>.tfvars` from the `terraform/inputs` directory, to the `terraform` directory
-- Rename the file to `terraform/mp_image_<edition>_<license>.tfvars` to `terraform/mp_image_<edition>_<license>.auto.tfvars`
+First, you need to set the image variables, depending on which WebLogic edition and type of license you want to use
+([BYOL license](#bring-your-own-license-byol) or [UCM license](#universal-credits-model-ucm)) when creating the stack.
+
+The following files contain the values for those variables:
+- [mp_image_se_byol.tfvars](./terraform/inputs/mp_image_se_byol.tfvars): WebLogic Standard Edition - BYOL
+- [mp_image_ee_byol.tfvars](./terraform/inputs/mp_image_ee_byol.tfvars): WebLogic Enterprise Edition - BYOL
+- [mp_image_ee_ucm.tfvars](./terraform/inputs/mp_image_ee_ucm.tfvars): WebLogic Enterprise Edition - UCM
+- [mp_image_suite_byol.tfvars](./terraform/inputs/mp_image_suite_byol.tfvars): WebLogic Suite - BYOL
+- [mp_image_suite_ucm.tfvars](./terraform/inputs/mp_image_suite_ucm.tfvars): WebLogic Suite - UCM
+
+To use one of the files above:
+- Copy the file from the `terraform/inputs` directory, to the `terraform` directory
+- Rename the file from `terraform/mp_image_<edition>_<license>.tfvars` to `terraform/mp_image_<edition>_<license>.auto.tfvars`
 
 For example, if you want to create a WebLogic Enterprise Edition UCM stack, copy the file `terraform/inputs/mp_image_ee_ucm.tfvars`
 to `terraform/mp_image_ee_ucm.auto.tfvars`
@@ -198,10 +207,20 @@ terraform apply
 
 You'll need to enter yes when prompted.
 
-After the stack creation is complete, you can
-[manage the domain](https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/manage-domain-oracle-weblogic-cloud.html).
+After the stack creation is complete, if you need to make changes to your stack (adding a new VM for example), you can edit
+the variables in your `terraform.tfvars` file, and run the following commands:
+
+```bash
+terraform plan
+# If the plan looks OK, run apply.
+terraform apply
+```
+*NOTE*: Not all variables can be changed after a stack is deployed.
 
 ### Destroy the Deployment
+
+**Important:** Refer to [documentation](https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/delete-domain.html)
+for steps to perform before running *terraform destroy*.
 
 When you no longer need the deployment, you can run this command to destroy it:
 
@@ -211,10 +230,7 @@ terraform destroy
 
 You'll need to enter yes when prompted.
 
-**Important:** Refer to [documentation](https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/delete-domain.html)
-for steps to perform before running *terraform destroy*.
-
-## Using OCI Resource Manager
+## Create Stack Using OCI Resource Manager
 
 Oracle Cloud Infrastructure [Resource Manager (ORM)][orm] allows you to manage your Terraform configurations and state.
 To simplify getting started, the Terraform zip files for use with ORM are created as part of each [release](https://github.com/oracle-quickstart/weblogic-server-for-oci/releases).
@@ -282,7 +298,8 @@ cd builds
 The zip files are generated in the `builds/binaries` directory.
 
 Follow [these steps](https://docs.oracle.com/en-us/iaas/Content/ResourceManager/Tasks/create-stack-local.htm) to create
-a ORM stack with a released zip file, or a zip file generated manually.
+a ORM stack, using either a zip file from one of the [releases](https://github.com/oracle-quickstart/weblogic-server-for-oci/releases),
+or a zip file generated manually with the `build_mp_bundles.sh` script.
 
 ### Deploy the stack
 
@@ -297,12 +314,11 @@ After the stack creation is complete, you can
 
 ### Destroy the stack
 
-When you no longer need the deployment, you can run a
-`destroy` [job](https://docs.oracle.com/en-us/iaas/Content/ResourceManager/Tasks/create-job-destroy.htm) to destroy the stack.
-
 **Important:** Refer to [documentation](https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/delete-domain.html) for
 steps to perform before running a `destroy` job.
 
+When you no longer need the deployment, you can run a
+`destroy` [job](https://docs.oracle.com/en-us/iaas/Content/ResourceManager/Tasks/create-job-destroy.htm) to destroy the stack.
 
 ## License
 
