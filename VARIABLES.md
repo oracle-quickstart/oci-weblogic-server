@@ -120,7 +120,7 @@ db_existing_vcn_add_secrule   = true
 ```
 Review the [db_variables.tf](./terraform/db_variables.tf) file for more details.
 
-## WebLogic compute instance
+## WebLogic Compute Instance
 
 To specify shape and OCPUs (for flex shapes) for the WebLogic VMs, you can set variables from the [variables.tf](./terraform/variables.tf) file.
 
@@ -179,6 +179,12 @@ There are some prerequisites for using IDCS. See the `Create a Confidential Appl
 
 To create a file system and mount to the WebLogic VMs of your stack, refer to the [fss_variables.tf](./terraform/fss_variables.tf)
 file for the variables to use.
+
+This is an example of how to create new file system and mount target:
+```terraform
+add_fss                  = true
+fss_availability_domain  = "<availability domain name>"
+```
 
 ## Observability
 
