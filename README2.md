@@ -15,26 +15,22 @@ command-line interface (CLI).
 For more details on deploying the Oracle WebLogic Server for OCI stack on Oracle Cloud Infrastructure, visit the
 "Using Oracle WebLogic Server for OCI" [guide](https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/index.html).
 
+## Common Topologies
 
-## Full Topology
+WebLogic for OCI offers many options to customize your stack, to create new resources or use existing resources, use features
+like Oracle Identity and Cloud Service, etc. 
 
-![Full Topology Diagram](./images/image-full_topology.png)
+The [solutions](./solutions) directory contains examples of different topologies that can be created in WebLogic for OCI, with 
+sample tfvars files, and instructions to create the stack.
 
-The above diagram shows a topology that includes most of the components supported by the Terraform scripts. In this scenario,
-the WebLogic servers are in a private subnet. To access the applications running on WebLogic, an OCI load balancer is provisioned
-in either public or private regional subnet.  A bastion instance with a public IP address is used to allow access to the VMs
-in the private subnet.
+The following topologies are included:
 
-To create an Oracle WebLogic Server domain that includes the Java Required Files (JRF) components, you must provide an
-existing database in Oracle Cloud Infrastructure. The diagram shows the stack using a database located in a VCN different
-from the one use by the WebLogic for OCI stack, with VCN peering. Peering is not necessary if the same VCN is used for both
-the stack and the database.
+| Solution                     | Features                                                                                                                              |
+|------------------------------|---------------------------------------------------------------------------------------------------------------------------------------|
+|[non_jrf](./solutions/non_jrf)|<ul><li>New VCN</li><li>New public load balancer</li><li>New bastion</li><li>New file system and mount target</li><li>OCI Logging</li> |
+|[jrf](./solutions/jrf)|<ul><li>Existing subnets</li><li>Existing load balancer</li><li>New bastion</li><li>JRF with OCI DB</li><li>IDCS</li>                          |
 
-By default, the Oracle WebLogic Server domain is configured to use the local WebLogic Server identity store to maintain
-administrators, application users, groups, and roles. These security elements are used to authenticate users, and to also
-authorize access to your applications and to tools like the WebLogic Server Administration Console. Oracle WebLogic Server
-for OCI can configure a WebLogic domain to use Oracle Identity Cloud Service for authentication. The diagram illustrates
-this configuration.
+Review each solution for more details.
 
 ## Before You Begin with Oracle WebLogic Server for OCI
 
