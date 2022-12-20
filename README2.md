@@ -168,7 +168,7 @@ commands will detect it and remind you to do so if necessary.
 ### Configure variables for the stack
 
 First, you need to set the image variables, depending on which WebLogic edition and type of license you want to use
-([BYOL license](#bring-your-own-license-byol) or [UCM license](#universal-credits-model-ucm)) when creating the stack.
+([BYOL license](#license) or [UCM license](#license)) when creating the stack.
 
 The following files contain the values for those variables:
 - [mp_image_se_byol.tfvars](./terraform/inputs/mp_image_se_byol.tfvars): WebLogic Standard Edition - BYOL
@@ -317,25 +317,7 @@ When you no longer need the deployment, you can run a
 `destroy` [job](https://docs.oracle.com/en-us/iaas/Content/ResourceManager/Tasks/create-job-destroy.htm) to destroy the stack.
 
 ## License
-
-These terraform scripts are licensed under the Universal Permissive License 1.0.  See [LICENSE](./LICENSE) for more details.
-
-There are two licensing options available:
-
-### Universal Credits Model (UCM)
-The listings in OCI Marketplace can be found here:
-- Oracle WebLogic Server Enterprise Edition UCM: https://cloudmarketplace.oracle.com/marketplace/en_US/listing/72493372
-- Oracle WebLogic Suite UCM: https://cloudmarketplace.oracle.com/marketplace/en_US/listing/72492657
-
-When deploying using UCM, the WebLogic for OCI license in governed by the following Licensing terms: https://cloudmarketplace.oracle.com/marketplace/content?contentId=70514770&render=inline
-
-### Bring Your Own License (BYOL)
-The listing in OCI Marketplace can be found here: 
-- Oracle WebLogic Server Standard Edition BYOL: https://cloudmarketplace.oracle.com/marketplace/en_US/listing/63497640
-- Oracle WebLogic Server Enterprise Edition BYOL: https://cloudmarketplace.oracle.com/marketplace/en_US/listing/63497374
-- Oracle WebLogic Suite BYOL: https://cloudmarketplace.oracle.com/marketplace/en_US/listing/63498586
-
-When deploying using BYOL, the WebLogic for OCI license is governed by the following Licensing terms: https://cloudmarketplace.oracle.com/marketplace/content?contentId=18088784&render=inline
+TBD
 
 
 [wlsoci]: https://docs.oracle.com/en/cloud/paas/weblogic-cloud/index.html
