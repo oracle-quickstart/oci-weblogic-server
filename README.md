@@ -167,8 +167,8 @@ commands will detect it and remind you to do so if necessary.
 
 ### Configure variables for the stack
 
-First, you need to set the image variables, depending on which WebLogic edition and type of license you want to use
-([BYOL license](#license) or [UCM license](#license)) when creating the stack.
+First, you need to set the image variables, depending on which WebLogic edition and type of license you want to use,
+BYOL license or UCM license, when creating the stack.
 
 The following files contain the values for those variables:
 - [mp_image_se_byol.tfvars](./terraform/inputs/mp_image_se_byol.tfvars): WebLogic Standard Edition - BYOL
@@ -315,9 +315,6 @@ steps to perform before running a `destroy` job.
 
 When you no longer need the deployment, you can run a
 `destroy` [job](https://docs.oracle.com/en-us/iaas/Content/ResourceManager/Tasks/create-job-destroy.htm) to destroy the stack.
-
-## License
-TBD
 
 
 [wlsoci]: https://docs.oracle.com/en/cloud/paas/weblogic-cloud/index.html
