@@ -1,8 +1,10 @@
 # Oracle WebLogic Server for Oracle Cloud Infrastructure
 
+wlsoci ee byol 12c stack
 [![Deploy to Oracle Cloud](https://oci-resourcemanager-plugin.plugins.oci.oraclecloud.com/latest/deploy-to-oracle-cloud.svg)
 ](https://cloud.oracle.com/resourcemanager/stacks/create?zipUrl=https://github.com/oracle-quickstart/weblogic-server-for-oci/releases/latest/download/wlsoci-resource-manager-ee-byol-mp-12.2.1.4.221018-22.4.3-221212101913.zip)
 
+wlsoci ee byol 14c stack
 [![Deploy to Oracle Cloud](https://oci-resourcemanager-plugin.plugins.oci.oraclecloud.com/latest/deploy-to-oracle-cloud.svg)
 ](https://cloud.oracle.com/resourcemanager/stacks/create?zipUrl=https://github.com/oracle-quickstart/weblogic-server-for-oci/releases/latest/download/wlsoci-resource-manager-ee-byol-mp-14.1.1.0.221018-22.4.3-221212101913.zip)
 
