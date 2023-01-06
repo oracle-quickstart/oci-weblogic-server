@@ -1656,9 +1656,19 @@ variables:
         - and:
             - ${create_policies}
             - or:
-                - ${create_new_vcn}
-                - not:
-                    - ${use_oci_db_connection_string}
+                - and:
+                    - eq:
+                        - ${db_strategy}
+                        - "Database System"
+                    - or:
+                        - ${create_new_vcn}
+                        - not:
+                            - ${use_oci_db_connection_string}
+                - and:
+                    - eq:
+                        - ${db_strategy}
+                        - "Autonomous Transaction Processing Database"
+                    - ${atp_db_uses_private_endpoint}
     type: boolean
     default: true
     title: Create Database Security List
