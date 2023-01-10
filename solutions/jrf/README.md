@@ -47,3 +47,4 @@ $ terraform apply -var-file=../solutions/common/tenancy.tfvars -var-file=inputs/
 
 To destroy the infrastructure
 $ terraform destroy var-file=../solutions/common/tenancy.tfvars -var-file=inputs/mp_image_ee_byol.tfvars -var-file=../solutions/jrf/jrf_instance.tfvars -var-file=../solutions/jrf/existing_lb.tfvars -var-file=../solutions/jrf/idcs.tfvars var-file=../solutions/jrf/oci_db.tfvars
+**Important:** Refer to [documentation](https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/delete-domain.html) for steps to perform before running *terraform destroy*.
