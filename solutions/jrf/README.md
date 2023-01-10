@@ -35,7 +35,7 @@ The directory weblogic-server-for-oci/solutions/jrf consists of the following te
 The directory weblogic-server-for-oci/solutions/common consists of the following:
 - tenancy.tfvars - tenancy configuration
 
-## Using the terraform command line tool
+## Using the Terraform command line tool
 cd weblogic-server-for-oci/terraform
 
 Initialize the terraform provider plugin
