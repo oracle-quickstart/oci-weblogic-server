@@ -10,10 +10,8 @@ Oracle Identity Cloud Service (IDCS) is used to authenticate user.
 [Full Topology Diagram](../common/Topology2.drawio.png)
 
 The above diagram shows a topology that includes most of the components supported by the Terraform scripts. 
-In this scenario, the WebLogic servers are in a private subnet. To access the applications running on WebLogic, an existing OCI load balancer in public regional subnet is used. A bastion instance with a public IP address is provisioned to allow access to the VMs in the private subnet.
-The Oracle WebLogic Server domain is configured to use Oracle Identity Cloud Service for authentication.
-The diagram shows the stack using a database located in a VCN different from the one used by the WebLogic for OCI stack, with VCN peering. Peering is necessary because DB VCN is different from Weblogic VCN. Since existing VCNs are used here, VCNs for WebLogic Server compute instances and the Oracle Cloud Infrastructure Application Database are peered manually before creating the stack for the Oracle WebLogic Server for OCI domain. 
-To peer the VCNs manually, see [Manual VCN Peering](https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/configure-database-parameters.html).
+In this scenario, the WebLogic servers are in a private subnet. To access the applications running on WebLogic, an existing OCI load balancer in public regional subnet is used. A bastion instance with a public IP address is provisioned to allow access to the VMs in the private subnet. The Oracle WebLogic Server domain is configured to use Oracle Identity Cloud Service for authentication.
+The diagram shows the stack using a database located in a VCN different from the one used by the WebLogic for OCI stack, with VCN peering. Peering is necessary because DB VCN is different from Weblogic VCN. Since existing VCNs are used here, VCNs for WebLogic Server compute instances and the Oracle Cloud Infrastructure Application Database are peered manually before creating the stack for the Oracle WebLogic Server for OCI domain. To peer the VCNs manually, see [Manual VCN Peering](https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/configure-database-parameters.html).
 
 ## Before You Begin with Oracle WebLogic Server for OCI
 Refer to the [documentation](https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/you-begin-oracle-weblogic-cloud.html) for the pre-requisite steps to using Oracle WebLogic Server for OCI.
