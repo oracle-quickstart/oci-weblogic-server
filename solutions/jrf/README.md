@@ -27,7 +27,7 @@ Refer to the [documentation](https://docs.oracle.com/en/cloud/paas/weblogic-clou
 ## Organization
 The directory weblogic-server-for-oci/solutions/jrf consists of the following terraform files: 
 
-- jrf_instance.tfvars - Weblogic instance, Bastion instance and Network configuration
+- jrf_instance.tfvars - Weblogic instance, bastion instance and network configuration
 - existing_lb.tfvars - Load Balancer configuration
 - oci_db.tfvars  - OCI Database configuration
 - idcs.tfvars - IDCS configuration
