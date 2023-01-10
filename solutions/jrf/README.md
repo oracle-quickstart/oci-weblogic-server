@@ -9,7 +9,7 @@ This topology uses existing infrastructure.
 
 Oracle Identity Cloud Service (IDCS) is used to authenticate user.
 
-[Full Topology Diagram](../solutions/jrf/Topology.png)
+![Full Topology Diagram](../solutions/jrf/Topology.png)
 
 The above diagram shows a topology that includes most of the components supported by the Terraform scripts. 
 In this scenario, the WebLogic servers are in a private subnet. To access the applications running on WebLogic, an existing OCI load balancer in public regional subnet is used. A bastion instance with a public IP address is provisioned to allow access to the VMs in the private subnet. The Oracle WebLogic Server domain is configured to use Oracle Identity Cloud Service for authentication.
