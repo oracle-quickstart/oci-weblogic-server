@@ -22,7 +22,11 @@ Refer to the [documentation](https://docs.oracle.com/en/cloud/paas/weblogic-clou
 ## Workspace Checkout
 - Install latest version of git from http://git-scm.com/downloads
 - For Linux and Mac: Add the git to the PATH
-- git clone https://github.com/oracle-quickstart/weblogic-server-for-oci.git
+- Clone the code using the command:
+
+```bash
+git clone https://github.com/oracle-quickstart/weblogic-server-for-oci.git
+```
 
 ## Organization
 The directory weblogic-server-for-oci/solutions/jrf consists of the following terraform files: 
@@ -36,15 +40,23 @@ The directory weblogic-server-for-oci/solutions/common consists of the following
 - tenancy.tfvars - tenancy configuration
 
 ## Using the Terraform command line tool
+```bash
 cd weblogic-server-for-oci/terraform
+```
 
 Initialize the terraform provider plugin
-$ terraform init
+```bash
+terraform init
+```
 
 Update the variable values in tfvars files under directories terraform/solutions/common and terraform/solutions/jrf according to the user specific values
 Invoke apply passing all *.tfvars files as input
-$ terraform apply -var-file=../solutions/common/tenancy.tfvars -var-file=inputs/mp_image_ee_byol.tfvars -var-file=../solutions/jrf/jrf_instance.tfvars -var-file=../solutions/jrf/existing_lb.tfvars -var-file=../solutions/jrf/idcs.tfvars var-file=../solutions/jrf/oci_db.tfvars
+```bash
+terraform apply -var-file=../solutions/common/tenancy.tfvars -var-file=inputs/mp_image_ee_byol.tfvars -var-file=../solutions/jrf/jrf_instance.tfvars -var-file=../solutions/jrf/existing_lb.tfvars -var-file=../solutions/jrf/idcs.tfvars var-file=../solutions/jrf/oci_db.tfvars
+```
 
 To destroy the infrastructure
-$ terraform destroy var-file=../solutions/common/tenancy.tfvars -var-file=inputs/mp_image_ee_byol.tfvars -var-file=../solutions/jrf/jrf_instance.tfvars -var-file=../solutions/jrf/existing_lb.tfvars -var-file=../solutions/jrf/idcs.tfvars var-file=../solutions/jrf/oci_db.tfvars
+```bash
+terraform destroy var-file=../solutions/common/tenancy.tfvars -var-file=inputs/mp_image_ee_byol.tfvars -var-file=../solutions/jrf/jrf_instance.tfvars -var-file=../solutions/jrf/existing_lb.tfvars -var-file=../solutions/jrf/idcs.tfvars var-file=../solutions/jrf/oci_db.tfvars
+```
 **Important:** Refer to [documentation](https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/delete-domain.html) for steps to perform before running *terraform destroy*.
