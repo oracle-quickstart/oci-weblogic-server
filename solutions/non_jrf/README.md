@@ -1,19 +1,19 @@
 ## WebLogic non JRF domain
 
-This solution creates single/multi node WLS cluster with Oracle Cloud Infrastructure File Storage service(FSS) fronted
+This solution creates single/multi node WebLogic cluster with Oracle Cloud Infrastructure File Storage service (FSS) fronted
 by a load balancer. The solution will create only one stack at time and further modifications that are done will be
 done on the same stack.
 
-This topology creates WLS in private subnet. Following regional subnets are created under new VCN.
-- WLS Regional Private Subnet
-- Bastion Regional Public Subnet
-- Loadbalancer Frontend Public Subnet
-- Mount Target Regional Private Subnet
+This topology creates WebLogic cluster in private subnet. Following regional subnets are created under new VCN.
+- WebLogic regional private subnet
+- Bastion regional public subnet
+- Load balancer frontend public subnet
+- Mount target regional private subnet
 
 ![Full Topology Diagram](Topology.png)
 
 The above diagram shows a topology that includes most of the components supported by the Terraform scripts.
-In this scenario, the WebLogic servers are created in a private subnet. To access the applications running on WebLogic, a new OCI load balancer in public regional subnet will be created. A bastion instance with a public ip address is provisioned to allow access to the WebLogic VMs in the private subnet. New file system(FSS) and mount target will be created in a private subnet to support mounting shared storage for WLS instance data and middleware. The file system(FSS) will be mounted on each WLS instance at /u01/shared.
+In this scenario, the WebLogic servers are created in a private subnet. To access the applications running on WebLogic, a new OCI load balancer in public regional subnet will be created. A bastion instance with a public ip address is provisioned to allow access to the WebLogic VMs in the private subnet. New file system (FSS) and mount target will be created in a private subnet to support mounting shared storage for WebLogic instance data and middleware. The file system (FSS) will be mounted on each WebLoogic instance at /u01/shared.
 
 ## Before You Begin with Oracle WebLogic Server for OCI
 Refer to the [documentation](https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/you-begin-oracle-weblogic-cloud.html) for the pre-requisite steps to using Oracle WebLogic Server for OCI.
@@ -30,7 +30,7 @@ git clone https://github.com/oracle-quickstart/weblogic-server-for-oci.git
 ## Organization
 The directory weblogic-server-for-oci/solutions/non_jrf  consists of the following terraform files:
 
-- nonjrf_instance.tfvars - wls instance, bastion instance , and network configuration
+- nonjrf_instance.tfvars - WebLoogic instance, bastion instance , and network configuration
 - lb.tfvars - load balancer configuration
 - fss.tfvars  - file system configuration
 
@@ -57,3 +57,4 @@ To destroy the infrastructure
 ```bash
 terraform destroy -var-file=../solutions/common/tenancy.tfvars -var-file=../solutions/common/mp_byol.tfvars -var-file=../solutions/non_jrf/nonjrf_instance.tfvars -var-file=../solutions/non_jrf/lb.tfvars -var-file=../solutions/non_jrf/fss.tfvars
 ```
+**Important:** Refer to [documentation](https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/delete-domain.html) for steps to perform before running *terraform destroy*.
