@@ -12,7 +12,7 @@ This topology creates WLS in private subnet. Following regional subnets are crea
 
 ![Full Topology Diagram](Topology.png)
 
-The above diagram shows a topology that includes most of the components supported by the Terraform scripts
+The above diagram shows a topology that includes most of the components supported by the Terraform scripts.
 In this scenario, the WebLogic servers are created in a private subnet. To access the applications running on WebLogic, a new OCI load balancer in public regional subnet will be created. A bastion instance with a public ip address is provisioned to allow access to the WebLogic VMs in the private subnet. New file system(FSS) and mount target will be created in a private subnet to support mounting shared storage for WLS instance data and middleware. The file system(FSS) will be mounted on each WLS instance at /u01/shared.
 
 ## Before You Begin with Oracle WebLogic Server for OCI
