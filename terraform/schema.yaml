@@ -1,4 +1,4 @@
-# Copyright (c) 2022, Oracle and/or its affiliates.
+# Copyright (c) 2022, 2023, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 title: Oracle WebLogic Server for Oracle Cloud Infrastructure
@@ -1653,12 +1653,21 @@ variables:
       and:
         - ${orm_create_mode}
         - ${add_JRF}
-        - and:
-            - ${create_policies}
-            - or:
-                - ${create_new_vcn}
-                - not:
-                    - ${use_oci_db_connection_string}
+        - ${create_policies}
+        - or:
+            - and:
+                - eq:
+                    - ${db_strategy}
+                    - "Database System"
+                - or:
+                    - ${create_new_vcn}
+                    - not:
+                        - ${use_oci_db_connection_string}
+            - and:
+                - eq:
+                    - ${db_strategy}
+                    - "Autonomous Transaction Processing Database"
+                - ${atp_db_uses_private_endpoint}
     type: boolean
     default: true
     title: Create Database Security List
