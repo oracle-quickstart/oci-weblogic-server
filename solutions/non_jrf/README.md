@@ -4,7 +4,7 @@ This solution creates single/multi node WebLogic cluster with Oracle Cloud Infra
 by a load balancer. The solution will create only one stack at time and further modifications that are done will be
 done on the same stack.
 
-This topology creates WebLogic cluster in private subnet. Following regional subnets are created under new VCN.
+This topology creates WebLogic cluster in private subnet. Following regional subnets are created under new virtual cloud network (VCN).
 - WebLogic regional private subnet
 - Bastion regional public subnet
 - Load balancer frontend public subnet
