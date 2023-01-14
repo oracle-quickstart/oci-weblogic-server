@@ -1,54 +1,152 @@
-# oci-quickstart-template
+# Oracle WebLogic Server for Oracle Cloud Infrastructure
 
-The [Oracle Cloud Infrastructure (OCI) Quick Start](https://github.com/oracle-quickstart?q=oci-quickstart) is a collection of examples that allow Oracle Cloud Infrastructure users to get a quick start deploying advanced infrastructure on OCI.
+[Oracle WebLogic Server for Oracle Cloud Infrastructure][wlsoci] allows you to quickly create your Java Enterprise Edition
+(Java EE) application environment in [Oracle Cloud Infrastructure (OCI)][oci], including an Oracle WebLogic Server domain,
+in a fraction of the time it would normally take on-premises.
 
-The oci-quickstart-template repository contains the template that can be used for accelerating the construction of quickstarts that runs from local Terraform CLI, [OCI Resource Manager](https://docs.cloud.oracle.com/en-us/iaas/Content/ResourceManager/Concepts/resourcemanager.htm) and [OCI Cloud Shell](https://docs.cloud.oracle.com/en-us/iaas/Content/API/Concepts/cloudshellintro.htm).
+Oracle WebLogic Server for OCI is available as a set of applications in the [Oracle Cloud Infrastructure Marketplace][marketplace].
+After launching one of these applications, you use a simple wizard interface to configure and provision your domains along
+with any supporting cloud resources like compute instances, networks and load balancers.
 
-Simple is a sample quickstart terraform template that deploys a virtual machine on a Virtual Cloud Network.
-Simple can be customized to subscribe and launch Marketplace images, Platform images or Custom images.
+This Quick Start is an alternative to deploy an Oracle WebLogic Server for OCI stack, that can be used to automate the creation
+of WebLogic domains in OCI. You can use the Oracle Cloud Infrastructure [Resource Manager (ORM)][orm] or the Terraform
+command-line interface (CLI).
 
-This repo is under active development.  Building open source software is a community effort.  We're excited to engage with the community building this.
+For more details on deploying the Oracle WebLogic Server for OCI stack on Oracle Cloud Infrastructure, visit the
+"Using Oracle WebLogic Server for OCI" [guide](https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/index.html).
 
-## Resource Manager Deployment
+## Common Topologies
 
-This Quick Start uses [OCI Resource Manager](https://docs.cloud.oracle.com/iaas/Content/ResourceManager/Concepts/resourcemanager.htm) to make deployment easy, sign up for an [OCI account](https://cloud.oracle.com/en_US/tryit) if you don't have one, and just click the button below:
+WebLogic for OCI offers many options to customize your stack, to create new resources or use existing resources, use features
+like Oracle Identity and Cloud Service, etc. 
 
-[![Deploy to Oracle Cloud](https://oci-resourcemanager-plugin.plugins.oci.oraclecloud.com/latest/deploy-to-oracle-cloud.svg)](https://console.us-ashburn-1.oraclecloud.com/resourcemanager/stacks/create?region=home&zipUrl=https://github.com/oracle-quickstart/oci-quickstart-template/archive/master.zip)
+The [solutions](./solutions) directory contains examples of different topologies that can be created in WebLogic for OCI, with 
+sample tfvars files, and instructions to create the stack.
 
-After logging into the console you'll be taken through the same steps described
-in the [Deploy](#deploy) section below.
+The following topologies are included:
 
+| Solution                     | Features                                                                                                                              |
+|------------------------------|---------------------------------------------------------------------------------------------------------------------------------------|
+|[non_jrf](./solutions/non_jrf)|<ul><li>New VCN</li><li>New public load balancer</li><li>New bastion</li><li>New file system and mount target</li><li>OCI Logging</li> |
+|[jrf](./solutions/jrf)|<ul><li>Existing subnets</li><li>Existing load balancer</li><li>New bastion</li><li>JRF with OCI DB</li><li>IDCS</li>                          |
 
-Note, if you use this template to create another repo you'll need to change the link for the button to point at your repo.
+Review each solution for more details.
 
-## Local Development
+## Before You Begin with Oracle WebLogic Server for OCI
 
-First off we'll need to do some pre deploy setup.  That's all detailed [here](https://github.com/oracle/oci-quickstart-prerequisites).
+Whether you use Terraform CLI, ORM or the Marketplace to create a stack, you need to perform some pre-requisites. Refer
+to the [documentation](https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/you-begin-oracle-weblogic-cloud.html) for
+the pre-requisite steps to using Oracle WebLogic Server for OCI.
 
-Note, the instructions below build a `.zip` file from you local copy for use in ORM.
-If you want to not use ORM and deploy with the terraform CLI you need to rename
-`provider.tf.cli -> provider.tf`. This is because authentication works slightly
-differently in ORM vs the CLI. This file is ignored by the build process below.
+For pre-requisites specific to Terraform CLI and ORM, see their corresponding section.
 
-Make sure you have terraform v0.14+ cli installed and accessible from your terminal.
+## Create Stack Using the Marketplace
 
-### Build
+To create, manage and destroy a WebLogic for OCI stack using the Marketplace, follow the instructions in the
+[documentation](https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/create-stack1.html).
 
-Simply `build` your package and follow the [Resource Manager instructions](https://docs.cloud.oracle.com/en-us/iaas/Content/ResourceManager/Tasks/managingstacksandjobs.htm#console) for how to create a stack.  Prior to building the Stack, you may want to modify some parts of the deployment detailed below.
+## Create Stack Using the Terraform CLI
 
-In order to `build` the zip file with the latest changes you made to this code, you can simply go to [build-orm](./build-orm) folder and use terraform to generate a new zip file:
+You need to install the following software in your computer to create a stack using Terraform CLI:
+ - [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git). Install the latest version
+ - [Terraform](https://www.terraform.io/). The scripts in this Quick Start requires Terraform version >= 1.1.2, < 1.2.0
 
-At first time, you are required to initialize the terraform modules used by the template with  `terraform init` command:
+First, get a local copy of this repo. You can make that with the commands:
+
+```bash
+git clone https://github.com/oracle-quickstart/weblogic-server-for-oci.git
+cd weblogic-server-for-oci/terraform
+ls
+```
+Example output:
+
+```bash
+$ git clone https://github.com/oracle-quickstart/weblogic-server-for-oci.git
+Cloning into 'weblogic-server-for-oci'...
+remote: Enumerating objects: 2522, done.
+remote: Counting objects: 100% (646/646), done.
+remote: Compressing objects: 100% (324/324), done.
+remote: Total 2522 (delta 449), reused 440 (delta 318), pack-reused 1876
+Receiving objects: 100% (2522/2522), 972.92 KiB | 1.54 MiB/s, done.
+Resolving deltas: 100% (1735/1735), done.
+$ cd weblogic-server-for-oci/terraform
+$ ls
+autoscaling_variables.tf  data_sources.tf  edition.tf        idcs_variables.tf  locals.tf  modules/         network_variables.tf        oci_images.tf  outputs.tf   schema.yaml        variables.tf  weblogic_variables.tf
+bastion_variables.tf      db_variables.tf  fss_variables.tf  inputs/            main.tf    mp_variables.tf  observability_variables.tf  orm/           provider.tf  schema_14110.yaml  versions.tf
+$
+```
+
+*NOTE*: All the `terraform` commands must be run from the `terraform` directory.
+
+Next, initialize the directory with the module in it. This makes the module aware of the OCI provider. You can do this by
+running:
+
+```bash
+terraform init
+```
+
+Example output:
 
 ```bash
 $ terraform init
+Initializing modules...
+- bastion in modules\compute\bastion
+- compute in modules\compute\wls_compute
+- compute.compute-keygen in modules\compute\keygen
+- compute.data-volume in modules\compute\volume
+- compute.data_volume_attach in modules\compute\volume
+- compute.middleware-volume in modules\compute\volume
+- compute.middleware_volume_attach in modules\compute\volume
+- compute.wls-instances in modules\compute\instance
+- fss in modules\fss
+- load-balancer in modules\lb\loadbalancer
+- load-balancer-backends in modules\lb\backends
+- network-bastion-nsg in modules\network\nsg
+- network-bastion-subnet in modules\network\subnet
+- network-compute-admin-nsg in modules\network\nsg
+- network-compute-managed-nsg in modules\network\nsg
+- network-lb-nsg in modules\network\nsg
+- network-lb-subnet-1 in modules\network\subnet
+- network-mount-target-nsg in modules\network\nsg
+- network-mount-target-private-subnet in modules\network\subnet
+- network-vcn in modules\network\vcn
+- network-vcn-config in modules\network\vcn-config
+- network-wls-private-subnet in modules\network\subnet
+- network-wls-public-subnet in modules\network\subnet
+- observability-autoscaling in modules\observability\autoscaling
+- observability-common in modules\observability\common
+- observability-logging in modules\observability\logging
+- policies in modules\policies
+- provisioners in modules\provisioners
+- system-tags in modules\resource-tags
+- validators in modules\validators
+- vcn-peering in modules\network\vcn-peering
 
 Initializing the backend...
 
 Initializing provider plugins...
-- Finding latest version of hashicorp/archive...
-- Installing hashicorp/archive v2.1.0...
-- Installed hashicorp/archive v2.1.0 (signed by HashiCorp)
+- Finding hashicorp/null versions matching "~> 3.1.1"...
+- Finding oracle/oci versions matching "4.96.0"...
+- Finding hashicorp/random versions matching "~> 3.4.3"...
+- Finding hashicorp/template versions matching "~> 2.2.0"...
+- Finding hashicorp/tls versions matching "~> 4.0.3"...
+- Finding hashicorp/time versions matching "~> 0.9.0"...
+- Installing hashicorp/template v2.2.0...
+- Installed hashicorp/template v2.2.0 (signed by HashiCorp)
+- Installing hashicorp/tls v4.0.4...
+- Installed hashicorp/tls v4.0.4 (signed by HashiCorp)
+- Installing hashicorp/time v0.9.1...
+- Installed hashicorp/time v0.9.1 (signed by HashiCorp)
+- Installing hashicorp/null v3.1.1...
+- Installed hashicorp/null v3.1.1 (signed by HashiCorp)
+- Installing oracle/oci v4.96.0...
+- Installed oracle/oci v4.96.0 (signed by a HashiCorp partner, key ID 1533A49284137CEB)
+- Installing hashicorp/random v3.4.3...
+- Installed hashicorp/random v3.4.3 (signed by HashiCorp)
+
+Partner and community providers are signed by their developers.
+If you'd like to know more about provider signing, you can read about it here:
+https://www.terraform.io/docs/cli/plugins/signing.html
 
 Terraform has created a lock file .terraform.lock.hcl to record the provider
 selections it made above. Include this file in your version control repository
@@ -64,187 +162,164 @@ should now work.
 If you ever set or change modules or backend configuration for Terraform,
 rerun this command to reinitialize your working directory. If you forget, other
 commands will detect it and remind you to do so if necessary.
+
 ```
 
-Once terraform is initialized, just run `terraform apply` to generate ORM zip file.
+### Configure variables for the stack
+
+First, you need to set the image variables, depending on which WebLogic edition and type of license you want to use,
+BYOL license or UCM license, when creating the stack.
+
+The following files contain the values for those variables:
+- [mp_image_se_byol.tfvars](./terraform/inputs/mp_image_se_byol.tfvars): WebLogic Standard Edition - BYOL
+- [mp_image_ee_byol.tfvars](./terraform/inputs/mp_image_ee_byol.tfvars): WebLogic Enterprise Edition - BYOL
+- [mp_image_ee_ucm.tfvars](./terraform/inputs/mp_image_ee_ucm.tfvars): WebLogic Enterprise Edition - UCM
+- [mp_image_suite_byol.tfvars](./terraform/inputs/mp_image_suite_byol.tfvars): WebLogic Suite - BYOL
+- [mp_image_suite_ucm.tfvars](./terraform/inputs/mp_image_suite_ucm.tfvars): WebLogic Suite - UCM
+
+To use one of the files above:
+- Copy the file from the `terraform/inputs` directory, to the `terraform` directory
+- Rename the file from `terraform/mp_image_<edition>_<license>.tfvars` to `terraform/mp_image_<edition>_<license>.auto.tfvars`
+
+For example, if you want to create a WebLogic Enterprise Edition UCM stack, copy the file `terraform/inputs/mp_image_ee_ucm.tfvars`
+to `terraform/mp_image_ee_ucm.auto.tfvars`
+
+Next, you need to configure [variables](./VARIABLES.md) to drive the stack creation. This can be done by creating a
+`terraform.tfvars` file in the `terraform` directory, using as a base the tfvars files from one of the [solutions](./solutions).
+
+Make sure the plan looks good. Once you created `terraform.tfvars` in the `terraform` directory, just run:
 
 ```bash
-$ terraform apply
-
-data.archive_file.generate_zip: Refreshing state...
-
-Apply complete! Resources: 0 added, 0 changed, 0 destroyed.
-```
-
-This command will package the content of `simple` folder into a zip and will store it in the `build-orm\dist` folder. You can check the content of the file by running `unzip -l dist/orm.zip`:
-
-```bash
-$ unzip -l dist/orm.zip
-Archive:  dist/orm.zip
-  Length      Date    Time    Name
----------  ---------- -----   ----
-     1140  01-01-2049 00:00   compute.tf
-      680  01-01-2049 00:00   data_sources.tf
-     1632  01-01-2049 00:00   image_subscription.tf
-     1359  01-01-2049 00:00   locals.tf
-    13548  01-01-2049 00:00   marketplace.yaml
-     2001  01-01-2049 00:00   network.tf
-     2478  01-01-2049 00:00   nsg.tf
-      830  01-01-2049 00:00   oci_images.tf
-     1092  01-01-2049 00:00   outputs.tf
-       44  01-01-2049 00:00   scripts/example.sh
-     4848  01-01-2049 00:00   variables.tf
-      311  01-01-2049 00:00   versions.tf
----------                     -------
-    29963                     12 files
+terraform plan
 ```
 
 ### Deploy
 
-1. [Login](https://console.us-ashburn-1.oraclecloud.com/resourcemanager/stacks/create) to Oracle Cloud Infrastructure to import the stack
-    > `Home > Solutions & Platform > Resource Manager > Stacks > Create Stack`
+If that's good, you can go ahead and apply to deploy the stack:
 
-2. Upload the `orm.zip` and provide a name and description for the stack
-![Create Stack](./images/create_orm_stack.png)
-
-3. Configure the Stack. The UI will present the variables to the user dynamically, based on their selections. These are the configuration options:
-
-> Compute Configuration
-
-|          VARIABLE          |           DESCRIPTION                                                 |
-|----------------------------|-----------------------------------------------------------------------|
-|COMPUTE COMPARTMENT         | Compartment for Compute resources, including Marketplace subscription |
-|INSTANCE NAME               | Compute instance name|
-|DNS HOSTNAME LABEL          | DNS Hostname|
-|COMPUTE SHAPE               | Compatible Compute shape|
-|FLEX SHAPE OCPUS            | Number of OCPUs, only available for VM.Standard.E3.Flex compute shape|
-|AVAILABILITY DOMAIN         | Availability Domain|
-|PUBLIC SSH KEY STRING       | RSA PUBLIC SSH key string used for sign in to the OS|
-
-> Virtual Cloud Network
-
-|          VARIABLE          |           DESCRIPTION                                                 |
-|----------------------------|-----------------------------------------------------------------------|
-|NETWORK COMPARTMENT         | Compartment for all Virtual Cloud Network resources|
-|NETWORK STRATEGY            | `Create New VCN and Subnet`: Create new network resources during apply. <br> `Use Existing VCN and Subnet`: Let user select pre-existent network resources.|
-|CONFIGURATION STRATEGY      | `Use Recommended Configuration`: Use default configuration defined by the Terraform template. <br> `Customize Network Configuration`: Allow user to customize network configuration such as name, dns label, cidr block for VCN and Subnet.|
-
-> Virtual Cloud Network - Customize Network Configuration
-
-|          VARIABLE          |           DESCRIPTION                                                 |
-|----------------------------|-----------------------------------------------------------------------|
-|NAME                        | VCN Display Name|
-|DNS LABEL                   | VCN DNS LABEL|
-|CIDR BLOCK                  | The CIDR of the new Virtual Cloud Network (VCN). If you plan to peer this VCN with another VCN, the VCNs must not have overlapping CIDRs.|
-
-> Simple Subnet (visible only when `Customize Network Configuration` is selected)
-
-|          VARIABLE          |           DESCRIPTION                                                 |
-|----------------------------|-----------------------------------------------------------------------|
-|SUBNET TYPE                 | `Public Subnet` or `Private Subnet`|
-|NAME                        | Subnet Display Name|
-|DNS LABEL                   | Subnet DNS LABEL|
-|CIDR BLOCK                  | The CIDR of the Subnet. Should not overlap with any other subnet CIDRs|
-|NETWORK SECURITY GROUP CONFIGURATION| `Use Recommended Configuration`: Use default configuration defined by the Terraform template. <br> `Customize Network Security Group`: Allow user to customize some basic network security group settings.|
-
-> Network Security Group (visible only when `Customize Network Security Group` is selected)
-
-|          VARIABLE          |           DESCRIPTION                                                 |
-|----------------------------|-----------------------------------------------------------------------|
-|NAME                        | NSG Display Name|
-|ALLOWED INGRESS TRAFFIC (CIDR BLOCK)| WHITELISTED CIDR BLOCK for ingress traffic|
-|SSH PORT NUMBER             | Default SSH PORT for ingress traffic|
-|HTTP PORT NUMBER            | Default HTTP PORT for ingress traffic|
-|HTTPS PORT NUMBER           | Default HTTPS PORT for ingress traffic|
-
-> Additional Configuration Options
-
-|          VARIABLE          |           DESCRIPTION                                                 |
-|----------------------------|-----------------------------------------------------------------------|
-|TAG KEY NAME                | Free-form tag key name|
-|TAG VALUE                   | Free-form tag value|
-
-4. Click Next and Review the configuration.
-5. Click Create button to confirm and create your ORM Stack.
-6. On Stack Details page, you can now run `Terraform` commands to manage your infrastructure. You typically start with a plan then run apply to create and make changes to the infrastructure. More details below:
-
-|      TERRAFORM ACTIONS     |           DESCRIPTION                                                 |
-|----------------------------|-----------------------------------------------------------------------|
-|Plan                        | `terraform plan` is used to create an execution plan. This command is a convenient way to check the execution plan prior to make any changes to the infrastructure resources.|
-|Apply                       | `terraform apply` is used to apply the changes required to reach the desired state of the configuration described by the template.|
-|Destroy                     | `terraform destroy` is used to destroy the Terraform-managed infrastructure.|
-
-## Customize for Marketplace
-
-In case you wanted to make changes to this template to use a Marketplace image rather than a platform image or custom image, you need to make the following changes.
-
-1. Configure Marketplace listing variables on [`variables.tf`](./variables.tf).
-
-|      VARIABLES             |           DESCRIPTION                                                 |
-|----------------------------|-----------------------------------------------------------------------|
-|mp_subscription_enabled     | Enable subscription to Marketplace.|
-|mp_listing_id               | Marketplace App Catalog Listing OCID.|
-|mp_listing_resource_id      | Marketplace Listing Image OCID.|
-|mp_listing_resource_version | Marketplace Listing Package/Resource Version (Reference value)|
-
-2. Modify [`compute.tf`](./compute.tf) set `source_details` to refer to `local.compute_image_id` rather than `platform_image_id`. The `local.compute_image_id` holds the logic to either refer to the marketplace image or a custom image, based on the `mp_subscription_enabled` flag.
-
-```hcl
-resource "oci_core_instance" "simple-vm" {
-  availability_domain = local.availability_domain
-  compartment_id      = var.compute_compartment_ocid
-  display_name        = var.vm_display_name
-  shape               = var.vm_compute_shape
-
-  dynamic "shape_config" {
-    for_each = local.is_flex_shape
-      content {
-        ocpus = shape_config.value
-      }
-  }
-
-
-  create_vnic_details {
-    subnet_id              = local.use_existing_network ? var.subnet_id : oci_core_subnet.simple_subnet[0].id
-    display_name           = var.subnet_display_name
-    assign_public_ip       = local.is_public_subnet
-    hostname_label         = var.hostname_label
-    skip_source_dest_check = false
-    nsg_ids                = [oci_core_network_security_group.simple_nsg.id]
-  }
-
-  source_details {
-    source_type = "image"
-    #use a marketplace image or custom image:
-    source_id   = local.compute_image_id
-  }
-
-```
-2. Modify [`oci_images.tf`](./oci_images.tf) set `marketplace_source_images` map variable to refer to the marketplace images your Stack will launch.
-
-```hcl
-
-variable "marketplace_source_images" {
-  type = map(object({
-    ocid = string
-    is_pricing_associated = bool
-    compatible_shapes = list(string)
-  }))
-  default = {
-    main_mktpl_image = {
-      ocid = "ocid1.image.oc1..<unique_id>"
-      is_pricing_associated = true
-      compatible_shapes = []
-    }
-    #Remove comment and add as many marketplace images that your stack references be replicated to other realms
-    #supporting_image = {
-    #  ocid = "ocid1.image.oc1..<unique_id>"
-    #  is_pricing_associated = false
-    #  compatible_shapes = ["VM.Standard2.2", "VM.Standard.E2.1.Micro"]
-    #}
-  }
-}
-
+```bash
+terraform apply
 ```
 
-2. Run your tests using the Terraform CLI or build a new package and deploy on ORM.
+You'll need to enter yes when prompted.
+
+After the stack creation is complete, if you need to make changes to your stack (adding a new VM for example), you can edit
+the variables in your `terraform.tfvars` file, and run the following commands:
+
+```bash
+terraform plan
+# If the plan looks OK, run apply.
+terraform apply
+```
+*NOTE*: Not all variables can be changed after a stack is deployed.
+
+### Destroy the Deployment
+
+**Important:** Refer to [documentation](https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/delete-domain.html)
+for steps to perform before running *terraform destroy*.
+
+When you no longer need the deployment, you can run this command to destroy it:
+
+```bash
+terraform destroy
+```
+
+You'll need to enter yes when prompted.
+
+## Create Stack Using OCI Resource Manager
+
+Oracle Cloud Infrastructure [Resource Manager (ORM)][orm] allows you to manage your Terraform configurations and state.
+To simplify getting started, the Terraform zip files for use with ORM are created as part of each [release](https://github.com/oracle-quickstart/weblogic-server-for-oci/releases).
+
+If you want to build the zip file to create an ORM stack, you need the following software:
+
+*Linux*
+
+- No additional software is required
+
+*Mac OS*
+
+- GNU sed
+
+*Windows*
+
+- Git bash (included in [Git for Windows](https://gitforwindows.org/)) or any other software that allows you to run bash
+  scripts in Windows
+- The build scripts use the `zip` command. This is an example of how you can use a program like [7-zip](https://www.7-zip.org/)
+  with the build scripts
+1. Install 7-zip
+2. Locate the file 7z.exe. Copy it to a directory that can be added to your path (e.g. ~/bin)
+3. Create a script called `zip` in the same directory (e.g. ~/bin) with the following content:
+```bash
+#!/bin/bash
+7z.exe a $@
+```
+4. Add the directory where you put the files (e.g. ~/bin) in your PATH
+5. Verify zip command is recognized:
+```bash
+$ zip
+ 
+7-Zip 22.01 (x64) : Copyright (c) 1999-2022 Igor Pavlov : 2022-07-15
+ 
+ 
+ 
+Command Line Error:
+Cannot find archive name
+```
+
+### Create the stack
+
+To build the zip file to create an ORM stack, run the `builds/build_mp_bundles.sh` script.
+```bash
+$ cd builds/
+$ ./build_mp_bundles.sh
+Build the Oracle Resource Manager (ORM) bundles to deploy in Marketplace
+
+Arguments: build_mp_bundles.sh -e|--edition <EE|SUITE|SE> -v|--version <12.2.1.4|14.1.1.0> -t|--type <UCM|BYOL> --all
+options:
+-e, --edition     WebLogic edition. Supported values are EE, SUITE, or SE. Optional when --all option is provided
+-v, --version     WebLogic version. Supported values are 12.2.1.4 or 14.1.1.0. Optional when --all option is provided
+-t, --type        Type of bundle. Supported values are UCM or BYOL. Optional when --all option is provided
+--all             All bundles
+```
+
+For example, to create the zip file for a WebLogic 12.2.1.4 Enterprise Edition stack with BYOL license, run the following
+command:
+
+```bash
+cd builds
+./build_mp_bundles.sh --edition EE --version 12.2.1.4 --type BYOL
+```
+
+The zip files are generated in the `builds/binaries` directory.
+
+Follow [these steps](https://docs.oracle.com/en-us/iaas/Content/ResourceManager/Tasks/create-stack-local.htm) to create
+a ORM stack, using either a zip file from one of the [releases](https://github.com/oracle-quickstart/weblogic-server-for-oci/releases),
+or a zip file generated manually with the `build_mp_bundles.sh` script.
+
+### Deploy the stack
+
+After you create the stack, you can run a `plan` [job](https://docs.oracle.com/en-us/iaas/Content/ResourceManager/Tasks/create-job-plan.htm)
+to validate the resources that will be created.
+
+If the plan looks good, you can run an `apply` [job](https://docs.oracle.com/en-us/iaas/Content/ResourceManager/Tasks/create-job-apply.htm)
+to deploy the stack.
+
+After the stack creation is complete, you can
+[manage the domain](https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/manage-domain-oracle-weblogic-cloud.html).
+
+### Destroy the stack
+
+**Important:** Refer to [documentation](https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/delete-domain.html) for
+steps to perform before running a `destroy` job.
+
+When you no longer need the deployment, you can run a
+`destroy` [job](https://docs.oracle.com/en-us/iaas/Content/ResourceManager/Tasks/create-job-destroy.htm) to destroy the stack.
+
+
+[wlsoci]: https://docs.oracle.com/en/cloud/paas/weblogic-cloud/index.html
+[oci]: https://cloud.oracle.com/cloud-infrastructure
+[marketplace]: https://docs.oracle.com/iaas/Content/Marketplace/Concepts/marketoverview.htm
+[orm]: https://docs.cloud.oracle.com/iaas/Content/ResourceManager/Concepts/resourcemanager.htm
+[vault]: https://docs.cloud.oracle.com/iaas/Content/KeyManagement/Concepts/keyoverview.htm
+[tf]: https://www.terraform.io
