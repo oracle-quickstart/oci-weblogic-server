@@ -1,4 +1,4 @@
-# Copyright (c) 2022, Oracle and/or its affiliates.
+# Copyright (c) 2022, 2023, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 variable "compartment_id" {
@@ -38,19 +38,19 @@ variable "route_table_name_suffix" {
 
 variable "wls_expose_admin_port" {
   type        = bool
-  description = "Set to true if you want to export wls admin port"
+  description = "Set to true if you want to open the WebLogic admin port"
   default     = false
 }
 
 variable "wls_admin_port_source_cidr" {
   type        = string
-  description = "The CIDR value of the wls admin source port"
+  description = "The CIDR value to allow access to the WebLogic admin port"
 }
 
 variable "assign_backend_public_ip" {
-  type = string
+  type        = string
   description = "Indicates if the WebLogic Server VMs will have a public IP address"
-  default = false
+  default     = false
 }
 
 // Optional params
@@ -66,7 +66,7 @@ For LB frontend subnet - this is not passed.
 
 variable "wls_subnet_cidr" {
   type        = string
-  description = "The CIDR value of the wls subnet"
+  description = "The CIDR value of the WebLogic subnet"
 }
 
 // Optional params
@@ -82,21 +82,9 @@ variable "wls_extern_ssl_admin_port" {
   default     = 7002
 }
 
-variable "wls_security_list_name" {
-  type        = string
-  description = "A user-friendly name of the compute instance seclist"
-  default     = "wls-security-list"
-}
-
 variable "resource_name_prefix" {
   type        = string
   description = "Prefix which will be used to create VCN config display name"
-}
-
-variable "wls_bastion_security_list_name" {
-  type        = string
-  description = "A user-friendly name of the bastion instance seclist"
-  default     = "wls-bastion-security-list"
 }
 
 variable "bastion_subnet_cidr" {
@@ -147,12 +135,12 @@ variable "vcn_cidr" {
 
 variable "wls_ms_content_port" {
   type        = number
-  description = "The managed server SSL port  or idcs cloudgate port which allows public internet traffic"
+  description = "The managed server port or idcs cloudgate port for application traffic"
 }
 
 variable "wls_ms_source_cidrs" {
   type        = list(any)
-  description = "The Weblogic managed servers source CIDR values"
+  description = "The WebLogic managed servers source CIDR values"
 }
 
 variable "existing_service_gateway_ids" {
@@ -192,18 +180,6 @@ variable "lb_destination_cidr" {
 variable "create_load_balancer" {
   type        = bool
   description = "Set to true if add load balancer is true"
-}
-
-variable "load_balancer_min_value" {
-  type        = number
-  description = "The managed server port or the managed server SSL port on which to send application traffic"
-  default     = 7003
-}
-
-variable "load_balancer_max_value" {
-  type        = number
-  description = "The managed server port or the managed server SSL port on which to send application traffic"
-  default     = 7004
 }
 
 variable "nsg_ids" {
