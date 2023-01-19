@@ -23,7 +23,7 @@ instance_shape = "VM.Standard.E4.Flex"
 wls_version = "12.2.1.4"
 wls_ocpu_count = 1
 wls_node_count = 2
-wls_availability_domain_name = "HiGv:US-ASHBURN-AD-2"
+wls_availability_domain_name = "<availability_domain_name>"
 wls_subnet_id = "ocid1.subnet.xxxxxxxxxxxxxxx"
 
 ### Bastion parameters to create new bastion instance

@@ -3,5 +3,5 @@
 
 ### File System parameters to create new file system
 add_fss                  = true
-fss_availability_domain  = "HiGv:US-ASHBURN-AD-2"
+fss_availability_domain  = "<availability_domain_name>"
 mount_target_subnet_cidr = "10.0.4.0/24"
