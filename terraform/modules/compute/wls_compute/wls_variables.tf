@@ -16,7 +16,7 @@ variable "wls_admin_user" {
   description = "The name of the admin user that will be added to the WebLogic domain"
   validation {
     condition     = replace(var.wls_admin_user, "/^[a-zA-Z][a-zA-Z0-9_]{7,127}/", "0") == "0"
-    error_message = "WLSC-ERROR: The value for wls_admin_user provided should be alphanumeric and can optionally include underscore (_). Length should be between 8 and 128 characters."
+    error_message = "WLSC-ERROR: The value for wls_admin_user should be between 8 and 128 characters long and alphanumeric, and can contain underscore (_) special character."
   }
 }
 
