@@ -265,3 +265,9 @@ variable "existing_network_validated" {
   description = "Confirm selected existing Virtual Cloud Network is validated using the network validation script by entering YES in the field."
   default     = ""
 }
+
+variable "skip_network_validation" {
+  type = bool
+  description = "Used in case there is something really wrong with the validation and we need to skip it"
+  default = false
+}
