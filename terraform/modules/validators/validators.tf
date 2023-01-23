@@ -56,4 +56,8 @@ locals {
   invalid_lb_availability_domain_indexes  = !var.use_regional_subnet && var.use_existing_subnets && local.add_new_load_balancer && var.lb_availability_domain_name1 != "" && (var.lb_availability_domain_name1 == var.lb_availability_domain_name2)
   lb_availability_domain_indexes_msg      = "WLSC-ERROR: The value for lb_subnet_1_availability_domain_name=[${var.lb_availability_domain_name1}] and lb_subnet_2_availability_domain_name=[${var.lb_availability_domain_name2}] cannot be same."
   validate_lb_availability_domain_indexes = local.invalid_lb_availability_domain_indexes ? local.validators_msg_map[local.lb_availability_domain_indexes_msg] : null
+
+  invalid_script_version  = var.mode == "PROD" && var.tf_script_version == ""
+  script_version_msg      = "WLSC-ERROR: The value for tf script version is not valid. Please provide valid script version that matches with version on the image."
+  validate_script_version = local.invalid_script_version ? local.validators_msg_map[local.script_version_msg] : null
 }

@@ -426,6 +426,7 @@ module "validators" {
 
   wlsoci_vmscripts_zip_bundle_path = var.wlsoci_vmscripts_zip_bundle_path
   mode                             = var.mode
+  tf_script_version                = var.tf_script_version
 
   image_mode             = var.image_mode
   instance_image_id      = var.instance_image_id
