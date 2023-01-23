@@ -37,14 +37,11 @@ module "network-vcn-config" {
   wls_extern_admin_port      = var.wls_extern_admin_port
   wls_expose_admin_port      = var.wls_expose_admin_port
   wls_admin_port_source_cidr = var.wls_admin_port_source_cidr
-  wls_ms_content_port        = var.is_idcs_selected ? var.idcs_cloudgate_port : var.wls_ms_extern_ssl_port
+  wls_ms_content_port        = local.add_load_balancer ? (var.is_idcs_selected ? var.idcs_cloudgate_port : var.wls_ms_extern_port) : var.wls_ms_extern_ssl_port
   assign_backend_public_ip   = local.assign_weblogic_public_ip
 
-  wls_security_list_name       = !local.assign_weblogic_public_ip ? "bastion-security-list" : "wls-security-list"
   wls_subnet_cidr              = local.wls_subnet_cidr
   wls_ms_source_cidrs          = local.add_load_balancer ? [local.lb_subnet_1_subnet_cidr] : ["0.0.0.0/0"]
-  load_balancer_min_value      = local.add_load_balancer ? var.wls_ms_extern_port : var.wls_ms_extern_ssl_port
-  load_balancer_max_value      = local.add_load_balancer ? var.wls_ms_extern_port : var.wls_ms_extern_ssl_port
   create_load_balancer         = local.add_load_balancer
   resource_name_prefix         = local.service_name_prefix
   bastion_subnet_cidr          = local.bastion_subnet_cidr
