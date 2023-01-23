@@ -228,91 +228,91 @@ groupings:
 outputs:
   virtual_cloud_network_id:
     type: ocid
-    title: Virtual Cloud Network Id
+    title: "Virtual Cloud Network Id"
   is_vcn_peered:
     type: link
-    title: Is VCN Peered
+    title: "Is VCN Peered"
     visible: false
   weblogic_server_administration_console:
     type: link
-    title: WebLogic Server Administration Console
+    title: "WebLogic Server Administration Console"
   weblogic_instances:
     type: json
-    title: WebLogic Instances
+    title: "WebLogic Instances"
   load_balancer_id:
     type: ocid
-    title: Load balancer Id
+    title: "Load balancer Id"
   load_balancer_ip:
     type: copyableString
-    title: Load Balancer IP
+    title: "Load Balancer IP"
   fusion_middleware_control_console:
     type: link
-    title: Fusion Middleware Control Console
+    title: "Fusion Middleware Control Console"
   provisioning_status:
     type: link
-    title: Provisioning Status
+    title: "Provisioning Status"
     visible: false
   sample_application:
     type: link
-    title: Sample Application
+    title: "Sample Application"
   sample_application_protected_by_idcs:
     type: link
-    title: Sample Application Protected By IDCS
+    title: "Sample Application Protected By IDCS"
   virtual_cloud_network_cidr:
     type: link
-    title: Virtual Cloud Network CIDR
+    title: "Virtual Cloud Network CIDR"
   weblogic_version:
     type: link
-    title: WebLogic Version
+    title: "WebLogic Version"
   jdk_version:
     type: link
-    title: JDK Version
+    title: "JDK Version"
   bastion_instance_id:
     type: ocid
-    title: Instance Id
+    title: "Instance Id"
   bastion_instance_public_ip:
     type: copyableString
-    title: Public Ip
+    title: "Public Ip"
   ssh_command:
     type: copyableString
-    title: SSH Command
+    title: "SSH Command"
   ssh_command_with_dynamic_port_forwarding:
     type: copyableString
-    title: SSH Command with Dynamic Port Forwarding
+    title: "SSH Command with Dynamic Port Forwarding"
   fss_system_id:
     type: ocid
-    title: File System Id
+    title: "File System Id"
   mount_target_id:
     type: ocid
-    title: Mount Target Id
+    title: "Mount Target Id"
   listing_version:
     type: copyableString
-    title: Marketplace Listing Version
+    title: "Marketplace Listing Version"
   resource_identifier_value:
     type: copyableString
-    title: Stack Resources System Tag
+    title: "Stack Resources System Tag"
   weblogic_agent_configuration_id:
     type: ocid
-    title: WebLogic Log Agent Configuration Id
+    title: "WebLogic Log Agent Configuration Id"
     visible: false
   weblogic_log_group_id:
     type: ocid
-    title: WebLogic Log Group Id
+    title: "WebLogic Log Group Id"
   weblogic_log_id:
     type: ocid
-    title: WebLogic Log Id
+    title: "WebLogic Log Id"
   autoscaling_scaleout_monitoring_alarm_id:
     type: ocid
-    title: Autoscaling ScaleOut Monitoring Alarm Id
+    title: "Autoscaling ScaleOut Monitoring Alarm Id"
   autoscaling_scalein_monitoring_alarm_id:
     type: ocid
-    title: Autoscaling ScaleIn Monitoring Alarm Id
+    title: "Autoscaling ScaleIn Monitoring Alarm Id"
   autoscaling_function_application_id:
     type: ocid
-    title: Autoscaling Function Application Id
+    title: "Autoscaling Function Application Id"
 
 outputGroups:
-  - title: WebLogic
+  - title: "WebLogic"
     outputs:
       - ${weblogic_server_administration_console}
       - ${sample_application}
@@ -321,30 +321,30 @@ outputGroups:
       - ${weblogic_version}
       - ${weblogic_instances}
       - ${jdk_version}
-  - title: Networking
+  - title: "Networking"
     outputs:
       - ${virtual_cloud_network_id}
       - ${load_balancer_id}
       - ${virtual_cloud_network_cidr}
       - ${load_balancer_ip}
-  - title: Bastion
+  - title: "Bastion"
     outputs:
       - ${bastion_instance_id}
       - ${ssh_command}
       - ${bastion_instance_public_ip}
       - ${ssh_command_with_dynamic_port_forwarding}
-  - title: File Storage
+  - title: "File Storage"
     outputs:
       - ${fss_system_id}
       - ${mount_target_id}
-  - title: Observability
+  - title: "Observability"
     outputs:
       - ${weblogic_log_group_id}
       - ${weblogic_log_id}
       - ${autoscaling_scaleout_monitoring_alarm_id}
       - ${autoscaling_scalein_monitoring_alarm_id}
       - ${autoscaling_function_application_id}
-  - title: Listing
+  - title: "Listing"
     outputs:
       - ${listing_version}
       - ${resource_identifier_value}
@@ -356,8 +356,8 @@ variables:
     minLength: 1
     maxLength: 16
     pattern: "^[a-zA-Z][a-zA-Z0-9]{0,15}$"
-    title: Resource Name Prefix
-    description: The names of all compute and network resources will begin with this prefix. It can only contain letters or numbers and must begin with a letter.
+    title: "Resource Name Prefix"
+    description: "The names of all compute and network resources will begin with this prefix. It can only contain letters or numbers and must begin with a letter."
     required: true
     visible: ${orm_create_mode}
 
@@ -365,7 +365,7 @@ variables:
     visible: ${orm_create_mode}
     type: string
     required: true
-    title: Instance Image OCID
+    title: "Instance Image OCID"
     pattern: ^ocid1.image.*$
     dependsOn:
       compartmentId: ${compartment_ocid}
@@ -373,8 +373,8 @@ variables:
   instance_shape:
     type: oci:core:instanceshape:name
     #type: oci:core:instanceshapewithflex:name
-    title: Compute Shape
-    description: The shape for WebLogic Server compute instances. When scaled-out, the changes to instance shape will apply only to the added nodes.
+    title: "Compute Shape"
+    description: "The shape for WebLogic Server compute instances. When scaled-out, the changes to instance shape will apply only to the added nodes."
     required: true
     default: VM.Standard.E4.Flex
     dependsOn:
@@ -384,8 +384,8 @@ variables:
   # TODO: remove this when UI uses control with flex shape
   wls_ocpu_count:
     type: integer
-    title: OCPU Count
-    description: The number of OCPU count for instances. Only required for VM.Standard.E3.Flex, VM.Standard.E4.Flex, VM.Optimized3.Flex, and  VM.Standard3.Flex Shapes. The maximum number of ocpus for VM.Standard.E3.Flex and VM.Standard.E4.Flex is 64 while VM.Optimized3.Flex shape supports maximum of 18 ocpus. When scaled-out, the changes in OCPU count will apply only to the added nodes.
+    title: "OCPU Count"
+    description: "The number of OCPU count for instances. Only required for VM.Standard.E3.Flex, VM.Standard.E4.Flex, VM.Optimized3.Flex, and  VM.Standard3.Flex Shapes. The maximum number of ocpus for VM.Standard.E3.Flex and VM.Standard.E4.Flex is 64 while VM.Optimized3.Flex shape supports maximum of 18 ocpus. When scaled-out, the changes in OCPU count will apply only to the added nodes."
     minimum: 1
     maximum: 64
     multipleOf: 1
@@ -410,14 +410,14 @@ variables:
 
   ssh_public_key:
     type: oci:core:ssh:publickey
-    title: SSH Public Key
-    description: Use the corresponding private key to access new WebLogic Server compute instances. The keys for existing compute instances remain unchanged.
+    title: "SSH Public Key"
+    description: "Use the corresponding private key to access new WebLogic Server compute instances. The keys for existing compute instances remain unchanged."
     required: true
 
   wls_availability_domain_name:
     type: oci:identity:availabilitydomain:name
-    title: WebLogic Administration Server Availability Domain
-    description: The availability domain in which to create the WebLogic administration server compute instance. If not specified, by default, the compute instance is created in availability domain 1.
+    title: "WebLogic Administration Server Availability Domain"
+    description: "The availability domain in which to create the WebLogic administration server compute instance. If not specified, by default, the compute instance is created in availability domain 1."
     required: false
     dependsOn:
       compartmentId: ${compartment_ocid}
@@ -437,8 +437,8 @@ variables:
 
   wls_node_count:
     type: integer
-    title: Node Count
-    description: The number of WebLogic Server compute instances, and also the number of managed servers in the domain. The maximum is 8, which can be scaled out to 30 when you edit the domain.
+    title: "Node Count"
+    description: "The number of WebLogic Server compute instances, and also the number of managed servers in the domain. The maximum is 8, which can be scaled out to 30 when you edit the domain."
     minimum: 1
     multipleOf: 1
     default: 1
@@ -449,8 +449,8 @@ variables:
       not:
         - ${orm_create_mode}
     type: integer
-    title: WebLogic Server Nodes Limit
-    description: The limit for the maximum number of WebLogic Server compute instances, and also the number of managed servers that can be added in the domain.
+    title: "WebLogic Server Nodes Limit"
+    description: "The limit for the maximum number of WebLogic Server compute instances, and also the number of managed servers that can be added in the domain."
     minimum: 1
     maximum: 30
     multipleOf: 1
@@ -460,8 +460,8 @@ variables:
   wls_admin_user:
     visible: ${orm_create_mode}
     type: string
-    title: WebLogic Server Admin User Name
-    description: The name of the administrator in the WebLogic Server domain
+    title: "WebLogic Server Admin User Name"
+    description: "The name of the administrator in the WebLogic Server domain"
     pattern: "^[a-zA-Z][a-zA-Z0-9]{7,127}$"
     minLength: 8
     maxLength: 128
@@ -469,14 +469,14 @@ variables:
 
   wls_admin_secret_compartment_id:
     type: oci:identity:compartment:id
-    title: WebLogic Server Admin Secret Compartment
-    description: The compartment where you have the WebLogic Server administration secret
+    title: "WebLogic Server Admin Secret Compartment"
+    description: "The compartment where you have the WebLogic Server administration secret"
     required: true
     default: ${compartment_ocid}
 
   wls_admin_password_id:
     type: "oci:kms:secret:id"
-    title: Validated Secret for WebLogic Server Admin Password
+    title: "Validated Secret for WebLogic Server Admin Password"
     description: "The secret that contains the administration password in the WebLogic Server domain. Use a WebLogic Administrator password that starts with a letter, is between 8 and 30 characters long, contains at least one number, and, optionally, any number of the special characters ($ # _). For example, Ach1z0#d. To create secrets, see <a target=\"_blank\" href=\"https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/you-begin-oracle-weblogic-cloud.html#GUID-0517A019-4A89-40ED-A568-DD2193733F8B\">Create Secrets for Passwords</a>."
     required: true
     dependsOn:
@@ -487,7 +487,7 @@ variables:
     type: boolean
     default: false
     title: "Configure Ports"
-    description: Configure the ports for administration server, managed server, and cluster. If not selected, default ports will be used. See <a target="_blank" href="https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/default-ports.html">Default Ports</a>.
+    description: "Configure the ports for administration server, managed server, and cluster. If not selected, default ports will be used. See <a target="_blank" href="https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/default-ports.html">Default Ports</a>."
 
   wls_nm_port:
     visible:
@@ -499,8 +499,8 @@ variables:
     minimum: 1024
     maximum: 65535
     multipleOf: 1
-    title: WebLogic Server Node Manager Port
-    description: The listen port number for the node manager process on all compute instances
+    title: "WebLogic Server Node Manager Port"
+    description: "The listen port number for the node manager process on all compute instances"
     required: true
 
   wls_extern_admin_port:
@@ -513,8 +513,8 @@ variables:
     minimum: 1024
     maximum: 65535
     multipleOf: 1
-    title: WebLogic Server Admin Console Port
-    description: The administration server port on which to access the administration console
+    title: "WebLogic Server Admin Console Port"
+    description: "The administration server port on which to access the administration console"
     required: true
 
   wls_extern_ssl_admin_port:
@@ -527,8 +527,8 @@ variables:
     minimum: 1024
     maximum: 65535
     multipleOf: 1
-    title: WebLogic Server Admin Console SSL Port
-    description: The administration server SSL port on which to access the administration console
+    title: "WebLogic Server Admin Console SSL Port"
+    description: "The administration server SSL port on which to access the administration console"
     required: true
 
   wls_cluster_mc_port:
@@ -541,8 +541,8 @@ variables:
     minimum: 1024
     maximum: 65535
     multipleOf: 1
-    title: WebLogic Cluster Port
-    description: The managed server port on which to send heartbeats and other internal cluster traffic (not applicable for Standard Edition)
+    title: "WebLogic Cluster Port"
+    description: "The managed server port on which to send heartbeats and other internal cluster traffic (not applicable for Standard Edition)"
     required: true
 
   wls_ms_extern_port:
@@ -555,8 +555,8 @@ variables:
     minimum: 1024
     maximum: 65535
     multipleOf: 1
-    title: WebLogic Managed Server External Port
-    description: The managed server port on which to send application traffic
+    title: "WebLogic Managed Server External Port"
+    description: "The managed server port on which to send application traffic"
     required: true
 
   wls_ms_extern_ssl_port:
@@ -569,8 +569,8 @@ variables:
     minimum: 1024
     maximum: 65535
     multipleOf: 1
-    title: WebLogic Managed Server External SSL Port
-    description: The managed server SSL port on which to send application traffic
+    title: "WebLogic Managed Server External SSL Port"
+    description: "The managed server SSL port on which to send application traffic"
     required: true
 
   deploy_sample_app:
@@ -583,8 +583,8 @@ variables:
                 - "SE"
     type: boolean
     default: true
-    title: Deploy Sample Application
-    description: Deploy an application named sample-app to the WebLogic cluster (Not applicable for Standard Edition)
+    title: "Deploy Sample Application"
+    description: "Deploy an application named sample-app to the WebLogic cluster (Not applicable for Standard Edition)"
 
   allow_manual_domain_extension:
     visible:
@@ -592,13 +592,13 @@ variables:
         - ${orm_create_mode}
     type: boolean
     default: false
-    title: Do Not Update Domain Configuration for Scale Out
-    description: 'When nodes are added to an existing stack, the domain configuration is not modified. You must manually add the managed servers to your domain configuration after updating the stack. This field applies only to editing an existing stack and not to creating a new one. NOTE: Autoscaling feature if previously enabled, will be disabled, if this option is selected.'
+    title: "Do Not Update Domain Configuration for Scale Out"
+    description: "When nodes are added to an existing stack, the domain configuration is not modified. You must manually add the managed servers to your domain configuration after updating the stack. This field applies only to editing an existing stack and not to creating a new one. NOTE: Autoscaling feature if previously enabled, will be disabled, if this option is selected."
 
   wls_server_startup_args:
     type: string
-    title: WebLogic Server Startup Arguments
-    description: Server Startup Arguments are used for providing arguments to the Java Virtual Machine for WebLogic Server instances. When scaled-out, the changes to server startup arguments will apply only to the added nodes.
+    title: "WebLogic Server Startup Arguments"
+    description: "Server Startup Arguments are used for providing arguments to the Java Virtual Machine for WebLogic Server instances. When scaled-out, the changes to server startup arguments will apply only to the added nodes."
     required: false
 
   create_new_vcn:
@@ -622,8 +622,8 @@ variables:
   network_compartment_id:
     visible: ${orm_create_mode}
     type: oci:identity:compartment:id
-    title: Network Compartment
-    description: The compartment where you want to create the network resources such as Virtual Cloud Network, security lists, route tables and gateways.
+    title: "Network Compartment"
+    description: "The compartment where you want to create the network resources such as Virtual Cloud Network, security lists, route tables and gateways."
     required: false
     default: ${compartment_ocid}
 
@@ -660,8 +660,8 @@ variables:
             - ${create_new_vcn}
     type: oci:identity:compartment:id
     required: true
-    title: Mount Target Compartment
-    description: The compartment where you have existing mount target
+    title: "Mount Target Compartment"
+    description: "The compartment where you have existing mount target"
     default: ${compartment_ocid}
 
   add_existing_fss:
@@ -703,8 +703,8 @@ variables:
   existing_network_validated:
     type: string
     required: true
-    title: Acknowledge if Existing Network is Validated
-    description: Enter YES to confirm if existing Virtual Cloud Network you selected is validated using the network validation script. See <a target="_blank" href="https://docs.oracle.com/pls/topic/lookup?ctx=en/cloud/paas/weblogic-cloud/user&id=oci_network_validate">Validate Existing Network Setup</a>
+    title: "Acknowledge if Existing Network is Validated"
+    description: "Enter YES to confirm if existing Virtual Cloud Network you selected is validated using the network validation script. See <a target="_blank" href="https://docs.oracle.com/pls/topic/lookup?ctx=en/cloud/paas/weblogic-cloud/user&id=oci_network_validate">Validate Existing Network Setup</a>"
     pattern: "^[yY][eE][sS]$"
     visible:
       and:
@@ -723,8 +723,8 @@ variables:
         - not:
             - ${create_new_subnets}
     type: oci:identity:compartment:id
-    title: Subnet Compartment
-    description: The compartment where you have subnets created.
+    title: "Subnet Compartment"
+    description: "The compartment where you have subnets created"
     required: true
     default: ${compartment_ocid}
 
@@ -737,8 +737,8 @@ variables:
         - not:
             - ${create_new_subnets}
     type: enum
-    title: Subnet Type
-    description: Choose between private and public subnets. Warning - If you select a public subnet, ensure to limit the CIDR range to access WebLogic administration console ports (defaults are 7001 and 7002 for http and https).
+    title: "Subnet Type"
+    description: "Choose between private and public subnets. Warning - If you select a public subnet, ensure to limit the CIDR range to access WebLogic administration console ports (defaults are 7001 and 7002 for http and https)."
     enum:
       - "Use Private Subnet"
       - "Use Public Subnet"
@@ -753,8 +753,8 @@ variables:
         - not:
             - ${create_new_subnets}
     type: enum
-    title: Subnet Span
-    description: Choose between regional and AD specific subnets
+    title: "Subnet Span"
+    description: "Choose between regional and AD specific subnets"
     enum:
       - "Regional Subnet"
       - "AD Specific Subnet"
@@ -788,8 +788,8 @@ variables:
     maxLength: 255
     pattern: "^[a-zA-Z_]\\w{0,254}$"
     required: true
-    title: Virtual Cloud Network Name
-    description: The name of the new Virtual Cloud Network (VCN) to create for this service
+    title: "Virtual Cloud Network Name"
+    description: "The name of the new Virtual Cloud Network (VCN) to create for this service"
 
   wls_existing_vcn_id:
     visible:
@@ -802,8 +802,8 @@ variables:
       compartmentId: ${network_compartment_id}
     required: true
     default: ''
-    title: Existing Network
-    description: An existing Virtual Cloud Network (VCN) in which to create the compute instances, network resources, and load balancers.
+    title: "Existing Network"
+    description: "An existing Virtual Cloud Network (VCN) in which to create the compute instances, network resources, and load balancers."
 
   wls_vcn_cidr:
     visible:
@@ -813,8 +813,8 @@ variables:
     type: string
     default: 10.0.0.0/16
     pattern: "^(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\\/(3[0-2]|[1-2]?[0-9])$"
-    title: Virtual Cloud Network CIDR
-    description: The CIDR to assign to the new Virtual Cloud Network (VCN) to create for this service.
+    title: "Virtual Cloud Network CIDR"
+    description: "The CIDR to assign to the new Virtual Cloud Network (VCN) to create for this service"
 
   wls_subnet_cidr:
     visible:
@@ -828,7 +828,7 @@ variables:
     default: 10.0.2.0/24
     pattern: "^(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\\/(3[0-2]|[1-2]?[0-9])$"
     required: true
-    title: WebLogic Server Subnet CIDR
+    title: "WebLogic Server Subnet CIDR"
     description: "The CIDR of the new subnet to create for WebLogic Server compute instances. This field is required only if you want to use new subnets. The new subnet's CIDR should not overlap with any other subnet CIDRs."
 
   mount_target_subnet_cidr:
@@ -848,7 +848,7 @@ variables:
     default: 10.0.5.0/24
     pattern: "^(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\\/(3[0-2]|[1-2]?[0-9])$"
     required: true
-    title: Mount Target Subnet CIDR
+    title: "Mount Target Subnet CIDR"
     description: "The CIDR of the new subnet to create for mount target. This field is required only if you want to use new subnets. The new subnet's CIDR should not overlap with any other subnet CIDRs."
 
   wls_subnet_id:
@@ -885,8 +885,8 @@ variables:
               - "AD Specific Subnet"
     default: ''
     required: true
-    title: Existing Subnet for WebLogic Server
-    description: An existing subnet to use for WebLogic Server compute instances. This subnet must already be present in the chosen VCN.
+    title: "Existing Subnet for WebLogic Server"
+    description: "An existing subnet to use for WebLogic Server compute instances. This subnet must already be present in the chosen VCN."
 
   mount_target_subnet_id:
     visible:
@@ -927,15 +927,15 @@ variables:
               - "AD Specific Subnet"
     default: ''
     required: true
-    title: Existing Subnet for Mount Target
-    description: An existing subnet to use for mount target. This subnet must already be present in the chosen VCN.
+    title: "Existing Subnet for Mount Target"
+    description: "An existing subnet to use for mount target. This subnet must already be present in the chosen VCN."
 
   assign_weblogic_public_ip:
     visible: ${orm_create_mode}
     type: boolean
     default: true
-    title: Assign Public IP Addresses to WebLogic Server
-    description: If not selected, the WebLogic Server compute instances are created in a new private subnet. The compute instances, admin console, and applications will not be directly accessible from clients that are external to Oracle Cloud.
+    title: "Assign Public IP Addresses to WebLogic Server"
+    description: "If not selected, the WebLogic Server compute instances are created in a new private subnet. The compute instances, admin console, and applications will not be directly accessible from clients that are external to Oracle Cloud."
 
   is_bastion_instance_required:
     visible:
@@ -952,8 +952,8 @@ variables:
                     - "Use Public Subnet"
     type: boolean
     default: true
-    title: Provision Bastion Instance
-    description: Provision a bastion compute instance on a public subnet to provide access to the WebLogic Server compute instances on a private subnet. If not selected, you must check the status of the compute instances after the stack job is complete.
+    title: "Provision Bastion Instance"
+    description: "Provision a bastion compute instance on a public subnet to provide access to the WebLogic Server compute instances on a private subnet. If not selected, you must check the status of the compute instances after the stack job is complete."
 
   is_bastion_with_reserved_public_ip:
     visible:
@@ -974,14 +974,14 @@ variables:
                     - "Use Private Subnet"
     type: boolean
     default: false
-    title: Assign Reserved Public IP to Bastion Instance
-    description: Provision a bastion compute instance with a reserved public IP
+    title: "Assign Reserved Public IP to Bastion Instance"
+    description: "Provision a bastion compute instance with a reserved public IP"
 
   bastion_subnet_name:
     type: string
     default: 'bastion-subnet'
-    title: Bastion Host Subnet Name
-    description: Subnet name for Bastion host
+    title: "Bastion Host Subnet Name"
+    description: "Subnet name for Bastion host"
 
   bastion_subnet_cidr:
     visible:
@@ -999,7 +999,7 @@ variables:
     default: 10.0.1.0/24
     pattern: "^(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\\/(3[0-2]|[1-2]?[0-9])$"
     required: true
-    title: Bastion Host Subnet CIDR
+    title: "Bastion Host Subnet CIDR"
     description: "The CIDR of the new public subnet to create for a Bastion compute instance. This field is required only if you did not assign public IP addresses to WebLogic Server. The new subnet's CIDR should not overlap with any other subnet CIDRs."
 
   bastion_subnet_id:
@@ -1033,8 +1033,8 @@ variables:
               - "AD Specific Subnet"
     default: ''
     required: true
-    title: Existing Subnet for Bastion Host
-    description: An existing public subnet to use for a Bastion compute instance. This subnet must already be present in the chosen VCN. This field is required only if you did not assign public IP addresses to WebLogic Server.
+    title: "Existing Subnet for Bastion Host"
+    description: "An existing public subnet to use for a Bastion compute instance. This subnet must already be present in the chosen VCN. This field is required only if you did not assign public IP addresses to WebLogic Server."
 
   bastion_instance_shape:
     visible:
@@ -1050,8 +1050,8 @@ variables:
                 - "Use Private Subnet"
     type: oci:core:instanceshape:name
     #type: oci:core:instanceshapewithflex:name
-    title: Bastion Host Shape
-    description: The shape for bastion compute instance.
+    title: "Bastion Host Shape"
+    description: "The shape for bastion compute instance"
     required: true
     dependsOn:
       compartmentId: ${compartment_ocid}
@@ -1122,8 +1122,8 @@ variables:
   add_load_balancer:
     type: boolean
     default: true
-    title: Provision Load Balancer
-    description: Provision a load balancer in Oracle Cloud Infrastructure to distribute application traffic to the managed servers in the domain.
+    title: "Provision Load Balancer"
+    description: "Provision a load balancer in Oracle Cloud Infrastructure to distribute application traffic to the managed servers in the domain"
 
   load_balancer_strategy_new_subnet:
     visible:
@@ -1139,8 +1139,8 @@ variables:
     enum:
       - "Create New Load Balancer"
     default: "Create New Load Balancer"
-    title: Create New Load Balancer
-    description: Configure a new load balancer in Oracle Cloud Infrastructure to distribute application traffic to the managed servers in the domain. Load balancer is required for metrics based autoscaling and Oracle Identity Cloud Service (IDCS).
+    title: "Create New Load Balancer"
+    description: "Configure a new load balancer in Oracle Cloud Infrastructure to distribute application traffic to the managed servers in the domain. Load balancer is required for metrics based autoscaling and Oracle Identity Cloud Service (IDCS)."
     required: true
 
   load_balancer_strategy_existing_subnet:
@@ -1159,8 +1159,8 @@ variables:
       - "Create New Load Balancer"
       - "Use Existing Load Balancer"
     default: "Create New Load Balancer"
-    title: Create or Use Existing Load Balancer
-    description: Configure a new or existing load balancer in Oracle Cloud Infrastructure to distribute application traffic to the managed servers in the domain. Load balancer is required for metrics based autoscaling and Oracle Identity Cloud Service (IDCS).
+    title: "Create or Use Existing Load Balancer"
+    description: "Configure a new or existing load balancer in Oracle Cloud Infrastructure to distribute application traffic to the managed servers in the domain. Load balancer is required for metrics based autoscaling and Oracle Identity Cloud Service (IDCS)."
     required: true
 
   existing_load_balancer_id:
@@ -1179,8 +1179,8 @@ variables:
                 - "Use Existing Load Balancer"
     type: string
     pattern: ^ocid1.loadbalancer.*$
-    title: Existing Load Balancer ID
-    description: The OCID of the existing load balancer. If you use an existing load balancer, the WebLogic Server nodes are added to the backend set of the existing load balancer.
+    title: "Existing Load Balancer ID"
+    description: "The OCID of the existing load balancer. If you use an existing load balancer, the WebLogic Server nodes are added to the backend set of the existing load balancer."
     required: true
 
   backendset_name_for_existing_load_balancer:
@@ -1198,8 +1198,8 @@ variables:
                 - ${load_balancer_strategy_existing_subnet}
                 - "Use Existing Load Balancer"
     type: string
-    title: Existing Load Balancer Backend Set Name
-    description: Name of the backend set for the existing load balancer. The backend set should not have any associated backends. Ensure that you have configured a routing policy for the backend set.
+    title: "Existing Load Balancer Backend Set Name"
+    description: "Name of the backend set for the existing load balancer. The backend set should not have any associated backends. Ensure that you have configured a routing policy for the backend set."
     required: true
 
   is_lb_private:
@@ -1217,8 +1217,8 @@ variables:
                 - "Use Existing Load Balancer"
     type: boolean
     default: false
-    title: Private Load balancer
-    description: Provision a private load balancer.
+    title: "Private Load balancer"
+    description: "Provision a private load balancer"
 
   add_lb_reserved_public_ip_id:
     visible:
@@ -1234,8 +1234,8 @@ variables:
                 - "Use Existing Load Balancer"
     type: boolean
     default: false
-    title: Load Balancer with Reserved Public IP
-    description: Provision a load balancer with a reserved public IP
+    title: "Load Balancer with Reserved Public IP"
+    description: "Provision a load balancer with a reserved public IP"
 
   lb_reserved_public_ip_id:
     visible:
@@ -1248,9 +1248,9 @@ variables:
                 - ${load_balancer_strategy_existing_subnet}
                 - "Use Existing Load Balancer"
     type: string
-    title: Reserved Public IP OCID for Load Balancer
+    title: "Reserved Public IP OCID for Load Balancer"
     required: true
-    description: The OCID of the reserved public IP address for the load balancer
+    description: "The OCID of the reserved public IP address for the load balancer"
     pattern: ^ocid1.publicip.*$
 
   lb_subnet_1_cidr:
@@ -1267,7 +1267,7 @@ variables:
     default: 10.0.3.0/24
     pattern: "^(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\\/(3[0-2]|[1-2]?[0-9])$"
     required: true
-    title: Load Balancer Subnet CIDR
+    title: "Load Balancer Subnet CIDR"
     description: "The CIDR of the new subnet to create for the load balancer. The new subnet's CIDR should not overlap with any other subnet CIDRs."
 
   lb_subnet_1_id:
@@ -1305,8 +1305,8 @@ variables:
               - "AD Specific Subnet"
     default: ''
     required: true
-    title: Existing Subnet for Load Balancer
-    description: An existing subnet to use for the load balancer. This subnet must already be present in the chosen VCN.
+    title: "Existing Subnet for Load Balancer"
+    description: "An existing subnet to use for the load balancer. This subnet must already be present in the chosen VCN."
 
   lb_subnet_2_id:
     visible:
@@ -1344,8 +1344,8 @@ variables:
               - "AD Specific Subnet"
     default: ''
     required: true
-    title: Existing Subnet 2 for Load Balancer
-    description: An existing subnet to use for the second load balancer node. This field is required only if you are not using regional subnets.
+    title: "Existing Subnet 2 for Load Balancer"
+    description: "An existing subnet to use for the second load balancer node. This field is required only if you are not using regional subnets."
 
   lb_min_bandwidth:
     visible:
@@ -1376,8 +1376,8 @@ variables:
                     - ${load_balancer_strategy_new_subnet}
                     - "Create New Load Balancer"
     type: integer
-    title: Minimum Bandwidth for Flexible Load Balancer
-    description: Create flexible shape load balancer with minimum bandwidth. The minimum service limit is 10 Mbps.
+    title: "Minimum Bandwidth for Flexible Load Balancer"
+    description: "Create flexible shape load balancer with minimum bandwidth. The minimum service limit is 10 Mbps."
     minimum: 10
     maximum: 8000
     default: 10
@@ -1412,8 +1412,8 @@ variables:
                     - ${load_balancer_strategy_new_subnet}
                     - "Create New Load Balancer"
     type: integer
-    title: Maximum Bandwidth for Flexible Load Balancer
-    description: Create flexible shape load balancer with maximum bandwidth. The maximum service limit is 8000 Mbps. Check the service limits page in the Console to provide accurate service limits.
+    title: "Maximum Bandwidth for Flexible Load Balancer"
+    description: "Create flexible shape load balancer with maximum bandwidth. The maximum service limit is 8000 Mbps. Check the service limits page in the Console to provide accurate service limits."
     minimum: 10
     maximum: 8000
     default: 400
@@ -1448,8 +1448,8 @@ variables:
 
   create_policies:
     type: boolean
-    title: OCI Policies
-    description: Create policies to read Secrets from Vault and manage Autonomous Transaction Processing Database (if applicable). Deselecting this option is for Advanced users only.  Before you deselect the check box, see <a target="_blank" href="https://docs.oracle.com/pls/topic/lookup?ctx=en/cloud/paas/weblogic-cloud&id=WLCUG-GUID-4E2AD7BF-592D-4C2C-AF66-D98CB26379A5">Create Root Policies</a> to create the required groups and relevant policies.
+    title: "OCI Policies"
+    description: "Create policies to read Secrets from Vault and manage Autonomous Transaction Processing Database (if applicable). Deselecting this option is for Advanced users only.  Before you deselect the check box, see <a target="_blank" href="https://docs.oracle.com/pls/topic/lookup?ctx=en/cloud/paas/weblogic-cloud&id=WLCUG-GUID-4E2AD7BF-592D-4C2C-AF66-D98CB26379A5">Create Root Policies</a> to create the required groups and relevant policies."
     required: false
     default: true
 
@@ -1457,8 +1457,8 @@ variables:
     visible: ${orm_create_mode}
     type: boolean
     default: false
-    title: Provision with JRF
-    description: Deploy the Java Required Files (JRF) components and create the JRF schemas on the selected database
+    title: "Provision with JRF"
+    description: "Deploy the Java Required Files (JRF) components and create the JRF schemas on the selected database"
 
   db_strategy:
     visible:
@@ -1466,8 +1466,8 @@ variables:
         - ${orm_create_mode}
         - ${add_JRF}
     type: enum
-    title: Database Strategy
-    description: Choose the database strategy for WebLogic Server
+    title: "Database Strategy"
+    description: "Choose the database strategy for WebLogic Server"
     enum:
       - "Autonomous Transaction Processing Database"
       - "Database System"
@@ -1486,8 +1486,8 @@ variables:
                 - ${db_strategy}
                 - "Database System"
     type: boolean
-    title: Use Database Connection String
-    description: Use database connection string to create a single instance datasource for JRF schemas. You cannot create an Active GridLink or a Multi Data Source using this database connection string. For the database connection string, see <a target="_blank" href="https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/create-jrf-enabled-domain.html#GUID-6A39A2A7-EF6C-408E-B5C7-C44089A9B134">Configure Database Parameters</a>.
+    title: "Use Database Connection String"
+    description: "Use database connection string to create a single instance datasource for JRF schemas. You cannot create an Active GridLink or a Multi Data Source using this database connection string. For the database connection string, see <a target="_blank" href="https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/create-jrf-enabled-domain.html#GUID-6A39A2A7-EF6C-408E-B5C7-C44089A9B134">Configure Database Parameters</a>."
     default: false
 
   oci_db_connection_string:
@@ -1502,7 +1502,7 @@ variables:
         - not:
             - ${create_new_vcn}
     type: string
-    title: Oracle Database Connection String
+    title: "Oracle Database Connection String"
     description: "Oracle database connection string to connect to database. Example: //{scan_hostname}.{host_domain_name}:{db_port}/{pdb_or_sid}.{Host Domain Name}"
     pattern: ^(\/\/)
     required: true
@@ -1518,8 +1518,8 @@ variables:
             - "Autonomous Transaction Processing Database"
     type: oci:identity:compartment:id
     required: true
-    title: Autonomous Database Compartment
-    description: The compartment in which the Autonomous Transaction Processing (ATP) database is found
+    title: "Autonomous Database Compartment"
+    description: "The compartment in which the Autonomous Transaction Processing (ATP) database is found"
 
   atp_db_id:
     visible:
