@@ -527,5 +527,4 @@ variable "lb_availability_domain_name2" {
 variable "tf_script_version" {
   type        = string
   description = "The version of the provisioning scripts located in the OCI image used to create the WebLogic compute instances"
-  default     = ""
 }
