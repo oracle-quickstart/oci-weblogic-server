@@ -1,4 +1,4 @@
-# Copyright (c) 2022, Oracle and/or its affiliates.
+# Copyright (c) 2022, 2023, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 variable "service_name" {
@@ -522,4 +522,9 @@ variable "lb_availability_domain_name1" {
 variable "lb_availability_domain_name2" {
   type        = string
   description = "The availability domain of the subnet for the secondary load balancer. Only applicable if using AD subnets"
+}
+
+variable "tf_script_version" {
+  type        = string
+  description = "The version of the provisioning scripts located in the OCI image used to create the WebLogic compute instances"
 }
