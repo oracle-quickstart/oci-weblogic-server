@@ -1533,8 +1533,8 @@ variables:
     dependsOn:
       compartmentId: ${atp_db_compartment_id}
     required: true
-    title: Autonomous Database
-    description: The Autonomous Transaction Processing (ATP) database in which to provision the schemas for a JRF-enabled WebLogic Server domain
+    title: "Autonomous Database"
+    description: "The Autonomous Transaction Processing (ATP) database in which to provision the schemas for a JRF-enabled WebLogic Server domain"
 
   atp_db_secret_compartment_id:
     visible:
@@ -1545,8 +1545,8 @@ variables:
             - ${db_strategy}
             - "Autonomous Transaction Processing Database"
     type: oci:identity:compartment:id
-    title: Autonomous Database Secret Compartment
-    description: The compartment where you have the ATP database secret
+    title: "Autonomous Database Secret Compartment"
+    description: "The compartment where you have the ATP database secret"
     required: true
     default: ${compartment_ocid}
 
@@ -1562,8 +1562,8 @@ variables:
     dependsOn:
       compartmentId: ${atp_db_secret_compartment_id}
     required: true
-    title: Validated Secret for Autonomous Database Admin Password
-    description: The secret that contains the administration user password in the ATP database. To create secrets, see <a target="_blank" href="https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/you-begin-oracle-weblogic-cloud.html#GUID-0517A019-4A89-40ED-A568-DD2193733F8B"> Create Secrets for Passwords</a>.
+    title: "Validated Secret for Autonomous Database Admin Password"
+    description: "The secret that contains the administration user password in the ATP database. To create secrets, see <a target="_blank" href="https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/you-begin-oracle-weblogic-cloud.html#GUID-0517A019-4A89-40ED-A568-DD2193733F8B"> Create Secrets for Passwords</a>."
 
   atp_db_level:
     visible:
@@ -1579,8 +1579,8 @@ variables:
       - tp
       - tpurgent
     default: low
-    title: Autonomous Database Service Level
-    description: The service level that the WebLogic Server domain should use to connect to the autonomous database. The default is low.
+    title: "Autonomous Database Service Level"
+    description: "The service level that the WebLogic Server domain should use to connect to the autonomous database. The default is low."
 
   atp_db_uses_private_endpoint:
     visible:
@@ -1592,8 +1592,8 @@ variables:
             - "Autonomous Transaction Processing Database"
     type: boolean
     default: false
-    title: Database uses private endpoint
-    description: The Autonomous Transaction Processing (ATP) database uses private endpoint for network access.
+    title: "Database uses private endpoint"
+    description: "The Autonomous Transaction Processing (ATP) database uses private endpoint for network access"
 
   atp_db_network_compartment_id:
     visible:
@@ -1607,8 +1607,8 @@ variables:
             - ${atp_db_uses_private_endpoint}
     type: oci:identity:compartment:id
     required: true
-    title: Autonomous Database Network Compartment
-    description: The compartment in which the ATP database Virtual Cloud Network is found.
+    title: "Autonomous Database Network Compartment"
+    description: "The compartment in which the ATP database Virtual Cloud Network is found"
     default: ${compartment_ocid}
 
   atp_db_existing_vcn_id:
@@ -1626,8 +1626,8 @@ variables:
       compartmentId: ${atp_db_network_compartment_id}
     required: true
     default: ''
-    title: Autonomous Database Network
-    description: An existing Virtual Cloud Network (VCN) used by ATP database with private endpoint. If the selected VCN is different from WebLogic Server VCN then local VCN peering will be setup. When using VCN peering ensure that the VCNs being peered have non-overlapping CIDR blocks.
+    title: "Autonomous Database Network"
+    description: "An existing Virtual Cloud Network (VCN) used by ATP database with private endpoint. If the selected VCN is different from WebLogic Server VCN then local VCN peering will be setup. When using VCN peering ensure that the VCNs being peered have non-overlapping CIDR blocks."
 
   oci_db_network_compartment_id:
     visible:
@@ -1644,8 +1644,8 @@ variables:
                     - ${use_oci_db_connection_string}
     type: oci:identity:compartment:id
     required: true
-    title: DB System Network Compartment
-    description: The compartment in which the DB System Virtual Cloud Network is found.
+    title: "DB System Network Compartment"
+    description: "The compartment in which the DB System Virtual Cloud Network is found"
     default: ${compartment_ocid}
 
   db_existing_vcn_add_secrule:
@@ -1670,8 +1670,8 @@ variables:
                 - ${atp_db_uses_private_endpoint}
     type: boolean
     default: true
-    title: Create Database Security List
-    description: Add a security list to the DB subnet or a security rule to the Network Security Group for ATP Database with private endpoint that allows connections from the WebLogic Server subnet
+    title: "Create Database Security List"
+    description: "Add a security list to the DB subnet or a security rule to the Network Security Group for ATP Database with private endpoint that allows connections from the WebLogic Server subnet"
 
   # OCI DB Configuration
 
@@ -1690,8 +1690,8 @@ variables:
                     - ${use_oci_db_connection_string}
     type: oci:identity:compartment:id
     required: true
-    title: DB System Compartment
-    description: The compartment in which the DB System is found
+    title: "DB System Compartment"
+    description: "The compartment in which the DB System is found"
     default: ${compartment_ocid}
 
   oci_db_existing_vcn_id:
@@ -1712,8 +1712,8 @@ variables:
       compartmentId: ${oci_db_network_compartment_id}
     required: true
     default: ''
-    title: DB System Network
-    description: An existing Virtual Cloud Network (VCN) used by DB System. If the selected VCN is different from WebLogic Server VCN then local VCN peering will be setup. When using VCN peering ensure that the VCNs being peered have non-overlapping CIDR blocks.
+    title: "DB System Network"
+    description: "An existing Virtual Cloud Network (VCN) used by DB System. If the selected VCN is different from WebLogic Server VCN then local VCN peering will be setup. When using VCN peering ensure that the VCNs being peered have non-overlapping CIDR blocks."
 
   oci_db_dbsystem_id:
     visible:
@@ -1732,8 +1732,8 @@ variables:
     dependsOn:
       compartmentId: ${oci_db_compartment_id}
     required: true
-    title: DB System
-    description: The Oracle Cloud Infrastructure DB System to use for this WebLogic Server domain.
+    title: "DB System"
+    description: "The Oracle Cloud Infrastructure DB System to use for this WebLogic Server domain"
 
   oci_db_dbhome_id:
     visible:
@@ -1750,8 +1750,8 @@ variables:
                     - ${use_oci_db_connection_string}
     type: oci:database:dbhome:id
     required: true
-    title: Database home in the DB System
-    description: The database home within the DB System
+    title: "Database home in the DB System"
+    description: "The database home within the DB System"
     dependsOn:
       compartmentId: ${oci_db_compartment_id}
       dbSystemId: ${oci_db_dbsystem_id}
@@ -1770,8 +1770,8 @@ variables:
                 - not:
                     - ${use_oci_db_connection_string}
     type: oci:database:dbhome:dbversion
-    title: Version of Database home in the DB System
-    description: The version of database home within the DB System
+    title: "Version of Database home in the DB System"
+    description: "The version of database home within the DB System"
     dependsOn:
       dbHomeId: ${oci_db_dbhome_id}
 
@@ -1793,8 +1793,8 @@ variables:
       compartmentId: ${oci_db_compartment_id}
       dbHomeId: ${oci_db_dbhome_id}
     required: true
-    title: Database in the DB System
-    description: The database within the DB System in which to provision the schemas for a JRF-enabled WebLogic Server domain
+    title: "Database in the DB System"
+    description: "The database within the DB System in which to provision the schemas for a JRF-enabled WebLogic Server domain"
 
   oci_db_pdb_service_name:
     visible:
@@ -1817,8 +1817,8 @@ variables:
 
     type: string
     required: true
-    title: PDB
-    description: The name of the pluggable database (PDB) in which to provision the schemas for a JRF-enabled WebLogic Server domain. This is required for Oracle Database 12c or later.
+    title: "PDB"
+    description: "The name of the pluggable database (PDB) in which to provision the schemas for a JRF-enabled WebLogic Server domain. This is required for Oracle Database 12c or later."
 
   oci_db_user:
     visible:
@@ -1833,8 +1833,8 @@ variables:
     pattern: "^[a-zA-Z][a-zA-Z0-9]{1,49}$"
     minLength: 2
     maxLength: 50
-    title: Database Administrator
-    description: The name of a database user with SYSDBA privileges
+    title: "Database Administrator"
+    description: "The name of a database user with SYSDBA privileges"
     required: true
 
   oci_db_port:
@@ -1852,8 +1852,8 @@ variables:
                     - ${use_oci_db_connection_string}
     type: integer
     default: 1521
-    title: Database Listener Port
-    description: The Listener Port for the Database
+    title: "Database Listener Port"
+    description: "The Listener Port for the Database"
     required: false
 
   oci_db_secret_compartment_id:
@@ -1865,8 +1865,8 @@ variables:
             - ${db_strategy}
             - "Database System"
     type: oci:identity:compartment:id
-    title: OCI DB Admin Password Secret Compartment
-    description: The compartment where you have the OCI DB administration password secret
+    title: "OCI DB Admin Password Secret Compartment"
+    description: "The compartment where you have the OCI DB administration password secret"
     required: true
     default: ${compartment_ocid}
 
@@ -1882,8 +1882,8 @@ variables:
     dependsOn:
       compartmentId: ${oci_db_secret_compartment_id}
     required: true
-    title: Validated Secret for OCI DB Admin Password
-    description: The secret that contains the database administration password. To create secrets, see <a target="_blank" href="https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/you-begin-oracle-weblogic-cloud.html#GUID-0517A019-4A89-40ED-A568-DD2193733F8B"> Create Secrets for Passwords</a>.
+    title: "Validated Secret for OCI DB Admin Password"
+    description: "The secret that contains the database administration password. To create secrets, see <a target="_blank" href="https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/you-begin-oracle-weblogic-cloud.html#GUID-0517A019-4A89-40ED-A568-DD2193733F8B"> Create Secrets for Passwords</a>."
 
   db_vcn_lpg_id:
     visible:
@@ -1919,18 +1919,18 @@ variables:
                               - ${atp_db_existing_vcn_id}
 
     type: string
-    title: Local Peering Gateway in Database VCN
+    title: "Local Peering Gateway in Database VCN"
     pattern: ^ocid1.localpeeringgateway.*$
     required: true
-    description: The OCID of the Local Peering Gateway (LPG) in the database VCN, used to peer the WebLogic VCN.
+    description: "The OCID of the Local Peering Gateway (LPG) in the database VCN, used to peer the WebLogic VCN"
 
   # Tagging variables
   create_service_tag:
     visible: ${orm_create_mode}
     type: boolean
-    title: Add Tags
+    title: "Add Tags"
     default: false
-    description: Add tags to the resources created by the WebLogic for OCI stack.
+    description: "Add tags to the resources created by the WebLogic for OCI stack"
 
   service_tags:
     visible:
@@ -1938,15 +1938,15 @@ variables:
         - ${orm_create_mode}
         - ${create_service_tag}
     type: oci:identity:tag:value
-    title: Service Tagging
+    title: "Service Tagging"
     required: false
 
   # IDCS variables
   is_idcs_selected:
     type: boolean
     default: false
-    title: Enable Authentication Using Identity Cloud Service
-    description: Authenticate WebLogic Server users against Oracle Identity Cloud Service (IDCS). If not selected, WebLogic Server uses the local identity store. If you select the check box, load balancer will be provisioned.
+    title: "Enable Authentication Using Identity Cloud Service"
+    description: "Authenticate WebLogic Server users against Oracle Identity Cloud Service (IDCS). If not selected, WebLogic Server uses the local identity store. If you select the check box, load balancer will be provisioned."
     visible: ${orm_create_mode}
 
   idcs_host:
@@ -1958,8 +1958,8 @@ variables:
     type: string
     minLength: 1
     maxLength: 1024
-    title: IDCS Host Domain Name
-    description: The domain name for the host that you use to access Identity Cloud Service.
+    title: "IDCS Host Domain Name"
+    description: "The domain name for the host that you use to access Identity Cloud Service"
     required: true
     default: "identity.oraclecloud.com"
 
@@ -1974,8 +1974,8 @@ variables:
     minimum: 0
     maximum: 65535
     multipleOf: 1
-    title: IDCS Port
-    description: The port number that you use to access Identity Cloud Service
+    title: "IDCS Port"
+    description: "The port number that you use to access Identity Cloud Service"
     required: true
 
   idcs_tenant:
@@ -1987,8 +1987,8 @@ variables:
     type: string
     minLength: 1
     maxLength: 1024
-    title: IDCS Tenant
-    description: The ID of your Identity Cloud Service tenant, which typically has the format idcs-{guid}, and is part of the host name that you use to access Identity Cloud Service
+    title: "IDCS Tenant"
+    description: "The ID of your Identity Cloud Service tenant, which typically has the format idcs-{guid}, and is part of the host name that you use to access Identity Cloud Service"
     required: true
 
   idcs_client_id:
@@ -2000,8 +2000,8 @@ variables:
     type: string
     minLength: 1
     maxLength: 1024
-    title: IDCS Client ID
-    description: The client ID of a confidential application in Identity Cloud Service that is used to create the necessary artifacts in Identity Cloud Service. This application needs to be configured as client, and has to be granted with access to Identity Cloud Service Admin APIs, with Identity Domain Administrator app role. See <a target="_blank" href="https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/you-begin-oracle-weblogic-cloud.html#GUID-807D5863-04A3-47A3-8D65-443B859B80FD">Create a Confidential Application</a>.
+    title: "IDCS Client ID"
+    description: "The client ID of a confidential application in Identity Cloud Service that is used to create the necessary artifacts in Identity Cloud Service. This application needs to be configured as client, and has to be granted with access to Identity Cloud Service Admin APIs, with Identity Domain Administrator app role. See <a target="_blank" href="https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/you-begin-oracle-weblogic-cloud.html#GUID-807D5863-04A3-47A3-8D65-443B859B80FD">Create a Confidential Application</a>."
     required: true
 
   idcs_secret_compartment_id:
@@ -2011,8 +2011,8 @@ variables:
         - and:
             - ${is_idcs_selected}
     type: oci:identity:compartment:id
-    title: IDCS Secret Compartment
-    description: The compartment where you have the IDCS secret
+    title: "IDCS Secret Compartment"
+    description: "The compartment where you have the IDCS secret"
     required: true
     default: ${compartment_ocid}
 
@@ -2025,8 +2025,8 @@ variables:
     type: "oci:kms:secret:id"
     minLength: 1
     maxLength: 1024
-    title: Validated Secret for IDCS Client
-    description: The secret that contains the client secret of the confidential application password in IDCS, which is used to create the necessary artifacts in IDCS. To create secrets, see <a target="_blank" href="https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/you-begin-oracle-weblogic-cloud.html#GUID-0517A019-4A89-40ED-A568-DD2193733F8B"> Create Secrets for Passwords</a>.
+    title: "Validated Secret for IDCS Client"
+    description: "The secret that contains the client secret of the confidential application password in IDCS, which is used to create the necessary artifacts in IDCS. To create secrets, see <a target="_blank" href="https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/you-begin-oracle-weblogic-cloud.html#GUID-0517A019-4A89-40ED-A568-DD2193733F8B"> Create Secrets for Passwords</a>."
     required: true
     dependsOn:
       compartmentId: ${idcs_secret_compartment_id}
@@ -2042,8 +2042,8 @@ variables:
     minimum: 1024
     maximum: 65535
     multipleOf: 1
-    title: IDCS Redirect Port
-    description: The listen port for the Identity Cloud Service App Gateway, which authenticates requests and redirects them to WebLogic Server
+    title: "IDCS Redirect Port"
+    description: "The listen port for the Identity Cloud Service App Gateway, which authenticates requests and redirects them to WebLogic Server"
     required: true
 
   fss_availability_domain:
@@ -2061,7 +2061,7 @@ variables:
                 - not:
                     - ${add_existing_mount_target}
     type: oci:identity:availabilitydomain:name
-    title: File System Availability Domain
+    title: "File System Availability Domain"
     description: "The name of the availability domain for the file system and mount target"
     dependsOn:
       compartmentId: ${compartment_ocid}
@@ -2077,8 +2077,8 @@ variables:
             - ${create_new_vcn}
     type: oci:identity:compartment:id
     required: true
-    title: Existing File System Compartment
-    description: The compartment where the file system exists
+    title: "Existing File System Compartment"
+    description: "The compartment where the file system exists"
     default: ${compartment_ocid}
 
   mount_target_id:
@@ -2108,8 +2108,8 @@ variables:
         - not:
             - ${create_new_vcn}
     type: string
-    title: Existing File System ID
-    description: The Oracle Cloud Identifier (OCID) of your existing file system. The existing file system must be in the same availability domain as the existing mount target.
+    title: "Existing File System ID"
+    description: "The Oracle Cloud Identifier (OCID) of your existing file system. The existing file system must be in the same availability domain as the existing mount target."
     pattern: ^$|^ocid1.filesystem.*$
     required: true
 
@@ -2127,7 +2127,7 @@ variables:
         - not:
             - ${create_policies}
     type: oci:identity:dynamicgroups:id
-    title: Dynamic Group OCID for WebLogic Server Instances
+    title: "Dynamic Group OCID for WebLogic Server Instances"
     dependsOn:
       compartmentId: ${tenancy_ocid}
     description: "The OCID of the dynamic group that contains the WebLogic instances from which logs will be exported to OCI Logging Service."
@@ -2138,8 +2138,8 @@ variables:
       not:
         - ${orm_create_mode}
     type: enum
-    title: Image for Scale Out
-    description: The selected image is used for scale out. A BYOL image requires a WebLogic License with valid support contract. UCM images are charged per OCPU/hour for the entitlement and WebLogic support.
+    title: "Image for Scale Out"
+    description: "The selected image is used for scale out. A BYOL image requires a WebLogic License with valid support contract. UCM images are charged per OCPU/hour for the entitlement and WebLogic support."
     required: true
     enum:
       - "Oracle WebLogic Server BYOL Image"
@@ -2154,8 +2154,8 @@ variables:
           - "Oracle WebLogic Server Enterprise Edition UCM Image"
     type: boolean
     default: false
-    title: Terms of use
-    description: I have reviewed and accept the <a target="_blank" href="https://objectstorage.us-phoenix-1.oraclecloud.com/n/axxu7cichsnt/b/terms/o/wlsoci_ee_terms_and_conditions.txt">Oracle terms of use</a>
+    title: "Terms of use"
+    description: "I have reviewed and accept the <a target="_blank" href="https://objectstorage.us-phoenix-1.oraclecloud.com/n/axxu7cichsnt/b/terms/o/wlsoci_ee_terms_and_conditions.txt">Oracle terms of use</a>"
     required: true
 
   use_apm_service:
@@ -2170,8 +2170,8 @@ variables:
         - ${use_apm_service}
         - ${use_autoscaling}
     type: oci:identity:compartment:id
-    title: Application Performance Monitoring Domain Compartment
-    description: The compartment where you have the Application Performance Monitoring domain to be used by this WebLogic instance.
+    title: "Application Performance Monitoring Domain Compartment"
+    description: "The compartment where you have the Application Performance Monitoring domain to be used by this WebLogic instance"
     required: true
     default: ${compartment_ocid}
 
@@ -2316,8 +2316,8 @@ variables:
         - and:
             - ${use_autoscaling}
     type: string
-    title: Registry User Name
-    description: The user name to access the Oracle Cloud Infrastructure Registry (OCIR) for deploying autoscaling OCI functions
+    title: "Registry User Name"
+    description: "The user name to access the Oracle Cloud Infrastructure Registry (OCIR) for deploying autoscaling OCI functions"
     required: true
 
   ocir_auth_token_compartment_id:
@@ -2329,8 +2329,8 @@ variables:
             - and:
                 - ${config_observability}
     type: oci:identity:compartment:id
-    title: OCIR Auth Token Secret Compartment
-    description: The compartment where you have the OCIR auth token
+    title: "OCIR Auth Token Secret Compartment"
+    description: "The compartment where you have the OCIR auth token"
     required: true
     default: ${compartment_ocid}
 
@@ -2343,8 +2343,8 @@ variables:
             - and:
                 - ${config_observability}
     type: "oci:kms:secret:id"
-    title: Validated Secret for OCIR Auth Token
-    description: The secret that contains the OCIR auth token that you generated for the user to access the image registry
+    title: "Validated Secret for OCIR Auth Token"
+    description: "The secret that contains the OCIR auth token that you generated for the user to access the image registry"
     required: true
     dependsOn:
       compartmentId: ${ocir_auth_token_compartment_id}
@@ -2356,21 +2356,21 @@ variables:
         - and:
             - ${use_autoscaling}
     type: string
-    title: Notification Email
-    description: Email address to which scaling notifications are sent
+    title: "Notification Email"
+    description: "Email address to which scaling notifications are sent"
     pattern: ^$|^(?!^[.+&'_-]*@.*$)(^[_\w\d+&'-]+(\.[_\w\d+&'-]*)*@[\w\d-]+(\.[\w\d-]+)*\.(([\d]{1,3})|([\w]{2,}))$)$
     required: false
 
   # Hidden Variables
   mount_path:
     type: string
-    title: Mount Path on the WebLogic Server instances
-    description: The path to mount the file system on the WebLogic Server instances
+    title: "Mount Path on the WebLogic Server instances"
+    description: "The path to mount the file system on the WebLogic Server instances"
 
   mode:
     type: enum
-    title: Terraform mode
-    description: Select Terraform mode for development or production. In development mode, local VM scripts zip is seeded on WLS VMs.
+    title: "Terraform mode"
+    description: "Select Terraform mode for development or production. In development mode, local VM scripts zip is seeded on WLS VMs."
     enum:
       - PROD
       - DEV
@@ -2379,20 +2379,20 @@ variables:
   wls_subnet_name:
     type: string
     default: 'wls-subnet'
-    title: WebLogic Server Subnet Name
-    description: The name of the new subnet to create for WebLogic Server compute instances. This field is required only if you want to use an existing VCN.
+    title: "WebLogic Server Subnet Name"
+    description: "The name of the new subnet to create for WebLogic Server compute instances. This field is required only if you want to use an existing VCN."
 
   lb_subnet_1_name:
     type: string
     default: 'lb-subnet-1'
-    title: Load Balancer Subnet Name
-    description: The name of the new subnet to create for the load balancer.
+    title: "Load Balancer Subnet Name"
+    description: "The name of the new subnet to create for the load balancer"
 
   lb_subnet_2_name:
     type: string
     default: 'lb-subnet-2'
-    title: Load Balancer Subnet 2 Name
-    description: The name of the subnet to create for the second load balancer node. This field is required only if you are not using regional subnets.
+    title: "Load Balancer Subnet 2 Name"
+    description: "The name of the subnet to create for the second load balancer node. This field is required only if you are not using regional subnets."
 
   user_id:
     type: string
@@ -2430,20 +2430,20 @@ variables:
 
   tenancy_ocid:
     type: string
-    title: Tenancy ID
-    description: The Oracle Cloud Identifier (OCID) for your tenancy
+    title: "Tenancy ID"
+    description: "The Oracle Cloud Identifier (OCID) for your tenancy"
     required: true
 
   region:
     type: oci:identity:region:name
-    title: Region
-    description: The region in which to create all resources
+    title: "Region"
+    description: "The region in which to create all resources"
     required: true
 
   log_level:
     type: enum
-    title: Log Level
-    description: Log level
+    title: "Log Level"
+    description: "Log level"
     enum:
       - DEBUG
       - INFO
@@ -2451,29 +2451,29 @@ variables:
 
   bastion_image_id:
     type: string
-    title: Base Linux Instance OCID
-    description: The Oracle Cloud Identifier (OCID) for PIC image
+    title: "Base Linux Instance OCID"
+    description: "The Oracle Cloud Identifier (OCID) for PIC image"
 
   bastion_listing_id:
     type: string
-    title: Base Linux  Marketplace listing Id
-    description: The Base Linux  Marketplace listing Id for PIC image
+    title: "Base Linux  Marketplace listing Id"
+    description: "The Base Linux  Marketplace listing Id for PIC image"
 
   bastion_listing_resource_version:
     type: string
-    title: Base Linux  Marketplace listing version
-    description: The Base Linux  Marketplace listing version for PIC image
+    title: "Base Linux  Marketplace listing version"
+    description: "The Base Linux  Marketplace listing version for PIC image"
 
   compartment_ocid:
     type: oci:identity:compartment:id
-    title: WebLogic Server Compartment
-    description: The compartment in which to create the WebLogic Server compute instances
+    title: "WebLogic Server Compartment"
+    description: "The compartment in which to create the WebLogic Server compute instances"
     required: true
 
   wls_version:
     type: enum
-    title: Weblogic Server Version
-    description: The version of WebLogic Server to provision
+    title: "Weblogic Server Version"
+    description: "The version of WebLogic Server to provision"
     enum:
       - 12.2.1.4
       - 14.1.1.0
