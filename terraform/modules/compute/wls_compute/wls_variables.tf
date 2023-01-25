@@ -1,4 +1,4 @@
-# Copyright (c) 2022, Oracle and/or its affiliates.
+# Copyright (c) 2022, 2023, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 variable "wls_edition" {
@@ -15,8 +15,8 @@ variable "wls_admin_user" {
   type        = string
   description = "The name of the admin user that will be added to the WebLogic domain"
   validation {
-    condition     = replace(var.wls_admin_user, "/^[a-zA-Z][a-zA-Z0-9]{7,127}/", "0") == "0"
-    error_message = "WLSC-ERROR: The value for wls_admin_user provided should be alphanumeric and length should be between 8 and 128 characters."
+    condition     = replace(var.wls_admin_user, "/^[a-zA-Z][a-zA-Z0-9_]{7,127}/", "0") == "0"
+    error_message = "WLSC-ERROR: The value for wls_admin_user should be between 8 and 128 characters long and alphanumeric, and can contain underscore (_) special character."
   }
 }
 

@@ -1,4 +1,4 @@
-# Copyright (c) 2022, Oracle and/or its affiliates.
+# Copyright (c) 2022, 2023, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 variable "is_bastion_instance_required" {
@@ -33,7 +33,7 @@ variable "bastion_instance_shape" {
 
 variable "bastion_ssh_private_key" {
   type        = string
-  description = "Private ssh key for existing bastion instance"
+  description = "The path to the file that contains the private ssh key for an existing bastion instance"
   default     = ""
 }
 

@@ -1,4 +1,4 @@
-# Copyright (c) 2022, Oracle and/or its affiliates.
+# Copyright (c) 2022, 2023, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 title: Oracle WebLogic Server for Oracle Cloud Infrastructure
@@ -458,9 +458,15 @@ variables:
   wls_admin_user:
     visible: ${orm_create_mode}
     type: string
+<<<<<<< HEAD
     title: "WebLogic Server Admin User Name"
     description: "The name of the administrator in the WebLogic Server domain"
     pattern: "^[a-zA-Z][a-zA-Z0-9]{7,127}$"
+=======
+    title: WebLogic Server Admin User Name
+    description: The name of the administrator in the WebLogic Server domain
+    pattern: "^[a-zA-Z][a-zA-Z0-9_]{7,127}$"
+>>>>>>> development
     minLength: 8
     maxLength: 128
     required: true
