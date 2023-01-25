@@ -458,15 +458,9 @@ variables:
   wls_admin_user:
     visible: ${orm_create_mode}
     type: string
-<<<<<<< HEAD
     title: "WebLogic Server Admin User Name"
     description: "The name of the administrator in the WebLogic Server domain"
     pattern: "^[a-zA-Z][a-zA-Z0-9]{7,127}$"
-=======
-    title: WebLogic Server Admin User Name
-    description: The name of the administrator in the WebLogic Server domain
-    pattern: "^[a-zA-Z][a-zA-Z0-9_]{7,127}$"
->>>>>>> development
     minLength: 8
     maxLength: 128
     required: true
