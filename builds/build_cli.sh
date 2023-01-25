@@ -1,7 +1,7 @@
-# Copyright (c) 2022, Oracle and/or its affiliates.
-# Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
-
 #!/usr/bin/env bash
+
+# Copyright (c) 2022, 2023, Oracle and/or its affiliates.
+# Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 ############################################################
 # Build CLI bundle to run SRG dev tests                                                     #
@@ -68,7 +68,7 @@ mkdir -p ${SCRIPT_DIR}/binaries/tmpbuild
 
 create_cli_bundle()
 {
-  cp -Rf ${SCRIPT_DIR}/../terraform/modules ${SCRIPT_DIR}/../terraform/edition.tf ${SCRIPT_DIR}/../terraform/*.tf ${SCRIPT_DIR}/../terraform/inputs ${TMP_BUILD}
+  cp -Rf ${SCRIPT_DIR}/../terraform/modules ${SCRIPT_DIR}/../terraform/edition.tf ${SCRIPT_DIR}/../terraform/*.tf ${SCRIPT_DIR}/../terraform/images ${TMP_BUILD}
   replace_variables
   (cd ${TMP_BUILD}; zip -r ${SCRIPT_DIR}/binaries/wlsoci-terraform.zip *; rm -Rf ${TMP_BUILD}/*)
 }
