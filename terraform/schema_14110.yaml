@@ -226,91 +226,91 @@ groupings:
 outputs:
   virtual_cloud_network_id:
     type: ocid
-    title: "Virtual Cloud Network Id"
+    title: Virtual Cloud Network Id
   is_vcn_peered:
     type: link
-    title: "Is VCN Peered"
+    title: Is VCN Peered
     visible: false
   weblogic_server_administration_console:
     type: link
-    title: "WebLogic Server Administration Console"
+    title: WebLogic Server Administration Console
   weblogic_instances:
     type: json
-    title: "WebLogic Instances"
+    title: WebLogic Instances
   load_balancer_id:
     type: ocid
-    title: "Load balancer Id"
+    title: Load balancer Id
   load_balancer_ip:
     type: copyableString
-    title: "Load Balancer IP"
+    title: Load Balancer IP
   fusion_middleware_control_console:
     type: link
-    title: "Fusion Middleware Control Console"
+    title: Fusion Middleware Control Console
   provisioning_status:
     type: link
-    title: "Provisioning Status"
+    title: Provisioning Status
     visible: false
   sample_application:
     type: link
-    title: "Sample Application"
+    title: Sample Application
   sample_application_protected_by_idcs:
     type: link
-    title: "Sample Application Protected By IDCS"
+    title: Sample Application Protected By IDCS
   virtual_cloud_network_cidr:
     type: link
-    title: "Virtual Cloud Network CIDR"
+    title: Virtual Cloud Network CIDR
   weblogic_version:
     type: link
-    title: "WebLogic Version"
+    title: WebLogic Version
   jdk_version:
     type: link
-    title: "JDK Version"
+    title: JDK Version
   bastion_instance_id:
     type: ocid
-    title: "Instance Id"
+    title: Instance Id
   bastion_instance_public_ip:
     type: copyableString
-    title: "Public Ip"
+    title: Public Ip
   ssh_command:
     type: copyableString
-    title: "SSH Command"
+    title: SSH Command
   ssh_command_with_dynamic_port_forwarding:
     type: copyableString
-    title: "SSH Command with Dynamic Port Forwarding"
+    title: SSH Command with Dynamic Port Forwarding
   fss_system_id:
     type: ocid
-    title: "File System Id"
+    title: File System Id
   mount_target_id:
     type: ocid
-    title: "Mount Target Id"
+    title: Mount Target Id
   listing_version:
     type: copyableString
-    title: "Marketplace Listing Version"
+    title: Marketplace Listing Version
   resource_identifier_value:
     type: copyableString
-    title: "Stack Resources System Tag"
+    title: Stack Resources System Tag
   weblogic_agent_configuration_id:
     type: ocid
-    title: "WebLogic Log Agent Configuration Id"
+    title: WebLogic Log Agent Configuration Id
     visible: false
   weblogic_log_group_id:
     type: ocid
-    title: "WebLogic Log Group Id"
+    title: WebLogic Log Group Id
   weblogic_log_id:
     type: ocid
-    title: "WebLogic Log Id"
+    title: WebLogic Log Id
   autoscaling_scaleout_monitoring_alarm_id:
     type: ocid
-    title: "Autoscaling ScaleOut Monitoring Alarm Id"
+    title: Autoscaling ScaleOut Monitoring Alarm Id
   autoscaling_scalein_monitoring_alarm_id:
     type: ocid
-    title: "Autoscaling ScaleIn Monitoring Alarm Id"
+    title: Autoscaling ScaleIn Monitoring Alarm Id
   autoscaling_function_application_id:
     type: ocid
-    title: "Autoscaling Function Application Id"
+    title: Autoscaling Function Application Id
 
 outputGroups:
-  - title: "WebLogic"
+  - title: WebLogic
     outputs:
       - ${weblogic_server_administration_console}
       - ${sample_application}
@@ -319,30 +319,30 @@ outputGroups:
       - ${weblogic_version}
       - ${weblogic_instances}
       - ${jdk_version}
-  - title: "Networking"
+  - title: Networking
     outputs:
       - ${virtual_cloud_network_id}
       - ${load_balancer_id}
       - ${virtual_cloud_network_cidr}
       - ${load_balancer_ip}
-  - title: "Bastion"
+  - title: Bastion
     outputs:
       - ${bastion_instance_id}
       - ${ssh_command}
       - ${bastion_instance_public_ip}
       - ${ssh_command_with_dynamic_port_forwarding}
-  - title: "File Storage"
+  - title: File Storage
     outputs:
       - ${fss_system_id}
       - ${mount_target_id}
-  - title: "Observability"
+  - title: Observability
     outputs:
       - ${weblogic_log_group_id}
       - ${weblogic_log_id}
       - ${autoscaling_scaleout_monitoring_alarm_id}
       - ${autoscaling_scalein_monitoring_alarm_id}
       - ${autoscaling_function_application_id}
-  - title: "Listing"
+  - title: Listing
     outputs:
       - ${listing_version}
       - ${resource_identifier_value}
