@@ -460,7 +460,7 @@ variables:
     type: string
     title: "WebLogic Server Admin User Name"
     description: "The name of the administrator in the WebLogic Server domain"
-    pattern: "^[a-zA-Z][a-zA-Z0-9]{7,127}$"
+    pattern: "^[a-zA-Z][a-zA-Z0-9_]{7,127}$"
     minLength: 8
     maxLength: 128
     required: true
@@ -496,7 +496,7 @@ variables:
     type: boolean
     default: false
     title: "Configure Ports"
-    description: "Configure the ports for administration server, managed server, and cluster. If not selected, default ports will be used. See <a target="_blank" href="https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/default-ports.html">Default Ports</a>."
+    description: "Configure the ports for administration server, managed server, and cluster. If not selected, default ports will be used. See <a target=\"_blank\" href=\"https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/default-ports.html\">Default Ports</a>."
 
   wls_nm_port:
     visible:
@@ -713,7 +713,7 @@ variables:
     type: string
     required: true
     title: "Acknowledge if Existing Network is Validated"
-    description: "Enter YES to confirm if existing Virtual Cloud Network you selected is validated using the network validation script. See <a target="_blank" href="https://docs.oracle.com/pls/topic/lookup?ctx=en/cloud/paas/weblogic-cloud/user&id=oci_network_validate">Validate Existing Network Setup</a>"
+    description: "Enter YES to confirm if existing Virtual Cloud Network you selected is validated using the network validation script. See <a target=\"_blank\" href=\"https://docs.oracle.com/pls/topic/lookup?ctx=en/cloud/paas/weblogic-cloud/user&id=oci_network_validate\">Validate Existing Network Setup</a>"
     pattern: "^[yY][eE][sS]$"
     visible:
       and:
@@ -1458,7 +1458,7 @@ variables:
   create_policies:
     type: boolean
     title: "OCI Policies"
-    description: "Create policies to read Secrets from Vault and manage Autonomous Transaction Processing Database (if applicable). Deselecting this option is for Advanced users only.  Before you deselect the check box, see <a target="_blank" href="https://docs.oracle.com/pls/topic/lookup?ctx=en/cloud/paas/weblogic-cloud&id=WLCUG-GUID-4E2AD7BF-592D-4C2C-AF66-D98CB26379A5">Create Root Policies</a> to create the required groups and relevant policies."
+    description: "Create policies to read Secrets from Vault and manage Autonomous Transaction Processing Database (if applicable). Deselecting this option is for Advanced users only.  Before you deselect the check box, see <a target=\"_blank\" href=\"https://docs.oracle.com/pls/topic/lookup?ctx=en/cloud/paas/weblogic-cloud&id=WLCUG-GUID-4E2AD7BF-592D-4C2C-AF66-D98CB26379A5\">Create Root Policies</a> to create the required groups and relevant policies."
     required: false
     default: true
 
@@ -1539,7 +1539,7 @@ variables:
     minLength: 1
     maxLength: 1024
     title: "IDCS Client ID"
-    description: "The client ID of a confidential application in Identity Cloud Service that is used to create the necessary artifacts in Identity Cloud Service. This application needs to be configured as client, and has to be granted with access to Identity Cloud Service Admin APIs, with Identity Domain Administrator app role. See <a target="_blank" href="https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/you-begin-oracle-weblogic-cloud.html#GUID-807D5863-04A3-47A3-8D65-443B859B80FD">Create a Confidential Application</a>."
+    description: "The client ID of a confidential application in Identity Cloud Service that is used to create the necessary artifacts in Identity Cloud Service. This application needs to be configured as client, and has to be granted with access to Identity Cloud Service Admin APIs, with Identity Domain Administrator app role. See <a target=\"_blank\" href=\"https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/you-begin-oracle-weblogic-cloud.html#GUID-807D5863-04A3-47A3-8D65-443B859B80FD\">Create a Confidential Application</a>."
     required: true
 
   idcs_secret_compartment_id:
@@ -1564,7 +1564,7 @@ variables:
     minLength: 1
     maxLength: 1024
     title: "Validated Secret for IDCS Client"
-    description: "The secret that contains the client secret of the confidential application password in IDCS, which is used to create the necessary artifacts in IDCS. To create secrets, see <a target="_blank" href="https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/you-begin-oracle-weblogic-cloud.html#GUID-0517A019-4A89-40ED-A568-DD2193733F8B"> Create Secrets for Passwords</a>."
+    description: "The secret that contains the client secret of the confidential application password in IDCS, which is used to create the necessary artifacts in IDCS. To create secrets, see <a target=\"_blank\" href=\"https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/you-begin-oracle-weblogic-cloud.html#GUID-0517A019-4A89-40ED-A568-DD2193733F8B\"> Create Secrets for Passwords</a>."
     required: true
     dependsOn:
       compartmentId: ${idcs_secret_compartment_id}
@@ -1692,7 +1692,7 @@ variables:
     type: boolean
     default: false
     title: "Terms of use"
-    description: "I have reviewed and accept the <a target="_blank" href="https://objectstorage.us-phoenix-1.oraclecloud.com/n/axxu7cichsnt/b/terms/o/wlsoci_ee_terms_and_conditions.txt">Oracle terms of use</a>"
+    description: "I have reviewed and accept the <a target=\"_blank\" href=\"https://objectstorage.us-phoenix-1.oraclecloud.com/n/axxu7cichsnt/b/terms/o/wlsoci_ee_terms_and_conditions.txt\">Oracle terms of use</a>"
     required: true
 
   use_apm_service:
