@@ -316,6 +316,12 @@ steps to perform before running a `destroy` job.
 When you no longer need the deployment, you can run a
 `destroy` [job](https://docs.oracle.com/en-us/iaas/Content/ResourceManager/Tasks/create-job-destroy.htm) to destroy the stack.
 
+# Troubleshoot
+
+Refer to [documentation](https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/troubleshoot-oracle-weblogic-cloud.html)
+to identify common problems and learn how to diagnose and solve them.
+
+
 
 [wlsoci]: https://docs.oracle.com/en/cloud/paas/weblogic-cloud/index.html
 [oci]: https://cloud.oracle.com/cloud-infrastructure
