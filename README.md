@@ -72,7 +72,7 @@ Resolving deltas: 100% (1735/1735), done.
 $ cd weblogic-server-for-oci/terraform
 $ ls
 autoscaling_variables.tf  data_sources.tf  edition.tf        idcs_variables.tf  locals.tf  modules/         network_variables.tf        oci_images.tf  outputs.tf   schema.yaml        variables.tf  weblogic_variables.tf
-bastion_variables.tf      db_variables.tf  fss_variables.tf  inputs/            main.tf    mp_variables.tf  observability_variables.tf  orm/           provider.tf  schema_14110.yaml  versions.tf
+bastion_variables.tf      db_variables.tf  fss_variables.tf  images/            main.tf    mp_variables.tf  observability_variables.tf  orm/           provider.tf  schema_14110.yaml  versions.tf
 $
 ```
 
@@ -171,17 +171,17 @@ First, you need to set the image variables, depending on which WebLogic edition 
 BYOL license or UCM license, when creating the stack.
 
 The following files contain the values for those variables:
-- [mp_image_se_byol.tfvars](./terraform/inputs/mp_image_se_byol.tfvars): WebLogic Standard Edition - BYOL
-- [mp_image_ee_byol.tfvars](./terraform/inputs/mp_image_ee_byol.tfvars): WebLogic Enterprise Edition - BYOL
-- [mp_image_ee_ucm.tfvars](./terraform/inputs/mp_image_ee_ucm.tfvars): WebLogic Enterprise Edition - UCM
-- [mp_image_suite_byol.tfvars](./terraform/inputs/mp_image_suite_byol.tfvars): WebLogic Suite - BYOL
-- [mp_image_suite_ucm.tfvars](./terraform/inputs/mp_image_suite_ucm.tfvars): WebLogic Suite - UCM
+- [mp_image_se_byol.tfvars](./terraform/images/mp_image_se_byol.tfvars): WebLogic Standard Edition - BYOL
+- [mp_image_ee_byol.tfvars](./terraform/images/mp_image_ee_byol.tfvars): WebLogic Enterprise Edition - BYOL
+- [mp_image_ee_ucm.tfvars](./terraform/images/mp_image_ee_ucm.tfvars): WebLogic Enterprise Edition - UCM
+- [mp_image_suite_byol.tfvars](./terraform/images/mp_image_suite_byol.tfvars): WebLogic Suite - BYOL
+- [mp_image_suite_ucm.tfvars](./terraform/images/mp_image_suite_ucm.tfvars): WebLogic Suite - UCM
 
 To use one of the files above:
-- Copy the file from the `terraform/inputs` directory, to the `terraform` directory
+- Copy the file from the `terraform/images` directory, to the `terraform` directory
 - Rename the file from `terraform/mp_image_<edition>_<license>.tfvars` to `terraform/mp_image_<edition>_<license>.auto.tfvars`
 
-For example, if you want to create a WebLogic Enterprise Edition UCM stack, copy the file `terraform/inputs/mp_image_ee_ucm.tfvars`
+For example, if you want to create a WebLogic Enterprise Edition UCM stack, copy the file `terraform/images/mp_image_ee_ucm.tfvars`
 to `terraform/mp_image_ee_ucm.auto.tfvars`
 
 Next, you need to configure [variables](./VARIABLES.md) to drive the stack creation. This can be done by creating a
@@ -320,8 +320,6 @@ When you no longer need the deployment, you can run a
 
 Refer to [documentation](https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/troubleshoot-oracle-weblogic-cloud.html)
 to identify common problems and learn how to diagnose and solve them.
-
-
 
 [wlsoci]: https://docs.oracle.com/en/cloud/paas/weblogic-cloud/index.html
 [oci]: https://cloud.oracle.com/cloud-infrastructure
