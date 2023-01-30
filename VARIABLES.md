@@ -213,7 +213,7 @@ ocir_user             = "<ocir_user>"
 ocir_auth_token_id    = "ocid1.vaultsecret.oc1.phx.xxxxxxxxxxxxxxx"
 ```
 There are some prerequisites for using autoscaling. See the `Autoscaling`section in the
-[documentation](https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/you-begin-oracle-weblogic-cloud.html).
+[documentation](https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/you-begin-oracle-weblogic-cloud.html).                                 
 Note that autoscaling is not supported when creating a stack using Terraform CLI. You need to create a [Resource Manager][orm]
 stack, or use the [Marketplace][marketplace].
 
