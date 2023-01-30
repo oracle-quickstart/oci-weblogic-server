@@ -203,7 +203,18 @@ Review the [observability_variables.tf](./terraform/observability_variables.tf) 
 To configure the stack to automatically add or remove servers based on performance metrics, refer to the
 [autoscaling_variables.tf](./terraform/autoscaling_variables.tf) file for the variables to use.
 
-Note that autoscaling is not supported when creating a stack using Terraform CLI. You need you create a [Resource Manager][orm]
+This is an example of how to configure autoscaling:
+```terraform
+use_autoscaling       = true
+wls_metric            = "CPU Load"
+min_threshold_percent = 10
+max_threshold_percent = 20
+ocir_user             = "<ocir_user>"
+ocir_auth_token_id    = "ocid1.vaultsecret.oc1.phx.xxxxxxxxxxxxxxx"
+```
+There are some prerequisites for using autoscaling. See the `Autoscaling`section in the
+[documentation](https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/you-begin-oracle-weblogic-cloud.html).
+Note that autoscaling is not supported when creating a stack using Terraform CLI. You need to create a [Resource Manager][orm]
 stack, or use the [Marketplace][marketplace].
 
 [marketplace]: https://docs.oracle.com/iaas/Content/Marketplace/Concepts/marketoverview.htm
