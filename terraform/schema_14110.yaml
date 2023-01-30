@@ -1465,7 +1465,7 @@ variables:
   # Tagging variables
   create_service_tag:
     visible: ${orm_create_mode}
-    type: boolean"
+    type: boolean
     title: "Add Tags"
     default: false
     description: "Add tags to the resources created by the WebLogic for OCI stack"
