@@ -1,27 +1,27 @@
-# Oracle WebLogic Server for Oracle Cloud Infrastructure
+# OCI Terraform stack for WebLogic Server
 
-[Oracle WebLogic Server for Oracle Cloud Infrastructure][wlsoci] allows you to quickly create your Java Enterprise Edition
-(Java EE) application environment in [Oracle Cloud Infrastructure (OCI)][oci], including an Oracle WebLogic Server domain,
-in a fraction of the time it would normally take on-premises.
+The OCI Terraform stack for WebLogic Server allows you to create and configure a WebLogic domain in
+[Oracle Cloud Infrastructure (OCI)][oci], in minutes. It will create and/or configure multiple OCI services such as
+Compute, Network, OCI Database, Autonomous Database, Identity Cloud Service, Logging, File System, Application
+Performance Monitoring and Vault. The WebLogic domain created can be scaled by updating a terraform variable to indicate
+the desired number of nodes and re apply the stack or auto-scaling can be configured to automatically adapt to different
+workloads in real time.
 
-Oracle WebLogic Server for OCI is available as a set of applications in the [Oracle Cloud Infrastructure Marketplace][marketplace].
+The OCI Terraform stack for WebLogic Server is available through the Oracle Quick Start or through the
+[Oracle Cloud Infrastructure Marketplace][marketplace] as one of the multiple Oracle WebLogic Server for OCI applications.
 After launching one of these applications, you use a simple wizard interface to configure and provision your domains along
 with any supporting cloud resources like compute instances, networks and load balancers.
 
-This Quick Start is an alternative to deploy an Oracle WebLogic Server for OCI stack, that can be used to automate the creation
-of WebLogic domains in OCI. You can use the Oracle Cloud Infrastructure [Resource Manager (ORM)][orm] or the Terraform
-command-line interface (CLI).
-
-For more details on deploying the Oracle WebLogic Server for OCI stack on Oracle Cloud Infrastructure, visit the
+For more details about deploying the OCI Terraform stack for WebLogic Server through the OCI Marketplace, visit the
 "Using Oracle WebLogic Server for OCI" [guide](https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/index.html).
 
 ## Common Topologies
 
-WebLogic for OCI offers many options to customize your stack, to create new resources or use existing resources, use features
-like Oracle Identity and Cloud Service, etc. 
+The OCI Terraform stack for WebLogic Server offers many options to customize your environment, to create new resources or configure
+existing resources or services such as Network, Oracle Database, Oracle Identity Cloud Service, Logging, File System, etc.
 
-The [solutions](./solutions) directory contains examples of different topologies that can be created in WebLogic for OCI, with 
-sample tfvars files, and instructions to create the stack.
+The [solutions](./solutions) directory contains examples of different topologies that can be created with this Terraform
+template, with sample tfvars files, and instructions to create the stack.
 
 The following topologies are included:
 
@@ -32,24 +32,24 @@ The following topologies are included:
 
 Review each solution for more details.
 
-## Before You Begin with Oracle WebLogic Server for OCI
+## Before You Begin with OCI Terraform stack for WebLogic Server
 
 Whether you use Terraform CLI, ORM or the Marketplace to create a stack, you need to perform some pre-requisites. Refer
 to the [documentation](https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/you-begin-oracle-weblogic-cloud.html) for
-the pre-requisite steps to using Oracle WebLogic Server for OCI.
+the pre-requisite steps to use the OCI Terraform stack for WebLogic Server.
 
 For pre-requisites specific to Terraform CLI and ORM, see their corresponding section.
 
-## Create Stack Using the Marketplace
+## Create the Stack Using the OCI Marketplace
 
-To create, manage and destroy a WebLogic for OCI stack using the Marketplace, follow the instructions in the
-[documentation](https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/create-stack1.html).
+To create, manage and destroy the OCI Terraform stack for WebLogic Server as WebLogic Server for OCI using the Marketplace,
+follow the instructions in the [documentation](https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/create-stack1.html).
 
 ## Create Stack Using the Terraform CLI
 
 You need to install the following software in your computer to create a stack using Terraform CLI:
- - [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git). Install the latest version
- - [Terraform](https://www.terraform.io/). The scripts in this Quick Start requires Terraform version >= 1.1.2, < 1.2.0
+- [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git). Install the latest version
+- [Terraform](https://www.terraform.io/). The scripts in this Quick Start requires Terraform version >= 1.1.2, < 1.2.0
 
 First, get a local copy of this repo. You can make that with the commands:
 
@@ -320,6 +320,31 @@ When you no longer need the deployment, you can run a
 
 Refer to [documentation](https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/troubleshoot-oracle-weblogic-cloud.html)
 to identify common problems and learn how to diagnose and solve them.
+
+## License
+
+The OCI Terraform stack for WebLogic Server is licensed under the Universal Permissive License 1.0.
+See [LICENSE](./LICENSE) for more details.
+
+The OCI Terraform stack for WebLogic Server does not include entitlement to Oracle WebLogic Server. The entitlement of
+Oracle WebLogic Server within the OCI Terraform stack for WebLogic Server cab obtained by using the Oracle WebLogic
+Server for OCI images or by using a valid WebLogic Server license with the stack.
+
+### Universal Credits Model (UCM)
+The Oracle WebLogic Server for OCI images that include entitlement of Oracle WebLogic Server can be found here:
+- Oracle WebLogic Server Enterprise Edition UCM image: https://cloudmarketplace.oracle.com/marketplace/en_US/listing/70276523
+- Oracle WebLogic Suite UCM image: https://cloudmarketplace.oracle.com/marketplace/en_US/listing/70277452
+
+When using the Oracle WebLogic Server Enterprise Edition UCM image, the WebLogic for OCI license in governed by the
+following terms: https://cloudmarketplace.oracle.com/marketplace/content?contentId=70262301&render=inline
+
+When using the Oracle WebLogic Suite UCM image, the WebLogic for OCI license in governed by the following terms:
+https://cloudmarketplace.oracle.com/marketplace/content?contentId=70262277&render=inline
+
+### Bring Your Own License (BYOL)
+
+When deploying using BYOL, the WebLogic for OCI license is governed by the following Licensing terms:
+https://cloudmarketplace.oracle.com/marketplace/content?contentId=18088784&render=inline
 
 [wlsoci]: https://docs.oracle.com/en/cloud/paas/weblogic-cloud/index.html
 [oci]: https://cloud.oracle.com/cloud-infrastructure
