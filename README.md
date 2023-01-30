@@ -54,22 +54,22 @@ You need to install the following software in your computer to create a stack us
 First, get a local copy of this repo. You can make that with the commands:
 
 ```bash
-git clone https://github.com/oracle-quickstart/weblogic-server-for-oci.git
-cd weblogic-server-for-oci/terraform
+git clone https://github.com/oracle-quickstart/oci-weblogic-server.git
+cd oci-weblogic-server/terraform
 ls
 ```
 Example output:
 
 ```bash
-$ git clone https://github.com/oracle-quickstart/weblogic-server-for-oci.git
-Cloning into 'weblogic-server-for-oci'...
+$ git clone https://github.com/oracle-quickstart/oci-weblogic-server.git
+Cloning into 'oci-weblogic-server'...
 remote: Enumerating objects: 2522, done.
 remote: Counting objects: 100% (646/646), done.
 remote: Compressing objects: 100% (324/324), done.
 remote: Total 2522 (delta 449), reused 440 (delta 318), pack-reused 1876
 Receiving objects: 100% (2522/2522), 972.92 KiB | 1.54 MiB/s, done.
 Resolving deltas: 100% (1735/1735), done.
-$ cd weblogic-server-for-oci/terraform
+$ cd oci-weblogic-server/terraform
 $ ls
 autoscaling_variables.tf  data_sources.tf  edition.tf        idcs_variables.tf  locals.tf  modules/         network_variables.tf        oci_images.tf  outputs.tf   schema.yaml        variables.tf  weblogic_variables.tf
 bastion_variables.tf      db_variables.tf  fss_variables.tf  images/            main.tf    mp_variables.tf  observability_variables.tf  orm/           provider.tf  schema_14110.yaml  versions.tf
@@ -229,7 +229,7 @@ You'll need to enter yes when prompted.
 ## Create Stack Using OCI Resource Manager
 
 Oracle Cloud Infrastructure [Resource Manager (ORM)][orm] allows you to manage your Terraform configurations and state.
-To simplify getting started, the Terraform zip files for use with ORM are created as part of each [release](https://github.com/oracle-quickstart/weblogic-server-for-oci/releases).
+To simplify getting started, the Terraform zip files for use with ORM are created as part of each [release](https://github.com/oracle-quickstart/oci-weblogic-server/releases).
 
 If you want to build the zip file to create an ORM stack, you need the following software:
 
@@ -294,7 +294,7 @@ cd builds
 The zip files are generated in the `builds/binaries` directory.
 
 Follow [these steps](https://docs.oracle.com/en-us/iaas/Content/ResourceManager/Tasks/create-stack-local.htm) to create
-a ORM stack, using either a zip file from one of the [releases](https://github.com/oracle-quickstart/weblogic-server-for-oci/releases),
+a ORM stack, using either a zip file from one of the [releases](https://github.com/oracle-quickstart/oci-weblogic-server/releases),
 or a zip file generated manually with the `build_mp_bundles.sh` script.
 
 ### Deploy the stack

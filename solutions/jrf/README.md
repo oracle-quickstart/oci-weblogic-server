@@ -25,23 +25,23 @@ Refer to the [documentation](https://docs.oracle.com/en/cloud/paas/weblogic-clou
 - Clone the code using the command:
 
 ```bash
-git clone https://github.com/oracle-quickstart/weblogic-server-for-oci.git
+git clone https://github.com/oracle-quickstart/oci-weblogic-server.git
 ```
 
 ## Organization
-The directory weblogic-server-for-oci/solutions/jrf consists of the following terraform files: 
+The directory oci-weblogic-server/solutions/jrf consists of the following terraform files:
 
 - jrf_instance.tfvars - WebLogic instance, bastion instance and network configuration
 - existing_lb.tfvars - Load balancer configuration
 - oci_db.tfvars  - OCI Database configuration
 - idcs.tfvars - IDCS configuration
 
-The directory weblogic-server-for-oci/solutions/common consists of the following:
+The directory oci-weblogic-server/solutions/common consists of the following:
 - tenancy.tfvars - tenancy configuration
 
 ## Using the Terraform command line tool
 ```bash
-cd weblogic-server-for-oci/terraform
+cd oci-weblogic-server/terraform
 ```
 
 Initialize the terraform provider plugin
