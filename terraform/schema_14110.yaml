@@ -460,7 +460,7 @@ variables:
     type: string
     title: "WebLogic Server Admin User Name"
     description: "The name of the administrator in the WebLogic Server domain"
-    pattern: "^[a-zA-Z][a-zA-Z0-9_]{7,127}$"
+    pattern: "^[a-zA-Z][a-zA-Z0-9_-]{7,127}$"
     minLength: 8
     maxLength: 128
     required: true
@@ -1465,7 +1465,7 @@ variables:
   # Tagging variables
   create_service_tag:
     visible: ${orm_create_mode}
-    type: boolean"
+    type: boolean
     title: "Add Tags"
     default: false
     description: "Add tags to the resources created by the WebLogic for OCI stack"
