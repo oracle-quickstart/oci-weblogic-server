@@ -48,6 +48,10 @@ The directory oci-weblogic-server/solutions/jrf consists of the following terraf
 The directory oci-weblogic-server/solutions/common consists of the following:
 - tenancy.tfvars - tenancy configuration
 
+The files in the oci-weblogic-server/images directory contain the values of the images for the different combinations of
+WebLogic edition and pricing. In this solution, the file _mp_image_ee_byol.tfvars_ is used to create a WebLogic Enterprise
+Edition, BYOL instance. Specify a different file to use a different edition and/or pricing.
+
 ## Using the Terraform command line tool
 ```bash
 cd oci-weblogic-server/terraform
