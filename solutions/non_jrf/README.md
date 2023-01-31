@@ -44,8 +44,9 @@ The directory oci-weblogic-server/solutions/common consists of the following:
 
 The files in the oci-weblogic-server/images directory contain the values of the images for the different combinations of
 WebLogic edition and pricing. In this solution, the file _mp_image_ee_byol.tfvars_ is used to create a WebLogic Enterprise
-Edition, BYOL instance. Specify a different file to use a different edition and/or pricing. See the
-[License section](/#license) for more information.
+Edition, BYOL instance. Specify a different file to use a different edition and/or pricing.
+
+See the [License](/README.md#license) section for more information to help you decide which _mp_image_*.tfvars_ file to use.
 
 ## Using the terraform command line tool
 ```bash
