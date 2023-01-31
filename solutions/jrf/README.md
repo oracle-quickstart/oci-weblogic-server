@@ -1,8 +1,7 @@
 ## WebLogic JRF domain with OCI DB
 
 This solution creates single/multi node Weblogic cluster with OCI Database and Oracle Identity Cloud Service fronted by
-a load balancer. The solution will create only one stack at time and further modifications that are done will be done on
-the same stack.
+a load balancer.
 
 This topology uses existing infrastructure.
 - Existing VCN and existing subnets with private WebLogic subnet.

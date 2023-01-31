@@ -1,8 +1,7 @@
 ## WebLogic non JRF domain
 
 This solution creates single/multi node WebLogic cluster with Oracle Cloud Infrastructure File Storage service (FSS) fronted
-by a load balancer. The solution will create only one stack at time and further modifications that are done will be
-done on the same stack.
+by a load balancer.
 
 This topology creates WebLogic cluster in private subnet. Following regional subnets are created under new virtual cloud
 network (VCN).
@@ -64,5 +63,3 @@ To destroy the infrastructure
 ```bash
 terraform destroy -var-file=../solutions/common/tenancy.tfvars -var-file=../solutions/common/mp_byol.tfvars -var-file=../solutions/non_jrf/nonjrf_instance.tfvars -var-file=../solutions/non_jrf/lb.tfvars -var-file=../solutions/non_jrf/fss.tfvars
 ```
-**Important:** Refer to [documentation](https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/delete-domain.html) for
-steps to perform before running *terraform destroy*.

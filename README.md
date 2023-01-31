@@ -3,7 +3,7 @@
 The OCI Terraform stack for WebLogic Server allows you to create and configure a WebLogic domain in
 [Oracle Cloud Infrastructure (OCI)][oci], in minutes. It will create and/or configure multiple OCI services such as
 Compute, Network, OCI Database, Autonomous Database, Identity Cloud Service, Logging, File System, Application
-Performance Monitoring and Vault. The WebLogic domain created can be scaled by updating a terraform variable to indicate
+Performance Monitoring and Autoscalings. The WebLogic domain created can be scaled by updating a terraform variable to indicate
 the desired number of nodes and re apply the stack or auto-scaling can be configured to automatically adapt to different
 workloads in real time.
 
@@ -13,7 +13,7 @@ After launching one of these applications, you use a simple wizard interface to 
 with any supporting cloud resources like compute instances, networks and load balancers.
 
 For more details about deploying the OCI Terraform stack for WebLogic Server through the OCI Marketplace, visit the
-"Using Oracle WebLogic Server for OCI" [guide](https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/index.html).
+["Using Oracle WebLogic Server for OCI"](https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/index.html) guide.
 
 ## Common Topologies
 
@@ -195,7 +195,7 @@ terraform plan
 
 ### Deploy
 
-If that's good, you can go ahead and apply to deploy the stack:
+If terraform plan is successful, you can run terraform apply to deploy the stack:
 
 ```bash
 terraform apply
@@ -327,7 +327,7 @@ The OCI Terraform stack for WebLogic Server is licensed under the Universal Perm
 See [LICENSE](./LICENSE) for more details.
 
 The OCI Terraform stack for WebLogic Server does not include entitlement to Oracle WebLogic Server. The entitlement of
-Oracle WebLogic Server within the OCI Terraform stack for WebLogic Server cab obtained by using the Oracle WebLogic
+Oracle WebLogic Server within the OCI Terraform stack for WebLogic Server can be obtained by using the Oracle WebLogic
 Server for OCI images or by using a valid WebLogic Server license with the stack.
 
 ### Universal Credits Model (UCM)
