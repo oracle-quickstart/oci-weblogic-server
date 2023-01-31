@@ -1487,7 +1487,7 @@ variables:
                 - "Database System"
     type: boolean
     title: "Use Database Connection String"
-    description: "Use database connection string to create a single instance datasource for JRF schemas. You cannot create an Active GridLink or a Multi Data Source using this database connection string. For the database connection string, see <a target=\"_blank\" href=\"https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/create-jrf-enabled-domain.html#GUID-6A39A2A7-EF6C-408E-B5C7-C44089A9B134\">Configure Database Parameters</a>."
+    description: "Use database connection string to create a single instance datasource for JRF schemas. You cannot create an Active GridLink or a Multi Data Source using this database connection string. For the database connection string, see <a target=\"_blank\" href=\"https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/configure-database-parameters.html\">Configure Database Parameters and VCN Peering</a>."
     default: false
 
   oci_db_connection_string:
