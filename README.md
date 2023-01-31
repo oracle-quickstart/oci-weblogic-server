@@ -185,7 +185,8 @@ For example, if you want to create a WebLogic Enterprise Edition UCM stack, copy
 to `terraform/mp_image_ee_ucm.auto.tfvars`
 
 Next, you need to configure [variables](./VARIABLES.md) to drive the stack creation. This can be done by creating a
-`terraform.tfvars` file in the `terraform` directory, using as a base the tfvars files from one of the [solutions](./solutions).
+`terraform.tfvars` file in the `terraform` directory, using variables copied from the tfvars files from one of the [solutions](./solutions)
+into the `terraform.tfvars` file.
 
 Make sure the plan looks good. Once you created `terraform.tfvars` in the `terraform` directory, just run:
 
