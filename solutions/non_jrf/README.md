@@ -3,7 +3,7 @@
 This solution creates single/multi node WebLogic cluster with Oracle Cloud Infrastructure File Storage service (FSS) fronted
 by a load balancer.
 
-This topology creates WebLogic cluster in private subnet. Following regional subnets are created under new virtual cloud
+This topology creates WebLogic cluster in a private subnet. Following regional subnets are created under new virtual cloud
 network (VCN).
 - WebLogic regional private subnet
 - Bastion regional public subnet
