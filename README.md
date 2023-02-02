@@ -2,8 +2,8 @@
 
 The OCI Terraform stack for WebLogic Server allows you to create and configure a WebLogic domain in
 [Oracle Cloud Infrastructure (OCI)][oci], in minutes. It will create and/or configure multiple OCI services such as
-Compute, Network, OCI Database, Autonomous Database, Identity Cloud Service, Logging, File System, Application
-Performance Monitoring and Autoscalings. The WebLogic domain created can be scaled by updating a terraform variable to indicate
+Compute, Network, OCI Database, Autonomous Database, Identity Cloud Service, Logging, File System, and Application
+Performance Monitoring. The WebLogic domain created can be scaled by updating a terraform variable to indicate
 the desired number of nodes and re apply the stack or auto-scaling can be configured to automatically adapt to different
 workloads in real time.
 
@@ -41,6 +41,13 @@ the pre-requisite steps to use the OCI Terraform stack for WebLogic Server.
 For pre-requisites specific to Terraform CLI and ORM, see their corresponding section.
 
 ## Create the Stack Using the OCI Marketplace
+
+The WebLogic Server for OCI applications available in the Marketplace are:
+- [Oracle WebLogic Server Enterprise Edition (UCM)](https://cloudmarketplace.oracle.com/marketplace/en_US/listing/72493372)
+- [Oracle WebLogic Suite (UCM)](https://cloudmarketplace.oracle.com/marketplace/en_US/listing/72492657)
+- [Oracle WebLogic Server Standard Edition (BYOL)](https://cloudmarketplace.oracle.com/marketplace/en_US/listing/65022652)
+- [Oracle WebLogic Server Enterprise Edition (BYOL)](https://cloudmarketplace.oracle.com/marketplace/en_US/listing/63497374)
+- [Oracle WebLogic Suite (BYOL)](https://cloudmarketplace.oracle.com/marketplace/en_US/listing/63498586)
 
 To create, manage and destroy the OCI Terraform stack for WebLogic Server as WebLogic Server for OCI using the Marketplace,
 follow the instructions in the [documentation](https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/create-stack1.html).
