@@ -3,7 +3,7 @@
 The OCI Terraform stack for WebLogic Server allows you to create and configure a WebLogic domain in
 [Oracle Cloud Infrastructure (OCI)][oci], in minutes. It will create and/or configure multiple OCI services such as
 Compute, Network, OCI Database, Autonomous Database, Identity Cloud Service, Logging, File System, Application
-Performance Monitoring and Autoscalings. The WebLogic domain created can be scaled by updating a terraform variable to indicate
+Performance Monitoring and Autoscaling. The WebLogic domain created can be scaled by updating a terraform variable to indicate
 the desired number of nodes and re apply the stack or auto-scaling can be configured to automatically adapt to different
 workloads in real time.
 
