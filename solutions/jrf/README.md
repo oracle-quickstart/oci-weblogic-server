@@ -52,11 +52,11 @@ terraform init
 Update the variable values in tfvars files under directories terraform/solutions/common and terraform/solutions/jrf according to the user specific values
 Invoke apply passing all *.tfvars files as input
 ```bash
-terraform apply -var-file=../solutions/common/tenancy.tfvars -var-file=inputs/mp_image_ee_byol.tfvars -var-file=../solutions/jrf/jrf_instance.tfvars -var-file=../solutions/jrf/existing_lb.tfvars -var-file=../solutions/jrf/idcs.tfvars var-file=../solutions/jrf/oci_db.tfvars
+terraform apply -var-file=../solutions/common/tenancy.tfvars -var-file=images/mp_image_ee_byol.tfvars -var-file=../solutions/jrf/jrf_instance.tfvars -var-file=../solutions/jrf/existing_lb.tfvars -var-file=../solutions/jrf/idcs.tfvars var-file=../solutions/jrf/oci_db.tfvars
 ```
 
 To destroy the infrastructure
 ```bash
-terraform destroy var-file=../solutions/common/tenancy.tfvars -var-file=inputs/mp_image_ee_byol.tfvars -var-file=../solutions/jrf/jrf_instance.tfvars -var-file=../solutions/jrf/existing_lb.tfvars -var-file=../solutions/jrf/idcs.tfvars var-file=../solutions/jrf/oci_db.tfvars
+terraform destroy var-file=../solutions/common/tenancy.tfvars -var-file=images/mp_image_ee_byol.tfvars -var-file=../solutions/jrf/jrf_instance.tfvars -var-file=../solutions/jrf/existing_lb.tfvars -var-file=../solutions/jrf/idcs.tfvars var-file=../solutions/jrf/oci_db.tfvars
 ```
 **Important:** Refer to [documentation](https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/delete-domain.html) for steps to perform before running *terraform destroy*.
