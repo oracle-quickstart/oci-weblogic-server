@@ -42,7 +42,7 @@ For pre-requisites specific to Terraform CLI and ORM, see their corresponding se
 
 ## Create the Stack Using the OCI Marketplace
 
-The WebLogic Server for OCI applications available in the Marketplace are:
+The WebLogic Server for OCI stack applications available in the Marketplace are:
 - [Oracle WebLogic Server Enterprise Edition (UCM)](https://cloudmarketplace.oracle.com/marketplace/en_US/listing/72493372)
 - [Oracle WebLogic Suite (UCM)](https://cloudmarketplace.oracle.com/marketplace/en_US/listing/72492657)
 - [Oracle WebLogic Server Standard Edition (BYOL)](https://cloudmarketplace.oracle.com/marketplace/en_US/listing/65022652)
