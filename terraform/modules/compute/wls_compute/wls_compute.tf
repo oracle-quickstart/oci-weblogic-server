@@ -80,6 +80,8 @@ module "wls-instances" {
       mw_vol_device        = lookup(var.volume_map[0], "device")
       data_vol_mount_point = lookup(var.volume_map[1], "volume_mount_point")
       data_vol_device      = lookup(var.volume_map[1], "device")
+      data_volume          = module.data-volume.data_volume_ids[x / var.num_volumes]
+      mw_volume            = module.middleware-volume.data_volume_ids[x / var.num_volumes]
 
       deploy_sample_app                  = var.deploy_sample_app
       domain_dir                         = var.domain_dir
