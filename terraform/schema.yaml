@@ -701,9 +701,10 @@ variables:
 
   #Network Validation script execution acknowledgement
   existing_network_validated:
-    type: string
+    type: boolean
+    default: true
     required: true
-    title: "Acknowledge if Existing Network is Validated"
+    title: "Check if existing Network needs to be validated"
     description: "Enter YES to confirm if existing Virtual Cloud Network you selected is validated using the network validation script. See <a target=\"_blank\" href=\"https://docs.oracle.com/pls/topic/lookup?ctx=en/cloud/paas/weblogic-cloud/user&id=oci_network_validate\">Validate Existing Network Setup</a>"
     pattern: "^[yY][eE][sS]$"
     visible:

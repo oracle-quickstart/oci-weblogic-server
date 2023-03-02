@@ -3,8 +3,22 @@
 
 module "network-validation" {
   source = "./modules/network-validator"
-  count  = local.use_existing_subnets && !var.skip_network_validation ? 1 : 0
+  count  = local.use_existing_subnets && var.existing_network_validated ? 1 : 0
   wls_subnet_id = var.wls_subnet_id
+  bastion_subnet_id = var.bastion_subnet_id
+  lb_subnet_1_id    = var.lb_subnet_1_id
+  fss_subnet_id    = var.fss_subnet_id
+  bastion_ip        = local.bastion_ip
+  atp_db_id =  var.atp_db_id
+  oci_db_database_id = var.oci_db_database_id
+  db_vcn_lpg_id = var.db_vcn_lpg_id
+  wls_extern_admin_port = var.wls_extern_admin_port
+  wls_extern_ssl_admin_port = var.wls_extern_ssl_admin_port
+  existing_admin_server_nsg_id = var.existing_admin_server_nsg_id
+  existing_managed_server_nsg_id = var.existing_managed_server_nsg_id
+  existing_lb_nsg_id = var.existing_lb_nsg_id
+  existing_mount_target_nsg_id = var.existing_mount_target_nsg_id
+  existing_bastion_nsg_id = var.existing_bastion_nsg_id
 }
 
 module "system-tags" {

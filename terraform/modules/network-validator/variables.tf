@@ -5,3 +5,13 @@ variable "wls_subnet_id" {
   type        = string
   description = "The OCID of the subnet where WebLogic VMs will be created"
 }
+
+variable "bastion_subnet_id" {
+  type        = string
+  description = "The OCID of the subnet for the bastion instance"
+}
+
+variable "lb_subnet_1_id" {
+  type        = string
+  description = "The OCID of a regional or AD-specific subnet for primary load balancer"
+}

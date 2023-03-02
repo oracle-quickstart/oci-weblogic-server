@@ -3,7 +3,7 @@
 
 resource "null_resource" "validate_network" {
   provisioner "local-exec" {
-    command = "chmod +x ./scripts/network_validation.sh && ./scripts/network_validation.sh ${local.validation_script_wls_subnet_param}"
+    command = "chmod +x ./scripts/network_validation.sh && ./scripts/network_validation.sh ${local.validation_script_wls_subnet_param} ${local.validation_scripts_bastion_subnet_param} ${local.validation_scripts_lb_subnet_1_param}"
     interpreter = ["/bin/bash", "-c"]
     working_dir = path.module
   }
