@@ -16,18 +16,19 @@ version="1.0.0"
 # Flags which can be overridden by user input.
 # Default values are below
 # -----------------------------------
-DB_PORT=1521
+DB_PORT=""
 ATP_DB_PORT=1522
 SSH_PORT=22
 T3_PORT=9071
-WLS_LB_PORT=7003
+WLS_LB_PORT=""
 LB_PORT=443
 ADMIN_HTTP_PORT=7001
 ADMIN_HTTPS_PORT=7002
 WLS_SUBNET_OCID=""
 BASTION_SUBNET_OCID=""
 BASTION_HOST_IP=""
-LB_SUBNET_OCID=""
+LB_SUBNET_1_OCID=""
+LB_SUBNET_2_OCID=""
 FSS_SUBNET_OCID=""
 ADMIN_SRV_NSG_OCID=""
 MANAGED_SRV_NSG_OCID=""
@@ -512,11 +513,14 @@ This script is used to validate existing subnets, and optionally network securit
   -p, --http_port     WebLogic Admin Console http port (defaults to 7001)
   -s, --https_port    WebLogic Admin Console https port (defaults to 7002)
   -d, --ocidbid       OCI Database System OCID
+  -P, --ocidbport     OCI Database Port
   -t, --atpdbid       ATP Database OCID
   -g, --lpg           OCID of the Local Peering Gateway (LPG) in the DB VCN
   -b, --bastionsubnet Bastion Subnet OCID
-  -i, --bastionip     Bastion Host IP. Provide this if using existing bastion or new bastion with reserved IP
-  -l, --lbsubnet      Load Balancer Subnet OCID
+  -i, --bastionip     Bastion Host IP. Provide this if using existing bastion
+  -l1, --lbsubnet1    Load Balancer Subnet 1 OCID
+  -l2, --lbsubnet2    Load Balancer Subnet 2 OCID
+  -l,  --externalport WebLogic Managed Server External Port
   -f, --fsssubnet     File Storage Service (FSS) Mount Target Subnet OCID
   -a, --adminsrvnsg   OCID of the Network Security Group (NSG) for the administration server (Required if using NSGs instead of security lists)
   -m, --managedsrvnsg OCID of the Network Security Group (NSG) for the managed servers (Required if using NSGs instead of security lists)
@@ -577,11 +581,14 @@ while [[ $1 = -?* ]]; do
     -p|--http_port) shift; ADMIN_HTTP_PORT=${1} ;;
     -s|--https_port) shift; ADMIN_HTTPS_PORT=${1} ;;
     -d|--ocidbid) shift; OCIDB_OCID=${1} ;;
+    -P|--ocidbport) shift; DB_PORT=${1} ;;
     -t|--atpdbid) shift; ATPDB_OCID=${1} ;;
     -g|--lpg) shift; LPG_OCID=${1} ;;
     -b|--bastionsubnet) shift; BASTION_SUBNET_OCID=${1} ;;
     -i|--bastionip) shift; BASTION_HOST_IP=${1} ;;
-    -l|--lbsubnet) shift; LB_SUBNET_OCID=${1} ;;
+    -l1|--lbsubnet1) shift; LB_SUBNET_1_OCID=${1} ;;
+    -l2|--lbsubnet2) shift; LB_SUBNET_2_OCID=${1} ;;
+    -l|--externalport) shift; WLS_LB_PORT=${1} ;;
     -f|--fsssubnet) shift; FSS_SUBNET_OCID=${1} ;;
     -a|--adminsrvnsg) shift; ADMIN_SRV_NSG_OCID=${1} ;;
     -m|--managedsrvnsg) shift; MANAGED_SRV_NSG_OCID=${1} ;;
@@ -657,7 +664,7 @@ fi
 # If Load Balancer NSG is provided then Admin server NSG,Managed server NSG & LB subnet are required
 if [[ -n ${LB_NSG_OCID} ]]
 then
-  if [[ -z ${ADMIN_SRV_NSG_OCID} || -z ${MANAGED_SRV_NSG_OCID} || -z ${LB_SUBNET_OCID} ]]
+  if [[ -z ${ADMIN_SRV_NSG_OCID} || -z ${MANAGED_SRV_NSG_OCID} || -z ${LB_SUBNET_1_OCID} ]]
   then
    echo "One or more required parameters are not specified."
    usage >&2
@@ -756,7 +763,7 @@ then
   wls_subnet_cidr_block=$(oci network subnet get --subnet-id ${WLS_SUBNET_OCID} | jq -r '.data["cidr-block"]')
 
   # Check if SSH port is open for access by WLS subnet CIDR in Admin Server NSG
-  res=$(check_tcp_port_open_in_seclist_or_nsg $ADMIN_SRV_NSG_OCID "${SSH_PORT}" "$wls_subnet_cidr_block" "nsg")
+  res=$(check_tcp_port_open_in_seclist_or_nsg $MANAGED_SRV_NSG_OCID "${SSH_PORT}" "$wls_subnet_cidr_block" "nsg")
   if [[ $res -ne 0 ]]
   then
     echo "ERROR: Port ${SSH_PORT} is not open for access by WLS Subnet CIDR [$wls_subnet_cidr_block] in Admin Server NSG [$ADMIN_SRV_NSG_OCID]"
@@ -764,10 +771,10 @@ then
   fi
 
   # Check if T3 Port is open for access by WLS subnet CIDR in Admin Server NSG
-  res=$(check_tcp_port_open_in_seclist_or_nsg $ADMIN_SRV_NSG_OCID "${T3_PORT}" "$wls_subnet_cidr_block" "nsg")
+  res=$(check_tcp_port_open_in_seclist_or_nsg $MANAGED_SRV_NSG_OCID "${T3_PORT}" "$wls_subnet_cidr_block" "nsg")
   if [[ $res -ne 0 ]]
   then
-    echo "ERROR: Port ${T3_PORT} is not open for access by WLS Subnet CIDR [$wls_subnet_cidr_block] in Admin Server NSG [$ADMIN_SRV_NSG_OCID]"
+    echo "ERROR: Port ${T3_PORT} is not open for access by WLS Subnet CIDR [$wls_subnet_cidr_block] in Managed Server NSG [$MANAGED_SRV_NSG_OCID]"
     validation_return_code=2
   fi
 
@@ -927,12 +934,12 @@ then
   fi
 fi
 
-### Validation - Only when LB subnet/NSG OCID is provided) ###
+### Validation - Only when LB subnet 1/NSG OCID is provided) ###
 
 # Check if 7003 port is open for access by LB Subnet in WLS Subnet/Managed Server NSG
-if [[ -n ${LB_SUBNET_OCID} ]]
+if [[ -n ${LB_SUBNET_1_OCID} ]]
 then
-  lbsubnet_cidr_block=$(oci network subnet get --subnet-id "${LB_SUBNET_OCID}" | jq -r '.data["cidr-block"]')
+  lbsubnet_cidr_block=$(oci network subnet get --subnet-id "${LB_SUBNET_1_OCID}" | jq -r '.data["cidr-block"]')
   if [[ -z ${LB_NSG_OCID} ]]
   then
     res=$(validate_subnet_port_access "${WLS_SUBNET_OCID}" ${WLS_LB_PORT} "${lbsubnet_cidr_block}")
@@ -954,14 +961,14 @@ then
   fi
 fi
 # Check if LB Subnet port 443 is open in LB Subnet/NSG
-if [[ -n ${LB_SUBNET_OCID} ]]
+if [[ -n ${LB_SUBNET_1_OCID} ]]
 then
   if [[ -z ${LB_NSG_OCID} ]]
   then
-    res=$(validate_subnet_port_access "${LB_SUBNET_OCID}" ${LB_PORT} "${ALL_IPS}")
+    res=$(validate_subnet_port_access "${LB_SUBNET_1_OCID}" ${LB_PORT} "${ALL_IPS}")
     if [[ $res -ne 0 ]]
     then
-      echo "ERROR: Port [$LB_PORT] is not open for 0.0.0.0/0 in LB Subnet CIDR [${LB_SUBNET_OCID}]"
+      echo "ERROR: Port [$LB_PORT] is not open for 0.0.0.0/0 in LB Subnet CIDR [${LB_SUBNET_1_OCID}]"
       validation_return_code=2
     fi
   else
