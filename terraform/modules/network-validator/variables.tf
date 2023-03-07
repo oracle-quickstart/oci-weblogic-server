@@ -11,7 +11,82 @@ variable "bastion_subnet_id" {
   description = "The OCID of the subnet for the bastion instance"
 }
 
+variable "bastion_ip" {
+  type        = string
+  description = "Bastion Host IP of the existing bastion"
+}
+
 variable "lb_subnet_1_id" {
   type        = string
   description = "The OCID of a regional or AD-specific subnet for primary load balancer"
+}
+
+variable "lb_subnet_2_id" {
+  type        = string
+  description = "The OCID of a regional or AD-specific subnet for secondary load balancer"
+}
+
+variable "mount_target_subnet_id" {
+  type        = string
+  description = "The OCID for existing subnet for mount target"
+}
+
+variable "atp_db_id" {
+  type        = string
+  description = "The OCID of the ATP database"
+}
+
+variable "oci_db_database_id" {
+  type        = string
+  description = "The OCID of the OCI database"
+}
+
+variable "oci_db_port" {
+  type        = number
+  description = "The listener port for the OCI database"
+}
+
+variable "db_vcn_lpg_id" {
+  type        = string
+  description = "The OCID of the Local Peering Gateway (LPG) in the DB VCN to which the LPG in the WebLogic VCN will be peered. Required for VCN peering"
+}
+
+variable "wls_extern_admin_port" {
+  type        = number
+  description = "Weblogic console port"
+}
+
+variable "wls_extern_ssl_admin_port" {
+  type        = number
+  description = "The administration server SSL port on which to access the administration console"
+}
+
+variable "wls_ms_extern_port" {
+  type        = number
+  description = "The managed server port on which to send application traffic"
+}
+
+variable "existing_admin_server_nsg_id" {
+  type        = string
+  description = "The OCID of the pre-created NSG that should be attached to the admin server"
+}
+
+variable "existing_managed_server_nsg_id" {
+  type        = string
+  description = "The OCID of the pre-created NSG that should be attached to the managed server"
+}
+
+variable "existing_lb_nsg_id" {
+  type        = string
+  description = "The OCID of the pre-created NSG that should be attached to the load balancer"
+}
+
+variable "existing_mount_target_nsg_id" {
+  type        = string
+  description = "The OCID of the pre-created NSG that should be attached to the mount target"
+}
+
+variable "existing_bastion_nsg_id" {
+  type        = string
+  description = "The OCID of the pre-created NSG that should be attached to the bastion instance"
 }
