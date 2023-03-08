@@ -704,7 +704,7 @@ variables:
     type: boolean
     default: false
     required: true
-    title: "Check if existing Network needs to be validated"
+    title: "Skip Network Validation"
     description: "Enter YES to confirm if existing Virtual Cloud Network you selected is validated using the network validation script. See <a target=\"_blank\" href=\"https://docs.oracle.com/pls/topic/lookup?ctx=en/cloud/paas/weblogic-cloud/user&id=oci_network_validate\">Validate Existing Network Setup</a>"
     pattern: "^[yY][eE][sS]$"
     visible:

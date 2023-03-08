@@ -36,9 +36,9 @@ variable "atp_db_id" {
   description = "The OCID of the ATP database"
 }
 
-variable "oci_db_database_id" {
+variable "oci_db_dbsystem_id" {
   type        = string
-  description = "The OCID of the OCI database"
+  description = "The OCID of the OCI database system"
 }
 
 variable "oci_db_port" {

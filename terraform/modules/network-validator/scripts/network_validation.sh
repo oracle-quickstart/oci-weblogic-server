@@ -984,10 +984,60 @@ then
   fi
 fi
 
-### Validate Mount Target subnet/NSG (only when Mount Target subnet/NSG OCID is provided) ###
+### Validation - Only when LB subnet 2/NSG OCID is provided) ###
 
+# Check if 7003 port is open for access by LB Subnet 2 in WLS Subnet/Managed Server NSG
+if [[ -n ${LB_SUBNET_2_OCID} ]]
+then
+  lbsubnet2_cidr_block=$(oci network subnet get --subnet-id "${LB_SUBNET_2_OCID}" | jq -r '.data["cidr-block"]')
+  if [[ -z ${LB_NSG_OCID} ]]
+  then
+    res=$(validate_subnet_port_access "${WLS_SUBNET_OCID}" ${WLS_LB_PORT} "${lbsubnet2_cidr_block}")
+    if [[ $res -ne 0 ]]
+    then
+      echo "ERROR: LB port ${WLS_LB_PORT} is not open for access by LB Subnet CIDR - [$lbsubnet2_cidr_block] in WLS Subnet [$WLS_SUBNET_OCID]"
+      validation_return_code=2
+    fi
+  else
+    if [[ -n ${ADMIN_SRV_NSG_OCID} && -n ${MANAGED_SRV_NSG_OCID} ]]
+    then
+      res=$(check_tcp_port_open_in_seclist_or_nsg $MANAGED_SRV_NSG_OCID "${WLS_LB_PORT}" "$lbsubnet2_cidr_block" "nsg")
+      if [[ $res -ne 0 ]]
+      then
+        echo "ERROR: LB port ${WLS_LB_PORT} is not open for access by LB Subnet CIDR - [$lbsubnet2_cidr_block] in Managed Server NSG [$MANAGED_SRV_NSG_OCID]"
+        validation_return_code=2
+      fi
+    fi
+  fi
+fi
+
+# Check if LB Subnet port 443 is open in LB Subnet/NSG
+if [[ -n ${LB_SUBNET_2_OCID} ]]
+then
+  if [[ -z ${LB_NSG_OCID} ]]
+  then
+    res=$(validate_subnet_port_access "${LB_SUBNET_2_OCID}" ${LB_PORT} "${ALL_IPS}")
+    if [[ $res -ne 0 ]]
+    then
+      echo "ERROR: Port [$LB_PORT] is not open for 0.0.0.0/0 in LB Subnet CIDR [${LB_SUBNET_2_OCID}]"
+      validation_return_code=2
+    fi
+  else
+    if [[ -n ${ADMIN_SRV_NSG_OCID} && -n ${MANAGED_SRV_NSG_OCID} ]]
+    then
+      res=$(check_tcp_port_open_in_seclist_or_nsg $LB_NSG_OCID "${LB_PORT}" "$ALL_IPS" "nsg")
+      if [[ $res -ne 0 ]]
+      then
+        echo "ERROR: Port [$LB_PORT] is not open for 0.0.0.0/0 in Load Balancer Server NSG [${LB_NSG_OCID}]"
+        validation_return_code=2
+      fi
+    fi
+  fi
+fi
+
+### Validate Mount Target subnet/NSG (only when Mount Target subnet/NSG OCID is provided) ###
 # Check TCP Ports - '111' '2048' '2049' '2050' are open in Mount Target SUBNET/NSG for VCN CIDR
-if [[ -n ${FSS_SUBNET_OCID} || -n ${FSS_NSG_OCID} ]]
+if [[ -n ${FSS_SUBNET_OCID} && -z ${FSS_NSG_OCID} ]]
 then
   vcn_ocid=$(oci network subnet get --subnet-id "${WLS_SUBNET_OCID}" | jq -r '.data["vcn-id"]')
   vcn_cidr=$(oci network vcn get --vcn-id "${vcn_ocid}" | jq -r '.data["cidr-block"]')
@@ -999,15 +1049,6 @@ then
       if [[ $res -ne 0 ]]
       then
         echo "ERROR: TCP Port [${port}] is not open in FSS Subnet [${FSS_SUBNET_OCID}] for VCN CIDR [${vcn_cidr}]"
-        validation_return_code=2
-      fi
-    fi
-    if [[ -n ${FSS_NSG_OCID} ]]
-    then
-      res=$(check_tcp_port_open_in_seclist_or_nsg $FSS_NSG_OCID "${port}" "$vcn_cidr" "nsg")
-      if [[ $res -ne 0 ]]
-      then
-        echo "ERROR: TCP Port [${port}] is not open in FSS NSG [${FSS_NSG_OCID}] for VCN CIDR [${vcn_cidr}]"
         validation_return_code=2
       fi
     fi
@@ -1024,6 +1065,29 @@ then
         validation_return_code=2
       fi
     fi
+  done
+fi
+
+# Check TCP Ports - '111' '2048' '2049' '2050' are open in Mount Target SUBNET/NSG for VCN CIDR
+if [[ -n ${FSS_SUBNET_OCID} && -n ${FSS_NSG_OCID} ]]
+then
+  vcn_ocid=$(oci network subnet get --subnet-id "${WLS_SUBNET_OCID}" | jq -r '.data["vcn-id"]')
+  vcn_cidr=$(oci network vcn get --vcn-id "${vcn_ocid}" | jq -r '.data["cidr-block"]')
+
+  for port in '111' '2048' '2049' '2050'; do
+    if [[ -n ${FSS_NSG_OCID} ]]
+    then
+      res=$(check_tcp_port_open_in_seclist_or_nsg $FSS_NSG_OCID "${port}" "$vcn_cidr" "nsg")
+      if [[ $res -ne 0 ]]
+      then
+        echo "ERROR: TCP Port [${port}] is not open in FSS NSG [${FSS_NSG_OCID}] for VCN CIDR [${vcn_cidr}]"
+        validation_return_code=2
+      fi
+    fi
+  done
+
+  # Check UDP Ports - '111' '2048' are open in Mount Target SUBNET/NSG for VCN CIDR
+  for port in '111' '2048'; do
     if [[ -n ${FSS_NSG_OCID} ]]
     then
       res=$(check_udp_port_open_in_seclist_or_nsg $FSS_NSG_OCID "${port}" "$vcn_cidr" "nsg")

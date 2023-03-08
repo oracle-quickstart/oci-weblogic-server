@@ -3,15 +3,15 @@
 
 module "network-validation" {
   source = "./modules/network-validator"
-  count  = local.use_existing_subnets && var.skip_network_validation ? 1 : 0
+  count  = local.use_existing_subnets && !var.skip_network_validation ? 1 : 0
   wls_subnet_id = var.wls_subnet_id
   bastion_subnet_id = var.is_bastion_instance_required ? var.bastion_subnet_id : ""
   bastion_ip        = var.is_bastion_instance_required && var.existing_bastion_instance_id != "" ? data.oci_core_instance.existing_bastion_instance[0].private_ip : ""
   lb_subnet_1_id    = var.add_load_balancer ? var.lb_subnet_1_id : ""
-  lb_subnet_2_id    = var.add_load_balancer && !var.use_regional_subnet ? var.lb_subnet_2_id : ""
+  lb_subnet_2_id    = var.add_load_balancer && !local.use_regional_subnet ? var.lb_subnet_2_id : ""
   mount_target_subnet_id    = var.add_fss ? var.mount_target_subnet_id : ""
   atp_db_id =  !local.is_oci_db ? var.atp_db_id : ""
-  oci_db_database_id = local.is_oci_db ? var.oci_db_database_id : ""
+  oci_db_dbsystem_id = local.is_oci_db ? var.oci_db_dbsystem_id : ""
   oci_db_port = local.is_oci_db ? var.oci_db_port : 0
   db_vcn_lpg_id = local.is_oci_db ? var.db_vcn_lpg_id : ""
   wls_extern_admin_port = var.wls_extern_admin_port
@@ -19,9 +19,9 @@ module "network-validation" {
   wls_ms_extern_port = var.wls_ms_extern_port
   existing_admin_server_nsg_id = var.add_existing_nsg ? var.existing_admin_server_nsg_id : ""
   existing_managed_server_nsg_id = var.add_existing_nsg ? var.existing_managed_server_nsg_id : ""
-  existing_lb_nsg_id = var.add_existing_nsg ? var.existing_lb_nsg_id : ""
-  existing_mount_target_nsg_id = var.add_existing_nsg ? var.existing_mount_target_nsg_id : ""
-  existing_bastion_nsg_id = var.add_existing_nsg ? var.existing_bastion_nsg_id : ""
+  existing_lb_nsg_id = var.add_existing_nsg && var.add_load_balancer ? var.existing_lb_nsg_id : ""
+  existing_mount_target_nsg_id = var.add_existing_nsg && var.add_fss ? var.existing_mount_target_nsg_id : ""
+  existing_bastion_nsg_id = var.add_existing_nsg && var.is_bastion_instance_required ? var.existing_bastion_nsg_id : ""
 }
 
 module "system-tags" {
