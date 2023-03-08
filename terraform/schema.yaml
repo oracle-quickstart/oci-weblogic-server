@@ -699,14 +699,12 @@ variables:
       compartmentId: ${network_compartment_id}
       vcnId: ${wls_existing_vcn_id}
 
-  #Network Validation script execution acknowledgement
   skip_network_validation:
     type: boolean
     default: false
     required: true
     title: "Skip Network Validation"
-    description: "Enter YES to confirm if existing Virtual Cloud Network you selected is validated using the network validation script. See <a target=\"_blank\" href=\"https://docs.oracle.com/pls/topic/lookup?ctx=en/cloud/paas/weblogic-cloud/user&id=oci_network_validate\">Validate Existing Network Setup</a>"
-    pattern: "^[yY][eE][sS]$"
+    description: "Network validation script to run for existing subnets"
     visible:
       and:
         - not:
