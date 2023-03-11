@@ -83,9 +83,9 @@ locals {
   autoscaling_fss_export_sets_policy_statement  = (var.add_fss && var.use_autoscaling) ? length(oci_identity_dynamic_group.wlsc_functions_principal_group) > 0 ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_functions_principal_group[0].name} to manage export-sets in compartment id ${var.fss_compartment_id}" : "" : ""
 
   #logging policies
-  autoscaling_logging_policy_1 = (var.use_oci_logging && var.use_autoscaling)? length(oci_identity_dynamic_group.wlsc_functions_principal_group) > 0 ?"Allow dynamic-group ${oci_identity_dynamic_group.wlsc_functions_principal_group[0].name} to manage log-groups in compartment id ${var.compartment_id}" : "" : ""
-  autoscaling_logging_policy_2 = (var.use_oci_logging && var.use_autoscaling)? length(oci_identity_dynamic_group.wlsc_functions_principal_group) > 0 ?"Allow dynamic-group ${oci_identity_dynamic_group.wlsc_functions_principal_group[0].name} to use log-content in compartment id ${var.compartment_id}" : "" : ""
-  autoscaling_logging_policy_3 = (var.use_oci_logging && var.use_autoscaling)? length(oci_identity_dynamic_group.wlsc_functions_principal_group) > 0 ?"Allow dynamic-group ${oci_identity_dynamic_group.wlsc_functions_principal_group[0].name} to manage unified-configuration in compartment id ${var.compartment_id}" : "" : ""
+  autoscaling_logging_policy_1 = (var.use_oci_logging && var.use_autoscaling) ? length(oci_identity_dynamic_group.wlsc_functions_principal_group) > 0 ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_functions_principal_group[0].name} to manage log-groups in compartment id ${var.compartment_id}" : "" : ""
+  autoscaling_logging_policy_2 = (var.use_oci_logging && var.use_autoscaling) ? length(oci_identity_dynamic_group.wlsc_functions_principal_group) > 0 ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_functions_principal_group[0].name} to use log-content in compartment id ${var.compartment_id}" : "" : ""
+  autoscaling_logging_policy_3 = (var.use_oci_logging && var.use_autoscaling) ? length(oci_identity_dynamic_group.wlsc_functions_principal_group) > 0 ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_functions_principal_group[0].name} to manage unified-configuration in compartment id ${var.compartment_id}" : "" : ""
 
   autoscaling_statements = compact([local.autoscaling_statement1, local.autoscaling_statement2,
     local.autoscaling_statement3, local.autoscaling_statement4, local.autoscaling_statement5,
@@ -97,7 +97,7 @@ locals {
     local.autoscaling_statement21, local.autoscaling_statement22, local.autoscaling_statement23,
     local.autoscaling_statement24, local.autoscaling_statement25, local.autoscaling_statement26,
     local.autoscaling_statement27,
-    local.autoscaling_logging_policy_1,local.autoscaling_logging_policy_2, local.autoscaling_logging_policy_3,
+    local.autoscaling_logging_policy_1, local.autoscaling_logging_policy_2, local.autoscaling_logging_policy_3,
     local.autoscaling_atp_policy_statement,
     local.autoscaling_db_policy_statement,
     local.autoscaling_fss_mount_target_policy_statement,

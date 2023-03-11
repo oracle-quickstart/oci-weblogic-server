@@ -613,9 +613,6 @@ args+=("$@")
 # ##                                     ##
 # ############# ############# #############
 
-# Workaroud for ORM issue with jq
-export LD_LIBRARY_PATH=""
-
 # Set IFS to preferred implementation
 IFS=$'\n\t'
 
@@ -766,11 +763,11 @@ then
   res=$(check_tcp_port_open_in_seclist_or_nsg $MANAGED_SRV_NSG_OCID "${SSH_PORT}" "$wls_subnet_cidr_block" "nsg")
   if [[ $res -ne 0 ]]
   then
-    echo "ERROR: Port ${SSH_PORT} is not open for access by WLS Subnet CIDR [$wls_subnet_cidr_block] in Admin Server NSG [$ADMIN_SRV_NSG_OCID]"
+    echo "ERROR: Port ${SSH_PORT} is not open for access by WLS Subnet CIDR [$wls_subnet_cidr_block] in Managed Server NSG [$MANAGED_SRV_NSG_OCID]"
     validation_return_code=2
   fi
 
-  # Check if T3 Port is open for access by WLS subnet CIDR in Admin Server NSG
+  # Check if T3 Port is open for access by WLS subnet CIDR in Managed Server NSG
   res=$(check_tcp_port_open_in_seclist_or_nsg $MANAGED_SRV_NSG_OCID "${T3_PORT}" "$wls_subnet_cidr_block" "nsg")
   if [[ $res -ne 0 ]]
   then

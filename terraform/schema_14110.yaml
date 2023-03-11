@@ -713,7 +713,7 @@ variables:
     default: false
     required: true
     title: "Skip Network Validation"
-    description: "Network validation script to run for existing subnets"
+    description: "Skip running network validation script for existing subnets"
     visible:
       and:
         - not:

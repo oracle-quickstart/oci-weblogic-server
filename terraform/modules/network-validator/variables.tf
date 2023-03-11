@@ -23,7 +23,7 @@ variable "lb_subnet_1_id" {
 
 variable "lb_subnet_2_id" {
   type        = string
-  description = "The OCID of a regional or AD-specific subnet for secondary load balancer"
+  description = "The OCID of a AD-specific subnet for secondary load balancer"
 }
 
 variable "mount_target_subnet_id" {
@@ -53,7 +53,7 @@ variable "db_vcn_lpg_id" {
 
 variable "wls_extern_admin_port" {
   type        = number
-  description = "Weblogic console port"
+  description = "WebLogic console port"
 }
 
 variable "wls_extern_ssl_admin_port" {
