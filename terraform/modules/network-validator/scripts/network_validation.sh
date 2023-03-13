@@ -115,18 +115,18 @@ function validate_service_or_nat_gw_exist() {
     fi
 
     # WLS subnet should be using either NAT or service gateway or both in its route table
-    local rt_ocid=$(oci network subnet get --subnet-id ${WLS_SUBNET_OCID} | jq -r '.data["route-table-id"]')
-    local rt_rules=$(oci network route-table get --rt-id ${rt_ocid} | jq -r '.data["route-rules"]')
-    local rt_rules_count=$(echo $rt_rules | jq '.|length')
+    rt_ocid=$(oci network subnet get --subnet-id ${WLS_SUBNET_OCID} | jq -r '.data["route-table-id"]')
+    rt_rules=$(oci network route-table get --rt-id ${rt_ocid} | jq -r '.data["route-rules"]')
+    rt_rules_count=$(echo $rt_rules | jq '.|length')
 
     nat=""
     svc=""
     nat_gw_id=""
     svc_gw_id=""
 
-    for ((j = 0 ; j < $rt_rules_count ; j++))
+    for ((i = 0 ; i < $rt_rules_count ; i++))
     do
-      network_entity_ocid=$(echo $rt_rules | jq -r --arg i "$j" '.[$i|tonumber]["network-entity-id"]')
+      network_entity_ocid=$(echo $rt_rules | jq -r --arg i "$i" '.[$i|tonumber]["network-entity-id"]')
       nat_id=$(echo $network_entity_ocid | grep natgateway)
       if [[ -n $nat_id ]]; then nat_gw_id=$nat_id; fi
       svc_id=$(echo $network_entity_ocid | grep servicegateway)
