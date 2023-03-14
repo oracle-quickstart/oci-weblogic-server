@@ -518,8 +518,8 @@ This script is used to validate existing subnets, and optionally network securit
   -g, --lpg           OCID of the Local Peering Gateway (LPG) in the DB VCN
   -b, --bastionsubnet Bastion Subnet OCID
   -i, --bastionip     Bastion Host IP. Provide this if using existing bastion
-  -l1, --lbsubnet1    Load Balancer Subnet 1 OCID
-  -l2, --lbsubnet2    Load Balancer Subnet 2 OCID
+  -u, --lbsubnet1    Load Balancer Subnet 1 OCID
+  -v, --lbsubnet2    Load Balancer Subnet 2 OCID
   -l,  --externalport WebLogic Managed Server External Port
   -f, --fsssubnet     File Storage Service (FSS) Mount Target Subnet OCID
   -a, --adminsrvnsg   OCID of the Network Security Group (NSG) for the administration server (Required if using NSGs instead of security lists)
@@ -586,8 +586,8 @@ while [[ $1 = -?* ]]; do
     -g|--lpg) shift; LPG_OCID=${1} ;;
     -b|--bastionsubnet) shift; BASTION_SUBNET_OCID=${1} ;;
     -i|--bastionip) shift; BASTION_HOST_IP=${1} ;;
-    -l1|--lbsubnet1) shift; LB_SUBNET_1_OCID=${1} ;;
-    -l2|--lbsubnet2) shift; LB_SUBNET_2_OCID=${1} ;;
+    -u|--lbsubnet1) shift; LB_SUBNET_1_OCID=${1} ;;
+    -v|--lbsubnet2) shift; LB_SUBNET_2_OCID=${1} ;;
     -l|--externalport) shift; WLS_LB_PORT=${1} ;;
     -f|--fsssubnet) shift; FSS_SUBNET_OCID=${1} ;;
     -a|--adminsrvnsg) shift; ADMIN_SRV_NSG_OCID=${1} ;;
@@ -1066,7 +1066,7 @@ then
 fi
 
 # Check TCP Ports - '111' '2048' '2049' '2050' are open in Mount Target SUBNET/NSG for VCN CIDR
-if [[ -n ${FSS_SUBNET_OCID} && -n ${FSS_NSG_OCID} ]]
+if [[ -n ${FSS_NSG_OCID} ]]
 then
   vcn_ocid=$(oci network subnet get --subnet-id "${WLS_SUBNET_OCID}" | jq -r '.data["vcn-id"]')
   vcn_cidr=$(oci network vcn get --vcn-id "${vcn_ocid}" | jq -r '.data["cidr-block"]')
