@@ -16,11 +16,11 @@ version="1.0.0"
 # Flags which can be overridden by user input.
 # Default values are below
 # -----------------------------------
-DB_PORT=""
+DB_PORT=1521
 ATP_DB_PORT=1522
 SSH_PORT=22
 T3_PORT=9071
-WLS_LB_PORT=""
+WLS_LB_PORT=7003
 LB_PORT=443
 ADMIN_HTTP_PORT=7001
 ADMIN_HTTPS_PORT=7002
