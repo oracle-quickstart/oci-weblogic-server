@@ -46,11 +46,6 @@ variable "oci_db_port" {
   description = "The listener port for the OCI database"
 }
 
-variable "db_vcn_lpg_id" {
-  type        = string
-  description = "The OCID of the Local Peering Gateway (LPG) in the DB VCN to which the LPG in the WebLogic VCN will be peered. Required for VCN peering"
-}
-
 variable "wls_extern_admin_port" {
   type        = number
   description = "WebLogic console port"

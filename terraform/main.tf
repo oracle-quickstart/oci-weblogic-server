@@ -13,7 +13,6 @@ module "network-validation" {
   atp_db_id                      = !local.is_oci_db ? var.atp_db_id : ""
   oci_db_dbsystem_id             = local.is_oci_db ? var.oci_db_dbsystem_id : ""
   oci_db_port                    = local.is_oci_db ? var.oci_db_port : 0
-  db_vcn_lpg_id                  = local.is_oci_db ? var.db_vcn_lpg_id : ""
   wls_extern_admin_port          = var.wls_extern_admin_port
   wls_extern_ssl_admin_port      = var.wls_extern_ssl_admin_port
   wls_ms_extern_port             = var.wls_ms_extern_port
