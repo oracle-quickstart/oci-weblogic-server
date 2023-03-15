@@ -704,7 +704,7 @@ variables:
     default: false
     required: true
     title: "Skip Network Validation"
-    description: "Skip running network validation script for existing subnets"
+    description: "Skip running network validation script for existing subnets. Existing Virtual Cloud Network can be validated using the network validation script. See <a target=\"_blank\" href=\"https://docs.oracle.com/pls/topic/lookup?ctx=en/cloud/paas/weblogic-cloud/user&id=oci_network_validate\">Validate Existing Network Setup</a>"
     visible:
       and:
         - not:
@@ -803,7 +803,7 @@ variables:
     required: true
     default: ''
     title: "Existing Network"
-    description: "An existing Virtual Cloud Network (VCN) in which to create the compute instances, network resources, and load balancers."
+    description: "An existing Virtual Cloud Network (VCN) in which to create the compute instances, network resources, and load balancers. Existing Virtual Cloud Network can be validated using the network validation script. See <a target=\"_blank\" href=\https://docs.oracle.com/pls/topic/lookup?ctx=en/cloud/paas/weblogic-cloud/user&id=oci_network_validate\>Validate Existing Network Setup</a>"
 
   wls_vcn_cidr:
     visible:
