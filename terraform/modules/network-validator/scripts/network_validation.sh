@@ -519,8 +519,8 @@ This script is used to validate existing subnets, and optionally network securit
   -g, --lpg           OCID of the Local Peering Gateway (LPG) in the DB VCN
   -b, --bastionsubnet Bastion Subnet OCID
   -i, --bastionip     Bastion Host IP. Provide this if using existing bastion
-  -u, --lbsubnet1    Load Balancer Subnet 1 OCID
-  -v, --lbsubnet2    Load Balancer Subnet 2 OCID
+  -u, --lbsubnet1     Load Balancer Subnet 1 OCID
+  -v, --lbsubnet2     Load Balancer Subnet 2 OCID which is required only for AD subnet
   -l,  --externalport WebLogic Managed Server External Port
   -f, --fsssubnet     File Storage Service (FSS) Mount Target Subnet OCID
   -a, --adminsrvnsg   OCID of the Network Security Group (NSG) for the administration server (Required if using NSGs instead of security lists)
@@ -801,7 +801,7 @@ then
     # Check if DB port is open for access by WLS subnet CIDR in DB subnet/NSG
     res=$(validate_ocidb_port_access ${ocidb_subnet_ocid} ${OCIDB_OCID} ${wls_subnet_cidr_block})
     if [[ $res -ne 0 ]]; then
-      echo "ERROR: DB port ${DB_PORT} is not open for access by WLS Subnet CIDR [$wls_subnet_cidr_block] in DB Subnet [$ocidb_subnet_ocid] or in DB NSG [$ocidb_nsg_ocid]i. ${NETWORK_VALIDATION_MSG}"
+      echo "ERROR: DB port ${DB_PORT} is not open for access by WLS Subnet CIDR [$wls_subnet_cidr_block] in DB Subnet [$ocidb_subnet_ocid] or in DB NSG [$ocidb_nsg_ocid]. ${NETWORK_VALIDATION_MSG}"
       validation_return_code=2
     fi
 
