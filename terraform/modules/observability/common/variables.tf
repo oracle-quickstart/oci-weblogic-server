@@ -24,7 +24,7 @@ variable "tags" {
 }
 
 variable "add_delay" {
-  type = bool
+  type        = bool
   description = "Add delay to log group creation for OCI policy to be effective"
-  default = false
+  default     = false
 }

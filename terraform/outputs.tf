@@ -18,7 +18,7 @@ output "fss_system_id" {
 }
 
 output "mount_target_id" {
-  value = var.add_fss? (var.mount_target_id != ""? var.mount_target_id: module.fss[0].mount_target_id):""
+  value = var.add_fss ? (var.mount_target_id != "" ? var.mount_target_id : module.fss[0].mount_target_id) : ""
 }
 
 output "load_balancer_id" {

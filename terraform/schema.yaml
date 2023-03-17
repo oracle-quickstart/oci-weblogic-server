@@ -27,7 +27,7 @@ groupings:
       - ${wls_vcn_name}
       - ${wls_vcn_cidr}
       - ${create_new_subnets}
-      - ${existing_network_validated}
+      - ${skip_network_validation}
       - ${subnet_compartment_id}
       - ${subnet_type}
       - ${subnet_span}
@@ -699,16 +699,16 @@ variables:
       compartmentId: ${network_compartment_id}
       vcnId: ${wls_existing_vcn_id}
 
-  #Network Validation script execution acknowledgement
-  existing_network_validated:
-    type: string
+  skip_network_validation:
+    type: boolean
+    default: false
     required: true
-    title: "Acknowledge if Existing Network is Validated"
-    description: "Enter YES to confirm if existing Virtual Cloud Network you selected is validated using the network validation script. See <a target=\"_blank\" href=\"https://docs.oracle.com/pls/topic/lookup?ctx=en/cloud/paas/weblogic-cloud/user&id=oci_network_validate\">Validate Existing Network Setup</a>"
-    pattern: "^[yY][eE][sS]$"
+    title: "Skip Network Validation"
+    description: "Skip running network validation script for existing subnets. Existing Virtual Cloud Network can be validated using the network validation script. See <a target=\"_blank\" href=\"https://docs.oracle.com/pls/topic/lookup?ctx=en/cloud/paas/weblogic-cloud/user&id=oci_network_validate\">Validate Existing Network Setup</a>"
     visible:
       and:
-        - ${orm_create_mode}
+        - not:
+            - ${orm_create_mode}
         - not:
             - ${create_new_vcn}
         - not:
@@ -803,7 +803,7 @@ variables:
     required: true
     default: ''
     title: "Existing Network"
-    description: "An existing Virtual Cloud Network (VCN) in which to create the compute instances, network resources, and load balancers."
+    description: "An existing Virtual Cloud Network (VCN) in which to create the compute instances, network resources, and load balancers. Existing Virtual Cloud Network can be validated using the network validation script. See <a target=\"_blank\" href=\"https://docs.oracle.com/pls/topic/lookup?ctx=en/cloud/paas/weblogic-cloud/user&id=oci_network_validate\">Validate Existing Network Setup</a>"
 
   wls_vcn_cidr:
     visible:

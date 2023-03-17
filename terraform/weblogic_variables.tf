@@ -196,3 +196,4 @@ variable "deploy_sample_app" {
   description = "Set to true to install a sample application in the WebLogic domain"
   default     = true
 }
+
