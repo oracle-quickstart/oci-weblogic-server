@@ -4,7 +4,7 @@
 
 # time delay for OCI policies to be effective
 resource "time_sleep" "log_grp_policy_delay" {
-  create_duration = var.add_delay?"30s":"0s"
+  create_duration = var.add_delay ? "30s" : "0s"
 }
 
 resource "oci_logging_log_group" "wlsc_log_group" {

@@ -9,7 +9,7 @@
 # ############################################################################
 #
 
-version="1.0.0"
+version="1.1.0"
 
 # Set Flags
 # -----------------------------------
@@ -27,7 +27,8 @@ ADMIN_HTTPS_PORT=7002
 WLS_SUBNET_OCID=""
 BASTION_SUBNET_OCID=""
 BASTION_HOST_IP=""
-LB_SUBNET_OCID=""
+LB_SUBNET_1_OCID=""
+LB_SUBNET_2_OCID=""
 FSS_SUBNET_OCID=""
 ADMIN_SRV_NSG_OCID=""
 MANAGED_SRV_NSG_OCID=""
@@ -36,6 +37,7 @@ LB_NSG_OCID=""
 FSS_NSG_OCID=""
 LPG_OCID=""
 ALL_IPS="0.0.0.0/0"
+NETWORK_VALIDATION_MSG="Fix the network validation script errors and re-run the script in the cloud shell"
 
 debug=false
 args=()
@@ -147,13 +149,13 @@ function validate_service_or_nat_gw_exist() {
         echo 3
         return
       fi
-      for ((i = 0 ; i < $rt_rules_count ; i++))
+      for ((k = 0 ; k < $rt_rules_count ; k++))
       do
-        network_entity_ocid=$(echo $rt_rules | jq -r --arg i "$i" '.[$i|tonumber]["network-entity-id"]')
+        network_entity_ocid=$(echo $rt_rules | jq -r --arg i "$k" '.[$i|tonumber]["network-entity-id"]')
         res=$(echo $network_entity_ocid | grep servicegateway)
         if [[ -n $res ]]
         then
-          all_services_destination=$(echo $rt_rules | jq -r --arg i "$i" '.[$i|tonumber].destination'  | grep -i "all-.*-services-in-oracle-services-network")
+          all_services_destination=$(echo $rt_rules | jq -r --arg i "$k" '.[$i|tonumber].destination'  | grep -i "all-.*-services-in-oracle-services-network")
           if [[ -z $all_services_destination ]]
           then
             echo 4
@@ -221,13 +223,13 @@ function check_tcp_port_open_in_seclist_or_nsg() {
 
   ingress_rules_count=$(echo $ingress_rules | jq '.|length')
   if [[ $ingress_rules_count != "" ]]; then
-    for ((i = 0 ; i < $ingress_rules_count ; i++))
+    for ((j = 0 ; j < $ingress_rules_count ; j++))
     do
-      ingress_protocol=$(echo $ingress_rules | jq -r --arg i "$i" '.[$i|tonumber].protocol')
-      ingress_source=$(echo $ingress_rules | jq -r --arg i "$i" '.[$i|tonumber].source')
-      tcp_options=$(echo $ingress_rules | jq -r --arg i "$i" '.[$i|tonumber]["tcp-options"]')
-      port_min=$(echo $ingress_rules | jq -r --arg i "$i" '.[$i|tonumber]["tcp-options"]["destination-port-range"].min')
-      port_max=$(echo $ingress_rules | jq -r --arg i "$i" '.[$i|tonumber]["tcp-options"]["destination-port-range"].max')
+      ingress_protocol=$(echo $ingress_rules | jq -r --arg i "$j" '.[$i|tonumber].protocol')
+      ingress_source=$(echo $ingress_rules | jq -r --arg i "$j" '.[$i|tonumber].source')
+      tcp_options=$(echo $ingress_rules | jq -r --arg i "$j" '.[$i|tonumber]["tcp-options"]')
+      port_min=$(echo $ingress_rules | jq -r --arg i "$j" '.[$i|tonumber]["tcp-options"]["destination-port-range"].min')
+      port_max=$(echo $ingress_rules | jq -r --arg i "$j" '.[$i|tonumber]["tcp-options"]["destination-port-range"].max')
 
       source_in_cidr_range=1
       if [[ $source = "0.0.0.0/0" ]]
@@ -283,13 +285,13 @@ function check_udp_port_open_in_seclist_or_nsg() {
 
   ingress_rules_count=$(echo $ingress_rules | jq '.|length')
   if [[ $ingress_rules_count -ne 0 ]]; then
-    for ((i = 0 ; i < $ingress_rules_count ; i++))
+    for ((j = 0 ; j < $ingress_rules_count ; j++))
     do
-      ingress_protocol=$(echo $ingress_rules | jq -r --arg i "$i" '.[$i|tonumber].protocol')
-      ingress_source=$(echo $ingress_rules | jq -r --arg i "$i" '.[$i|tonumber].source')
-      udp_options=$(echo $ingress_rules | jq -r --arg i "$i" '.[$i|tonumber]["udp-options"]')
-      port_min=$(echo $ingress_rules | jq -r --arg i "$i" '.[$i|tonumber]["udp-options"]["destination-port-range"].min')
-      port_max=$(echo $ingress_rules | jq -r --arg i "$i" '.[$i|tonumber]["udp-options"]["destination-port-range"].max')
+      ingress_protocol=$(echo $ingress_rules | jq -r --arg i "$j" '.[$i|tonumber].protocol')
+      ingress_source=$(echo $ingress_rules | jq -r --arg i "$j" '.[$i|tonumber].source')
+      udp_options=$(echo $ingress_rules | jq -r --arg i "$j" '.[$i|tonumber]["udp-options"]')
+      port_min=$(echo $ingress_rules | jq -r --arg i "$j" '.[$i|tonumber]["udp-options"]["destination-port-range"].min')
+      port_max=$(echo $ingress_rules | jq -r --arg i "$j" '.[$i|tonumber]["udp-options"]["destination-port-range"].max')
 
       source_in_cidr_range=1
       if [[ $source = "0.0.0.0/0" ]]
@@ -512,11 +514,14 @@ This script is used to validate existing subnets, and optionally network securit
   -p, --http_port     WebLogic Admin Console http port (defaults to 7001)
   -s, --https_port    WebLogic Admin Console https port (defaults to 7002)
   -d, --ocidbid       OCI Database System OCID
+  -P, --ocidbport     OCI Database Port
   -t, --atpdbid       ATP Database OCID
   -g, --lpg           OCID of the Local Peering Gateway (LPG) in the DB VCN
   -b, --bastionsubnet Bastion Subnet OCID
-  -i, --bastionip     Bastion Host IP. Provide this if using existing bastion or new bastion with reserved IP
-  -l, --lbsubnet      Load Balancer Subnet OCID
+  -i, --bastionip     Bastion Host IP. Provide this if using existing bastion
+  -u, --lbsubnet1     Load Balancer Subnet 1 OCID
+  -v, --lbsubnet2     Load Balancer Subnet 2 OCID which is required only for AD subnet
+  -l,  --externalport WebLogic Managed Server External Port
   -f, --fsssubnet     File Storage Service (FSS) Mount Target Subnet OCID
   -a, --adminsrvnsg   OCID of the Network Security Group (NSG) for the administration server (Required if using NSGs instead of security lists)
   -m, --managedsrvnsg OCID of the Network Security Group (NSG) for the managed servers (Required if using NSGs instead of security lists)
@@ -577,11 +582,14 @@ while [[ $1 = -?* ]]; do
     -p|--http_port) shift; ADMIN_HTTP_PORT=${1} ;;
     -s|--https_port) shift; ADMIN_HTTPS_PORT=${1} ;;
     -d|--ocidbid) shift; OCIDB_OCID=${1} ;;
+    -P|--ocidbport) shift; DB_PORT=${1} ;;
     -t|--atpdbid) shift; ATPDB_OCID=${1} ;;
     -g|--lpg) shift; LPG_OCID=${1} ;;
     -b|--bastionsubnet) shift; BASTION_SUBNET_OCID=${1} ;;
     -i|--bastionip) shift; BASTION_HOST_IP=${1} ;;
-    -l|--lbsubnet) shift; LB_SUBNET_OCID=${1} ;;
+    -u|--lbsubnet1) shift; LB_SUBNET_1_OCID=${1} ;;
+    -v|--lbsubnet2) shift; LB_SUBNET_2_OCID=${1} ;;
+    -l|--externalport) shift; WLS_LB_PORT=${1} ;;
     -f|--fsssubnet) shift; FSS_SUBNET_OCID=${1} ;;
     -a|--adminsrvnsg) shift; ADMIN_SRV_NSG_OCID=${1} ;;
     -m|--managedsrvnsg) shift; MANAGED_SRV_NSG_OCID=${1} ;;
@@ -626,7 +634,7 @@ if [[ -z ${WLS_SUBNET_OCID} ]]
 then
   echo "One or more required params are not specified."
   usage >&2
-  exit
+  exit 1
 fi
 
 # Required for validating existing NSGs
@@ -638,7 +646,7 @@ then
   then
    echo "One or more required parameters are not specified."
    usage >&2
-   exit
+   exit 1
    fi
 fi
 # If Managed server NSG is provided then Admin server NSG is required
@@ -648,17 +656,17 @@ then
   then
    echo "One or more required parameters are not specified."
    usage >&2
-   exit
+   exit 1
    fi
 fi
 # If Load Balancer NSG is provided then Admin server NSG,Managed server NSG & LB subnet are required
 if [[ -n ${LB_NSG_OCID} ]]
 then
-  if [[ -z ${ADMIN_SRV_NSG_OCID} || -z ${MANAGED_SRV_NSG_OCID} || -z ${LB_SUBNET_OCID} ]]
+  if [[ -z ${ADMIN_SRV_NSG_OCID} || -z ${MANAGED_SRV_NSG_OCID} || -z ${LB_SUBNET_1_OCID} ]]
   then
    echo "One or more required parameters are not specified."
    usage >&2
-   exit
+   exit 1
    fi
 fi
 # If  Bastion NSG is provided then Admin server NSG,Managed server NSG & Bastion subnet or Bastion host IP CIDR are required
@@ -668,38 +676,44 @@ then
   then
    echo "One or more required parameters are not specified."
    usage >&2
-   exit
+   exit 1
    fi
 fi
+
+validation_return_code=0
 
 # Check if Service or NAT gateway exists in WLS subnet's VCN.
 res=$(validate_service_or_nat_gw_exist)
 if [[ $res -eq 1 ]]
 then
-  echo "ERROR: Missing Service or NAT gateway in the VCN of the private WLS subnet [$WLS_SUBNET_OCID]"
+  echo "ERROR: Missing Service or NAT gateway in the VCN of the private WLS subnet [$WLS_SUBNET_OCID]. ${NETWORK_VALIDATION_MSG}"
+  validation_return_code=2
 elif [[ $res -eq 2 ]]
 then
-  echo "ERROR: Private WLS subnet [$WLS_SUBNET_OCID] does not use NAT or Service gateway"
+  echo "ERROR: Private WLS subnet [$WLS_SUBNET_OCID] does not use NAT or Service gateway. ${NETWORK_VALIDATION_MSG}"
+  validation_return_code=2
 elif [[ $res -eq 3 ]]
 then
-  echo "ERROR: Service Gateway in VCN of private WLS subnet [$WLS_SUBNET_OCID] does not allow access to all services in Oracle services network"
+  echo "ERROR: Service Gateway in VCN of private WLS subnet [$WLS_SUBNET_OCID] does not allow access to all services in Oracle services network. ${NETWORK_VALIDATION_MSG}"
+  validation_return_code=2
 elif [[ $res -eq 4 ]]
 then
-  echo "ERROR: Route Rule of private WLS subnet [$WLS_SUBNET_OCID] does not use 'ALL Services in Oracle services network' destination"
+  echo "ERROR: Route Rule of private WLS subnet [$WLS_SUBNET_OCID] does not use 'ALL Services in Oracle services network' destinationi. ${NETWORK_VALIDATION_MSG}"
+  validation_return_code=2
 fi
 
 # Check for Custom Resolver
 res=$(validate_dhcp_options ${WLS_SUBNET_OCID})
 if [[ $res -ne 0 ]]
 then
-  echo "WARNING: Missing OCI DNS Server [169.254.169.254] in the DNS Servers entries for the custom resolver"
+  echo "WARNING: Missing OCI DNS Server [169.254.169.254] in the DNS Servers entries for the custom resolver. ${NETWORK_VALIDATION_MSG}"
 fi
 
 # Check if Internet Gateway exists in WLS subnet's VCN.
 res=$(validate_internet_gw_exist)
 if [[ $res -ne 0 ]]
 then
-  echo "WARNING: Missing internet gateway in the VCN of the WLS subnet [$WLS_SUBNET_OCID]"
+  echo "WARNING: Missing internet gateway in the VCN of the WLS subnet [$WLS_SUBNET_OCID]. ${NETWORK_VALIDATION_MSG}"
 fi
 
 ### Validation - Only when WLS Subnet OCID is provided ###
@@ -713,28 +727,30 @@ then
 
   if [[ $res -ne 0 ]]
   then
-    echo "ERROR: Port ${SSH_PORT} is not open for access by WLS Subnet CIDR [$wls_subnet_cidr_block] in WLS Subnet [$WLS_SUBNET_OCID]"
+    echo "ERROR: Port ${SSH_PORT} is not open for access by WLS Subnet CIDR [$wls_subnet_cidr_block] in WLS Subnet [$WLS_SUBNET_OCID]. ${NETWORK_VALIDATION_MSG}"
+    validation_return_code=2
   fi
 
   # Check if T3 Port is open for access by WLS subnet CIDR
   res=$(validate_subnet_port_access ${WLS_SUBNET_OCID} ${T3_PORT} ${wls_subnet_cidr_block})
   if [[ $res -ne 0 ]]
   then
-    echo "ERROR: Port ${T3_PORT} is not open for access by WLS Subnet CIDR [$wls_subnet_cidr_block] in WLS Subnet [$WLS_SUBNET_OCID]"
+    echo "ERROR: Port ${T3_PORT} is not open for access by WLS Subnet CIDR [$wls_subnet_cidr_block] in WLS Subnet [$WLS_SUBNET_OCID]. ${NETWORK_VALIDATION_MSG}"
+    validation_return_code=2
   fi
 
   # Check if Admin Console HTTP Port is open for access to ALL_IPS by WLS subnet CIDR
   res=$(validate_subnet_port_access ${WLS_SUBNET_OCID} ${ADMIN_HTTP_PORT} ${ALL_IPS})
   if [[ $res -eq 0 ]]
   then
-    echo "WARNING: Exposing the WebLogic administrator port [${ADMIN_HTTP_PORT}] in the subnet [{$WLS_SUBNET_OCID}] to the internet [${ALL_IPS}] allows any user to access the WebLogic console, which is not a recommended practice. Ensure that only a specific CIDR range can access the WebLogic console."
+    echo "WARNING: Exposing the WebLogic administrator port [${ADMIN_HTTP_PORT}] in the subnet [{$WLS_SUBNET_OCID}] to the internet [${ALL_IPS}] allows any user to access the WebLogic console, which is not a recommended practice. Ensure that only a specific CIDR range can access the WebLogic console. ${NETWORK_VALIDATION_MSG}"
   fi
 
   # Check if Admin Console HTTPS Port is open for access to ALL_IPS by WLS subnet CIDR
   res=$(validate_subnet_port_access ${WLS_SUBNET_OCID} ${ADMIN_HTTPS_PORT} ${ALL_IPS})
   if [[ $res -eq 0 ]]
   then
-    echo "WARNING: Exposing the WebLogic administrator port [${ADMIN_HTTPS_PORT}] in the subnet [{$WLS_SUBNET_OCID}] to the internet [${ALL_IPS}] allows any user to access the WebLogic console, which is not a recommended practice. Ensure that only a specific CIDR range can access the WebLogic console."
+    echo "WARNING: Exposing the WebLogic administrator port [${ADMIN_HTTPS_PORT}] in the subnet [{$WLS_SUBNET_OCID}] to the internet [${ALL_IPS}] allows any user to access the WebLogic console, which is not a recommended practice. Ensure that only a specific CIDR range can access the WebLogic console. ${NETWORK_VALIDATION_MSG}"
   fi
 fi
 
@@ -745,31 +761,33 @@ then
   wls_subnet_cidr_block=$(oci network subnet get --subnet-id ${WLS_SUBNET_OCID} | jq -r '.data["cidr-block"]')
 
   # Check if SSH port is open for access by WLS subnet CIDR in Admin Server NSG
-  res=$(check_tcp_port_open_in_seclist_or_nsg $ADMIN_SRV_NSG_OCID "${SSH_PORT}" "$wls_subnet_cidr_block" "nsg")
+  res=$(check_tcp_port_open_in_seclist_or_nsg $MANAGED_SRV_NSG_OCID "${SSH_PORT}" "$wls_subnet_cidr_block" "nsg")
   if [[ $res -ne 0 ]]
   then
-    echo "ERROR: Port ${SSH_PORT} is not open for access by WLS Subnet CIDR [$wls_subnet_cidr_block] in Admin Server NSG [$ADMIN_SRV_NSG_OCID]"
+    echo "ERROR: Port ${SSH_PORT} is not open for access by WLS Subnet CIDR [$wls_subnet_cidr_block] in Managed Server NSG [$MANAGED_SRV_NSG_OCID]. ${NETWORK_VALIDATION_MSG}"
+    validation_return_code=2
   fi
 
-  # Check if T3 Port is open for access by WLS subnet CIDR in Admin Server NSG
-  res=$(check_tcp_port_open_in_seclist_or_nsg $ADMIN_SRV_NSG_OCID "${T3_PORT}" "$wls_subnet_cidr_block" "nsg")
+  # Check if T3 Port is open for access by WLS subnet CIDR in Managed Server NSG
+  res=$(check_tcp_port_open_in_seclist_or_nsg $MANAGED_SRV_NSG_OCID "${T3_PORT}" "$wls_subnet_cidr_block" "nsg")
   if [[ $res -ne 0 ]]
   then
-    echo "ERROR: Port ${T3_PORT} is not open for access by WLS Subnet CIDR [$wls_subnet_cidr_block] in Admin Server NSG [$ADMIN_SRV_NSG_OCID]"
+    echo "ERROR: Port ${T3_PORT} is not open for access by WLS Subnet CIDR [$wls_subnet_cidr_block] in Managed Server NSG [$MANAGED_SRV_NSG_OCID]. ${NETWORK_VALIDATION_MSG}"
+    validation_return_code=2
   fi
 
   # Check if Admin Console HTTP Port is open for access to ALL_IPS by WLS subnet CIDR in Admin Server NSG
   res=$(check_tcp_port_open_in_seclist_or_nsg $ADMIN_SRV_NSG_OCID "${ADMIN_HTTP_PORT}" "$ALL_IPS" "nsg")
   if [[ $res -eq 0 ]]
   then
-    echo "WARNING: Exposing the WebLogic administrator port [${ADMIN_HTTP_PORT}] in the Admin Server NSG [{$ADMIN_SRV_NSG_OCID}] to the internet [${ALL_IPS}] allows any user to access the WebLogic console, which is not a recommended practice. Ensure that only a specific CIDR range can access the WebLogic console."
+    echo "WARNING: Exposing the WebLogic administrator port [${ADMIN_HTTP_PORT}] in the Admin Server NSG [{$ADMIN_SRV_NSG_OCID}] to the internet [${ALL_IPS}] allows any user to access the WebLogic console, which is not a recommended practice. Ensure that only a specific CIDR range can access the WebLogic console. ${NETWORK_VALIDATION_MSG}"
   fi
 
   # Check if Admin Console HTTPS Port is open for access to ALL_IPS by WLS subnet CIDR in Admin Server NSG
   res=$(check_tcp_port_open_in_seclist_or_nsg $ADMIN_SRV_NSG_OCID "${ADMIN_HTTPS_PORT}" "$ALL_IPS" "nsg")
   if [[ $res -eq 0 ]]
   then
-    echo "WARNING: Exposing the WebLogic administrator port [${ADMIN_HTTPS_PORT}] in the Admin Server NSG [{$ADMIN_SRV_NSG_OCID}] to the internet [${ALL_IPS}] allows any user to access the WebLogic console, which is not a recommended practice. Ensure that only a specific CIDR range can access the WebLogic console."
+    echo "WARNING: Exposing the WebLogic administrator port [${ADMIN_HTTPS_PORT}] in the Admin Server NSG [{$ADMIN_SRV_NSG_OCID}] to the internet [${ALL_IPS}] allows any user to access the WebLogic console, which is not a recommended practice. Ensure that only a specific CIDR range can access the WebLogic console. ${NETWORK_VALIDATION_MSG}"
   fi
 fi
 
@@ -783,14 +801,15 @@ then
     # Check if DB port is open for access by WLS subnet CIDR in DB subnet/NSG
     res=$(validate_ocidb_port_access ${ocidb_subnet_ocid} ${OCIDB_OCID} ${wls_subnet_cidr_block})
     if [[ $res -ne 0 ]]; then
-      echo "ERROR: DB port ${DB_PORT} is not open for access by WLS Subnet CIDR [$wls_subnet_cidr_block] in DB Subnet [$ocidb_subnet_ocid] or in DB NSG [$ocidb_nsg_ocid]"
+      echo "ERROR: DB port ${DB_PORT} is not open for access by WLS Subnet CIDR [$wls_subnet_cidr_block] in DB Subnet [$ocidb_subnet_ocid] or in DB NSG [$ocidb_nsg_ocid]. ${NETWORK_VALIDATION_MSG}"
+      validation_return_code=2
     fi
 
     # Check if DB subnet has 5 security lists
     sec_lists_count=$(oci network subnet get --subnet-id ${ocidb_subnet_ocid} | jq -c '.data["security-list-ids"] | length')
     if [[ $sec_lists_count -eq 5 && $res -ne 0 ]]
     then
-      echo "WARNING: Subnet security list limit reached for the DB subnet [${ocidb_subnet_ocid}]. Five security lists are already associated with it and a new security list cannot be added. Ensure that one of the security rules opens the DB port ${DB_PORT} for WLS Subnet CIDR [$wls_subnet_cidr_block] in DB Subnet [$ocidb_subnet_ocid] or in DB NSG [$ocidb_nsg_ocid]. Also, when creating a stack, do not select the Create Database Security List option."
+      echo "WARNING: Subnet security list limit reached for the DB subnet [${ocidb_subnet_ocid}]. Five security lists are already associated with it and a new security list cannot be added. Ensure that one of the security rules opens the DB port ${DB_PORT} for WLS Subnet CIDR [$wls_subnet_cidr_block] in DB Subnet [$ocidb_subnet_ocid] or in DB NSG [$ocidb_nsg_ocid]. Also, when creating a stack, do not select the Create Database Security List option. ${NETWORK_VALIDATION_MSG}"
     fi
 
     # Check if LPG is in OCI DB VCN & peering status is valid
@@ -799,11 +818,13 @@ then
       ocidb_vcn_ocid=$(oci network subnet get --subnet-id ${ocidb_subnet_ocid} | jq -c '.data["vcn-id"]')
       lpg_vcn_ocid=$(oci network local-peering-gateway get --local-peering-gateway-id ${LPG_OCID} | jq -c '.data["vcn-id"]')
       if [[ "${lpg_vcn_ocid//\"}" != "${ocidb_vcn_ocid//\"}" ]]; then
-        echo "ERROR: LPG [${LPG_OCID}] is not in OCI DB VCN [${ocidb_vcn_ocid}]"
+        echo "ERROR: LPG [${LPG_OCID}] is not in OCI DB VCN [${ocidb_vcn_ocid}]. ${NETWORK_VALIDATION_MSG}"
+        validation_return_code=2
       fi
       lpg_peering_status=$(oci network local-peering-gateway get --local-peering-gateway-id ${LPG_OCID} | jq -c '.data["peering-status"]')
       if [[ "${lpg_peering_status//\"}" != "NEW" ]]; then
-        echo "ERROR: LPG [${LPG_OCID}] cannot be used to provision a new stack. The peering status is [${lpg_peering_status}]."
+        echo "ERROR: LPG [${LPG_OCID}] cannot be used to provision a new stack. The peering status is [${lpg_peering_status}]. ${NETWORK_VALIDATION_MSG}"
+        validation_return_code=2
       fi
     fi
   fi
@@ -819,7 +840,8 @@ then
     # Check if ATP DB port is open for access by WLS subnet CIDR in DB subnet/NSG
     res=$(validate_atpdb_port_access ${atp_subnet_ocid} ${ATPDB_OCID} ${wls_subnet_cidr_block})
     if [[ $res -ne 0 ]]; then
-      echo "ERROR: ATP DB port ${ATP_DB_PORT} is not open for access by WLS Subnet CIDR [$wls_subnet_cidr_block] in ATP DB Subnet [${atp_subnet_ocid}] or in ATP DB NSG [$atp_nsg_ocid]"
+      echo "ERROR: ATP DB port ${ATP_DB_PORT} is not open for access by WLS Subnet CIDR [$wls_subnet_cidr_block] in ATP DB Subnet [${atp_subnet_ocid}] or in ATP DB NSG [$atp_nsg_ocid]. ${NETWORK_VALIDATION_MSG}"
+      validation_return_code=2
     fi
 
     # Check if LPG is in ATP DB VCN & peering status is valid
@@ -828,11 +850,13 @@ then
       atp_vcn_ocid=$(oci network subnet get --subnet-id $atp_subnet_ocid | jq -r '.data["vcn-id"]')
       lpg_vcn_ocid=$(oci network local-peering-gateway get --local-peering-gateway-id ${LPG_OCID} | jq -c '.data["vcn-id"]')
       if [[ "${lpg_vcn_ocid//\"}" != "${atp_vcn_ocid//\"}" ]]; then
-        echo "ERROR: LPG [${LPG_OCID}] is not in ATP DB VCN [${atp_vcn_ocid}]"
+        echo "ERROR: LPG [${LPG_OCID}] is not in ATP DB VCN [${atp_vcn_ocid}]. ${NETWORK_VALIDATION_MSG}"
+        validation_return_code=2
       fi
       lpg_peering_status=$(oci network local-peering-gateway get --local-peering-gateway-id ${LPG_OCID} | jq -c '.data["peering-status"]')
       if [[ "${lpg_peering_status//\"}" != "NEW" ]]; then
-        echo "ERROR: LPG [${LPG_OCID}] cannot be used to provision a new stack. The peering status is [${lpg_peering_status}]"
+        echo "ERROR: LPG [${LPG_OCID}] cannot be used to provision a new stack. The peering status is [${lpg_peering_status}]. ${NETWORK_VALIDATION_MSG}"
+        validation_return_code=2
       fi
     fi
   fi
@@ -854,7 +878,8 @@ then
         res=$(validate_subnet_port_access ${BASTION_SUBNET_OCID} ${SSH_PORT} ${ALL_IPS})
         if [[ $res -ne 0 ]]
         then
-          echo "ERROR: SSH port ${SSH_PORT} is not open for access by [$ALL_IPS] in Bastion Subnet [$BASTION_SUBNET_OCID]"
+          echo "ERROR: SSH port ${SSH_PORT} is not open for access by [$ALL_IPS] in Bastion Subnet [$BASTION_SUBNET_OCID]. ${NETWORK_VALIDATION_MSG}"
+          validation_return_code=2
         fi
      fi
     else
@@ -863,7 +888,8 @@ then
         res=$(check_tcp_port_open_in_seclist_or_nsg $BASTION_NSG_OCID "${SSH_PORT}" "$ALL_IPS" "nsg")
         if [[ $res -ne 0 ]]
         then
-          echo "ERROR: SSH port ${SSH_PORT} is not open for access by [$ALL_IPS] in Bastion NSG [$BASTION_NSG_OCID]"
+          echo "ERROR: SSH port ${SSH_PORT} is not open for access by [$ALL_IPS] in Bastion NSG [$BASTION_NSG_OCID]. ${NETWORK_VALIDATION_MSG}"
+          validation_return_code=2
         fi
       fi
     fi
@@ -878,7 +904,7 @@ then
       then
         echo "Bastion host IP CIDR is not valid: [${BASTION_HOST_IP_CIDR}]"
         usage >&2
-        exit
+        exit 1
       fi
       bastion_cidr_block=${BASTION_HOST_IP_CIDR}
     else
@@ -891,7 +917,7 @@ then
       res=$(validate_subnet_port_access ${WLS_SUBNET_OCID} ${SSH_PORT} ${bastion_cidr_block})
       if [[ $res -ne 0 ]]
       then
-        echo "WARNING: SSH port ${SSH_PORT} is not open for access by [$bastion_cidr_block] in private WLS Subnet [$WLS_SUBNET_OCID]"
+        echo "WARNING: SSH port ${SSH_PORT} is not open for access by [$bastion_cidr_block] in private WLS Subnet [$WLS_SUBNET_OCID]. ${NETWORK_VALIDATION_MSG}"
       fi
     else
       if [[ -n ${ADMIN_SRV_NSG_OCID} && -n ${MANAGED_SRV_NSG_OCID} ]]
@@ -899,25 +925,26 @@ then
         res=$(check_tcp_port_open_in_seclist_or_nsg $MANAGED_SRV_NSG_OCID "${SSH_PORT}" "$bastion_cidr_block" "nsg")
         if [[ $res -ne 0 ]]
         then
-          echo "WARNING: SSH port ${SSH_PORT} is not open for access by [$bastion_cidr_block] in Managed Server NSG [$MANAGED_SRV_NSG_OCID]"
+          echo "WARNING: SSH port ${SSH_PORT} is not open for access by [$bastion_cidr_block] in Managed Server NSG [$MANAGED_SRV_NSG_OCID]. ${NETWORK_VALIDATION_MSG}"
         fi
       fi
     fi
   fi
 fi
 
-### Validation - Only when LB subnet/NSG OCID is provided) ###
+### Validation - Only when LB subnet 1/NSG OCID is provided) ###
 
 # Check if 7003 port is open for access by LB Subnet in WLS Subnet/Managed Server NSG
-if [[ -n ${LB_SUBNET_OCID} ]]
+if [[ -n ${LB_SUBNET_1_OCID} ]]
 then
-  lbsubnet_cidr_block=$(oci network subnet get --subnet-id "${LB_SUBNET_OCID}" | jq -r '.data["cidr-block"]')
+  lbsubnet_cidr_block=$(oci network subnet get --subnet-id "${LB_SUBNET_1_OCID}" | jq -r '.data["cidr-block"]')
   if [[ -z ${LB_NSG_OCID} ]]
   then
     res=$(validate_subnet_port_access "${WLS_SUBNET_OCID}" ${WLS_LB_PORT} "${lbsubnet_cidr_block}")
     if [[ $res -ne 0 ]]
     then
-      echo "ERROR: LB port ${WLS_LB_PORT} is not open for access by LB Subnet CIDR - [$lbsubnet_cidr_block] in WLS Subnet [$WLS_SUBNET_OCID]"
+      echo "ERROR: LB port ${WLS_LB_PORT} is not open for access by LB Subnet CIDR - [$lbsubnet_cidr_block] in WLS Subnet [$WLS_SUBNET_OCID]. ${NETWORK_VALIDATION_MSG}"
+      validation_return_code=2
     fi
   else
     if [[ -n ${ADMIN_SRV_NSG_OCID} && -n ${MANAGED_SRV_NSG_OCID} ]]
@@ -925,20 +952,22 @@ then
       res=$(check_tcp_port_open_in_seclist_or_nsg $MANAGED_SRV_NSG_OCID "${WLS_LB_PORT}" "$lbsubnet_cidr_block" "nsg")
       if [[ $res -ne 0 ]]
       then
-        echo "ERROR: LB port ${WLS_LB_PORT} is not open for access by LB Subnet CIDR - [$lbsubnet_cidr_block] in Managed Server NSG [$MANAGED_SRV_NSG_OCID]"
+        echo "ERROR: LB port ${WLS_LB_PORT} is not open for access by LB Subnet CIDR - [$lbsubnet_cidr_block] in Managed Server NSG [$MANAGED_SRV_NSG_OCID]. ${NETWORK_VALIDATION_MSG}"
+        validation_return_code=2
       fi
     fi
   fi
 fi
 # Check if LB Subnet port 443 is open in LB Subnet/NSG
-if [[ -n ${LB_SUBNET_OCID} ]]
+if [[ -n ${LB_SUBNET_1_OCID} ]]
 then
   if [[ -z ${LB_NSG_OCID} ]]
   then
-    res=$(validate_subnet_port_access "${LB_SUBNET_OCID}" ${LB_PORT} "${ALL_IPS}")
+    res=$(validate_subnet_port_access "${LB_SUBNET_1_OCID}" ${LB_PORT} "${ALL_IPS}")
     if [[ $res -ne 0 ]]
     then
-      echo "ERROR: Port [$LB_PORT] is not open for 0.0.0.0/0 in LB Subnet CIDR [${LB_SUBNET_OCID}]"
+      echo "ERROR: Port [$LB_PORT] is not open for 0.0.0.0/0 in LB Subnet CIDR [${LB_SUBNET_1_OCID}]. ${NETWORK_VALIDATION_MSG}"
+      validation_return_code=2
     fi
   else
     if [[ -n ${ADMIN_SRV_NSG_OCID} && -n ${MANAGED_SRV_NSG_OCID} ]]
@@ -946,16 +975,67 @@ then
       res=$(check_tcp_port_open_in_seclist_or_nsg $LB_NSG_OCID "${LB_PORT}" "$ALL_IPS" "nsg")
       if [[ $res -ne 0 ]]
       then
-        echo "ERROR: Port [$LB_PORT] is not open for 0.0.0.0/0 in Load Balancer Server NSG [${LB_NSG_OCID}]"
+        echo "ERROR: Port [$LB_PORT] is not open for 0.0.0.0/0 in Load Balancer Server NSG [${LB_NSG_OCID}]. ${NETWORK_VALIDATION_MSG}"
+        validation_return_code=2
+      fi
+    fi
+  fi
+fi
+
+### Validation - Only when LB subnet 2/NSG OCID is provided) ###
+
+# Check if 7003 port is open for access by LB Subnet 2 in WLS Subnet/Managed Server NSG
+if [[ -n ${LB_SUBNET_2_OCID} ]]
+then
+  lbsubnet2_cidr_block=$(oci network subnet get --subnet-id "${LB_SUBNET_2_OCID}" | jq -r '.data["cidr-block"]')
+  if [[ -z ${LB_NSG_OCID} ]]
+  then
+    res=$(validate_subnet_port_access "${WLS_SUBNET_OCID}" ${WLS_LB_PORT} "${lbsubnet2_cidr_block}")
+    if [[ $res -ne 0 ]]
+    then
+      echo "ERROR: LB port ${WLS_LB_PORT} is not open for access by LB Subnet CIDR - [$lbsubnet2_cidr_block] in WLS Subnet [$WLS_SUBNET_OCID]. ${NETWORK_VALIDATION_MSG}"
+      validation_return_code=2
+    fi
+  else
+    if [[ -n ${ADMIN_SRV_NSG_OCID} && -n ${MANAGED_SRV_NSG_OCID} ]]
+    then
+      res=$(check_tcp_port_open_in_seclist_or_nsg $MANAGED_SRV_NSG_OCID "${WLS_LB_PORT}" "$lbsubnet2_cidr_block" "nsg")
+      if [[ $res -ne 0 ]]
+      then
+        echo "ERROR: LB port ${WLS_LB_PORT} is not open for access by LB Subnet CIDR - [$lbsubnet2_cidr_block] in Managed Server NSG [$MANAGED_SRV_NSG_OCID]. ${NETWORK_VALIDATION_MSG}"
+        validation_return_code=2
+      fi
+    fi
+  fi
+fi
+
+# Check if LB Subnet port 443 is open in LB Subnet/NSG
+if [[ -n ${LB_SUBNET_2_OCID} ]]
+then
+  if [[ -z ${LB_NSG_OCID} ]]
+  then
+    res=$(validate_subnet_port_access "${LB_SUBNET_2_OCID}" ${LB_PORT} "${ALL_IPS}")
+    if [[ $res -ne 0 ]]
+    then
+      echo "ERROR: Port [$LB_PORT] is not open for 0.0.0.0/0 in LB Subnet CIDR [${LB_SUBNET_2_OCID}]. ${NETWORK_VALIDATION_MSG}"
+      validation_return_code=2
+    fi
+  else
+    if [[ -n ${ADMIN_SRV_NSG_OCID} && -n ${MANAGED_SRV_NSG_OCID} ]]
+    then
+      res=$(check_tcp_port_open_in_seclist_or_nsg $LB_NSG_OCID "${LB_PORT}" "$ALL_IPS" "nsg")
+      if [[ $res -ne 0 ]]
+      then
+        echo "ERROR: Port [$LB_PORT] is not open for 0.0.0.0/0 in Load Balancer Server NSG [${LB_NSG_OCID}]. ${NETWORK_VALIDATION_MSG}"
+        validation_return_code=2
       fi
     fi
   fi
 fi
 
 ### Validate Mount Target subnet/NSG (only when Mount Target subnet/NSG OCID is provided) ###
-
 # Check TCP Ports - '111' '2048' '2049' '2050' are open in Mount Target SUBNET/NSG for VCN CIDR
-if [[ -n ${FSS_SUBNET_OCID} || -n ${FSS_NSG_OCID} ]]
+if [[ -n ${FSS_SUBNET_OCID} && -z ${FSS_NSG_OCID} ]]
 then
   vcn_ocid=$(oci network subnet get --subnet-id "${WLS_SUBNET_OCID}" | jq -r '.data["vcn-id"]')
   vcn_cidr=$(oci network vcn get --vcn-id "${vcn_ocid}" | jq -r '.data["cidr-block"]')
@@ -966,15 +1046,8 @@ then
       res=$(validate_subnet_port_access "${FSS_SUBNET_OCID}" "${port}" "${vcn_cidr}")
       if [[ $res -ne 0 ]]
       then
-        echo "ERROR: TCP Port [${port}] is not open in FSS Subnet [${FSS_SUBNET_OCID}] for VCN CIDR [${vcn_cidr}]"
-      fi
-    fi
-    if [[ -n ${FSS_NSG_OCID} ]]
-    then
-      res=$(check_tcp_port_open_in_seclist_or_nsg $FSS_NSG_OCID "${port}" "$vcn_cidr" "nsg")
-      if [[ $res -ne 0 ]]
-      then
-        echo "ERROR: TCP Port [${port}] is not open in FSS NSG [${FSS_NSG_OCID}] for VCN CIDR [${vcn_cidr}]"
+        echo "ERROR: TCP Port [${port}] is not open in FSS Subnet [${FSS_SUBNET_OCID}] for VCN CIDR [${vcn_cidr}]. ${NETWORK_VALIDATION_MSG}"
+        validation_return_code=2
       fi
     fi
   done
@@ -986,16 +1059,43 @@ then
       res=$(validate_subnet_port_access "${FSS_SUBNET_OCID}" "${port}" "${vcn_cidr}" "UDP")
       if [[ $res -ne 0 ]]
       then
-        echo "ERROR: UDP Port [${port}] is not open in FSS Subnet [${FSS_SUBNET_OCID}] for VCN CIDR [${vcn_cidr}]"
+        echo "ERROR: UDP Port [${port}] is not open in FSS Subnet [${FSS_SUBNET_OCID}] for VCN CIDR [${vcn_cidr}]. ${NETWORK_VALIDATION_MSG}"
+        validation_return_code=2
       fi
     fi
+  done
+fi
+
+# Check TCP Ports - '111' '2048' '2049' '2050' are open in Mount Target SUBNET/NSG for VCN CIDR
+if [[ -n ${FSS_NSG_OCID} ]]
+then
+  vcn_ocid=$(oci network subnet get --subnet-id "${WLS_SUBNET_OCID}" | jq -r '.data["vcn-id"]')
+  vcn_cidr=$(oci network vcn get --vcn-id "${vcn_ocid}" | jq -r '.data["cidr-block"]')
+
+  for port in '111' '2048' '2049' '2050'; do
+    if [[ -n ${FSS_NSG_OCID} ]]
+    then
+      res=$(check_tcp_port_open_in_seclist_or_nsg $FSS_NSG_OCID "${port}" "$vcn_cidr" "nsg")
+      if [[ $res -ne 0 ]]
+      then
+        echo "ERROR: TCP Port [${port}] is not open in FSS NSG [${FSS_NSG_OCID}] for VCN CIDR [${vcn_cidr}]. ${NETWORK_VALIDATION_MSG}"
+        validation_return_code=2
+      fi
+    fi
+  done
+
+  # Check UDP Ports - '111' '2048' are open in Mount Target SUBNET/NSG for VCN CIDR
+  for port in '111' '2048'; do
     if [[ -n ${FSS_NSG_OCID} ]]
     then
       res=$(check_udp_port_open_in_seclist_or_nsg $FSS_NSG_OCID "${port}" "$vcn_cidr" "nsg")
       if [[ $res -ne 0 ]]
       then
-        echo "ERROR: UDP Port [${port}] is not open in FSS NSG [${FSS_NSG_OCID}] for VCN CIDR [${vcn_cidr}]"
+        echo "ERROR: UDP Port [${port}] is not open in FSS NSG [${FSS_NSG_OCID}] for VCN CIDR [${vcn_cidr}]. ${NETWORK_VALIDATION_MSG}"
+        validation_return_code=2
       fi
     fi
   done
 fi
+
+exit ${validation_return_code}

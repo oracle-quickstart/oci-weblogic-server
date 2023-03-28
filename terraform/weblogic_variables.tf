@@ -29,8 +29,8 @@ variable "wls_admin_user" {
   description = "Name of WebLogic administration user"
   default     = "weblogic"
   validation {
-    condition     = replace(var.wls_admin_user, "/^[a-zA-Z][a-zA-Z0-9]{7,127}/", "0") == "0"
-    error_message = "WLSC-ERROR: The value for wls_admin_user provided should be alphanumeric and length should be between 8 and 128 characters."
+    condition     = replace(var.wls_admin_user, "/^[a-zA-Z][a-zA-Z0-9_-]{7,127}/", "0") == "0"
+    error_message = "WLSC-ERROR: The value for wls_admin_user should be between 8 and 128 characters long and alphanumeric, and can contain underscore (_) and hyphen(-) special characters."
   }
 }
 
@@ -196,3 +196,4 @@ variable "deploy_sample_app" {
   description = "Set to true to install a sample application in the WebLogic domain"
   default     = true
 }
+

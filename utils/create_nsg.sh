@@ -16,6 +16,7 @@
 DB_PORT=1521
 MS_HTTP_PORT=7003
 MS_HTTPS_PORT=7004
+WLS_ADMIN_CONSOLE_HTTPS_PORT=7002
 LB_PORT=443
 CLOUDGATE_PORT=""
 WLS_SUBNET_OCID=""
@@ -167,17 +168,17 @@ then
   exit
 fi
 
-# The NSGs will be created in the VCN of the weblogic subnet & in the same compartment as the VCN
+# The NSGs will be created in the VCN of the WebLogic subnet & in the same compartment as the VCN
 vcn_ocid=$(oci network subnet get --subnet-id "${WLS_SUBNET_OCID}" | jq -r '.data["vcn-id"]')
 vcn_cidr=$(oci network vcn get --vcn-id "${vcn_ocid}" | jq -r '.data["cidr-block"]')
 wls_subnet_cidr_block=$(oci network subnet get --subnet-id ${WLS_SUBNET_OCID} | jq -r '.data["cidr-block"]')
 
-# Create admin & managed server NSGs when weblogic subnet is provided
+# Create admin & managed server NSGs when WebLogic subnet is provided
 admin_server_nsg_ocid=""
 managed_server_nsg_ocid=""
 if [[ -n ${WLS_SUBNET_OCID} ]]
 then
-  # Create security rules for WLS VM-VM access
+  # Create security rules for WebLogic VM-VM access
   INTERNAL_RULES_FILE=$(mktemp)
   cat > ${INTERNAL_RULES_FILE} << EOF
   [{
@@ -247,18 +248,43 @@ then
       "destination": "0.0.0.0/0"
     }]
 EOF
-  # Create security rules for WLS private subnet
+  # Create security rules for WebLogic private subnet
   WLS_BASTION_RULES_FILE=$(mktemp)
   cat > ${WLS_BASTION_RULES_FILE} << EOF
   [{
-      "description": "All traffic for all ports",
+      "description": "TCP traffic for ports: 22 SSH Remote Login Protocol",
       "direction": "INGRESS",
       "isStateless": "false",
-      "protocol": "all",
+      "protocol": "6",
       "sourceType": "CIDR_BLOCK",
-      "source": "$bastion_cidr_block"
+      "source": "$bastion_cidr_block",
+      "tcpOptions": {
+        "destinationPortRange": {
+          "min": "22",
+          "max": "22"
+        }
+      }
     }]
 EOF
+  # Create security rules for WebLogic administration console
+  WLS_ADMIN_CONSOLE_RULES_FILE=$(mktemp)
+  cat > ${WLS_ADMIN_CONSOLE_RULES_FILE} << EOF
+  [{
+      "description": "TCP traffic for HTTPS port for WebLogic administration console",
+      "direction": "INGRESS",
+      "isStateless": "false",
+      "protocol": "6",
+      "sourceType": "CIDR_BLOCK",
+      "source": "$bastion_cidr_block",
+      "tcpOptions": {
+        "destinationPortRange": {
+          "min": "$WLS_ADMIN_CONSOLE_HTTPS_PORT",
+          "max": "$WLS_ADMIN_CONSOLE_HTTPS_PORT"
+        }
+      }
+    }]
+EOF
+
 
   # Bastion instance NSG
   network_security_group_name="bastion_nsg"
@@ -273,29 +299,65 @@ EOF
       echo -e "Adding Bastion Security Rules in Managed Server Network Security Group $managed_server_nsg_ocid..."
       oci network nsg rules add --nsg-id $managed_server_nsg_ocid --security-rules file://$WLS_BASTION_RULES_FILE
     fi
+    if [[ -n $admin_server_nsg_ocid ]]
+    then
+      echo -e "Adding WebLogic Administration Console Security Rules in Administration Server Network Security Group $admin_server_nsg_ocid..."
+      oci network nsg rules add --nsg-id $admin_server_nsg_ocid --security-rules file://$WLS_ADMIN_CONSOLE_RULES_FILE
+    fi
   fi
 fi
 
 if [[ -n ${BASTION_HOST_IP} ]]
 then
   BASTION_HOST_IP_CIDR="$BASTION_HOST_IP/32"
-  # Create security rules for WLS private subnet with existing bastion instance
+  # Create security rules for WebLogic private subnet with existing bastion instance
   WLS_EXT_BASTION_RULES_FILE=$(mktemp)
   cat > ${WLS_EXT_BASTION_RULES_FILE} << EOF
   [{
-      "description": "All traffic for all ports",
+      "description": "TCP traffic for ports: 22 SSH Remote Login Protocol",
       "direction": "INGRESS",
       "isStateless": "false",
-      "protocol": "all",
+      "protocol": "6",
       "sourceType": "CIDR_BLOCK",
-      "source": "$BASTION_HOST_IP_CIDR"
+      "source": "$BASTION_HOST_IP_CIDR",
+      "tcpOptions": {
+        "destinationPortRange": {
+          "min": "22",
+          "max": "22"
+        }
+      }
     }]
 EOF
+
+  # Create security rules for WebLogic administration console with existing bastion instance
+  WLS_ADMIN_CONSOLE_EXT_BASTION_RULES_FILE=$(mktemp)
+  cat > ${WLS_ADMIN_CONSOLE_EXT_BASTION_RULES_FILE} << EOF
+  [{
+      "description": "TCP traffic for HTTPS port for WebLogic administration console",
+      "direction": "INGRESS",
+      "isStateless": "false",
+      "protocol": "6",
+      "sourceType": "CIDR_BLOCK",
+      "source": "$BASTION_HOST_IP_CIDR",
+      "tcpOptions": {
+        "destinationPortRange": {
+          "min": "$WLS_ADMIN_CONSOLE_HTTPS_PORT",
+          "max": "$WLS_ADMIN_CONSOLE_HTTPS_PORT"
+        }
+      }
+    }]
+EOF
+
   if [[ -n $managed_server_nsg_ocid ]]
   then
     echo -e "Adding Existing Bastion Security Rule in Managed Server Network Security Group $managed_server_nsg_ocid..."
     oci network nsg rules add --nsg-id $managed_server_nsg_ocid --security-rules file://$WLS_EXT_BASTION_RULES_FILE
   fi
+  if [[ -n $admin_server_nsg_ocid ]]
+    then
+      echo -e "Adding WebLogic Administration Console Security Rules for Existing Bastion in Administration Server Network Security Group $admin_server_nsg_ocid..."
+      oci network nsg rules add --nsg-id $admin_server_nsg_ocid --security-rules file://$WLS_ADMIN_CONSOLE_EXT_BASTION_RULES_FILE
+    fi
 fi
 
 # Create load balancer NSG when load balancer subnet is provided
@@ -338,7 +400,7 @@ then
       "destination": "0.0.0.0/0"
     }]
 EOF
-  # Create security rules for WLS Managed servers
+  # Create security rules for WebLogic Managed servers
   WLS_MS_RULES_FILE=$(mktemp)
   cat > ${WLS_MS_RULES_FILE} << EOF
   [{
@@ -480,7 +542,7 @@ EOF
                       }
                     }]
 EOF
-              echo -e "Adding LB Security Rules to access MS HTTP port for AD subnet in Admin Server Network Security Group $admin_server_nsg_ocid..."
+              echo -e "Adding LB Security Rules to access MS HTTP port for AD subnet in Admin Server Network Security Group $managed_server_nsg_ocid..."
               oci network nsg rules add --nsg-id $managed_server_nsg_ocid --security-rules file://$WLS_MS_RULES_FILE2
             fi
         fi
@@ -656,9 +718,3 @@ if [[ -n $mount_target_nsg_ocid ]]
   then
     echo -e "Mount Target Network Security Group          : $mount_target_nsg_ocid"
 fi
-
-
-
-
-
-

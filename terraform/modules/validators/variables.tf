@@ -523,3 +523,8 @@ variable "lb_availability_domain_name2" {
   type        = string
   description = "The availability domain of the subnet for the secondary load balancer. Only applicable if using AD subnets"
 }
+
+variable "tf_script_version" {
+  type        = string
+  description = "The version of the provisioning scripts located in the OCI image used to create the WebLogic compute instances"
+}

@@ -148,7 +148,7 @@ locals {
     var.wls_extern_ssl_admin_port,
   ) : ""
 
-  use_apm_service = (var.use_apm_service || var.use_autoscaling)
+  use_apm_service           = (var.use_apm_service || var.use_autoscaling)
   apm_domain_compartment_id = local.use_apm_service ? lookup(data.oci_apm_apm_domain.apm_domain[0], "compartment_id") : ""
 
 

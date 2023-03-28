@@ -1,7 +1,30 @@
 # Copyright (c) 2023, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
+module "network-validation" {
+  source                         = "./modules/network-validator"
+  count                          = local.use_existing_subnets && !var.skip_network_validation ? 1 : 0
+  wls_subnet_id                  = var.wls_subnet_id
+  bastion_subnet_id              = var.is_bastion_instance_required ? var.bastion_subnet_id : ""
+  bastion_ip                     = var.is_bastion_instance_required && var.existing_bastion_instance_id != "" ? data.oci_core_instance.existing_bastion_instance[0].private_ip : ""
+  lb_subnet_1_id                 = var.add_load_balancer ? var.lb_subnet_1_id : ""
+  lb_subnet_2_id                 = var.add_load_balancer && !local.use_regional_subnet ? var.lb_subnet_2_id : ""
+  mount_target_subnet_id         = var.add_fss ? var.mount_target_subnet_id : ""
+  atp_db_id                      = !local.is_oci_db ? var.atp_db_id : ""
+  oci_db_dbsystem_id             = local.is_oci_db ? var.oci_db_dbsystem_id : ""
+  oci_db_port                    = local.is_oci_db ? var.oci_db_port : 0
+  wls_extern_admin_port          = var.wls_extern_admin_port
+  wls_extern_ssl_admin_port      = var.wls_extern_ssl_admin_port
+  wls_ms_extern_port             = var.wls_ms_extern_port
+  existing_admin_server_nsg_id   = var.add_existing_nsg ? var.existing_admin_server_nsg_id : ""
+  existing_managed_server_nsg_id = var.add_existing_nsg ? var.existing_managed_server_nsg_id : ""
+  existing_lb_nsg_id             = var.add_existing_nsg && var.add_load_balancer ? var.existing_lb_nsg_id : ""
+  existing_mount_target_nsg_id   = var.add_existing_nsg && var.add_fss ? var.existing_mount_target_nsg_id : ""
+  existing_bastion_nsg_id        = var.add_existing_nsg && var.is_bastion_instance_required ? var.existing_bastion_nsg_id : ""
+}
+
 module "system-tags" {
+  depends_on     = [module.network-validation]
   source         = "./modules/resource-tags"
   compartment_id = var.compartment_ocid
   service_name   = var.service_name
@@ -37,14 +60,11 @@ module "network-vcn-config" {
   wls_extern_admin_port      = var.wls_extern_admin_port
   wls_expose_admin_port      = var.wls_expose_admin_port
   wls_admin_port_source_cidr = var.wls_admin_port_source_cidr
-  wls_ms_content_port        = var.is_idcs_selected ? var.idcs_cloudgate_port : var.wls_ms_extern_ssl_port
+  wls_ms_content_port        = local.add_load_balancer ? (var.is_idcs_selected ? var.idcs_cloudgate_port : var.wls_ms_extern_port) : var.wls_ms_extern_ssl_port
   assign_backend_public_ip   = local.assign_weblogic_public_ip
 
-  wls_security_list_name       = !local.assign_weblogic_public_ip ? "bastion-security-list" : "wls-security-list"
   wls_subnet_cidr              = local.wls_subnet_cidr
   wls_ms_source_cidrs          = local.add_load_balancer ? [local.lb_subnet_1_subnet_cidr] : ["0.0.0.0/0"]
-  load_balancer_min_value      = local.add_load_balancer ? var.wls_ms_extern_port : var.wls_ms_extern_ssl_port
-  load_balancer_max_value      = local.add_load_balancer ? var.wls_ms_extern_port : var.wls_ms_extern_ssl_port
   create_load_balancer         = local.add_load_balancer
   resource_name_prefix         = local.service_name_prefix
   bastion_subnet_cidr          = local.bastion_subnet_cidr
@@ -183,6 +203,7 @@ module "network-bastion-subnet" {
 }
 
 module "policies" {
+  depends_on             = [module.network-validation]
   source                 = "./modules/policies"
   count                  = var.create_policies ? 1 : 0
   compartment_id         = var.compartment_ocid
@@ -217,6 +238,7 @@ module "policies" {
 
 
 module "bastion" {
+  depends_on          = [module.network-validation]
   source              = "./modules/compute/bastion"
   count               = (!local.assign_weblogic_public_ip && var.is_bastion_instance_required && var.existing_bastion_instance_id == "") ? 1 : 0
   availability_domain = local.bastion_availability_domain
@@ -304,6 +326,7 @@ module "network-mount-target-private-subnet" {
 }
 
 module "vcn-peering" {
+  depends_on                     = [module.network-validation]
   count                          = local.is_vcn_peering ? 1 : 0
   source                         = "./modules/network/vcn-peering"
   resource_name_prefix           = local.service_name_prefix
@@ -321,7 +344,8 @@ module "vcn-peering" {
 }
 
 module "validators" {
-  source = "./modules/validators"
+  depends_on = [module.network-validation]
+  source     = "./modules/validators"
 
   service_name               = var.service_name
   wls_ms_port                = var.wls_ms_extern_port
@@ -426,6 +450,7 @@ module "validators" {
 
   wlsoci_vmscripts_zip_bundle_path = var.wlsoci_vmscripts_zip_bundle_path
   mode                             = var.mode
+  tf_script_version                = var.tf_script_version
 
   image_mode             = var.image_mode
   instance_image_id      = var.instance_image_id
@@ -438,8 +463,9 @@ module "validators" {
 }
 
 module "fss" {
-  source = "./modules/fss"
-  count  = var.add_fss ? 1 : 0
+  depends_on = [module.network-validation]
+  source     = "./modules/fss"
+  count      = var.add_fss ? 1 : 0
 
   compartment_id      = var.compartment_ocid
   availability_domain = local.fss_availability_domain
@@ -460,8 +486,9 @@ module "fss" {
 }
 
 module "load-balancer" {
-  source = "./modules/lb/loadbalancer"
-  count  = (local.add_load_balancer && var.existing_load_balancer_id == "") ? 1 : 0
+  depends_on = [module.network-validation]
+  source     = "./modules/lb/loadbalancer"
+  count      = (local.add_load_balancer && var.existing_load_balancer_id == "") ? 1 : 0
 
   compartment_id           = local.network_compartment_id
   lb_reserved_public_ip_id = compact([var.lb_reserved_public_ip_id])
@@ -480,8 +507,9 @@ module "load-balancer" {
 }
 
 module "observability-common" {
-  source = "./modules/observability/common"
-  count  = var.use_oci_logging ? 1 : 0
+  depends_on = [module.network-validation]
+  source     = "./modules/observability/common"
+  count      = var.use_oci_logging ? 1 : 0
 
   compartment_id      = var.compartment_ocid
   service_prefix_name = local.service_name_prefix
@@ -489,8 +517,9 @@ module "observability-common" {
 }
 
 module "observability-autoscaling" {
-  source = "./modules/observability/autoscaling"
-  count  = var.use_autoscaling ? 1 : 0
+  depends_on = [module.network-validation]
+  source     = "./modules/observability/autoscaling"
+  count      = var.use_autoscaling ? 1 : 0
 
   compartment_id        = var.compartment_ocid
   metric_compartment_id = local.apm_domain_compartment_id
@@ -649,8 +678,9 @@ module "compute" {
 }
 
 module "load-balancer-backends" {
-  source = "./modules/lb/backends"
-  count  = local.add_load_balancer ? 1 : 0
+  depends_on = [module.network-validation]
+  source     = "./modules/lb/backends"
+  count      = local.add_load_balancer ? 1 : 0
 
   resource_name_prefix = local.service_name_prefix
   load_balancer_id     = local.add_load_balancer ? (var.existing_load_balancer_id != "" ? var.existing_load_balancer_id : element(coalescelist(module.load-balancer[*].wls_loadbalancer_id, [""]), 0)) : ""
@@ -663,8 +693,9 @@ module "load-balancer-backends" {
 }
 
 module "observability-logging" {
-  source = "./modules/observability/logging"
-  count  = var.use_oci_logging ? 1 : 0
+  depends_on = [module.network-validation]
+  source     = "./modules/observability/logging"
+  count      = var.use_oci_logging ? 1 : 0
 
   compartment_id                        = var.compartment_ocid
   oci_managed_instances_principal_group = element(concat(module.policies[*].oci_managed_instances_principal_group, [""]), 0)
@@ -680,7 +711,8 @@ module "observability-logging" {
 }
 
 module "provisioners" {
-  source = "./modules/provisioners"
+  depends_on = [module.network-validation]
+  source     = "./modules/provisioners"
 
   existing_bastion_instance_id = var.existing_bastion_instance_id
   host_ips                     = coalescelist(compact(module.compute.instance_public_ips), compact(module.compute.instance_private_ips), [""])

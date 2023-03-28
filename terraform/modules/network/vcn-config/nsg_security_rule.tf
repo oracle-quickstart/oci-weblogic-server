@@ -2,7 +2,7 @@
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 resource "oci_core_network_security_group_security_rule" "bastion_ingress_security_rule" {
-  count = var.is_bastion_instance_required && !var.assign_backend_public_ip ? 1 : 0
+  count = var.existing_bastion_instance_id == "" && var.is_bastion_instance_required && !var.assign_backend_public_ip ? 1 : 0
 
   network_security_group_id = element(var.nsg_ids["bastion_nsg_id"], 0)
   direction                 = "INGRESS"
@@ -71,25 +71,7 @@ resource "oci_core_network_security_group_security_rule" "wls_ingress_internal_s
   stateless   = false
 }
 
-resource "oci_core_network_security_group_security_rule" "wls_ingress_lb_ms_security_rule" {
-  count                     = length(var.wls_ms_source_cidrs) > 0 ? length(var.wls_ms_source_cidrs) : 0
-  network_security_group_id = element(var.nsg_ids["managed_nsg_id"], 0)
-  direction                 = "INGRESS"
-  protocol                  = "6"
-
-  source      = var.wls_ms_source_cidrs[count.index]
-  source_type = "CIDR_BLOCK"
-  stateless   = false
-
-  tcp_options {
-    destination_port_range {
-      min = var.load_balancer_min_value
-      max = var.load_balancer_max_value
-    }
-  }
-}
-
-resource "oci_core_network_security_group_security_rule" "wls_ingress_idcs_ms_security_rule" {
+resource "oci_core_network_security_group_security_rule" "wls_ingress_app_ms_security_rule" {
   count                     = length(var.wls_ms_source_cidrs) > 0 ? length(var.wls_ms_source_cidrs) : 0
   network_security_group_id = element(var.nsg_ids["managed_nsg_id"], 0)
   direction                 = "INGRESS"
@@ -129,22 +111,72 @@ resource "oci_core_network_security_group_security_rule" "wls_bastion_ingress_se
   count                     = var.existing_bastion_instance_id == "" && var.is_bastion_instance_required && !var.assign_backend_public_ip ? 1 : 0
   network_security_group_id = element(var.nsg_ids["managed_nsg_id"], 0)
   direction                 = "INGRESS"
-  protocol                  = "all"
+  protocol                  = "6"
 
   source      = var.bastion_subnet_cidr
   source_type = "CIDR_BLOCK"
   stateless   = false
+
+  tcp_options {
+    destination_port_range {
+      max = 22
+      min = 22
+    }
+  }
 }
 
 resource "oci_core_network_security_group_security_rule" "wls_existing_bastion_ingress_security_rule" {
   count                     = var.existing_bastion_instance_id != "" && var.is_bastion_instance_required && !var.assign_backend_public_ip ? 1 : 0
   network_security_group_id = element(var.nsg_ids["managed_nsg_id"], 0)
   direction                 = "INGRESS"
-  protocol                  = "all"
+  protocol                  = "6"
 
   source      = format("%s/32", data.oci_core_instance.existing_bastion_instance[count.index].private_ip)
   source_type = "CIDR_BLOCK"
   stateless   = false
+
+  tcp_options {
+    destination_port_range {
+      max = 22
+      min = 22
+    }
+  }
+}
+
+resource "oci_core_network_security_group_security_rule" "wls_admin_bastion_ingress_security_rule" {
+  count                     = var.existing_bastion_instance_id == "" && var.is_bastion_instance_required && !var.assign_backend_public_ip ? 1 : 0
+  network_security_group_id = element(var.nsg_ids["admin_nsg_id"], 0)
+  direction                 = "INGRESS"
+  protocol                  = "6"
+
+  source      = var.bastion_subnet_cidr
+  source_type = "CIDR_BLOCK"
+  stateless   = false
+
+  tcp_options {
+    destination_port_range {
+      max = var.wls_extern_ssl_admin_port
+      min = var.wls_extern_ssl_admin_port
+    }
+  }
+}
+
+resource "oci_core_network_security_group_security_rule" "wls_admin_existing_bastion_ingress_security_rule" {
+  count                     = var.existing_bastion_instance_id != "" && var.is_bastion_instance_required && !var.assign_backend_public_ip ? 1 : 0
+  network_security_group_id = element(var.nsg_ids["admin_nsg_id"], 0)
+  direction                 = "INGRESS"
+  protocol                  = "6"
+
+  source      = format("%s/32", data.oci_core_instance.existing_bastion_instance[count.index].private_ip)
+  source_type = "CIDR_BLOCK"
+  stateless   = false
+
+  tcp_options {
+    destination_port_range {
+      max = var.wls_extern_ssl_admin_port
+      min = var.wls_extern_ssl_admin_port
+    }
+  }
 }
 
 resource "oci_core_network_security_group_security_rule" "fss_ingress_security_rule_1" {
