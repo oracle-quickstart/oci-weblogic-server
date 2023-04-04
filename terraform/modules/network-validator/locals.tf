@@ -7,7 +7,7 @@ locals {
   validation_script_bastion_ip_param                     = var.bastion_ip != "" ? format("--bastionip %s", var.bastion_ip) : ""
   validation_script_lb_subnet_1_param                    = var.lb_subnet_1_id != "" ? format("--lbsubnet1 %s", var.lb_subnet_1_id) : ""
   validation_script_lb_subnet_2_param                    = var.lb_subnet_2_id != "" ? format("--lbsubnet2 %s", var.lb_subnet_2_id) : ""
-  validation_script_lb_destination_cidr_param            = var.lb_destination_cidr != "" ? format("--lbdestinationcidr %s", var.lb_destination_cidr) : ""
+  validation_script_lb_source_cidr_param                 = var.lb_source_cidr != "" ? format("--lbsourcecidr %s", var.lb_source_cidr) : ""
   validation_script_wls_lb_port                          = var.wls_ms_extern_port != "" ? format("--externalport %s", var.wls_ms_extern_port) : ""
   validation_script_mount_target_subnet_param            = var.mount_target_subnet_id != "" ? format("--fsssubnet %s", var.mount_target_subnet_id) : ""
   validation_script_atp_db_id_param                      = var.atp_db_id != "" ? format("--atpdbid %s", var.atp_db_id) : ""

@@ -37,7 +37,7 @@ LB_NSG_OCID=""
 FSS_NSG_OCID=""
 LPG_OCID=""
 ALL_IPS="0.0.0.0/0"
-LB_DESTINATION_CIDR=""
+LB_SOURCE_CIDR=""
 NETWORK_VALIDATION_MSG="Fix the network validation script errors and re-run the script in the cloud shell"
 
 debug=false
@@ -523,10 +523,10 @@ This script is used to validate existing subnets, and optionally network securit
   -g, --lpg           OCID of the Local Peering Gateway (LPG) in the DB VCN
   -b, --bastionsubnet Bastion Subnet OCID
   -i, --bastionip     Bastion Host IP. Provide this if using existing bastion
-  -j, --lbdestinationcidr   Indicates use of private load balancer(true or false)
+  -j, --lbsourcecidr  Load Balance Source CIDR
   -u, --lbsubnet1     Load Balancer Subnet 1 OCID
   -v, --lbsubnet2     Load Balancer Subnet 2 OCID which is required only for AD subnet
-  -l, --externalport WebLogic Managed Server External Port
+  -l, --externalport  WebLogic Managed Server External Port
   -f, --fsssubnet     File Storage Service (FSS) Mount Target Subnet OCID
   -a, --adminsrvnsg   OCID of the Network Security Group (NSG) for the administration server (Required if using NSGs instead of security lists)
   -m, --managedsrvnsg OCID of the Network Security Group (NSG) for the managed servers (Required if using NSGs instead of security lists)
@@ -592,7 +592,7 @@ while [[ $1 = -?* ]]; do
     -g|--lpg) shift; LPG_OCID=${1} ;;
     -b|--bastionsubnet) shift; BASTION_SUBNET_OCID=${1} ;;
     -i|--bastionip) shift; BASTION_HOST_IP=${1} ;;
-    -j|--lbdestinationcidr) shift; LB_DESTINATION_CIDR=${1} ;;
+    -j|--lbsourcecidr) shift; LB_SOURCE_CIDR=${1} ;;
     -u|--lbsubnet1) shift; LB_SUBNET_1_OCID=${1} ;;
     -v|--lbsubnet2) shift; LB_SUBNET_2_OCID=${1} ;;
     -l|--externalport) shift; WLS_LB_PORT=${1} ;;
@@ -969,18 +969,18 @@ if [[ -n ${LB_SUBNET_1_OCID} ]]
 then
   if [[ -z ${LB_NSG_OCID} ]]
   then
-    res=$(validate_subnet_port_access "${LB_SUBNET_1_OCID}" ${LB_PORT} "${LB_DESTINATION_CIDR}")
+    res=$(validate_subnet_port_access "${LB_SUBNET_1_OCID}" ${LB_PORT} "${LB_SOURCE_CIDR}")
     if [[ $res -ne 0 ]]
     then
-      echo "WARNING : Port [$LB_PORT] is not open for ${LB_DESTINATION_CIDR} in LB Subnet CIDR [${LB_SUBNET_1_OCID}]. ${NETWORK_VALIDATION_MSG}"
+      echo "WARNING : Port [$LB_PORT] is not open for ${LB_SOURCE_CIDR} in LB Subnet CIDR [${LB_SUBNET_1_OCID}]. ${NETWORK_VALIDATION_MSG}"
     fi
   else
     if [[ -n ${ADMIN_SRV_NSG_OCID} && -n ${MANAGED_SRV_NSG_OCID} ]]
     then
-      res=$(check_tcp_port_open_in_seclist_or_nsg $LB_NSG_OCID "${LB_PORT}" "${LB_DESTINATION_CIDR}" "nsg")
+      res=$(check_tcp_port_open_in_seclist_or_nsg $LB_NSG_OCID "${LB_PORT}" "${LB_SOURCE_CIDR}" "nsg")
       if [[ $res -ne 0 ]]
       then
-        echo "WARNING : Port [$LB_PORT] is not open for ${LB_DESTINATION_CIDR} in Load Balancer Server NSG [${LB_NSG_OCID}]. ${NETWORK_VALIDATION_MSG}"
+        echo "WARNING : Port [$LB_PORT] is not open for ${LB_SOURCE_CIDR} in Load Balancer Server NSG [${LB_NSG_OCID}]. ${NETWORK_VALIDATION_MSG}"
       fi
     fi
   fi
@@ -1018,19 +1018,19 @@ if [[ -n ${LB_SUBNET_2_OCID} ]]
 then
   if [[ -z ${LB_NSG_OCID} ]]
   then
-    res=$(validate_subnet_port_access "${LB_SUBNET_2_OCID}" ${LB_PORT} "${LB_DESTINATION_CIDR}")
+    res=$(validate_subnet_port_access "${LB_SUBNET_2_OCID}" ${LB_PORT} "${LB_SOURCE_CIDR}")
     if [[ $res -ne 0 ]]
     then
-      echo "ERROR: Port [$LB_PORT] is not open for ${LB_DESTINATION_CIDR} in LB Subnet CIDR [${LB_SUBNET_2_OCID}]. ${NETWORK_VALIDATION_MSG}"
+      echo "ERROR: Port [$LB_PORT] is not open for ${LB_SOURCE_CIDR} in LB Subnet CIDR [${LB_SUBNET_2_OCID}]. ${NETWORK_VALIDATION_MSG}"
       validation_return_code=2
     fi
   else
     if [[ -n ${ADMIN_SRV_NSG_OCID} && -n ${MANAGED_SRV_NSG_OCID} ]]
     then
-      res=$(check_tcp_port_open_in_seclist_or_nsg $LB_NSG_OCID "${LB_PORT}" "${LB_DESTINATION_CIDR}" "nsg")
+      res=$(check_tcp_port_open_in_seclist_or_nsg $LB_NSG_OCID "${LB_PORT}" "${LB_SOURCE_CIDR}" "nsg")
       if [[ $res -ne 0 ]]
       then
-        echo "ERROR: Port [$LB_PORT] is not open for ${LB_DESTINATION_CIDR} in Load Balancer Server NSG [${LB_NSG_OCID}]. ${NETWORK_VALIDATION_MSG}"
+        echo "ERROR: Port [$LB_PORT] is not open for ${LB_SOURCE_CIDR} in Load Balancer Server NSG [${LB_NSG_OCID}]. ${NETWORK_VALIDATION_MSG}"
         validation_return_code=2
       fi
     fi
