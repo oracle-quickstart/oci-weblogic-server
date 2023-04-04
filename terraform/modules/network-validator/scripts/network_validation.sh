@@ -241,6 +241,9 @@ function check_tcp_port_open_in_seclist_or_nsg() {
         else
           source_in_cidr_range=1
         fi
+      elif [[ $source = "" ]]
+      then
+        source_in_cidr_range=0
       else
         source_in_cidr_range=$(in_cidr_range $ingress_source $source ; echo $?)
       fi
