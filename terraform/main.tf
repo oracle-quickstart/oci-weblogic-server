@@ -21,7 +21,7 @@ module "network-validation" {
   existing_lb_nsg_id             = var.add_existing_nsg && var.add_load_balancer ? var.existing_lb_nsg_id : ""
   existing_mount_target_nsg_id   = var.add_existing_nsg && var.add_fss ? var.existing_mount_target_nsg_id : ""
   existing_bastion_nsg_id        = var.add_existing_nsg && var.is_bastion_instance_required ? var.existing_bastion_nsg_id : ""
-  lb_source_cidr                          = var.add_load_balancer ? (var.is_lb_private ? "" : "0.0.0.0/0") : ""
+  lb_source_cidr                 = var.add_load_balancer ? (var.is_lb_private ? "" : "0.0.0.0/0") : ""
 }
 
 module "system-tags" {
