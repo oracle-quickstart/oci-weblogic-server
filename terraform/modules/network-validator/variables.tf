@@ -85,3 +85,8 @@ variable "existing_bastion_nsg_id" {
   type        = string
   description = "The OCID of the pre-created NSG that should be attached to the bastion instance"
 }
+
+variable "lb_source_cidr" {
+  type        = string
+  description = "Set to empty value if loadbalancer is set to private"
+}
