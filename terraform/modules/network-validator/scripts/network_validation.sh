@@ -797,7 +797,7 @@ then
     for warning in "${res[@]}"; do
       echo "$warning"
     done
-  elif [[ $res -eq 1 ]]
+  elif [[ $res -ne 0 ]]
   then
     echo "ERROR: Port ${SSH_PORT} is not open for access by WLS Subnet CIDR [$wls_subnet_cidr_block] in Managed Server NSG [$MANAGED_SRV_NSG_OCID]. ${NETWORK_VALIDATION_MSG}"
     validation_return_code=2
