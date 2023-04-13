@@ -1090,8 +1090,7 @@ then
     res=$(validate_subnet_port_access "${LB_SUBNET_2_OCID}" ${LB_PORT} "${LB_SOURCE_CIDR}")
     if [[ $res -ne 0 ]]
     then
-      echo "ERROR: Port [$LB_PORT] is not open for ${LB_SOURCE_CIDR} in LB Subnet CIDR [${LB_SUBNET_2_OCID}]. ${NETWORK_VALIDATION_MSG}"
-      validation_return_code=2
+      echo "WARNING: Port [$LB_PORT] is not open for ${LB_SOURCE_CIDR} in LB Subnet CIDR [${LB_SUBNET_2_OCID}]. ${NETWORK_VALIDATION_MSG}"
     fi
   else
     if [[ -n ${ADMIN_SRV_NSG_OCID} && -n ${MANAGED_SRV_NSG_OCID} ]]
@@ -1104,8 +1103,7 @@ then
         done
       elif [[ $res -ne 0 ]]
       then
-        echo "ERROR: Port [$LB_PORT] is not open for ${LB_SOURCE_CIDR} in Load Balancer Server NSG [${LB_NSG_OCID}]. ${NETWORK_VALIDATION_MSG}"
-        validation_return_code=2
+        echo "WARNING: Port [$LB_PORT] is not open for ${LB_SOURCE_CIDR} in Load Balancer Server NSG [${LB_NSG_OCID}]. ${NETWORK_VALIDATION_MSG}"
       fi
     fi
   fi
