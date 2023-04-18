@@ -6,3 +6,4 @@ use_marketplace_image    = true
 listing_id               = "ocid1.appcataloglisting.oc1..aaaaaaaaalcwal6mfwjbezzqyj3waoxrvigml4n3lcn3hfday3ozetjqn25a"
 listing_resource_version = "23.2.1-ol7.9-22.08.29-230414-1"
 instance_image_id        = "ocid1.image.oc1..aaaaaaaawygaz7ofqvzfrdrpu4nffgjt3dddz7icxrfq4obgm44m5fd4i2ba"
+
