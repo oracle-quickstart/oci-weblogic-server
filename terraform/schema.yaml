@@ -2317,7 +2317,7 @@ variables:
             - ${use_autoscaling}
     type: string
     title: "Registry User Name"
-    description: "The user name to access the Oracle Cloud Infrastructure Registry (OCIR) for deploying autoscaling OCI functions"
+    description: "The user name to access the Oracle Cloud Infrastructure Registry (OCIR) for deploying autoscaling OCI functions, which has the format {identity domain name}/{username}. If your tenancy is using Oracle Identity Cloud Service, use the format oracleidentitycloudservice/{username}."
     required: true
 
   ocir_auth_token_compartment_id:
