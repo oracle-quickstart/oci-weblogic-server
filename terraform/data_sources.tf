@@ -18,6 +18,12 @@ data "oci_core_instance" "existing_bastion_instance" {
   instance_id = var.existing_bastion_instance_id
 }
 
+data "oci_core_instance" "private_endpoint_instance" {
+  count = var.existing_bastion_instance_id != "" ? 1 : 0
+
+  instance_id = var.existing_bastion_instance_id
+}
+
 data "oci_core_subnet" "wls_subnet" {
   count     = var.wls_subnet_id == "" ? 0 : 1
   subnet_id = var.wls_subnet_id

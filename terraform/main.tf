@@ -93,6 +93,7 @@ module "network-vcn-config" {
     mount_target_nsg_id = flatten(module.network-mount-target-nsg[*].nsg_id)
     admin_nsg_id        = flatten(module.network-compute-admin-nsg[*].nsg_id)
     managed_nsg_id      = flatten(module.network-compute-managed-nsg[*].nsg_id)
+    rms_private_endpoint_nsg_id      = flatten(module.network-rms-private-endpoint-nsg[*].nsg_id)
   }
 
   tags = {
@@ -166,6 +167,19 @@ module "network-compute-managed-nsg" {
   }
 }
 
+module "network-rms-private-endpoint-nsg" {
+  source         = "./modules/network/nsg"
+  count          = !local.use_existing_subnets && local.wls_subnet_cidr != "" ? 1 : 0
+  compartment_id = local.network_compartment_id
+  vcn_id         = local.vcn_id
+  nsg_name       = "${local.service_name_prefix}-rms-private-endpoint-nsg"
+
+  tags = {
+    defined_tags  = local.defined_tags
+    freeform_tags = local.free_form_tags
+  }
+}
+
 /* Create primary subnet for Load balancer only */
 module "network-lb-subnet-1" {
   source          = "./modules/network/subnet"
@@ -205,70 +219,6 @@ module "network-bastion-subnet" {
     freeform_tags = local.free_form_tags
   }
 }
-
-module "policies" {
-  #depends_on             = [module.network-validation]
-  source                 = "./modules/policies"
-  count                  = var.create_policies ? 1 : 0
-  compartment_id         = var.compartment_ocid
-  network_compartment_id = local.network_compartment_id
-  dynamic_group_rule     = local.dynamic_group_rule
-  resource_name_prefix   = local.service_name_prefix
-  tenancy_id             = var.tenancy_ocid
-  wls_admin_password_id  = var.wls_admin_password_id
-  providers = {
-    oci = oci.home
-  }
-  tags = {
-    defined_tags  = local.defined_tags
-    freeform_tags = local.free_form_tags
-  }
-  atp_db                      = local.atp_db
-  oci_db                      = local.oci_db
-  vcn_id                      = element(concat(module.network-vcn[*].vcn_id, [""]), 0)
-  wls_existing_vcn_id         = var.wls_existing_vcn_id
-  is_idcs_selected            = var.is_idcs_selected
-  idcs_client_secret_id       = var.idcs_client_secret_id
-  use_oci_logging             = var.use_oci_logging
-  use_apm_service             = local.use_apm_service
-  apm_domain_compartment_id   = local.apm_domain_compartment_id
-  use_autoscaling             = var.use_autoscaling
-  ocir_auth_token_id          = var.ocir_auth_token_id
-  add_fss                     = var.add_fss
-  add_load_balancer           = local.add_load_balancer
-  fss_compartment_id          = var.fss_compartment_id == "" ? var.compartment_ocid : var.fss_compartment_id
-  mount_target_compartment_id = var.mount_target_compartment_id == "" ? var.compartment_ocid : var.mount_target_compartment_id
-}
-
-
-module "bastion" {
-  #depends_on          = [module.network-validation]
-  source              = "./modules/compute/bastion"
-  count               = (!local.assign_weblogic_public_ip && var.is_bastion_instance_required && var.existing_bastion_instance_id == "") ? 1 : 0
-  availability_domain = local.bastion_availability_domain
-  bastion_subnet_id   = var.bastion_subnet_id != "" ? var.bastion_subnet_id : module.network-bastion-subnet[0].subnet_id
-
-  compartment_id      = var.compartment_ocid
-  instance_image_id   = var.bastion_image_id
-  instance_shape      = local.bastion_instance_shape
-  region              = var.region
-  ssh_public_key      = var.ssh_public_key
-  tenancy_id          = var.tenancy_ocid
-  use_existing_subnet = var.bastion_subnet_id != ""
-  vm_count            = var.wls_node_count
-  instance_name       = "${local.service_name_prefix}-bastion-instance"
-  tags = {
-    defined_tags  = local.defined_tags
-    freeform_tags = local.free_form_tags
-  }
-  is_bastion_with_reserved_public_ip = var.is_bastion_with_reserved_public_ip
-  bastion_nsg_id                     = var.bastion_subnet_id != "" ? (var.add_existing_nsg ? [var.existing_bastion_nsg_id] : []) : flatten(module.network-bastion-nsg[*].nsg_id)
-
-  use_bastion_marketplace_image = var.use_bastion_marketplace_image
-  mp_listing_id                 = var.bastion_listing_id
-  mp_listing_resource_version   = var.bastion_listing_resource_version
-}
-
 
 /* Create back end  private subnet for wls */
 module "network-wls-private-subnet" {
@@ -510,6 +460,22 @@ module "load-balancer" {
   }
 }
 
+module "rms-private-endpoint" {
+  source     = "./modules/rms-private-endpoint"
+  count      = !local.use_existing_subnets && local.wls_subnet_cidr != "" ? 1 : 0
+
+  vcn_id                      = local.vcn_id
+  compartment_id         = var.compartment_ocid
+  private_endpoint_subnet_id              = var.wls_subnet_id != "" ? var.wls_subnet_id : local.assign_weblogic_public_ip ? element(concat(module.network-wls-public-subnet[*].subnet_id, [""]), 0) : element(concat(module.network-wls-private-subnet[*].subnet_id, [""]), 0)
+  private_endpoint_nsg_id = var.wls_subnet_id != "" ? (var.add_existing_nsg ? [var.existing_private_endpoint_nsg_id] : []) : element(module.network-rms-private-endpoint-nsg[*].nsg_id, 0)
+  resource_name_prefix        = var.service_name
+  
+  tags = {
+    defined_tags  = local.defined_tags
+    freeform_tags = local.free_form_tags
+  } 
+}
+
 module "observability-common" {
   #depends_on = [module.network-validation]
   source     = "./modules/observability/common"
@@ -723,7 +689,6 @@ module "provisioners" {
   num_vm_instances             = var.wls_node_count
   ssh_private_key              = module.compute.ssh_private_key_opc
   assign_public_ip             = local.assign_weblogic_public_ip
-  bastion_host                 = local.assign_weblogic_public_ip || !var.is_bastion_instance_required ? "" : var.existing_bastion_instance_id == "" ? module.bastion[0].public_ip : data.oci_core_instance.existing_bastion_instance[0].public_ip
   bastion_host_private_key     = local.assign_weblogic_public_ip || !var.is_bastion_instance_required ? "" : var.existing_bastion_instance_id == "" ? module.bastion[0].bastion_private_ssh_key : file(var.bastion_ssh_private_key)
   is_bastion_instance_required = var.is_bastion_instance_required
 
