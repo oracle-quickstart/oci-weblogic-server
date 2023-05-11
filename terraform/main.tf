@@ -93,7 +93,6 @@ module "network-vcn-config" {
     mount_target_nsg_id = flatten(module.network-mount-target-nsg[*].nsg_id)
     admin_nsg_id        = flatten(module.network-compute-admin-nsg[*].nsg_id)
     managed_nsg_id      = flatten(module.network-compute-managed-nsg[*].nsg_id)
-    rms_private_endpoint_nsg_id      = flatten(module.network-rms-private-endpoint-nsg[*].nsg_id)
   }
 
   tags = {
@@ -160,19 +159,6 @@ module "network-compute-managed-nsg" {
   compartment_id = local.network_compartment_id
   vcn_id         = local.vcn_id
   nsg_name       = "${local.service_name_prefix}-managed-server-nsg"
-
-  tags = {
-    defined_tags  = local.defined_tags
-    freeform_tags = local.free_form_tags
-  }
-}
-
-module "network-rms-private-endpoint-nsg" {
-  source         = "./modules/network/nsg"
-  count          = !local.use_existing_subnets && local.wls_subnet_cidr != "" ? 1 : 0
-  compartment_id = local.network_compartment_id
-  vcn_id         = local.vcn_id
-  nsg_name       = "${local.service_name_prefix}-rms-private-endpoint-nsg"
 
   tags = {
     defined_tags  = local.defined_tags
@@ -462,18 +448,18 @@ module "load-balancer" {
 
 module "rms-private-endpoint" {
   source     = "./modules/rms-private-endpoint"
-  count      = !local.use_existing_subnets && local.wls_subnet_cidr != "" ? 1 : 0
+  count      = !local.use_existing_subnets && local.wls_subnet_cidr != "" && var.is_rms_private_endpoint ? 1 : 0
 
-  vcn_id                      = local.vcn_id
-  compartment_id         = var.compartment_ocid
-  private_endpoint_subnet_id              = var.wls_subnet_id != "" ? var.wls_subnet_id : local.assign_weblogic_public_ip ? element(concat(module.network-wls-public-subnet[*].subnet_id, [""]), 0) : element(concat(module.network-wls-private-subnet[*].subnet_id, [""]), 0)
-  private_endpoint_nsg_id = var.wls_subnet_id != "" ? (var.add_existing_nsg ? [var.existing_private_endpoint_nsg_id] : []) : element(module.network-rms-private-endpoint-nsg[*].nsg_id, 0)
+  vcn_id                                  = local.vcn_id
+  compartment_id                          = var.compartment_ocid
+  private_endpoint_subnet_id              = element(concat(module.network-wls-private-subnet[*].subnet_id, [""]), 0)
+  private_endpoint_nsg_id = var.wls_subnet_id != "" ? (var.add_existing_nsg ? [var.existing_admin_server_nsg_id] : []) : element(module.network-compute-admin-nsg[*].nsg_id, 0)
   resource_name_prefix        = var.service_name
   
   tags = {
     defined_tags  = local.defined_tags
     freeform_tags = local.free_form_tags
-  } 
+  }
 }
 
 module "observability-common" {
@@ -688,6 +674,8 @@ module "provisioners" {
   host_ips                     = coalescelist(compact(module.compute.instance_public_ips), compact(module.compute.instance_private_ips), [""])
   num_vm_instances             = var.wls_node_count
   ssh_private_key              = module.compute.ssh_private_key_opc
+  is_rms_private_endpoint      = var.is_rms_private_endpoint
+  rms_private_endpoint_id      = var.is_rms_private_endpoint ? module.rms-private-endpoint.rms_private_endpoint_id : ""
   assign_public_ip             = local.assign_weblogic_public_ip
   bastion_host_private_key     = local.assign_weblogic_public_ip || !var.is_bastion_instance_required ? "" : var.existing_bastion_instance_id == "" ? module.bastion[0].bastion_private_ssh_key : file(var.bastion_ssh_private_key)
   is_bastion_instance_required = var.is_bastion_instance_required

@@ -222,6 +222,7 @@ groupings:
       - ${wls_admin_port_source_cidr}
       - ${wlsoci_vmscripts_zip_bundle_path}
       - ${tf_script_version}
+      - ${is_rms_private_endpoint}
       #- ${use_autoscaling}
 
 outputs:
@@ -232,7 +233,7 @@ outputs:
     type: link
     title: Is VCN Peered
     visible: false
-  weblogic_server_administration_console:
+  weblogic_server_administration_cionsole:
     type: link
     title: WebLogic Server Administration Console
   weblogic_instances:

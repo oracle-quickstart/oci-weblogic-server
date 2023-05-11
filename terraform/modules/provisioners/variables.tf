@@ -16,6 +16,17 @@ variable "num_vm_instances" {
   description = "The number of compute instances that are available"
 }
 
+variable "rms_private_endpoint_id" {
+  type        = string
+  description = "The OCID of the RMS private endpoint"
+}
+
+variable "is_rms_private_endpoint" {
+  type        = bool
+  description = "Terms and conditions for user to accept Oracle WebLogic Server Enterprise Edition UCM or Oracle WebLogic Suite UCM license agreement"
+  default     = true
+}
+
 variable "mode" {
   type        = string
   description = "Select mode for development(DEV) or production(PROD). In development mode, local VM scripts zip is seeded on WLS VMs "

@@ -121,3 +121,8 @@ variable "tf_script_version" {
   default     = ""
 }
 
+variable "is_rms_private_endpoint" {
+  type        = bool
+  description = "Terms and conditions for user to accept Oracle WebLogic Server Enterprise Edition UCM or Oracle WebLogic Suite UCM license agreement"
+  default     = true
+}
