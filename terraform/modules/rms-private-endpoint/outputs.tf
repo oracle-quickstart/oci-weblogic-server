@@ -3,5 +3,5 @@
 
 output "rms_private_endpoint_id" {
   value       = oci_resourcemanager_private_endpoint.rms_private_endpoint.id
-  description = "The OCID of the RMS private endpoint"
+  description = "The OCID of the resource manager private endpoint"
 }

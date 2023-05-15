@@ -18,12 +18,12 @@ variable "num_vm_instances" {
 
 variable "rms_private_endpoint_id" {
   type        = string
-  description = "The OCID of the RMS private endpoint"
+  description = "The OCID of the resource manager private endpoint"
 }
 
 variable "is_rms_private_endpoint_required" {
   type        = bool
-  description = "Terms and conditions for user to accept Oracle WebLogic Server Enterprise Edition UCM or Oracle WebLogic Suite UCM license agreement"
+  description = "Set resource manager private endpoint"
   default     = true
 }
 

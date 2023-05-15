@@ -239,7 +239,7 @@ outputs:
     type: link
     title: Is VCN Peered
     visible: false
-  weblogic_server_administration_cionsole:
+  weblogic_server_administration_console:
     type: link
     title: WebLogic Server Administration Console
   weblogic_instances:
