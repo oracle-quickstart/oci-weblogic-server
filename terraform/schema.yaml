@@ -12,6 +12,7 @@ groupings:
       - ${ssh_public_key}
       - ${create_policies}
       - ${create_new_vcn}
+      - ${is_rms_private_endpoint_required}
       - ${is_bastion_instance_required}
       - ${add_load_balancer}
       - ${is_idcs_selected}
@@ -89,6 +90,12 @@ groupings:
       - ${wls_subnet_cidr}
       - ${existing_admin_server_nsg_id}
       - ${existing_managed_server_nsg_id}
+
+  - title: "Resource Manager Private Endpoint"
+    variables:
+      - ${add_existing_rms_private_endpoint}
+      - ${rms_existing_private_endpoint_id}
+      - ${add_new_rms_private_endpoint}
 
   - title: "Bastion Instance"
     variables:
@@ -222,7 +229,6 @@ groupings:
       - ${wls_admin_port_source_cidr}
       - ${wlsoci_vmscripts_zip_bundle_path}
       - ${tf_script_version}
-      - ${is_rms_private_endpoint}
       #- ${use_autoscaling}
 
 outputs:
@@ -267,6 +273,9 @@ outputs:
   jdk_version:
     type: link
     title: JDK Version
+  rms_private_endpoint_id:
+    type: ocid
+    title: Rsource Manager Private Endpoint
   bastion_instance_id:
     type: ocid
     title: Instance Id
@@ -321,6 +330,7 @@ outputGroups:
       - ${weblogic_version}
       - ${weblogic_instances}
       - ${jdk_version}
+      - ${rms_private_endpoint_id}
   - title: Networking
     outputs:
       - ${virtual_cloud_network_id}
@@ -926,6 +936,15 @@ variables:
     visible:
       and:
         - ${orm_create_mode}
+    type: boolean
+    default: false
+    title: "Provision Bastion Instance"
+    description: "Provision a bastion compute instance on a public subnet to provide access to the WebLogic Server compute instances on a private subnet. If not selected, you must check the status of the compute instances after the stack job is complete."
+
+  is_rms_private_endpoint_required:
+    visible:
+      and:
+        - ${orm_create_mode}
         - and:
             - not:
                 - ${create_new_subnets}
@@ -937,16 +956,60 @@ variables:
                     - "Use Public Subnet"
     type: boolean
     default: true
-    title: "Provision Bastion Instance"
+    title: "Provision Resource Manager Private Endpoint"
     description: "Provision a bastion compute instance on a public subnet to provide access to the WebLogic Server compute instances on a private subnet. If not selected, you must check the status of the compute instances after the stack job is complete."
+
+  add_existing_rms_private_endpoint:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${is_rms_private_endpoint_required}
+        - not:
+            - ${create_new_vcn}
+        - not:
+            - ${add_new_rms_private_endpoint}
+    type: boolean
+    default: false
+    title: "Resource Manager Existing Private Endpoint"
+    description: "Use existing resource manager private endpoint."
+  
+  rms_existing_private_endpoint_id:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${is_rms_private_endpoint_required}
+        - ${add_existing_rms_private_endpoint}
+        - not:
+            - ${create_new_vcn}
+        - not:
+            - ${add_new_rms_private_endpoint}
+    dependsOn:
+      compartmentId: ${compartment_ocid}
+      vcnId: ${wls_existing_vcn_id}
+    type: oci:resourcemanager:privateendpoint:id
+    required: true
+    title: "Resource Manager Private Endpoint"
+    description: "Resource manager private endpoint for private access."
+    
+  add_new_rms_private_endpoint:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${is_rms_private_endpoint_required}
+        - not:
+            - ${create_new_vcn}
+        - not:
+            - ${add_existing_rms_private_endpoint}
+    type: boolean
+    default: false
+    title: "Resource Manager New Private Endpoint"
+    description: "Create resource manager private endpoint."
 
   is_bastion_with_reserved_public_ip:
     visible:
       and:
         - or:
             - ${is_bastion_instance_required}
-            - ${create_new_vcn}
-            - ${create_new_subnets}
         - or:
             - or:
                 - ${create_new_vcn}
@@ -974,8 +1037,6 @@ variables:
         - ${orm_create_mode}
         - or:
             - ${is_bastion_instance_required}
-            - ${create_new_vcn}
-            - ${create_new_subnets}
         - and:
              - or:
                 - ${create_new_vcn}
@@ -1028,8 +1089,6 @@ variables:
         - and:
             - or:
                 - ${is_bastion_instance_required}
-                - ${create_new_vcn}
-                - ${create_new_subnets}
             - eq:
                 - ${subnet_type}
                 - "Use Private Subnet"
@@ -1102,6 +1161,7 @@ variables:
     dependsOn:
       compartmentId: ${network_compartment_id}
       vcnId: ${wls_existing_vcn_id}
+
 
   # Load Balancer Configuration
   add_load_balancer:

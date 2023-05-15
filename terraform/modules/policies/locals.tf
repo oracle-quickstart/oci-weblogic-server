@@ -35,16 +35,10 @@ locals {
   apm_domain_policy_statement = var.use_apm_service ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to use apm-domains in compartment id ${var.apm_domain_compartment_id}" : ""
   # This policy with "use load_balancer" verb is needed to create load balancer for new vcn
   lb_policy_statement = var.add_load_balancer ? length(oci_identity_dynamic_group.wlsc_instance_principal_group) > 0 ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to use load-balancers in compartment id ${var.network_compartment_id}" : "" : ""
-
   service_statements = compact([local.core_policy_statement1, local.core_policy_statement2, local.core_policy_statement3, local.network_policy_statement1, local.secrets_policy_statement1, local.secrets_policy_statement2,
     local.atp_policy_statement1, local.atp_policy_statement2, local.atp_policy_statement3, local.oci_db_policy_statement1, local.oci_db_policy_statement2, local.oci_db_policy_statement3, local.logging_policy,
     local.apm_domain_policy_statement, local.lb_policy_statement
   ])
-
-  #rms private endpoint policies
-  rms_private_endpoint_statement1 = "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to manage orm-private-endpoints in tenancy
-  rms_private_endpoint_statement2 = "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to use virtual-network-family in tenancy where any request.operation={'CreatePrivateEndpoint'}"
-  rms_policy_statements = compact([local.rms_private_endpoint_statement1, local.rms_private_endpoint_statement2])
 
   cloning_policy_statement1 = "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to read orm-stacks in compartment id ${var.compartment_id}"
   cloning_policy_statement2 = "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to inspect compartments in tenancy"
@@ -111,7 +105,7 @@ locals {
   ])
 
   #TODO: When other categories with more statements are added here, concat them with service_statements
-  policy_statements = concat(local.service_statements, local.cloning_policy_statement, local.autoscaling_statements, local.rms_policy_statements)
+  policy_statements = concat(local.service_statements, local.cloning_policy_statement, local.autoscaling_statements)
 
   reserved_ips_info = var.compartment_id == "" ? [{ id = var.resource_name_prefix }] : []
 

@@ -21,7 +21,7 @@ variable "rms_private_endpoint_id" {
   description = "The OCID of the RMS private endpoint"
 }
 
-variable "is_rms_private_endpoint" {
+variable "is_rms_private_endpoint_required" {
   type        = bool
   description = "Terms and conditions for user to accept Oracle WebLogic Server Enterprise Edition UCM or Oracle WebLogic Suite UCM license agreement"
   default     = true

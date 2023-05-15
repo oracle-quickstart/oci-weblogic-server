@@ -78,12 +78,12 @@ output "listing_version" {
   value = var.tf_script_version
 }
 
-output "provisioning_status" {
-  value = local.async_prov_mode
-}
-
 output "jdk_version" {
   value = local.jdk_version
+}
+
+output "rms_private_endpoint_id" {
+  value = var.is_rms_private_endpoint_required ? (var.add_new_rms_private_endpoint || var.wls_existing_vcn_id == "") ? module.rms-private-endpoint[0].rms_private_endpoint_id : var.rms_existing_private_endpoint_id : ""
 }
 
 output "weblogic_agent_configuration_id" {

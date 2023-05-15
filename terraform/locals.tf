@@ -105,8 +105,6 @@ locals {
     local.lb_ip,
   ) : ""
 
-  async_prov_mode = !local.assign_weblogic_public_ip && !var.is_bastion_instance_required ? "Asynchronous provisioning is enabled. Connect to each compute instance and confirm that the file /u01/data/domains/${format("%s_domain", local.service_name_prefix)}/provCompletedMarker exists. Details are found in the file /u01/logs/provisioning.log." : ""
-
   jdk_labels  = { jdk7 = "JDK 7", jdk8 = "JDK 8", jdk11 = "JDK 11" }
   jdk_version = var.wls_version == "14.1.1.0" ? local.jdk_labels[var.wls_14c_jdk_version] : (var.wls_version == "11.1.1.7" ? local.jdk_labels["jdk7"] : local.jdk_labels["jdk8"])
 

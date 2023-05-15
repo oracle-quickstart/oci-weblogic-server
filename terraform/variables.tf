@@ -121,8 +121,26 @@ variable "tf_script_version" {
   default     = ""
 }
 
-variable "is_rms_private_endpoint" {
+variable "is_rms_private_endpoint_required" {
   type        = bool
-  description = "Terms and conditions for user to accept Oracle WebLogic Server Enterprise Edition UCM or Oracle WebLogic Suite UCM license agreement"
+  description = "Set resource manager private endpoint. Default value is true"
   default     = true
+}
+
+variable "add_new_rms_private_endpoint" {
+  type        = bool 
+  description = "Add new resource manager private endpoint"
+  default     = false
+}
+
+variable "add_existing_rms_private_endpoint" {
+  type        = bool
+  description = "Add existing resource manager private endpoint"
+  default     = false
+}
+
+variable "rms_existing_private_endpoint_id" {
+  type        = string
+  description = "The OCID for the existing resource manager private endpoint"
+  default     = ""
 }
