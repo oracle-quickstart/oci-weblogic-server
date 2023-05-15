@@ -191,7 +191,6 @@ variable "nsg_ids" {
     mount_target_nsg_id         = ""
     admin_nsg_id                = ""
     managed_nsg_id              = ""
-    rms_private_endpoint_nsg_id = ""
   }
 }
 
