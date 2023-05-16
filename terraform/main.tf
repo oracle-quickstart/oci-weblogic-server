@@ -444,9 +444,9 @@ module "validators" {
   min_threshold_counter = var.min_threshold_counter
   min_threshold_percent = var.min_threshold_percent
 
-  is_rms_private_endpoint_required = var.is_rms_private_endpoint_required
+  is_rms_private_endpoint_required  = var.is_rms_private_endpoint_required
   add_existing_rms_private_endpoint = var.add_existing_rms_private_endpoint
-  add_new_rms_private_endpoint = var.add_new_rms_private_endpoint
+  add_new_rms_private_endpoint      = var.add_new_rms_private_endpoint
 
   generate_dg_tag = var.generate_dg_tag
   service_tags    = var.service_tags
