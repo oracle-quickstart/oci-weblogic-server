@@ -528,3 +528,18 @@ variable "tf_script_version" {
   type        = string
   description = "The version of the provisioning scripts located in the OCI image used to create the WebLogic compute instances"
 }
+
+variable "is_rms_private_endpoint_required" { 
+  type        = bool
+  description = "Set resource manager private endpoint. Default value is true"
+} 
+  
+variable "add_new_rms_private_endpoint" {
+  type        = bool
+  description = "Add new resource manager private endpoint"
+}
+  
+variable "add_existing_rms_private_endpoint" {
+  type        = bool
+  description = "Add existing resource manager private endpoint"
+} 
