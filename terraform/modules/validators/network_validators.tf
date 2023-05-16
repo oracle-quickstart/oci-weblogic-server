@@ -36,7 +36,7 @@ locals {
   missing_vcn_id                = (var.existing_vcn_id == "" && (local.has_wls_subnet_id || local.has_lb_backend_subnet_id || local.has_lb_frontend_subnet_id))
   missing_private_subnet_vcn_id = (var.is_bastion_instance_required && (var.bastion_subnet_id != "" || var.existing_bastion_instance_id != "") && var.existing_vcn_id == "")
 
-  missing_rms_private_endpoint_id  = var.wls_existing_vcn_id != "" && var.is_rms_private_endpoint_required && !var.add_new_rms_private_endpoint && !var.add_existing_rms_private_endpoint
+  missing_rms_private_endpoint_id  = var.existing_vcn_id != "" && var.is_rms_private_endpoint_required && !var.add_new_rms_private_endpoint && !var.add_existing_rms_private_endpoint
 
   #existing subnets
   # If load balancer selected, check LB and WLS have existing subnet IDs specified else, if load balancer is not selected, check if WLS is using existing subnet id
@@ -104,7 +104,7 @@ locals {
   validate_missing_private_subnet_vcn_id = local.missing_private_subnet_vcn_id ? local.validators_msg_map[local.missing_private_subnet_vcn_id_msg] : null
 
   missing_rms_private_endpoint_id_msg = "WLSC-ERROR: The new or existing resource manager private endpoint id is required if is_rms_private_endpoint_required is set to true."
-  validate_missing_rms_private_endpoint_id_msg = local.missing_rms_private_endpoint_id ? local.validators_msg_map[local.missing_missing_rms_private_endpoint_id] : null
+  validate_missing_rms_private_endpoint_id_msg = local.missing_rms_private_endpoint_id ? local.validators_msg_map[local.missing_rms_private_endpoint_id_msg] : null
 
   wls_subnet_cidr_msg       = "WLSC-ERROR:  WebLogic subnet CIDR has to be unique value."
   duplicate_wls_subnet_cidr = local.check_duplicate_wls_subnet_cidr == true ? local.validators_msg_map[local.wls_subnet_cidr_msg] : null
