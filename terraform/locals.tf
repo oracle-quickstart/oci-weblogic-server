@@ -155,7 +155,10 @@ locals {
 
   ocir_namespace = data.oci_objectstorage_namespace.object_namespace.namespace
 
-  ocir_user           = format("%s/%s", local.ocir_namespace, var.ocir_user)
+  ocir_namespace_with_slash = format("%s/",local.ocir_namespace)
+  ocir_user_starts_with = substr(var.ocir_user, 0, length(local.ocir_namespace_with_slash))
+  ocir_user =  local.ocir_user_starts_with == local.ocir_namespace_with_slash ? var.ocir_user :  "${format("%s%s", local.ocir_namespace_with_slash, var.ocir_user)}"
+
   region_keys         = data.oci_identity_regions.all_regions.regions.*.key
   region_names        = data.oci_identity_regions.all_regions.regions.*.name
   ocir_region         = var.ocir_region == "" ? lower(element(local.region_keys, index(local.region_names, lower(var.region)))) : var.ocir_region
