@@ -127,12 +127,6 @@ variable "is_rms_private_endpoint_required" {
   default     = true
 }
 
-variable "add_new_rms_private_endpoint" {
-  type        = bool
-  description = "Add new resource manager private endpoint"
-  default     = false
-}
-
 variable "add_existing_rms_private_endpoint" {
   type        = bool
   description = "Add existing resource manager private endpoint"

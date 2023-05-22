@@ -175,4 +175,7 @@ locals {
     "instanceShape" = var.bastion_instance_shape,
     "ocpus"         = 1
   }
+
+  # Resource Manager 
+  add_new_rms_private_endpoint = !var.add_existing_rms_private_endpoint && var.rms_existing_private_endpoint_id == "" ? true : false
 }

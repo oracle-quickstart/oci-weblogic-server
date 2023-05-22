@@ -1002,7 +1002,7 @@ variables:
         - not:
             - ${add_new_rms_private_endpoint}
     dependsOn:
-      compartmentId: ${compartment_ocid}
+      compartmentId: ${subnet_compartment_id}
       vcnId: ${wls_existing_vcn_id}
     type: oci:resourcemanager:privateendpoint:id
     required: true

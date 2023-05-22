@@ -196,7 +196,7 @@ module "network-bastion-subnet" {
   dhcp_options_id    = length(module.network-vcn-config) > 0 ? module.network-vcn-config[0].dhcp_options_id : ""
   route_table_id     = length(module.network-vcn-config) > 0 ? module.network-vcn-config[0].route_table_id : ""
   subnet_name        = "${local.service_name_prefix}-${var.bastion_subnet_name}"
-  dns_label          = "${var.bastion_subnet_name}-${substr(uuid(), -7, -1)}"
+  dns_label          = var.is_bastion_instance_required && !var.is_rms_private_endpoint_required ? "${var.bastion_subnet_name}-${substr(uuid(), -7, -1)}" : format("%s-%s", var.bastion_subnet_name, substr(strrev(var.service_name), 0, 7))
   cidr_block         = local.bastion_subnet_cidr
   prohibit_public_ip = false
 
@@ -446,7 +446,7 @@ module "validators" {
 
   is_rms_private_endpoint_required  = var.is_rms_private_endpoint_required
   add_existing_rms_private_endpoint = var.add_existing_rms_private_endpoint
-  add_new_rms_private_endpoint      = var.add_new_rms_private_endpoint
+  add_new_rms_private_endpoint      = local.add_new_rms_private_endpoint
 
   generate_dg_tag = var.generate_dg_tag
   service_tags    = var.service_tags
@@ -515,7 +515,7 @@ module "load-balancer" {
 
 module "rms-private-endpoint" {
   source = "./modules/rms-private-endpoint"
-  count  = (var.is_rms_private_endpoint_required && var.add_new_rms_private_endpoint) || var.wls_existing_vcn_id == "" ? 1 : 0
+  count  = (var.is_rms_private_endpoint_required && local.add_new_rms_private_endpoint) == "" ? 1 : 0
 
   vcn_id                     = local.vcn_id
   compartment_id             = var.compartment_ocid
@@ -742,7 +742,7 @@ module "provisioners" {
   num_vm_instances                 = var.wls_node_count
   ssh_private_key                  = module.compute.ssh_private_key_opc
   is_rms_private_endpoint_required = var.is_rms_private_endpoint_required
-  rms_private_endpoint_id          = var.is_rms_private_endpoint_required ? (var.add_new_rms_private_endpoint || var.wls_existing_vcn_id == "") ? module.rms-private-endpoint[0].rms_private_endpoint_id : var.rms_existing_private_endpoint_id : ""
+  rms_private_endpoint_id          = var.is_rms_private_endpoint_required ? (local.add_new_rms_private_endpoint) ? module.rms-private-endpoint[0].rms_private_endpoint_id : var.rms_existing_private_endpoint_id : ""
   assign_public_ip                 = local.assign_weblogic_public_ip
   bastion_host_private_key         = local.assign_weblogic_public_ip || !var.is_bastion_instance_required ? "" : var.existing_bastion_instance_id == "" ? module.bastion[0].bastion_private_ssh_key : file(var.bastion_ssh_private_key)
   is_bastion_instance_required     = var.is_bastion_instance_required

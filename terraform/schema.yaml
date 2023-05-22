@@ -95,7 +95,6 @@ groupings:
     variables:
       - ${add_existing_rms_private_endpoint}
       - ${rms_existing_private_endpoint_id}
-      - ${add_new_rms_private_endpoint}
 
   - title: "Bastion Instance"
     variables:
@@ -947,16 +946,12 @@ variables:
         - ${orm_create_mode}
         - and:
             - not:
-                - ${create_new_subnets}
-            - not:
-                - ${create_new_vcn}
-            - not:
                 - eq:
                     - ${subnet_type}
                     - "Use Public Subnet"
     type: boolean
     default: true
-    title: "Provision Resource Manager Private Endpoint"
+    title: "Use Resource Manager Private Endpoint"
     description: "Provision a resource manager private end point on a private subnet to check the provisioning status of the private resources. if this is not selected then you will need to get the status of domain creation from /u01/logs/provisioning.log on the Compute instance. If not selected, then domain creation failures will not be reported."
 
   add_existing_rms_private_endpoint:
@@ -964,12 +959,8 @@ variables:
       and:
         - ${orm_create_mode}
         - ${is_rms_private_endpoint_required}
-        - not:
-            - ${create_new_vcn}
-        - not:
-            - ${add_new_rms_private_endpoint}
     type: boolean
-    default: false
+    default: true
     title: "Resource Manager Existing Private Endpoint"
     description: "Use existing resource manager private endpoint."
   
@@ -979,10 +970,6 @@ variables:
         - ${orm_create_mode}
         - ${is_rms_private_endpoint_required}
         - ${add_existing_rms_private_endpoint}
-        - not:
-            - ${create_new_vcn}
-        - not:
-            - ${add_new_rms_private_endpoint}
     dependsOn:
       compartmentId: ${compartment_ocid}
       vcnId: ${wls_existing_vcn_id}
@@ -991,20 +978,6 @@ variables:
     title: "Resource Manager Private Endpoint"
     description: "Resource manager private endpoint for private access."
     
-  add_new_rms_private_endpoint:
-    visible:
-      and:
-        - ${orm_create_mode}
-        - ${is_rms_private_endpoint_required}
-        - not:
-            - ${create_new_vcn}
-        - not:
-            - ${add_existing_rms_private_endpoint}
-    type: boolean
-    default: false
-    title: "Resource Manager New Private Endpoint"
-    description: "Create resource manager private endpoint."
-
   is_bastion_with_reserved_public_ip:
     visible:
       and:
