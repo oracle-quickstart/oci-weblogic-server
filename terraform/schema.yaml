@@ -93,7 +93,7 @@ groupings:
 
   - title: "Resource Manager Private Endpoint"
     variables:
-      - ${add_existing_rms_private_endpoint}
+      - ${add_rms_private_endpoint}
       - ${rms_existing_private_endpoint_id}
 
   - title: "Bastion Instance"
@@ -935,6 +935,15 @@ variables:
     visible:
       and:
         - ${orm_create_mode}
+        - and:
+            - not:
+                - ${create_new_subnets}
+            - not:
+                - ${create_new_vcn}
+            - not:
+                - eq:
+                    - ${subnet_type}
+                    - "Use Public Subnet"
     type: boolean
     default: false
     title: "Provision Bastion Instance"
@@ -946,6 +955,10 @@ variables:
         - ${orm_create_mode}
         - and:
             - not:
+                - ${create_new_subnets}
+            - not:
+                - ${create_new_vcn}
+            - not:
                 - eq:
                     - ${subnet_type}
                     - "Use Public Subnet"
@@ -954,24 +967,38 @@ variables:
     title: "Use Resource Manager Private Endpoint"
     description: "Provision a resource manager private end point on a private subnet to check the provisioning status of the private resources. if this is not selected then you will need to get the status of domain creation from /u01/logs/provisioning.log on the Compute instance. If not selected, then domain creation failures will not be reported."
 
-  add_existing_rms_private_endpoint:
+  add_rms_private_endpoint:
     visible:
       and:
         - ${orm_create_mode}
         - ${is_rms_private_endpoint_required}
-    type: boolean
-    default: true
-    title: "Resource Manager Existing Private Endpoint"
-    description: "Use existing resource manager private endpoint."
-  
+        - not:
+            - ${create_new_subnets}
+        - not:
+            - ${create_new_vcn}
+    type: enum
+    enum:
+      - "Use Existing Resource Manager Endpoint"
+      - "Create New Resource Manager Endpoint"
+    default: "Use Existing Resource Manager Endpoint"
+    title: "Create or Use Existing Resource Manager Endpoint"
+    description: "Configure a new or existing resource manager private endpoint."
+    required: true
+
   rms_existing_private_endpoint_id:
     visible:
       and:
         - ${orm_create_mode}
         - ${is_rms_private_endpoint_required}
-        - ${add_existing_rms_private_endpoint}
+        - not:
+           - ${create_new_subnets}
+        - not:
+           - ${create_new_vcn}
+        - eq:
+           - ${add_rms_private_endpoint}
+           - "Use Existing Resource Manager Endpoint"
     dependsOn:
-      compartmentId: ${compartment_ocid}
+      compartmentId: ${network_compartment_id}
       vcnId: ${wls_existing_vcn_id}
     type: oci:resourcemanager:privateendpoint:id
     required: true
@@ -983,6 +1010,8 @@ variables:
       and:
         - or:
             - ${is_bastion_instance_required}
+            - ${create_new_vcn}
+            - ${create_new_subnets}
         - or:
             - or:
                 - ${create_new_vcn}
@@ -1010,6 +1039,8 @@ variables:
         - ${orm_create_mode}
         - or:
             - ${is_bastion_instance_required}
+            - ${create_new_vcn}
+            - ${create_new_subnets}
         - and:
              - or:
                 - ${create_new_vcn}
@@ -1062,6 +1093,8 @@ variables:
         - and:
             - or:
                 - ${is_bastion_instance_required}
+                - ${create_new_vcn}
+                - ${create_new_subnets}
             - eq:
                 - ${subnet_type}
                 - "Use Private Subnet"

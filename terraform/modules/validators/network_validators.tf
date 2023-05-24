@@ -36,8 +36,6 @@ locals {
   missing_vcn_id                = (var.existing_vcn_id == "" && (local.has_wls_subnet_id || local.has_lb_backend_subnet_id || local.has_lb_frontend_subnet_id))
   missing_private_subnet_vcn_id = (var.is_bastion_instance_required && (var.bastion_subnet_id != "" || var.existing_bastion_instance_id != "") && var.existing_vcn_id == "")
 
-  missing_rms_private_endpoint_id = !var.is_rms_private_endpoint_required && !var.is_bastion_instance_required
-
   #existing subnets
   # If load balancer selected, check LB and WLS have existing subnet IDs specified else, if load balancer is not selected, check if WLS is using existing subnet id
   has_all_existing_subnets = (local.add_new_load_balancer && local.has_wls_subnet_id && local.has_lb_backend_subnet_id && local.has_lb_frontend_subnet_id) || (!local.add_new_load_balancer && local.has_wls_subnet_id)
@@ -102,9 +100,6 @@ locals {
 
   missing_private_subnet_vcn_id_msg      = "WLSC-ERROR: The value for existing_vcn_id is required if existing bastion subnet id is used for provisioning."
   validate_missing_private_subnet_vcn_id = local.missing_private_subnet_vcn_id ? local.validators_msg_map[local.missing_private_subnet_vcn_id_msg] : null
-
-  missing_rms_private_endpoint_id_msg          = "WLSC-ERROR: Atleast one of the is_bastion_instance_required or is_rms_private_endpoint_required is set to true"
-  validate_missing_rms_private_endpoint_id_msg = local.missing_rms_private_endpoint_id ? local.validators_msg_map[local.missing_rms_private_endpoint_id_msg] : null
 
   wls_subnet_cidr_msg       = "WLSC-ERROR:  WebLogic subnet CIDR has to be unique value."
   duplicate_wls_subnet_cidr = local.check_duplicate_wls_subnet_cidr == true ? local.validators_msg_map[local.wls_subnet_cidr_msg] : null

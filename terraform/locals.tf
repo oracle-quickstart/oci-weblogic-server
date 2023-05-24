@@ -84,7 +84,6 @@ locals {
   lb_subnet_1_name = var.is_lb_private ? "lbprist1" : "lbpubst1"
   lb_subnet_2_name = var.is_lb_private ? "lbprist2" : "lbpubst2"
 
-
   lb_id = local.use_existing_lb ? var.existing_load_balancer_id : local.new_lb_id
   lb_ip = local.use_existing_lb ? local.existing_lb_ip : local.new_lb_ip
 
@@ -104,6 +103,8 @@ locals {
     local.sample_app_protocol,
     local.lb_ip,
   ) : ""
+
+  async_prov_mode = !local.assign_weblogic_public_ip && !var.is_rms_private_endpoint_required && !var.is_bastion_instance_required ? "Asynchronous provisioning is enabled. Connect to each compute instance and confirm that the file /u01/data/domains/${format("%s_domain", local.service_name_prefix)}/provCompletedMarker exists. Details are found in the file /u01/logs/provisioning.log." : ""
 
   jdk_labels  = { jdk7 = "JDK 7", jdk8 = "JDK 8", jdk11 = "JDK 11" }
   jdk_version = var.wls_version == "14.1.1.0" ? local.jdk_labels[var.wls_14c_jdk_version] : (var.wls_version == "11.1.1.7" ? local.jdk_labels["jdk7"] : local.jdk_labels["jdk8"])
@@ -149,8 +150,6 @@ locals {
   use_apm_service           = (var.use_apm_service || var.use_autoscaling)
   apm_domain_compartment_id = local.use_apm_service ? lookup(data.oci_apm_apm_domain.apm_domain[0], "compartment_id") : ""
 
-
-
   ocir_namespace = data.oci_objectstorage_namespace.object_namespace.namespace
 
   ocir_user           = format("%s/%s", local.ocir_namespace, var.ocir_user)
@@ -176,6 +175,10 @@ locals {
     "ocpus"         = 1
   }
 
-  # Resource Manager 
-  add_new_rms_private_endpoint = !var.add_existing_rms_private_endpoint && var.rms_existing_private_endpoint_id == "" ? true : false
+  is_bastion_instance_required = (var.is_bastion_instance_required && var.subnet_type != "Use Public Subnet") || var.wls_existing_vcn_id == "" || (var.wls_existing_vcn_id != "" && var.wls_subnet_id == "") ? true : false
+
+  # Resource Manager Endpoint
+  add_new_rms_private_endpoint      = var.is_rms_private_endpoint_required && var.add_rms_private_endpoint == "Create New Resource Manager Endpoint" ? true : false
+  add_existing_rms_private_endpoint = var.is_rms_private_endpoint_required && var.add_rms_private_endpoint == "Use Existing Resource Manager Endpoint" ? true : false
+  is_rms_private_endpoint_required  = var.is_rms_private_endpoint_required && var.wls_existing_vcn_id != "" && var.wls_subnet_id != "" && var.subnet_type != "Use Public Subnet" ? true : false
 }

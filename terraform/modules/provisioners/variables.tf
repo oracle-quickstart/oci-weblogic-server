@@ -24,7 +24,6 @@ variable "rms_private_endpoint_id" {
 variable "is_rms_private_endpoint_required" {
   type        = bool
   description = "Set resource manager private endpoint"
-  default     = true
 }
 
 variable "mode" {
@@ -59,7 +58,6 @@ variable "assign_public_ip" {
 variable "is_bastion_instance_required" {
   type        = bool
   description = "Whether bastion instance is required to connect to the compute instance"
-  default     = true
 }
 
 variable "existing_bastion_instance_id" {

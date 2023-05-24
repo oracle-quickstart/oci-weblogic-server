@@ -78,6 +78,10 @@ output "listing_version" {
   value = var.tf_script_version
 }
 
+output "provisioning_status" {
+  value = local.async_prov_mode
+}
+
 output "jdk_version" {
   value = local.jdk_version
 }
