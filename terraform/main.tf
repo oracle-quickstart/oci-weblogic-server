@@ -514,7 +514,7 @@ module "rms-private-endpoint" {
   count  = local.is_rms_private_endpoint_required && local.add_new_rms_private_endpoint ? 1 : 0
 
   vcn_id                     = local.vcn_id
-  compartment_id             = var.compartment_ocid
+  compartment_id             = local.network_compartment_id
   private_endpoint_subnet_id = var.wls_subnet_id != "" ? var.wls_subnet_id : element(concat(module.network-wls-private-subnet[*].subnet_id, [""]), 0)
   private_endpoint_nsg_id    = var.wls_subnet_id != "" ? (var.add_existing_nsg ? [var.existing_admin_server_nsg_id] : []) : element(module.network-compute-admin-nsg[*].nsg_id, 0)
   resource_name_prefix       = var.service_name
