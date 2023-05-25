@@ -1,32 +1,30 @@
 # Copyright (c) 2023, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
-# This validation is applicable only for resource manager stacks. Not applicable for terraform CLI mode.
 
-# list all stacks in any state (active, deleted etc)
-data "oci_resourcemanager_stacks" "all_stacks_in_the_compartment" {
+# The validation fails if any running/stopped compute instances with the display name "<service_name>-wls-0" are present in the stack compartment.
+
+data "oci_core_instances" "wls_running_instances_in_stack_compartment" {
   compartment_id = var.compartment_id
+  display_name = local.instance_name_to_match
+  state = "RUNNING"
 }
 
-# collect id of each stack
-locals {
-  stack_list = data.oci_resourcemanager_stacks.all_stacks_in_the_compartment.stacks
-  num_stacks = length(local.stack_list)
-  stack_ids = [for stack in local.stack_list : { id = stack.id }]
-}
-
-# get details of each stack from the list of stack_ids
-data "oci_resourcemanager_stack" "all_stacks" {
-  count = local.num_stacks
-  #Required
-  stack_id = local.stack_ids[count.index].id
+data "oci_core_instances" "wls_stopped_instances_in_stack_compartment" {
+  compartment_id = var.compartment_id
+  display_name = local.instance_name_to_match
+  state = "STOPPED"
 }
 
 locals {
-  stack_variables = [for stack in data.oci_resourcemanager_stack.all_stacks : { variables = stack.variables }]
-  service_names_used_by_existing_stacks = [for stack_variables in local.stack_variables : lookup(stack_variables.variables, "service_name", "?_not_found_?")]
-  duplicate_service_names_list = [for service_name in local.service_names_used_by_existing_stacks : service_name if service_name == var.service_name]
-  # There will be always one entry for the name of the current stack. Set duplicate to true if there are more than one entries.
-  service_name_already_exists = length(local.duplicate_service_names_list) > 1 ? true : false
-  service_name_already_exists_msg      = "WLSC-ERROR: Another stack with the service_name [${var.service_name}] already exisits in the stack compartment. Try again with a different service name."
+  vnic_prefix = "wls"
+  resource_name_prefix = var.service_name
+  # The host_label value below should match with the host_label of the module wls_compute
+  host_label = "${local.resource_name_prefix}-${local.vnic_prefix}"
+  instance_name_to_match = "${local.host_label}-0"
+  num_running_instances = length(data.oci_core_instances.wls_running_instances_in_stack_compartment.instances)
+  num_stopped_instances = length(data.oci_core_instances.wls_stopped_instances_in_stack_compartment.instances)
+  num_instances = local.num_running_instances + local.num_stopped_instances
+  service_name_already_exists = local.num_instances > 0 ? true : false
+  service_name_already_exists_msg = "WLSC-ERROR: Another compute instance with the name [${local.instance_name_to_match}] already exisits in the stack compartment. Try again with a different service name."
   validate_service_name_is_not_already_used = local.service_name_already_exists ? local.validators_msg_map[local.service_name_already_exists_msg] : null
 }
