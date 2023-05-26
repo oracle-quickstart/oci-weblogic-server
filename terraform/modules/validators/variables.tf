@@ -3,7 +3,7 @@
 
 variable "compartment_id" {
   type        = string
-  description = "Compartment for stack resources"
+  description = "The OCID of the compartment where the stack resources are created"
 }
 
 variable "service_name" {
