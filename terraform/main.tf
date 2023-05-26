@@ -738,10 +738,10 @@ module "provisioners" {
   num_vm_instances                 = var.wls_node_count
   ssh_private_key                  = module.compute.ssh_private_key_opc
   is_rms_private_endpoint_required = local.is_rms_private_endpoint_required
-  rms_private_endpoint_id          = local.is_rms_private_endpoint_required ? (local.add_new_rms_private_endpoint) ? module.rms-private-endpoint[0].rms_private_endpoint_id : var.rms_existing_private_endpoint_id : ""
+  rms_private_endpoint_id          = local.is_rms_private_endpoint_required ? local.add_new_rms_private_endpoint ? module.rms-private-endpoint[0].rms_private_endpoint_id : var.rms_existing_private_endpoint_id : ""
   assign_public_ip                 = local.assign_weblogic_public_ip
-  bastion_host                     = local.is_rms_private_endpoint_required ? "" : (local.assign_weblogic_public_ip || !local.is_bastion_instance_required ? "" : var.existing_bastion_instance_id == "" ? module.bastion[0].public_ip : data.oci_core_instance.existing_bastion_instance[0].public_ip)
-  bastion_host_private_key         = local.is_rms_private_endpoint_required ? "" : (local.assign_weblogic_public_ip || !local.is_bastion_instance_required ? "" : var.existing_bastion_instance_id == "" ? module.bastion[0].bastion_private_ssh_key : file(var.bastion_ssh_private_key))
+  bastion_host                     = local.assign_weblogic_public_ip || (local.is_bastion_instance_required ? "" : var.existing_bastion_instance_id == "" ? module.bastion[0].public_ip : data.oci_core_instance.existing_bastion_instance[0].public_ip)
+  bastion_host_private_key         = local.is_rms_private_endpoint_required ? "" : local.assign_weblogic_public_ip || !local.is_bastion_instance_required ? "" : var.existing_bastion_instance_id == "" ? module.bastion[0].bastion_private_ssh_key : file(var.bastion_ssh_private_key)
   is_bastion_instance_required     = local.is_bastion_instance_required
 
   mode                             = var.mode
