@@ -1,8 +1,11 @@
 # Copyright (c) 2023, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
+
+# If any of the existing stacks is the same stack compartment is already using the same "service_name" as the current stack, then fail the validation.
+# To pass the validation, recreate the stack with a different service name.
+# This is to prevent trying to create another compute instance using the same prefix, which will lead to DNS issues.
 # This validation is applicable only for resource manager stacks. Not applicable for terraform CLI mode.
 
-# list all stacks in any state (active, deleted etc)
 data "oci_resourcemanager_stacks" "all_stacks_in_the_compartment" {
   compartment_id = var.compartment_id
 }
