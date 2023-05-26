@@ -26,9 +26,8 @@ wls_node_count = 2
 wls_availability_domain_name = "<availability_domain_name>"
 wls_subnet_id = "ocid1.subnet.xxxxxxxxxxxxxxx"
 
-### Resource Manager Private Endpoint parameters to create new endpoint
-is_rms_private_endpoint_required = true
-add_rms_private_endpoint = "Create New Resource Manager Endpoint"
+### Resource Manager Private Endpoint parameter
+is_rms_private_endpoint_required = false
 
 ### Bastion instance parameters
 is_bastion_instance_required = true

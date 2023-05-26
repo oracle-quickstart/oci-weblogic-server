@@ -14,8 +14,8 @@ resource "null_resource" "status_check" {
     private_key = var.ssh_private_key
 
     bastion_user        = "opc"
-    bastion_private_key = var.is_rms_private_endpoint_required ? "" : var.bastion_host_private_key
-    bastion_host        = var.is_rms_private_endpoint_required ? "" : var.bastion_host
+    bastion_private_key = var.bastion_host_private_key
+    bastion_host        = var.bastion_host
   }
 
   // Call check_status.sh 11 more times - if we add additional markers we must add an additional status check call here.
@@ -133,8 +133,8 @@ resource "null_resource" "print_service_info" {
     private_key = var.ssh_private_key
 
     bastion_user        = "opc"
-    bastion_private_key = var.is_rms_private_endpoint_required ? "" : var.bastion_host_private_key
-    bastion_host        = var.is_rms_private_endpoint_required ? "" : var.bastion_host
+    bastion_private_key = var.bastion_host_private_key
+    bastion_host        = var.bastion_host
   }
 
   provisioner "remote-exec" {
@@ -159,8 +159,8 @@ resource "null_resource" "cleanup" {
     private_key = var.ssh_private_key
 
     bastion_user        = "opc"
-    bastion_private_key = var.is_rms_private_endpoint_required ? "" : var.bastion_host_private_key
-    bastion_host        = var.is_rms_private_endpoint_required ? "" : var.bastion_host
+    bastion_private_key = var.bastion_host_private_key
+    bastion_host        = var.bastion_host
   }
 
   provisioner "remote-exec" {

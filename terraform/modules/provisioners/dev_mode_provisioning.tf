@@ -2,7 +2,7 @@
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 resource "null_resource" "dev_mode_provisioning" {
-  count = var.mode == "DEV" && (var.is_bastion_instance_required || var.is_rms_private_endpoint_required) ? var.num_vm_instances : 0
+  count = var.mode == "DEV" ? var.num_vm_instances : 0
 
   // In production we will use the vmscripts.tar.gz already on the image.
   // In developer mode we will upload the vmscripts to the instance.
@@ -14,25 +14,25 @@ resource "null_resource" "dev_mode_provisioning" {
     connection {
       agent       = false
       timeout     = "30m"
-      host        = var.is_rms_private_endpoint_required ? data.oci_resourcemanager_private_endpoint_reachable_ip.private_endpoint_reachable_ips[count.index].ip_address : var.host_ips[count.index]
+      host        = var.host_ips[count.index]
       user        = "opc"
       private_key = var.ssh_private_key
 
       bastion_user        = "opc"
-      bastion_private_key = var.is_rms_private_endpoint_required ? "" : var.bastion_host_private_key
-      bastion_host        = var.is_rms_private_endpoint_required ? "" : var.bastion_host
+      bastion_private_key = var.bastion_host_private_key
+      bastion_host        = var.bastion_host
     }
   }
   provisioner "remote-exec" {
     connection {
       agent               = false
       timeout             = "30m"
-      host                = var.is_rms_private_endpoint_required ? data.oci_resourcemanager_private_endpoint_reachable_ip.private_endpoint_reachable_ips[count.index].ip_address : var.host_ips[count.index]
+      host                = var.host_ips[count.index]
       user                = "opc"
       private_key         = var.ssh_private_key
       bastion_user        = "opc"
-      bastion_private_key = var.is_rms_private_endpoint_required ? "" : var.bastion_host_private_key
-      bastion_host        = var.is_rms_private_endpoint_required ? "" : var.bastion_host
+      bastion_private_key = var.bastion_host_private_key
+      bastion_host       = var.bastion_host
     }
 
     inline = [
