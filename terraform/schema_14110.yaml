@@ -66,9 +66,8 @@ groupings:
 
   - title: "Resource Manager Private Endpoint"
     variables:
-      - ${add_existing_rms_private_endpoint}
+      - ${add_rms_private_endpoint}
       - ${rms_existing_private_endpoint_id}
-      - ${add_new_rms_private_endpoint}
 
   - title: "Bastion Instance"
     variables:
