@@ -32,7 +32,7 @@ resource "null_resource" "dev_mode_provisioning" {
       private_key         = var.ssh_private_key
       bastion_user        = "opc"
       bastion_private_key = var.bastion_host_private_key
-      bastion_host       = var.bastion_host
+      bastion_host        = var.bastion_host
     }
 
     inline = [
