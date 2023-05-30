@@ -956,7 +956,7 @@ variables:
     type: boolean
     default: false
     title: "Provision Bastion Instance"
-    description: "Provision a bastion compute instance on a public subnet to provide access to the WebLogic Server compute instances on a private subnet. If not selected, you must check the status of the compute instances after the stack job is complete."
+    description: "Provision a bastion compute instance on a public subnet to provide access to the WebLogic Server compute instances on a private subnet. If this and resource manager private endpoint are not selected, you must check the status of domain creation on the compute instance using /u01/logs/provisioning.log file, and any failures during domain creation are reported."
 
   is_rms_private_endpoint_required:
     visible:
@@ -974,7 +974,7 @@ variables:
     type: boolean
     default: true
     title: "Use Resource Manager Private Endpoint"
-    description: "Provision a resource manager private end point on a private subnet to check the provisioning status of the private resources. if this is not selected then you will need to get the status of domain creation from /u01/logs/provisioning.log on the Compute instance. If not selected, then domain creation failures will not be reported."
+    description: "Provision a resource manager private endpoint on a private subnet to check the provisioning status of the private resources. If this and bastion are not selected, you must check the status of domain creation on the compute instance using /u01/logs/provisioning.log file, and any failures during domain creation are reported."
     
   add_rms_private_endpoint:
     visible:
