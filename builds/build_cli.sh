@@ -69,6 +69,7 @@ mkdir -p ${SCRIPT_DIR}/binaries/tmpbuild
 create_cli_bundle()
 {
   cp -Rf ${SCRIPT_DIR}/../terraform/modules ${SCRIPT_DIR}/../terraform/edition.tf ${SCRIPT_DIR}/../terraform/*.tf ${SCRIPT_DIR}/../terraform/images ${TMP_BUILD}
+  rm ${TMP_BUILD}/modules/validators/stack_validators.tf
   replace_variables
   (cd ${TMP_BUILD}; zip -r ${SCRIPT_DIR}/binaries/wlsoci-terraform.zip *; rm -Rf ${TMP_BUILD}/*)
 }
@@ -79,6 +80,8 @@ replace_variables()
   sed -i '/variable "generate_dg_tag" {/!b;n;n;n;cdefault = false' ${TMP_BUILD}/variables.tf
   sed -i '/variable "use_marketplace_image" {/!b;n;n;n;cdefault = false' ${TMP_BUILD}/mp_variables.tf
   sed -i '/variable "tf_script_version" {/!b;n;n;n;cdefault = \"'"$SCRIPTS_VERSION"'\"' ${TMP_BUILD}/variables.tf
+  sed -i '/variable "is_rms_private_endpoint_required" {/!b;n;n;n;cdefault = false' ${TMP_BUILD}/variables.tf
+  sed -i '/variable "is_bastion_instance_required" {/!b;n;n;n;cdefault = true' ${TMP_BUILD}/bastion_variables.tf
 }
 
 

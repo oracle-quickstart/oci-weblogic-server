@@ -4,7 +4,7 @@
 variable "is_bastion_instance_required" {
   type        = bool
   description = "Set to true to use a bastion, either new or existing. If existing_bastion_instance_id is blank, a new bastion will be created"
-  default     = true
+  default     = false
 }
 
 variable "existing_bastion_instance_id" {
