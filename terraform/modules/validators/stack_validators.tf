@@ -14,7 +14,7 @@ data "oci_resourcemanager_stacks" "all_stacks_in_the_compartment" {
 locals {
   stack_list = data.oci_resourcemanager_stacks.all_stacks_in_the_compartment.stacks
   num_stacks = length(local.stack_list)
-  stack_ids = [for stack in local.stack_list : { id = stack.id }]
+  stack_ids  = [for stack in local.stack_list : { id = stack.id }]
 }
 
 # get details of each stack from the list of stack_ids
@@ -25,11 +25,11 @@ data "oci_resourcemanager_stack" "all_stacks" {
 }
 
 locals {
-  stack_variables = [for stack in data.oci_resourcemanager_stack.all_stacks : { variables = stack.variables }]
+  stack_variables                       = [for stack in data.oci_resourcemanager_stack.all_stacks : { variables = stack.variables }]
   service_names_used_by_existing_stacks = [for stack_variables in local.stack_variables : lookup(stack_variables.variables, "service_name", "?_not_found_?")]
-  duplicate_service_names_list = [for service_name in local.service_names_used_by_existing_stacks : service_name if service_name == var.service_name]
+  duplicate_service_names_list          = [for service_name in local.service_names_used_by_existing_stacks : service_name if service_name == var.service_name]
   # There will be always one entry for the name of the current stack. Set duplicate to true if there are more than one entries.
-  service_name_already_exists = length(local.duplicate_service_names_list) > 1 ? true : false
-  service_name_already_exists_msg      = "WLSC-ERROR: Another stack with the service_name [${var.service_name}] already exisits in the stack compartment. Try again with a different service name."
+  service_name_already_exists               = length(local.duplicate_service_names_list) > 1 ? true : false
+  service_name_already_exists_msg           = "WLSC-ERROR: Another stack with the service_name [${var.service_name}] already exisits in the stack compartment. Try again with a different service name."
   validate_service_name_is_not_already_used = local.service_name_already_exists ? local.validators_msg_map[local.service_name_already_exists_msg] : null
 }

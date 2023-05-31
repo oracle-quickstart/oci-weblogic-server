@@ -16,6 +16,16 @@ variable "num_vm_instances" {
   description = "The number of compute instances that are available"
 }
 
+variable "rms_private_endpoint_id" {
+  type        = string
+  description = "The OCID of the resource manager private endpoint"
+}
+
+variable "is_rms_private_endpoint_required" {
+  type        = bool
+  description = "Set resource manager private endpoint"
+}
+
 variable "mode" {
   type        = string
   description = "Select mode for development(DEV) or production(PROD). In development mode, local VM scripts zip is seeded on WLS VMs "
@@ -48,7 +58,6 @@ variable "assign_public_ip" {
 variable "is_bastion_instance_required" {
   type        = bool
   description = "Whether bastion instance is required to connect to the compute instance"
-  default     = true
 }
 
 variable "existing_bastion_instance_id" {

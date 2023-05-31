@@ -35,7 +35,6 @@ locals {
   apm_domain_policy_statement = var.use_apm_service ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to use apm-domains in compartment id ${var.apm_domain_compartment_id}" : ""
   # This policy with "use load_balancer" verb is needed to create load balancer for new vcn
   lb_policy_statement = var.add_load_balancer ? length(oci_identity_dynamic_group.wlsc_instance_principal_group) > 0 ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to use load-balancers in compartment id ${var.network_compartment_id}" : "" : ""
-
   service_statements = compact([local.core_policy_statement1, local.core_policy_statement2, local.core_policy_statement3, local.network_policy_statement1, local.secrets_policy_statement1, local.secrets_policy_statement2,
     local.atp_policy_statement1, local.atp_policy_statement2, local.atp_policy_statement3, local.oci_db_policy_statement1, local.oci_db_policy_statement2, local.oci_db_policy_statement3, local.logging_policy,
     local.apm_domain_policy_statement, local.lb_policy_statement
@@ -76,6 +75,7 @@ locals {
   autoscaling_statement25                       = var.use_autoscaling ? length(oci_identity_dynamic_group.wlsc_functions_principal_group) > 0 ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_functions_principal_group[0].name} to inspect dynamic-groups in tenancy" : "" : ""
   autoscaling_statement26                       = var.use_autoscaling ? length(oci_identity_dynamic_group.wlsc_functions_principal_group) > 0 ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_functions_principal_group[0].name} to manage policies in tenancy" : "" : ""
   autoscaling_statement27                       = var.use_autoscaling ? length(oci_identity_dynamic_group.wlsc_functions_principal_group) > 0 ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_functions_principal_group[0].name} to use tag-namespaces in tenancy" : "" : ""
+  autoscaling_statement28                       = var.use_autoscaling ? length(oci_identity_dynamic_group.wlsc_functions_principal_group) > 0 ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_functions_principal_group[0].name} to manage orm-family in compartment id ${var.network_compartment_id}" : "" : ""
   autoscaling_atp_policy_statement              = (var.atp_db.is_atp && var.use_autoscaling) ? length(oci_identity_dynamic_group.wlsc_functions_principal_group) > 0 ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_functions_principal_group[0].name} to inspect autonomous-transaction-processing-family in compartment id ${var.atp_db.compartment_id}" : "" : ""
   autoscaling_db_policy_statement               = (local.is_oci_db && var.use_autoscaling) ? length(oci_identity_dynamic_group.wlsc_functions_principal_group) > 0 ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_functions_principal_group[0].name} to inspect database-family in compartment id ${var.oci_db.compartment_id}" : "" : ""
   autoscaling_fss_mount_target_policy_statement = (var.add_fss && var.use_autoscaling) ? length(oci_identity_dynamic_group.wlsc_functions_principal_group) > 0 ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_functions_principal_group[0].name} to manage mount-targets in compartment id ${var.mount_target_compartment_id}" : "" : ""
@@ -96,7 +96,7 @@ locals {
     local.autoscaling_statement18, local.autoscaling_statement19, local.autoscaling_statement20,
     local.autoscaling_statement21, local.autoscaling_statement22, local.autoscaling_statement23,
     local.autoscaling_statement24, local.autoscaling_statement25, local.autoscaling_statement26,
-    local.autoscaling_statement27,
+    local.autoscaling_statement27, local.autoscaling_statement28,
     local.autoscaling_logging_policy_1, local.autoscaling_logging_policy_2, local.autoscaling_logging_policy_3,
     local.autoscaling_atp_policy_statement,
     local.autoscaling_db_policy_statement,

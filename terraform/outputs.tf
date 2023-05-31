@@ -86,6 +86,10 @@ output "jdk_version" {
   value = local.jdk_version
 }
 
+output "rms_private_endpoint_id" {
+  value = var.is_rms_private_endpoint_required ? local.add_new_rms_private_endpoint ? module.rms-private-endpoint[0].rms_private_endpoint_id : var.rms_existing_private_endpoint_id : ""
+}
+
 output "weblogic_agent_configuration_id" {
   value = element(concat(module.observability-logging[*].agent_config_id, [""]), 0)
 }

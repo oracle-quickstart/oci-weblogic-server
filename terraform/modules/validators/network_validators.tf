@@ -36,7 +36,6 @@ locals {
   missing_vcn_id                = (var.existing_vcn_id == "" && (local.has_wls_subnet_id || local.has_lb_backend_subnet_id || local.has_lb_frontend_subnet_id))
   missing_private_subnet_vcn_id = (var.is_bastion_instance_required && (var.bastion_subnet_id != "" || var.existing_bastion_instance_id != "") && var.existing_vcn_id == "")
 
-
   #existing subnets
   # If load balancer selected, check LB and WLS have existing subnet IDs specified else, if load balancer is not selected, check if WLS is using existing subnet id
   has_all_existing_subnets = (local.add_new_load_balancer && local.has_wls_subnet_id && local.has_lb_backend_subnet_id && local.has_lb_frontend_subnet_id) || (!local.add_new_load_balancer && local.has_wls_subnet_id)
@@ -68,10 +67,6 @@ locals {
   is_existing_bastion_condition = (!var.assign_public_ip && var.is_bastion_instance_required && var.existing_bastion_instance_id != "")
   bastion_ssh_key_file          = var.bastion_ssh_private_key == "" ? "missing.txt" : var.bastion_ssh_private_key
   invalid_bastion_private_key   = (local.is_existing_bastion_condition && (var.bastion_ssh_private_key == "" || !fileexists(local.bastion_ssh_key_file)))
-
-  invalid_bastion_config     = (var.existing_vcn_id == "" || (local.has_existing_vcn && var.wls_subnet_id == "")) ? local.is_bastion_turned_off : false
-  invalid_bastion_config_msg = "WLSC-ERROR: Provisioning in private subnet without bastion instance has to be limited for VCN with existing subnets."
-  validate_bastion_config    = (local.invalid_bastion_config) ? local.validators_msg_map[local.invalid_bastion_config_msg] : null
 
   invalid_lb_type = var.is_lb_private && var.assign_public_ip
 

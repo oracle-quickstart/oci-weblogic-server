@@ -26,7 +26,10 @@ wls_node_count = 2
 wls_availability_domain_name = "<availability_domain_name>"
 wls_subnet_id = "ocid1.subnet.xxxxxxxxxxxxxxx"
 
-### Bastion parameters to create new bastion instance
+### Resource Manager Private Endpoint parameter
+is_rms_private_endpoint_required = false
+
+### Bastion instance parameters
 is_bastion_instance_required = true
 bastion_subnet_id = "ocid1.subnet.xxxxxxxxxxxxxxx"
 bastion_instance_shape = "VM.Standard.E4.Flex"
