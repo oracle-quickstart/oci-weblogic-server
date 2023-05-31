@@ -12,6 +12,7 @@ groupings:
       - ${ssh_public_key}
       - ${create_policies}
       - ${create_new_vcn}
+      - ${is_rms_private_endpoint_required}
       - ${is_bastion_instance_required}
       - ${add_load_balancer}
       - ${is_idcs_selected}
@@ -62,6 +63,11 @@ groupings:
       - ${wls_subnet_cidr}
       - ${existing_admin_server_nsg_id}
       - ${existing_managed_server_nsg_id}
+
+  - title: "Resource Manager Private Endpoint"
+    variables:
+      - ${add_rms_private_endpoint}
+      - ${rms_existing_private_endpoint_id}
 
   - title: "Bastion Instance"
     variables:
@@ -264,6 +270,9 @@ outputs:
   jdk_version:
     type: link
     title: JDK Version
+  rms_private_endpoint_id:
+    type: ocid
+    title: Resource Manager Private Endpoint
   bastion_instance_id:
     type: ocid
     title: Instance Id
@@ -318,6 +327,7 @@ outputGroups:
       - ${weblogic_version}
       - ${weblogic_instances}
       - ${jdk_version}
+      - ${rms_private_endpoint_id}
   - title: Networking
     outputs:
       - ${virtual_cloud_network_id}
@@ -944,9 +954,65 @@ variables:
                     - ${subnet_type}
                     - "Use Public Subnet"
     type: boolean
-    default: true
+    default: false
     title: "Provision Bastion Instance"
-    description: "Provision a bastion compute instance on a public subnet to provide access to the WebLogic Server compute instances on a private subnet. If not selected, you must check the status of the compute instances after the stack job is complete."
+    description: "Provision a bastion compute instance on a public subnet to provide access to the WebLogic Server compute instances on a private subnet. If this and resource manager private endpoint are not selected, you must check the status of domain creation on the compute instance using /u01/logs/provisioning.log file, and any failures during domain creation are reported."
+
+  is_rms_private_endpoint_required:
+    visible:
+      and: 
+        - ${orm_create_mode}
+        - and:
+            - not:
+                - ${create_new_subnets}
+            - not:
+                - ${create_new_vcn}
+            - not:
+                - eq: 
+                    - ${subnet_type}
+                    - "Use Public Subnet"
+    type: boolean
+    default: true
+    title: "Use Resource Manager Private Endpoint"
+    description: "Provision a resource manager private endpoint on a private subnet to check the provisioning status of the private resources. If this and bastion are not selected, you must check the status of domain creation on the compute instance using /u01/logs/provisioning.log file, and any failures during domain creation are reported."
+    
+  add_rms_private_endpoint:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${is_rms_private_endpoint_required}
+        - not:
+            - ${create_new_subnets}
+        - not:
+            - ${create_new_vcn}
+    type: enum
+    enum:
+      - "Use Existing Resource Manager Endpoint"
+      - "Create New Resource Manager Endpoint"
+    default: "Use Existing Resource Manager Endpoint"
+    title: "Create or Use Existing Resource Manager Endpoint"
+    description: "Configure a new or existing resource manager private endpoint."
+    required: true
+
+  rms_existing_private_endpoint_id:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${is_rms_private_endpoint_required}
+        - not:
+           - ${create_new_subnets}
+        - not:
+           - ${create_new_vcn}
+        - eq:
+           - ${add_rms_private_endpoint}
+           - "Use Existing Resource Manager Endpoint"
+    dependsOn:
+      compartmentId: ${network_compartment_id}
+      vcnId: ${wls_existing_vcn_id}
+    type: oci:resourcemanager:privateendpoint:id
+    required: true
+    title: "Resource Manager Private Endpoint"
+    description: "Resource manager private endpoint for private access."
 
   is_bastion_with_reserved_public_ip:
     visible:
@@ -1838,7 +1904,7 @@ variables:
             - ${use_autoscaling}
     type: string
     title: "Registry User Name"
-    description: "The user name to access the Oracle Cloud Infrastructure Registry (OCIR) for deploying autoscaling OCI functions"
+    description: "The user name to access the Oracle Cloud Infrastructure Registry (OCIR) for deploying autoscaling OCI functions, which has the format {identity domain name}/{username}. If your tenancy is using Oracle Identity Cloud Service, use the format oracleidentitycloudservice/{username}."
     required: true
 
   ocir_auth_token_compartment_id:

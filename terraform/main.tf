@@ -72,7 +72,7 @@ module "network-vcn-config" {
   create_load_balancer         = local.add_load_balancer
   resource_name_prefix         = local.service_name_prefix
   bastion_subnet_cidr          = local.bastion_subnet_cidr
-  is_bastion_instance_required = var.is_bastion_instance_required
+  is_bastion_instance_required = local.is_bastion_instance_required
   existing_bastion_instance_id = var.existing_bastion_instance_id
   vcn_cidr                     = var.wls_vcn_name == "" ? data.oci_core_vcn.wls_vcn[0].cidr_block : element(concat(module.network-vcn.*.vcn_cidr, tolist([""])), 0)
   existing_mt_subnet_id        = var.mount_target_subnet_id
@@ -116,7 +116,7 @@ module "network-lb-nsg" {
 
 module "network-bastion-nsg" {
   source         = "./modules/network/nsg"
-  count          = var.is_bastion_instance_required && var.existing_bastion_instance_id == "" && !local.use_existing_subnets && local.bastion_subnet_cidr != "" ? 1 : 0
+  count          = local.is_bastion_instance_required && var.existing_bastion_instance_id == "" && !local.use_existing_subnets && local.bastion_subnet_cidr != "" ? 1 : 0
   compartment_id = local.network_compartment_id
   vcn_id         = local.vcn_id
   nsg_name       = "${local.service_name_prefix}-bastion-nsg"
@@ -190,13 +190,13 @@ module "network-lb-subnet-1" {
 /* Create back end subnet for bastion subnet */
 module "network-bastion-subnet" {
   source             = "./modules/network/subnet"
-  count              = !local.assign_weblogic_public_ip && var.bastion_subnet_id == "" && var.is_bastion_instance_required && var.existing_bastion_instance_id == "" ? 1 : 0
+  count              = !local.assign_weblogic_public_ip && var.bastion_subnet_id == "" && local.is_bastion_instance_required && var.existing_bastion_instance_id == "" ? 1 : 0
   compartment_id     = local.network_compartment_id
   vcn_id             = local.vcn_id
   dhcp_options_id    = length(module.network-vcn-config) > 0 ? module.network-vcn-config[0].dhcp_options_id : ""
   route_table_id     = length(module.network-vcn-config) > 0 ? module.network-vcn-config[0].route_table_id : ""
   subnet_name        = "${local.service_name_prefix}-${var.bastion_subnet_name}"
-  dns_label          = "${var.bastion_subnet_name}-${substr(uuid(), -7, -1)}"
+  dns_label          = local.is_bastion_instance_required && local.is_rms_private_endpoint_required ? format("%s-%s", var.bastion_subnet_name, substr(strrev(var.service_name), 0, 7)) : "${var.bastion_subnet_name}-${substr(uuid(), -7, -1)}"
   cidr_block         = local.bastion_subnet_cidr
   prohibit_public_ip = false
 
@@ -223,28 +223,29 @@ module "policies" {
     defined_tags  = local.defined_tags
     freeform_tags = local.free_form_tags
   }
-  atp_db                      = local.atp_db
-  oci_db                      = local.oci_db
-  vcn_id                      = element(concat(module.network-vcn[*].vcn_id, [""]), 0)
-  wls_existing_vcn_id         = var.wls_existing_vcn_id
-  is_idcs_selected            = var.is_idcs_selected
-  idcs_client_secret_id       = var.idcs_client_secret_id
-  use_oci_logging             = var.use_oci_logging
-  use_apm_service             = local.use_apm_service
-  apm_domain_compartment_id   = local.apm_domain_compartment_id
-  use_autoscaling             = var.use_autoscaling
-  ocir_auth_token_id          = var.ocir_auth_token_id
-  add_fss                     = var.add_fss
-  add_load_balancer           = local.add_load_balancer
-  fss_compartment_id          = var.fss_compartment_id == "" ? var.compartment_ocid : var.fss_compartment_id
-  mount_target_compartment_id = var.mount_target_compartment_id == "" ? var.compartment_ocid : var.mount_target_compartment_id
-}
+  atp_db                           = local.atp_db
+  oci_db                           = local.oci_db
+  vcn_id                           = element(concat(module.network-vcn[*].vcn_id, [""]), 0)
+  wls_existing_vcn_id              = var.wls_existing_vcn_id
+  is_idcs_selected                 = var.is_idcs_selected
+  idcs_client_secret_id            = var.idcs_client_secret_id
+  use_oci_logging                  = var.use_oci_logging
+  use_apm_service                  = local.use_apm_service
+  apm_domain_compartment_id        = local.apm_domain_compartment_id
+  use_autoscaling                  = var.use_autoscaling
+  ocir_auth_token_id               = var.ocir_auth_token_id
+  add_fss                          = var.add_fss
+  add_load_balancer                = local.add_load_balancer
+  fss_compartment_id               = var.fss_compartment_id == "" ? var.compartment_ocid : var.fss_compartment_id
+  mount_target_compartment_id      = var.mount_target_compartment_id == "" ? var.compartment_ocid : var.mount_target_compartment_id
+  is_rms_private_endpoint_required = local.is_rms_private_endpoint_required
 
+}
 
 module "bastion" {
   #depends_on          = [module.network-validation]
   source              = "./modules/compute/bastion"
-  count               = (!local.assign_weblogic_public_ip && var.is_bastion_instance_required && var.existing_bastion_instance_id == "") ? 1 : 0
+  count               = (!local.assign_weblogic_public_ip && local.is_bastion_instance_required && var.existing_bastion_instance_id == "") ? 1 : 0
   availability_domain = local.bastion_availability_domain
   bastion_subnet_id   = var.bastion_subnet_id != "" ? var.bastion_subnet_id : module.network-bastion-subnet[0].subnet_id
 
@@ -349,8 +350,8 @@ module "vcn-peering" {
 
 module "validators" {
   #depends_on = [module.network-validation]
-  source     = "./modules/validators"
-
+  source                     = "./modules/validators"
+  compartment_id             = var.compartment_ocid
   service_name               = var.service_name
   wls_ms_port                = var.wls_ms_extern_port
   wls_ms_ssl_port            = var.wls_ms_extern_ssl_port
@@ -394,7 +395,7 @@ module "validators" {
   lb_subnet_1_cidr             = var.lb_subnet_1_cidr
   bastion_subnet_cidr          = local.bastion_subnet_cidr
   assign_public_ip             = local.assign_weblogic_public_ip
-  is_bastion_instance_required = var.is_bastion_instance_required
+  is_bastion_instance_required = local.is_bastion_instance_required
   existing_bastion_instance_id = var.existing_bastion_instance_id
   bastion_ssh_private_key      = var.bastion_ssh_private_key
 
@@ -468,8 +469,8 @@ module "validators" {
 
 module "fss" {
   #depends_on = [module.network-validation]
-  source     = "./modules/fss"
-  count      = var.add_fss ? 1 : 0
+  source = "./modules/fss"
+  count  = var.add_fss ? 1 : 0
 
   compartment_id      = var.compartment_ocid
   availability_domain = local.fss_availability_domain
@@ -491,8 +492,8 @@ module "fss" {
 
 module "load-balancer" {
   #depends_on = [module.network-validation]
-  source     = "./modules/lb/loadbalancer"
-  count      = (local.add_load_balancer && var.existing_load_balancer_id == "") ? 1 : 0
+  source = "./modules/lb/loadbalancer"
+  count  = (local.add_load_balancer && var.existing_load_balancer_id == "") ? 1 : 0
 
   compartment_id           = local.network_compartment_id
   lb_reserved_public_ip_id = compact([var.lb_reserved_public_ip_id])
@@ -510,10 +511,26 @@ module "load-balancer" {
   }
 }
 
+module "rms-private-endpoint" {
+  source = "./modules/rms-private-endpoint"
+  count  = local.is_rms_private_endpoint_required && local.add_new_rms_private_endpoint ? 1 : 0
+
+  vcn_id                     = local.vcn_id
+  compartment_id             = local.network_compartment_id
+  private_endpoint_subnet_id = var.wls_subnet_id != "" ? var.wls_subnet_id : element(concat(module.network-wls-private-subnet[*].subnet_id, [""]), 0)
+  private_endpoint_nsg_id    = var.wls_subnet_id != "" ? (var.add_existing_nsg ? [var.existing_admin_server_nsg_id] : []) : element(module.network-compute-admin-nsg[*].nsg_id, 0)
+  resource_name_prefix       = var.service_name
+
+  tags = {
+    defined_tags  = local.defined_tags
+    freeform_tags = local.free_form_tags
+  }
+}
+
 module "observability-common" {
   #depends_on = [module.network-validation]
-  source     = "./modules/observability/common"
-  count      = var.use_oci_logging ? 1 : 0
+  source = "./modules/observability/common"
+  count  = var.use_oci_logging ? 1 : 0
 
   compartment_id      = var.compartment_ocid
   service_prefix_name = local.service_name_prefix
@@ -522,8 +539,8 @@ module "observability-common" {
 
 module "observability-autoscaling" {
   #depends_on = [module.network-validation]
-  source     = "./modules/observability/autoscaling"
-  count      = var.use_autoscaling ? 1 : 0
+  source = "./modules/observability/autoscaling"
+  count  = var.use_autoscaling ? 1 : 0
 
   compartment_id        = var.compartment_ocid
   metric_compartment_id = local.apm_domain_compartment_id
@@ -608,7 +625,7 @@ module "compute" {
 
   deploy_sample_app = local.deploy_sample_app
 
-  is_bastion_instance_required = var.is_bastion_instance_required
+  is_bastion_instance_required = local.is_bastion_instance_required
 
   is_idcs_selected      = var.is_idcs_selected
   idcs_host             = var.idcs_host
@@ -683,8 +700,8 @@ module "compute" {
 
 module "load-balancer-backends" {
   #depends_on = [module.network-validation]
-  source     = "./modules/lb/backends"
-  count      = local.add_load_balancer ? 1 : 0
+  source = "./modules/lb/backends"
+  count  = local.add_load_balancer ? 1 : 0
 
   resource_name_prefix = local.service_name_prefix
   load_balancer_id     = local.add_load_balancer ? (var.existing_load_balancer_id != "" ? var.existing_load_balancer_id : element(coalescelist(module.load-balancer[*].wls_loadbalancer_id, [""]), 0)) : ""
@@ -698,8 +715,8 @@ module "load-balancer-backends" {
 
 module "observability-logging" {
   #depends_on = [module.network-validation]
-  source     = "./modules/observability/logging"
-  count      = var.use_oci_logging ? 1 : 0
+  source = "./modules/observability/logging"
+  count  = var.use_oci_logging ? 1 : 0
 
   compartment_id                        = var.compartment_ocid
   oci_managed_instances_principal_group = element(concat(module.policies[*].oci_managed_instances_principal_group, [""]), 0)
@@ -716,16 +733,18 @@ module "observability-logging" {
 
 module "provisioners" {
   #depends_on = [module.network-validation]
-  source     = "./modules/provisioners"
+  source = "./modules/provisioners"
 
-  existing_bastion_instance_id = var.existing_bastion_instance_id
-  host_ips                     = coalescelist(compact(module.compute.instance_public_ips), compact(module.compute.instance_private_ips), [""])
-  num_vm_instances             = var.wls_node_count
-  ssh_private_key              = module.compute.ssh_private_key_opc
-  assign_public_ip             = local.assign_weblogic_public_ip
-  bastion_host                 = local.assign_weblogic_public_ip || !var.is_bastion_instance_required ? "" : var.existing_bastion_instance_id == "" ? module.bastion[0].public_ip : data.oci_core_instance.existing_bastion_instance[0].public_ip
-  bastion_host_private_key     = local.assign_weblogic_public_ip || !var.is_bastion_instance_required ? "" : var.existing_bastion_instance_id == "" ? module.bastion[0].bastion_private_ssh_key : file(var.bastion_ssh_private_key)
-  is_bastion_instance_required = var.is_bastion_instance_required
+  existing_bastion_instance_id     = var.existing_bastion_instance_id
+  host_ips                         = coalescelist(compact(module.compute.instance_public_ips), compact(module.compute.instance_private_ips), [""])
+  num_vm_instances                 = var.wls_node_count
+  ssh_private_key                  = module.compute.ssh_private_key_opc
+  is_rms_private_endpoint_required = local.is_rms_private_endpoint_required
+  rms_private_endpoint_id          = local.is_rms_private_endpoint_required ? local.add_new_rms_private_endpoint ? module.rms-private-endpoint[0].rms_private_endpoint_id : var.rms_existing_private_endpoint_id : ""
+  assign_public_ip                 = local.assign_weblogic_public_ip
+  bastion_host                     = local.assign_weblogic_public_ip || !local.is_bastion_instance_required ? "" : var.existing_bastion_instance_id == "" ? module.bastion[0].public_ip : data.oci_core_instance.existing_bastion_instance[0].public_ip
+  bastion_host_private_key         = local.assign_weblogic_public_ip || !local.is_bastion_instance_required ? "" : var.existing_bastion_instance_id == "" ? module.bastion[0].bastion_private_ssh_key : file(var.bastion_ssh_private_key)
+  is_bastion_instance_required     = local.is_bastion_instance_required
 
   mode                             = var.mode
   wlsoci_vmscripts_zip_bundle_path = var.wlsoci_vmscripts_zip_bundle_path
