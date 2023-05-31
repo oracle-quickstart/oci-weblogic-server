@@ -152,9 +152,9 @@ locals {
 
   ocir_namespace = data.oci_objectstorage_namespace.object_namespace.namespace
 
-  ocir_namespace_with_slash = format("%s/",local.ocir_namespace)
-  ocir_user_starts_with = substr(var.ocir_user, 0, length(local.ocir_namespace_with_slash))
-  ocir_user =  local.ocir_user_starts_with == local.ocir_namespace_with_slash ? var.ocir_user :  "${format("%s%s", local.ocir_namespace_with_slash, var.ocir_user)}"
+  ocir_namespace_with_slash = format("%s/", local.ocir_namespace)
+  ocir_user_starts_with     = substr(var.ocir_user, 0, length(local.ocir_namespace_with_slash))
+  ocir_user                 = local.ocir_user_starts_with == local.ocir_namespace_with_slash ? var.ocir_user : "${format("%s%s", local.ocir_namespace_with_slash, var.ocir_user)}"
 
   region_keys         = data.oci_identity_regions.all_regions.regions.*.key
   region_names        = data.oci_identity_regions.all_regions.regions.*.name
@@ -181,7 +181,7 @@ locals {
   is_bastion_instance_required = (var.is_bastion_instance_required && var.subnet_type != "Use Public Subnet") || var.wls_existing_vcn_id == "" || (var.wls_existing_vcn_id != "" && var.wls_subnet_id == "") ? true : false
 
   # Resource Manager Endpoint
-  add_new_rms_private_endpoint      = var.is_rms_private_endpoint_required && var.add_rms_private_endpoint == "Create New Resource Manager Endpoint" ? true : false
-  add_existing_rms_private_endpoint = var.is_rms_private_endpoint_required && var.add_rms_private_endpoint == "Use Existing Resource Manager Endpoint" ? true : false
-  is_rms_private_endpoint_required  = var.is_rms_private_endpoint_required && var.wls_existing_vcn_id != "" && var.wls_subnet_id != "" && var.subnet_type != "Use Public Subnet" ? true : false
+  is_rms_private_endpoint_required  = var.is_rms_private_endpoint_required && var.wls_existing_vcn_id != "" && var.wls_subnet_id != "" && !local.assign_weblogic_public_ip ? true : false
+  add_new_rms_private_endpoint      = local.is_rms_private_endpoint_required && var.add_rms_private_endpoint == "Create New Resource Manager Endpoint" ? true : false
+  add_existing_rms_private_endpoint = local.is_rms_private_endpoint_required && var.add_rms_private_endpoint == "Use Existing Resource Manager Endpoint" ? true : false
 }

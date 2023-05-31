@@ -348,7 +348,7 @@ module "vcn-peering" {
 
 module "validators" {
   #depends_on = [module.network-validation]
-  source     = "./modules/validators"
+  source                     = "./modules/validators"
   compartment_id             = var.compartment_ocid
   service_name               = var.service_name
   wls_ms_port                = var.wls_ms_extern_port
