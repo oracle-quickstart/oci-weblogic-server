@@ -239,7 +239,6 @@ module "policies" {
   fss_compartment_id               = var.fss_compartment_id == "" ? var.compartment_ocid : var.fss_compartment_id
   mount_target_compartment_id      = var.mount_target_compartment_id == "" ? var.compartment_ocid : var.mount_target_compartment_id
   is_rms_private_endpoint_required = local.is_rms_private_endpoint_required
-
 }
 
 module "bastion" {
