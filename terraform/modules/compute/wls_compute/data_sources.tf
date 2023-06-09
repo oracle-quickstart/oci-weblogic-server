@@ -52,7 +52,7 @@ data "oci_database_autonomous_database" "atp_db" {
 }
 
 data "template_file" "atp_nsg_id" {
-  count    = local.is_atp_db ? 1 : 0
+  count    = local.is_atp_db && !local.is_db_deleted ? 1 : 0
   template = length(data.oci_database_autonomous_database.atp_db[0].nsg_ids) > 0 ? data.oci_database_autonomous_database.atp_db[0].nsg_ids[0] : ""
 }
 
@@ -76,6 +76,6 @@ data "oci_database_database" "ocidb_database" {
 }
 
 data "oci_database_db_home" "ocidb_db_home" {
-  count      = local.is_ocidb_system_id_available ? 1 : 0
+  count      = local.is_ocidb_system_id_available && !local.is_db_deleted ? 1 : 0
   db_home_id = data.oci_database_database.ocidb_database[0].db_home_id
 }
