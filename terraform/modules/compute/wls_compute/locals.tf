@@ -28,4 +28,6 @@ locals {
   db_options            = try(lookup(data.oci_database_db_systems.ocidb_db_systems[0].db_systems[0], "db_system_options", []), [])
   db_storage_management = try(lookup(local.db_options[0], "storage_management", "ASM"), "ASM")
 
+  is_db_deleted = local.apply_JRF ? (local.is_atp_db ? (data.oci_database_autonomous_database.atp_db[0].id == null ? true : false) : (data.oci_database_database.ocidb_database[0].id == null ? true : false)) : false
+
 }
