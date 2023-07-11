@@ -72,11 +72,12 @@ function in_cidr_range() {
 
   subnet_ip=$(echo "${cidr_subnet}" | cut -d'/' -f1)
   cidr_mask=$(echo "${cidr_subnet}" | cut -d'/' -f2)
+  ip_addr_ip=$(echo "${ip_addr}" | cut -d'/' -f1)
 
   netmask=$(( 0xFFFFFFFF << $(( 32 - ${cidr_mask} )) ))
 
   # Apply netmask to both the subnet IP and the given IP address
-  ip_addr_subnet=$(( netmask & $(ip_to_int ${ip_addr}) ))
+  ip_addr_subnet=$(( netmask & $(ip_to_int ${ip_addr_ip}) ))
   subnet=$(( netmask & $(ip_to_int ${subnet_ip}) ))
 
   # Subnet IPs will match if given IP address is in CIDR subnet
