@@ -10,8 +10,8 @@ variable "wls_network_compartment_id" {
   type        = string
   description = "The OCID of the compartment for the network resources, like VCN, for the WebLogic servers"
   validation {
-    condition     = length(regexall("^ocid1.compartment.*$", var.wls_network_compartment_id)) > 0
-    error_message = "WLSC-ERROR: The value for wls_network_compartment_id should start with \"ocid1.compartment.\"."
+    condition     = length(regexall("^ocid1.compartment.*$", var.wls_network_compartment_id)) > 0 || length(regexall("^ocid1.tenancy.*$", var.wls_network_compartment_id)) > 0
+    error_message = "WLSC-ERROR: The value for wls_network_compartment_id should start with \"ocid1.compartment.\" or \"ocid1.tenancy.\"."
   }
 }
 

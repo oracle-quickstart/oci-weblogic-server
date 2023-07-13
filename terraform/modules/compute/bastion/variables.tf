@@ -18,8 +18,8 @@ variable "compartment_id" {
   type        = string
   description = "The OCID of the compartment where the bastion instance will be created"
   validation {
-    condition     = length(regexall("^ocid1.compartment.*$", var.compartment_id)) > 0
-    error_message = "WLSC-ERROR: The value for compartment_id should start with \"ocid1.compartment.\"."
+    condition     = length(regexall("^ocid1.compartment.*$", var.compartment_id)) > 0 || length(regexall("^ocid1.tenancy.*$", var.compartment_id)) > 0
+    error_message = "WLSC-ERROR: The value for compartment_id should start with \"ocid1.compartment.\" or \"ocid1.tenancy.\"."
   }
 }
 

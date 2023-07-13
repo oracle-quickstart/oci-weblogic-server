@@ -200,8 +200,8 @@ variable "oci_db_compartment_id" {
   type        = string
   description = "The OCID of the compartment where the OCI database is located, if JRF with OCI DB is used"
   validation {
-    condition     = var.oci_db_compartment_id == "" || length(regexall("^ocid1.compartment.*$", var.oci_db_compartment_id)) > 0
-    error_message = "WLSC-ERROR: The value for oci_db_compartment_id should be blank or start with \"ocid1.compartment.\"."
+    condition     = var.oci_db_compartment_id == "" || length(regexall("^ocid1.compartment.*$", var.oci_db_compartment_id)) > 0 || length(regexall("^ocid1.tenancy.*$", var.oci_db_compartment_id)) > 0
+    error_message = "WLSC-ERROR: The value for oci_db_compartment_id should be blank or start with \"ocid1.compartment.\" or \"ocid1.tenancy.\"."
   }
 }
 variable "db_network_compartment_id" {
@@ -279,8 +279,8 @@ variable "atp_db_compartment_id" {
   type        = string
   description = "The OCID of the compartment where the ATP database is located, if JRF with ATP is used"
   validation {
-    condition     = var.atp_db_compartment_id == "" || length(regexall("^ocid1.compartment.*$", var.atp_db_compartment_id)) > 0
-    error_message = "WLSC-ERROR: The value for atp_db_compartment_id should be blank or start with \"ocid1.compartment.\"."
+    condition     = var.atp_db_compartment_id == "" || length(regexall("^ocid1.compartment.*$", var.atp_db_compartment_id)) > 0 || length(regexall("^ocid1.tenancy.*$", var.atp_db_compartment_id)) > 0
+    error_message = "WLSC-ERROR: The value for atp_db_compartment_id should be blank or start with \"ocid1.compartment.\" or \"ocid1.tenancy.\"."
   }
 }
 
@@ -348,8 +348,8 @@ variable "mount_target_compartment_id" {
   type        = string
   description = "The OCID of the compartment where the mount target exists"
   validation {
-    condition     = var.mount_target_compartment_id == "" || length(regexall("^ocid1.compartment.*$", var.mount_target_compartment_id)) > 0
-    error_message = "WLSC-ERROR: The value for mount_target_compartment_id should be blank or start with \"ocid1.compartment.\"."
+    condition     = var.mount_target_compartment_id == "" || length(regexall("^ocid1.compartment.*$", var.mount_target_compartment_id)) > 0 || length(regexall("^ocid1.tenancy.*$", var.mount_target_compartment_id)) > 0
+    error_message = "WLSC-ERROR: The value for mount_target_compartment_id should be blank or start with \"ocid1.compartment.\" or \"ocid1.tenancy.\"."
   }
 }
 
