@@ -14,8 +14,8 @@ variable "compartment_id" {
   type        = string
   description = "The OCID of the compartment for the matching rule of dynamic group"
   validation {
-    condition     = length(regexall("^ocid1.compartment.*$", var.compartment_id)) > 0
-    error_message = "WLSC-ERROR: The value for compartment_id should start with \"ocid1.compartment.\"."
+    condition     = length(regexall("^ocid1.compartment.*$", var.compartment_id)) > 0 || length(regexall("^ocid1.tenancy.*$", var.compartment_id)) > 0
+    error_message = "WLSC-ERROR: The value for compartment_id should start with \"ocid1.compartment.\" or \"ocid1.tenancy.\"."
   }
 }
 
@@ -23,8 +23,8 @@ variable "network_compartment_id" {
   type        = string
   description = "The OCID of the compartment where the network resources like VCN are located"
   validation {
-    condition     = length(regexall("^ocid1.compartment.*$", var.network_compartment_id)) > 0
-    error_message = "WLSC-ERROR: The value for network_compartment_id should start with \"ocid1.compartment.\"."
+    condition     = length(regexall("^ocid1.compartment.*$", var.network_compartment_id)) > 0 || length(regexall("^ocid1.tenancy.*$", var.network_compartment_id)) > 0
+    error_message = "WLSC-ERROR: The value for network_compartment_id should start with \"ocid1.compartment.\" or \"ocid1.tenancy.\"."
   }
 }
 
@@ -32,8 +32,8 @@ variable "fss_compartment_id" {
   type        = string
   description = "The OCID of the compartment where the file system exists"
   validation {
-    condition     = length(regexall("^ocid1.compartment.*$", var.fss_compartment_id)) > 0
-    error_message = "WLSC-ERROR: The value for fss_compartment_id should start with \"ocid1.compartment.\"."
+    condition     = length(regexall("^ocid1.compartment.*$", var.fss_compartment_id)) > 0 || length(regexall("^ocid1.tenancy.*$", var.fss_compartment_id)) > 0
+    error_message = "WLSC-ERROR: The value for fss_compartment_id should start with \"ocid1.compartment.\" or \"ocid1.tenancy.\"."
   }
 }
 
@@ -41,8 +41,8 @@ variable "mount_target_compartment_id" {
   type        = string
   description = "The OCID of the compartment where the mount target exists"
   validation {
-    condition     = length(regexall("^ocid1.compartment.*$", var.mount_target_compartment_id)) > 0
-    error_message = "WLSC-ERROR: The value for mount_target_compartment_id should start with \"ocid1.compartment.\"."
+    condition     = length(regexall("^ocid1.compartment.*$", var.mount_target_compartment_id)) > 0 || length(regexall("^ocid1.tenancy.*$", var.mount_target_compartment_id)) > 0
+    error_message = "WLSC-ERROR: The value for mount_target_compartment_id should start with \"ocid1.compartment.\" or \"ocid1.tenancy.\"."
   }
 }
 
