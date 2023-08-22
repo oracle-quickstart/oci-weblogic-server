@@ -44,6 +44,10 @@ resource "oci_load_balancer_listener" "wls_lb_listener_https" {
     certificate_name        = oci_load_balancer_certificate.demo_certificate[count.index].certificate_name
     verify_peer_certificate = false
   }
+
+  lifecycle {
+    ignore_changes = [ssl_configuration]
+  }
 }
 
 resource "oci_load_balancer_backend" "wls_lb_backend" {
