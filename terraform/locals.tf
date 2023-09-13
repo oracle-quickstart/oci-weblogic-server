@@ -72,7 +72,7 @@ locals {
   new_lb_ip                  = !local.add_load_balancer || local.use_existing_lb ? "" : element(coalescelist(module.load-balancer[0].wls_loadbalancer_ip_addresses, [""]), 0)
   new_lb_id                  = element(concat(module.load-balancer[*].wls_loadbalancer_id, [""]), 0)
   existing_lb_ip             = local.use_existing_lb && local.valid_existing_lb ? local.existing_lb_object_as_list[0].ip_addresses[0] : ""
-  existing_lb_object_as_list = local.add_load_balancer ? [for lb in data.oci_load_balancer_load_balancers.existing_load_balancers_data_source.load_balancers[*] : lb if lb.id == var.existing_load_balancer_id] : []
+  existing_lb_object_as_list = local.use_existing_lb ? [for lb in data.oci_load_balancer_load_balancers.existing_load_balancers_data_source.load_balancers[*] : lb if lb.id == var.existing_load_balancer_id] : []
   valid_existing_lb          = length(local.existing_lb_object_as_list) == 1
   use_existing_lb            = local.add_load_balancer && var.existing_load_balancer_id != ""
   lb_backendset_name         = local.use_existing_lb ? var.backendset_name_for_existing_load_balancer : "${local.service_name_prefix}-lb-backendset"
