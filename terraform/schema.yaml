@@ -50,6 +50,7 @@ groupings:
       - ${atp_db_password_id}
       - ${atp_db_level}
       - ${use_oci_db_connection_string}
+      - ${oci_db_connection_string}
       - ${oci_db_compartment_id}
       - ${oci_db_dbsystem_id}
       - ${oci_db_network_compartment_id}
@@ -58,7 +59,6 @@ groupings:
       - ${oci_db_dbhome_major_version}
       - ${oci_db_database_id}
       - ${oci_db_pdb_service_name}
-      - ${oci_db_connection_string}
       - ${oci_db_user}
       - ${oci_db_secret_compartment_id}
       - ${oci_db_password_id}
@@ -1853,18 +1853,13 @@ variables:
         - ${orm_create_mode}
         - ${add_JRF}
         - and:
-            - or:
-                - ${create_new_vcn}
-                - not:
-                    - ${use_oci_db_connection_string}
-            - and:
-                - not:
-                    - eq:
-                        - ${oci_db_dbhome_major_version}
-                        - "11"
+            - not:
                 - eq:
-                    - ${db_strategy}
-                    - "Database System"
+                    - ${oci_db_dbhome_major_version}
+                    - "11"
+            - eq:
+                - ${db_strategy}
+                - "Database System"
 
     type: string
     required: true
