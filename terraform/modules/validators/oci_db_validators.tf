@@ -18,7 +18,7 @@ locals {
   missing_oci_db_compartment_id = (var.is_oci_db && !local.has_oci_db_compartment_id)
   missing_oci_db_database_id    = (var.is_oci_db && !local.has_oci_db_database_id)
 
-  missing_oci_db_pdb_service_name = (var.is_oci_db && !local.has_oci_db_pdb_service_name)
+  missing_oci_db_pdb_service_name = (var.is_oci_db || var.oci_db_connection_string != "") && !local.has_oci_db_pdb_service_name
 
   missing_oci_db_vcn_id = (var.is_oci_db && var.oci_db_existing_vcn_id == "")
 
