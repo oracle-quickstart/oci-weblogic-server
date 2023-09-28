@@ -15,6 +15,9 @@ locals {
   core_policy_statement1 = "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to use instances in compartment id ${var.compartment_id}"
   core_policy_statement2 = "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to manage volumes in compartment id ${var.compartment_id}"
   core_policy_statement3 = "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to manage volume-attachments in compartment id ${var.compartment_id}"
+  # These policy statements are required to register Compute instances with the OS Management service
+  osms_policy_statement1 = "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to read instance-family in compartment id ${var.compartment_id}"
+  osms_policy_statement2 = "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to use osms-managed-instances in compartment id ${var.compartment_id}"
   # This policy with "inspect virtual-network-family" verb is needed to read VCN information like CIDR, etc, for VCN validation
   network_policy_statement1 = var.network_compartment_id != "" ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to inspect virtual-network-family in compartment id ${var.network_compartment_id}" : ""
   secrets_policy_statement1 = "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to read secret-bundles in tenancy where target.secret.id = '${var.wls_admin_password_id}'"
@@ -35,7 +38,7 @@ locals {
   apm_domain_policy_statement = var.use_apm_service ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to use apm-domains in compartment id ${var.apm_domain_compartment_id}" : ""
   # This policy with "use load_balancer" verb is needed to create load balancer for new vcn
   lb_policy_statement = var.add_load_balancer ? length(oci_identity_dynamic_group.wlsc_instance_principal_group) > 0 ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to use load-balancers in compartment id ${var.network_compartment_id}" : "" : ""
-  service_statements = compact([local.core_policy_statement1, local.core_policy_statement2, local.core_policy_statement3, local.network_policy_statement1, local.secrets_policy_statement1, local.secrets_policy_statement2,
+  service_statements = compact([local.core_policy_statement1, local.core_policy_statement2, local.core_policy_statement3, local.osms_policy_statement1, local.osms_policy_statement2, local.network_policy_statement1, local.secrets_policy_statement1, local.secrets_policy_statement2,
     local.atp_policy_statement1, local.atp_policy_statement2, local.atp_policy_statement3, local.oci_db_policy_statement1, local.oci_db_policy_statement2, local.oci_db_policy_statement3, local.logging_policy,
     local.apm_domain_policy_statement, local.lb_policy_statement
   ])
