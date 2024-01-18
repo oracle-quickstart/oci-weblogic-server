@@ -1,8 +1,8 @@
 # Copyright (c) 2023, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
-tf_script_version        = "23.4.3-231130202436"
+tf_script_version        = "24.1.1-240117210740"
 use_marketplace_image    = true
 listing_id               = "ocid1.appcataloglisting.oc1..aaaaaaaaq2vkow7zwkxg6ky4zxsnckdlfgtgmg7i4kkyev3y6zyo72mpkgza"
-listing_resource_version = "23.4.3-ol8.8-23.09.26-231130-1"
-instance_image_id        = "ocid1.image.oc1..aaaaaaaac4hb7q5h2i7qqpsbdyhzytaigli52qyk4mtrv5eo3d3zjb6rkjkq"
+listing_resource_version = "24.1.1-ol8.8-23.12.13-240117-1"
+instance_image_id        = "ocid1.image.oc1..aaaaaaaai42ahqg2nzta7x5632b7vo5dwy5mf4gnxyu5qgqpaecatfsoq74a"
