@@ -1,4 +1,4 @@
-# Copyright (c) 2023, Oracle and/or its affiliates.
+# Copyright (c) 2023, 2024, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 variable "wls_version" {
@@ -195,5 +195,31 @@ variable "deploy_sample_app" {
   type        = bool
   description = "Set to true to install a sample application in the WebLogic domain"
   default     = true
+}
+
+variable "configure_secure_mode" {
+  type        = bool
+  description = "Set to true to configure a secure WebLogic domain"
+  default     = true
+}
+
+variable "keystore_password_id" {
+  type        = string
+  description = "The OCID of the vault secret with the password for creating the keystore"
+  default     = ""
+  validation {
+    condition     = length(regexall("^ocid1.vaultsecret.", var.keystore_password_id)) > 0
+    error_message = "WLSC-ERROR: The value for keystore_password_id should start with \"ocid1.vaultsecret.\"."
+  }
+}
+
+variable "root_ca_id" {
+  type        = string
+  description = "The OCID of the existing root certificate authority to issue the certificates"
+  default     = ""
+  validation {
+    condition     = length(regexall("^ocid1.certificateauthority.", var.root_ca_id)) > 0
+    error_message = "WLSC-ERROR: The value for keystore_password_id should start with \"ocid1.certificateauthority.\"."
+  }
 }
 

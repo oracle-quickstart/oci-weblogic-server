@@ -1,4 +1,4 @@
-# Copyright (c) 2023, Oracle and/or its affiliates.
+# Copyright (c) 2023, 2024, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 title: Oracle WebLogic Server for Oracle Cloud Infrastructure
@@ -20,6 +20,7 @@ groupings:
       - ${use_apm_service}
       - ${use_autoscaling}
       - ${add_fss}
+      - ${configure_secure_mode}
 
   - title: "Virtual Cloud Networking"
     variables:
@@ -38,6 +39,8 @@ groupings:
       - ${wls_admin_user}
       - ${wls_admin_secret_compartment_id}
       - ${wls_admin_password_id}
+      - ${keystore_password_id}
+      - ${root_ca_id}
       - ${add_JRF}
       #Start of JRF fields
       - ${db_strategy}
@@ -772,6 +775,41 @@ variables:
     title: "Existing Network Security Groups"
     description: "Use existing Network Security Groups (NSG) for existing subnets"
 
+  # Secure Production Mode variables
+  configure_secure_mode:
+    visible: ${orm_create_mode}
+    type: boolean
+    required: true
+    default: true
+    title: "Enable Secure Production Mode"
+    description: "Configure a secure domain"
+
+  keystore_password_id:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - and:
+            - ${configure_secure_mode}
+    type: "oci:kms:secret:id"
+    minLength: 1
+    maxLength: 1024
+    required: true
+    title: "Validated Secret for Keystore password"
+    description: "The secret that contains the keystore password. To create secrets, see <a target=\"_blank\" href=\"https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/you-begin-oracle-weblogic-cloud.html#GUID-0517A019-4A89-40ED-A568-DD2193733F8B\"> Create Secrets for Passwords</a>."
+    dependsOn:
+      compartmentId: ${wls_admin_secret_compartment_id}
+
+  root_ca_id:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - and:
+            - ${configure_secure_mode}
+    type: string
+    pattern: ^ocid1.certificateauthority.*$
+    required: true
+    title: "Existing Root Certificate Authority ID"
+    description: "The OCID of the existing root certificate authority to issue the certificates"
 
   # WLS Network Configuration
   wls_vcn_name:
