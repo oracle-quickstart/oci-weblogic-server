@@ -604,11 +604,15 @@ module "compute" {
   wls_machine_name          = format("%s_machine_", local.service_name_prefix)
   wls_extern_admin_port     = var.wls_extern_admin_port
   wls_extern_ssl_admin_port = var.wls_extern_ssl_admin_port
-  wls_admin_port            = var.wls_admin_port
+  wls_admin_port            = local.wls_admin_port
   wls_admin_ssl_port        = var.wls_admin_ssl_port
   wls_domain_name           = format("%s_domain", local.service_name_prefix)
   wls_server_startup_args   = var.wls_server_startup_args
   wls_existing_vcn_id       = var.wls_existing_vcn_id
+
+  configure_secure_mode  = var.configure_secure_mode
+  keystore_password_id   = local.keystore_password_id
+  root_ca_id             = local.root_ca_id
 
   #The following two are for adding a dependency on the peering module
   wls_vcn_peering_dns_resolver_id           = element(flatten(concat(module.vcn-peering[*].wls_vcn_dns_resolver_id, [""])), 0)

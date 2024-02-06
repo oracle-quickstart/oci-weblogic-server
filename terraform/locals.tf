@@ -1,4 +1,4 @@
-# Copyright (c) 2023, Oracle and/or its affiliates.
+# Copyright (c) 2023, 2024, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 locals {
@@ -184,4 +184,11 @@ locals {
   is_rms_private_endpoint_required  = var.is_rms_private_endpoint_required && var.wls_existing_vcn_id != "" && var.wls_subnet_id != "" && !local.assign_weblogic_public_ip ? true : false
   add_new_rms_private_endpoint      = local.is_rms_private_endpoint_required && var.add_rms_private_endpoint == "Create New Resource Manager Endpoint" ? true : false
   add_existing_rms_private_endpoint = local.is_rms_private_endpoint_required && var.add_rms_private_endpoint == "Use Existing Resource Manager Endpoint" ? true : false
+
+  # Secure Production Mode
+  # TODO: replace 9002 with administration port variable : JCS-14313
+  wls_admin_port           = var.configure_secure_mode ? 9002 : var.wls_admin_port
+  keystore_password_id     = var.configure_secure_mode ? var.keystore_password_id : ""
+  root_ca_id               = var.configure_secure_mode ? var.root_ca_id : ""
+  wls_domain_configuration = var.configure_secure_mode ? "Secured Production Mode" : "Production Mode"
 }
