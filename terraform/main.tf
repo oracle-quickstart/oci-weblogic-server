@@ -66,6 +66,7 @@ module "network-vcn-config" {
   wls_admin_port_source_cidr = var.wls_admin_port_source_cidr
   wls_ms_content_port        = local.add_load_balancer ? (var.is_idcs_selected ? var.idcs_cloudgate_port : var.wls_ms_extern_port) : var.wls_ms_extern_ssl_port
   assign_backend_public_ip   = local.assign_weblogic_public_ip
+  configure_secure_mode      = var.configure_secure_mode
 
   wls_subnet_cidr              = local.wls_subnet_cidr
   wls_ms_source_cidrs          = local.add_load_balancer ? [local.lb_subnet_1_subnet_cidr] : ["0.0.0.0/0"]
@@ -239,6 +240,7 @@ module "policies" {
   fss_compartment_id               = var.fss_compartment_id == "" ? var.compartment_ocid : var.fss_compartment_id
   mount_target_compartment_id      = var.mount_target_compartment_id == "" ? var.compartment_ocid : var.mount_target_compartment_id
   is_rms_private_endpoint_required = local.is_rms_private_endpoint_required
+  configure_secure_mode            = var.configure_secure_mode
 }
 
 module "bastion" {

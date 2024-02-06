@@ -93,7 +93,7 @@ locals {
   deploy_sample_app = (var.deploy_sample_app && var.wls_edition != "SE")
 
   admin_ip_address      = local.assign_weblogic_public_ip ? module.compute.instance_public_ips[0] : module.compute.instance_private_ips[0]
-  admin_console_app_url = format("https://%s:%s/console", local.admin_ip_address, var.wls_extern_ssl_admin_port)
+  admin_console_app_url = format("https://%s:%s/console", local.admin_ip_address, local.wls_extern_ssl_admin_port)
   sample_app_protocol   = local.add_load_balancer ? "https" : "http"
   sample_app_url_lb_ip  = local.deploy_sample_app && local.add_load_balancer ? format("%s://%s/sample-app", local.sample_app_protocol, local.lb_ip) : ""
   sample_app_url_wls_ip = local.deploy_sample_app ? format("https://%s:%s/sample-app", local.admin_ip_address, var.wls_ms_extern_ssl_port) : ""
@@ -187,8 +187,9 @@ locals {
 
   # Secure Production Mode
   # TODO: replace 9002 with administration port variable : JCS-14313
-  wls_admin_port           = var.configure_secure_mode ? 9002 : var.wls_admin_port
-  keystore_password_id     = var.configure_secure_mode ? var.keystore_password_id : ""
-  root_ca_id               = var.configure_secure_mode ? var.root_ca_id : ""
-  wls_domain_configuration = var.configure_secure_mode ? "Secured Production Mode" : "Production Mode"
+  wls_admin_port            = var.configure_secure_mode ? 9002 : var.wls_admin_port
+  keystore_password_id      = var.configure_secure_mode ? var.keystore_password_id : ""
+  root_ca_id                = var.configure_secure_mode ? var.root_ca_id : ""
+  wls_domain_configuration  = var.configure_secure_mode ? "Secured Production Mode" : "Production Mode"
+  wls_extern_ssl_admin_port = var.configure_secure_mode ? 9002 : var.wls_extern_ssl_admin_port
 }

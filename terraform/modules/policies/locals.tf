@@ -108,8 +108,14 @@ locals {
     local.autoscaling_fss_export_sets_policy_statement
   ])
 
+  #Policies for creating wildcard certificate to configure SSL in secured production mode
+  secure_mode_statement1 = var.configure_secure_mode ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} use certificate-authority-delegates in compartment id ${var.compartment_id}" : ""
+  secure_mode_statement2 = var.configure_secure_mode ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to manage leaf-certificates in compartment id ${var.compartment_id}" : ""
+  secure_mode_statement3 = var.configure_secure_mode ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to read leaf-certificate-bundles in compartment id ${var.compartment_id} where target.leaf-certificate.bundle-type = 'CERTIFICATE_CONTENT_PUBLIC_ONLY'"  : ""
+  secure_mode_statement  = compact([local.secure_mode_statement1, local.secure_mode_statement2, local.secure_mode_statement3])
+
   #TODO: When other categories with more statements are added here, concat them with service_statements
-  policy_statements = concat(local.service_statements, local.cloning_policy_statement, local.autoscaling_statements)
+  policy_statements = concat(local.service_statements, local.cloning_policy_statement, local.autoscaling_statements, local.secure_mode_statement)
 
   reserved_ips_info = var.compartment_id == "" ? [{ id = var.resource_name_prefix }] : []
 

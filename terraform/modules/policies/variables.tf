@@ -192,3 +192,8 @@ variable "is_rms_private_endpoint_required" {
   type        = bool
   description = "Set resource manager private endpoint"
 }
+
+variable "configure_secure_mode" {
+  type        = bool
+  description = "Set to true to configure a secure WebLogic domain"
+}

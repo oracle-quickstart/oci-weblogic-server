@@ -155,8 +155,8 @@ resource "oci_core_network_security_group_security_rule" "wls_admin_bastion_ingr
 
   tcp_options {
     destination_port_range {
-      max = var.wls_extern_ssl_admin_port
-      min = var.wls_extern_ssl_admin_port
+      max = local.ssl_admin_port
+      min = local.ssl_admin_port
     }
   }
 }
@@ -173,8 +173,8 @@ resource "oci_core_network_security_group_security_rule" "wls_admin_existing_bas
 
   tcp_options {
     destination_port_range {
-      max = var.wls_extern_ssl_admin_port
-      min = var.wls_extern_ssl_admin_port
+      max = local.ssl_admin_port
+      min = local.ssl_admin_port
     }
   }
 }
