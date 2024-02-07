@@ -241,6 +241,7 @@ module "policies" {
   mount_target_compartment_id      = var.mount_target_compartment_id == "" ? var.compartment_ocid : var.mount_target_compartment_id
   is_rms_private_endpoint_required = local.is_rms_private_endpoint_required
   configure_secure_mode            = var.configure_secure_mode
+  keystore_password_id             = local.keystore_password_id
 }
 
 module "bastion" {

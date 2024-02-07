@@ -197,3 +197,8 @@ variable "configure_secure_mode" {
   type        = bool
   description = "Set to true to configure a secure WebLogic domain"
 }
+
+variable "keystore_password_id" {
+  type        = string
+  description = "The OCID of the vault secret with the password for creating the keystore"
+}
