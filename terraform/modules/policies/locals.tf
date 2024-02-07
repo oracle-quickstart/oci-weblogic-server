@@ -1,4 +1,4 @@
-# Copyright (c) 2023, Oracle and/or its affiliates.
+# Copyright (c) 2023, 2024, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 locals {
@@ -108,8 +108,16 @@ locals {
     local.autoscaling_fss_export_sets_policy_statement
   ])
 
+  #Policies for creating wildcard certificate to configure SSL in secured production mode
+  secure_mode_statement1 = var.configure_secure_mode ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to use certificate-authority-delegates in compartment id ${var.compartment_id}" : ""
+  secure_mode_statement2 = var.configure_secure_mode ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to manage leaf-certificates in compartment id ${var.compartment_id}" : ""
+  secure_mode_statement3 = var.configure_secure_mode ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to read leaf-certificate-bundles in compartment id ${var.compartment_id} where target.leaf-certificate.bundle-type = 'CERTIFICATE_CONTENT_PUBLIC_ONLY'"  : ""
+  #Policy for reading keystore password secret
+  secure_mode_secrets_policy_statement = (var.configure_secure_mode && var.keystore_password_id != "") ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to read secret-bundles in tenancy where target.secret.id = '${var.keystore_password_id}'" : ""
+  secure_mode_statement  = compact([local.secure_mode_statement1, local.secure_mode_statement2, local.secure_mode_statement3, local.secure_mode_secrets_policy_statement])
+
   #TODO: When other categories with more statements are added here, concat them with service_statements
-  policy_statements = concat(local.service_statements, local.cloning_policy_statement, local.autoscaling_statements)
+  policy_statements = concat(local.service_statements, local.cloning_policy_statement, local.autoscaling_statements, local.secure_mode_statement)
 
   reserved_ips_info = var.compartment_id == "" ? [{ id = var.resource_name_prefix }] : []
 

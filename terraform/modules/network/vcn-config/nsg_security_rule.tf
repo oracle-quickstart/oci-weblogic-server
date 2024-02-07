@@ -1,4 +1,4 @@
-# Copyright (c) 2023, Oracle and/or its affiliates.
+# Copyright (c) 2023, 2024, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 resource "oci_core_network_security_group_security_rule" "bastion_ingress_security_rule" {
@@ -155,8 +155,8 @@ resource "oci_core_network_security_group_security_rule" "wls_admin_bastion_ingr
 
   tcp_options {
     destination_port_range {
-      max = var.wls_extern_ssl_admin_port
-      min = var.wls_extern_ssl_admin_port
+      max = local.ssl_admin_port
+      min = local.ssl_admin_port
     }
   }
 }
@@ -173,8 +173,8 @@ resource "oci_core_network_security_group_security_rule" "wls_admin_existing_bas
 
   tcp_options {
     destination_port_range {
-      max = var.wls_extern_ssl_admin_port
-      min = var.wls_extern_ssl_admin_port
+      max = local.ssl_admin_port
+      min = local.ssl_admin_port
     }
   }
 }

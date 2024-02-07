@@ -1,4 +1,4 @@
-# Copyright (c) 2023, Oracle and/or its affiliates.
+# Copyright (c) 2023, 2024, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 variable "compartment_id" {
@@ -532,4 +532,19 @@ variable "lb_availability_domain_name2" {
 variable "tf_script_version" {
   type        = string
   description = "The version of the provisioning scripts located in the OCI image used to create the WebLogic compute instances"
+}
+
+variable "configure_secure_mode" {
+  type        = bool
+  description = "Set to true to configure a secure WebLogic domain"
+}
+
+variable "keystore_password_id" {
+  type        = string
+  description = "The OCID of the vault secret with the password for creating the keystore"
+}
+
+variable "root_ca_id" {
+  type        = string
+  description = "The OCID of the existing root certificate authority to issue the certificates"
 }
