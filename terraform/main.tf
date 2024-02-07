@@ -466,6 +466,10 @@ module "validators" {
   provisioned_node_count = length(data.oci_core_instances.provisioned_instances.instances.*.display_name)
   use_marketplace_image  = var.use_marketplace_image
   wls_edition            = var.wls_edition
+
+  configure_secure_mode  = var.configure_secure_mode
+  keystore_password_id   = local.keystore_password_id
+  root_ca_id             = local.root_ca_id
 }
 
 module "fss" {

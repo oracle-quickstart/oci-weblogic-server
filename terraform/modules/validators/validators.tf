@@ -60,4 +60,13 @@ locals {
   invalid_script_version  = var.mode == "PROD" && var.tf_script_version == ""
   script_version_msg      = "WLSC-ERROR: The value for tf script version cannot be empty. Please provide valid script version that matches with version on the image."
   validate_script_version = local.invalid_script_version ? local.validators_msg_map[local.script_version_msg] : null
+
+  missing_keystore_password_id          = var.configure_secure_mode && var.keystore_password_id == ""
+  keystore_password_id_required_msg     = "WLSC-ERROR: The value for keystore_password_id is required when enabling secure production mode."
+  validate_missing_keystore_password_id = local.missing_keystore_password_id ? local.validators_msg_map[local.keystore_password_id_required_msg] : null
+
+  missing_root_ca_id          = var.configure_secure_mode && var.root_ca_id == ""
+  root_ca_id_required_msg     = "WLSC-ERROR: The value for root_ca_id is required when enabling secure production mode."
+  validate_missing_root_ca_id = local.missing_root_ca_id ? local.validators_msg_map[local.root_ca_id_required_msg] : null
+
 }
