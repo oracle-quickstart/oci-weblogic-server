@@ -194,7 +194,7 @@ variable "configure_secure_mode" {
 
 variable "keystore_dir" {
   type        = string
-  description = "The directory where the pkcs12 keystores will be created in the compute instance"
+  description = "The directory where the pkcs12 keystores will be created in the compute instance when secured production mode is enabled."
   default     = "/u01/data/keystores"
 }
 
