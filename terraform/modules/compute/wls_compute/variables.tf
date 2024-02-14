@@ -192,6 +192,12 @@ variable "configure_secure_mode" {
   description = "Set to true to configure a secure WebLogic domain"
 }
 
+variable "keystore_dir" {
+  type        = string
+  description = "The directory where the pkcs12 keystores will be created in the compute instance"
+  default     = "/u01/data/keystores"
+}
+
 variable "keystore_password_id" {
   type        = string
   description = "The OCID of the vault secret with the password for creating the keystore"

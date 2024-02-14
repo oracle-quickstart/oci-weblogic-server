@@ -68,6 +68,7 @@ module "wls-instances" {
       wls_edition                        = var.wls_edition
       is_bastion_instance_required       = var.is_bastion_instance_required
       configure_secure_mode              = var.configure_secure_mode
+      keystore_dir                       = var.keystore_dir
       keystore_password_id               = var.keystore_password_id
       root_ca_id                         = var.root_ca_id
 
