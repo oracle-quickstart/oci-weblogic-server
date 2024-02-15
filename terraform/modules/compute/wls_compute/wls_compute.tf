@@ -1,4 +1,4 @@
-# Copyright (c) 2023, 2024,Oracle and/or its affiliates.
+# Copyright (c) 2023, 2024, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 module "compute-keygen" {
@@ -68,6 +68,7 @@ module "wls-instances" {
       wls_edition                        = var.wls_edition
       is_bastion_instance_required       = var.is_bastion_instance_required
       configure_secure_mode              = var.configure_secure_mode
+      keystore_dir                       = var.keystore_dir
       keystore_password_id               = var.keystore_password_id
       root_ca_id                         = var.root_ca_id
 
