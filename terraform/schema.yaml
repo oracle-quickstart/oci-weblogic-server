@@ -72,6 +72,8 @@ groupings:
       - ${deploy_sample_app}
       - ${wls_server_startup_args}
       - ${configure_wls_ports}
+      - ${administration_port}
+      - ${ms_administration_port}
       - ${wls_nm_port}
       - ${wls_extern_admin_port}
       - ${wls_extern_ssl_admin_port}
@@ -523,6 +525,8 @@ variables:
       and:
         - ${orm_create_mode}
         - ${configure_wls_ports}
+        - not:
+            - ${configure_secure_mode}
     type: integer
     default: 7001
     minimum: 1024
@@ -565,6 +569,8 @@ variables:
       and:
         - ${orm_create_mode}
         - ${configure_wls_ports}
+        - not:
+            - ${configure_secure_mode}
     type: integer
     default: 7003
     minimum: 1024
@@ -784,12 +790,39 @@ variables:
     title: "Enable Secure Production Mode"
     description: "Configure a secure domain"
 
+  administration_port:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${configure_secure_mode}
+    type: integer
+    default: 9002
+    minimum: 1024
+    maximum: 65535
+    multipleOf: 1
+    title: "WebLogic Server domain-wide Administration Port"
+    description: "The domain-wide administration port to configure a secure WebLogic domain"
+    required: true
+
+  ms_administration_port:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${configure_secure_mode}
+    type: integer
+    default: 9004
+    minimum: 1024
+    maximum: 65535
+    multipleOf: 1
+    title: "Administration Port for Managed Servers"
+    description: "The administration port for managed servers to configure a secure WebLogic domain"
+    required: true
+
   keystore_password_id:
     visible:
       and:
         - ${orm_create_mode}
-        - and:
-            - ${configure_secure_mode}
+        - ${configure_secure_mode}
     type: "oci:kms:secret:id"
     minLength: 1
     maxLength: 1024
@@ -803,8 +836,7 @@ variables:
     visible:
       and:
         - ${orm_create_mode}
-        - and:
-            - ${configure_secure_mode}
+        - ${configure_secure_mode}
     type: string
     pattern: ^ocid1.certificateauthority.*$
     required: true
