@@ -803,6 +803,7 @@ variables:
     visible:
       and:
         - ${orm_create_mode}
+        - ${configure_wls_ports}
         - ${configure_secure_mode}
     type: integer
     default: 9002
@@ -817,6 +818,7 @@ variables:
     visible:
       and:
         - ${orm_create_mode}
+        - ${configure_wls_ports}
         - ${configure_secure_mode}
     type: integer
     default: 9004
