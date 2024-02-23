@@ -210,3 +210,8 @@ variable "configure_secure_mode" {
   type        = bool
   description = "Set to true to configure a secure WebLogic domain"
 }
+
+variable "administration_port" {
+  type        = number
+  description = "The domain-wide administration port to configure a secure WebLogic domain"
+}

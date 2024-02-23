@@ -192,6 +192,16 @@ variable "configure_secure_mode" {
   description = "Set to true to configure a secure WebLogic domain"
 }
 
+variable "administration_port" {
+  type        = number
+  description = "The domain-wide administration port to configure a secure WebLogic domain"
+}
+
+variable "ms_administration_port" {
+  type        = number
+  description = "The administration port for managed servers to configure a secure WebLogic domain"
+}
+
 variable "keystore_dir" {
   type        = string
   description = "The directory where the pkcs12 keystores will be created in the compute instance when secured production mode is enabled."

@@ -67,6 +67,7 @@ module "network-vcn-config" {
   wls_ms_content_port        = local.add_load_balancer ? (var.is_idcs_selected ? var.idcs_cloudgate_port : var.wls_ms_extern_port) : var.wls_ms_extern_ssl_port
   assign_backend_public_ip   = local.assign_weblogic_public_ip
   configure_secure_mode      = var.configure_secure_mode
+  administration_port        = var.administration_port
 
   wls_subnet_cidr              = local.wls_subnet_cidr
   wls_ms_source_cidrs          = local.add_load_balancer ? [local.lb_subnet_1_subnet_cidr] : ["0.0.0.0/0"]
@@ -617,9 +618,11 @@ module "compute" {
   wls_server_startup_args   = var.wls_server_startup_args
   wls_existing_vcn_id       = var.wls_existing_vcn_id
 
-  configure_secure_mode  = var.configure_secure_mode
-  keystore_password_id   = local.keystore_password_id
-  root_ca_id             = local.root_ca_id
+  configure_secure_mode     = var.configure_secure_mode
+  administration_port       = var.administration_port
+  ms_administration_port    = var.ms_administration_port
+  keystore_password_id      = local.keystore_password_id
+  root_ca_id                = local.root_ca_id
 
   #The following two are for adding a dependency on the peering module
   wls_vcn_peering_dns_resolver_id           = element(flatten(concat(module.vcn-peering[*].wls_vcn_dns_resolver_id, [""])), 0)

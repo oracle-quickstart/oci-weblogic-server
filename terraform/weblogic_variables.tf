@@ -215,3 +215,14 @@ variable "root_ca_id" {
   default     = ""
 }
 
+variable "administration_port" {
+  type        = number
+  description = "The domain-wide administration port to configure a secure WebLogic domain"
+  default     = 9002
+}
+
+variable "ms_administration_port" {
+  type        = number
+  description = "The administration port for managed servers to configure a secure WebLogic domain"
+  default     = 9004
+}
