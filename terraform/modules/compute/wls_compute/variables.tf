@@ -218,6 +218,10 @@ variable "root_ca_id" {
   description = "The OCID of the existing root certificate authority to issue the certificates"
 }
 
+variable "thread_pool_limit" {
+  type        = number
+  description = "Shared Capacity For Work Managers"
+}
 
 variable "domain_dir" {
   type        = string

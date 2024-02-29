@@ -27,10 +27,10 @@ variable "wls_node_count_limit" {
 variable "wls_admin_user" {
   type        = string
   description = "Name of WebLogic administration user"
-  default     = "weblogic"
+  default     = "wls_user"
   validation {
-    condition     = replace(var.wls_admin_user, "/^[a-zA-Z][a-zA-Z0-9_-]{7,127}/", "0") == "0"
-    error_message = "WLSC-ERROR: The value for wls_admin_user should be between 8 and 128 characters long and alphanumeric, and can contain underscore (_) and hyphen(-) special characters."
+    condition     = replace(var.wls_admin_user, "/^[a-zA-Z][a-zA-Z0-9_-]{7,127}/", "0") == "0" && !contains(["system", "admin", "administrator", "weblogic"], var.wls_admin_user)
+    error_message = "WLSC-ERROR: The value for wls_admin_user should be between 8 and 128 characters long and alphanumeric, and can contain underscore (_) and hyphen(-) special characters, and should not be system, admin, administrator, or weblogic."
   }
 }
 
@@ -225,4 +225,10 @@ variable "ms_administration_port" {
   type        = number
   description = "The administration port for managed servers to configure a secure WebLogic domain"
   default     = 9004
+}
+
+variable "thread_pool_limit" {
+  type        = number
+  description = "Shared Capacity For Work Managers"
+  default     = 65536
 }

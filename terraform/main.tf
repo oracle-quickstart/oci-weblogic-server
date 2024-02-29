@@ -623,6 +623,7 @@ module "compute" {
   ms_administration_port    = var.ms_administration_port
   keystore_password_id      = local.keystore_password_id
   root_ca_id                = local.root_ca_id
+  thread_pool_limit         = var.thread_pool_limit
 
   #The following two are for adding a dependency on the peering module
   wls_vcn_peering_dns_resolver_id           = element(flatten(concat(module.vcn-peering[*].wls_vcn_dns_resolver_id, [""])), 0)

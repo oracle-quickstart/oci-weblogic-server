@@ -44,6 +44,7 @@ groupings:
       - ${wls_14c_jdk_version}
       - ${deploy_sample_app}
       - ${wls_server_startup_args}
+      - ${thread_pool_limit}
       - ${configure_wls_ports}
       - ${administration_port}
       - ${ms_administration_port}
@@ -476,8 +477,9 @@ variables:
     visible: ${orm_create_mode}
     type: string
     title: "WebLogic Server Admin User Name"
-    description: "The name of the administrator in the WebLogic Server domain"
-    pattern: "^[a-zA-Z][a-zA-Z0-9_-]{7,127}$"
+    description: "The name of the administrator in the WebLogic Server domain. The value should be between 8 and 128 characters long and alphanumeric, and can contain underscore (_) and hyphen(-) special characters, and should not be system, admin, administrator, or weblogic."
+    pattern: "^(?!weblogic$|administrator$)[a-zA-Z][a-zA-Z0-9_-]{7,127}$"
+    default: "wls_user"
     minLength: 8
     maxLength: 128
     required: true
@@ -854,6 +856,17 @@ variables:
     title: "Existing Root Certificate Authority ID"
     description: "The OCID of the existing root certificate authority to issue the certificates"
 
+  thread_pool_limit:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - and:
+            - ${configure_secure_mode}
+    type: string
+    default: 65536
+    title: "Throttle the thread pool"
+    description: "Shared Capacity For Work Managers"
+    required: true
 
   # WLS Network Configuration
   wls_vcn_name:
