@@ -197,6 +197,7 @@ variable "deploy_sample_app" {
   default     = true
 }
 
+# All the variables under this comment belong to Secure Production Mode
 variable "configure_secure_mode" {
   type        = bool
   description = "Set to true to configure a secure WebLogic domain"

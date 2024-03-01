@@ -618,6 +618,7 @@ module "compute" {
   wls_server_startup_args   = var.wls_server_startup_args
   wls_existing_vcn_id       = var.wls_existing_vcn_id
 
+  # Secure Production Mode
   configure_secure_mode     = var.configure_secure_mode
   administration_port       = var.administration_port
   ms_administration_port    = var.ms_administration_port

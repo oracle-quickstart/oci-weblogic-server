@@ -187,42 +187,6 @@ variable "is_bastion_instance_required" {
   default     = false
 }
 
-variable "configure_secure_mode" {
-  type        = bool
-  description = "Set to true to configure a secure WebLogic domain"
-}
-
-variable "administration_port" {
-  type        = number
-  description = "The domain-wide administration port to configure a secure WebLogic domain"
-}
-
-variable "ms_administration_port" {
-  type        = number
-  description = "The administration port for managed servers to configure a secure WebLogic domain"
-}
-
-variable "keystore_dir" {
-  type        = string
-  description = "The directory where the pkcs12 keystores will be created in the compute instance when secured production mode is enabled."
-  default     = "/u01/data/keystores"
-}
-
-variable "keystore_password_id" {
-  type        = string
-  description = "The OCID of the vault secret with the password for creating the keystore"
-}
-
-variable "root_ca_id" {
-  type        = string
-  description = "The OCID of the existing root certificate authority to issue the certificates"
-}
-
-variable "thread_pool_limit" {
-  type        = number
-  description = "Shared Capacity For Work Managers"
-}
-
 variable "domain_dir" {
   type        = string
   description = "The directory where the WebLogic domain will be created in the compute instance"
@@ -323,4 +287,41 @@ variable "mp_ucm_listing_resource_version" {
 variable "is_ucm_image" {
   type        = bool
   description = "The metadata info to send it to instance to determine if its ucm image based instance or not"
+}
+
+# All the variables under this comment belong to Secure Production Mode
+variable "configure_secure_mode" {
+  type        = bool
+  description = "Set to true to configure a secure WebLogic domain"
+}
+
+variable "administration_port" {
+  type        = number
+  description = "The domain-wide administration port to configure a secure WebLogic domain"
+}
+
+variable "ms_administration_port" {
+  type        = number
+  description = "The administration port for managed servers to configure a secure WebLogic domain"
+}
+
+variable "keystore_dir" {
+  type        = string
+  description = "The directory where the pkcs12 keystores will be created in the compute instance when secured production mode is enabled."
+  default     = "/u01/data/keystores"
+}
+
+variable "keystore_password_id" {
+  type        = string
+  description = "The OCID of the vault secret with the password for creating the keystore"
+}
+
+variable "root_ca_id" {
+  type        = string
+  description = "The OCID of the existing root certificate authority to issue the certificates"
+}
+
+variable "thread_pool_limit" {
+  type        = number
+  description = "Shared Capacity For Work Managers"
 }

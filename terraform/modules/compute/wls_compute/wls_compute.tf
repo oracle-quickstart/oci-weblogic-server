@@ -67,6 +67,8 @@ module "wls-instances" {
       wls_subnet_cidr                    = local.wls_subnet_cidr
       wls_edition                        = var.wls_edition
       is_bastion_instance_required       = var.is_bastion_instance_required
+
+      # Secure Production Mode
       configure_secure_mode              = var.configure_secure_mode
       administration_port                = var.administration_port
       ms_administration_port             = var.ms_administration_port
