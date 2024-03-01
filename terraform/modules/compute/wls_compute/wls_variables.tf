@@ -14,9 +14,10 @@ variable "wls_edition" {
 variable "wls_admin_user" {
   type        = string
   description = "The name of the admin user that will be added to the WebLogic domain"
+  default     = "wls_user"
   validation {
-    condition     = replace(var.wls_admin_user, "/^[a-zA-Z][a-zA-Z0-9_-]{7,127}/", "0") == "0"
-    error_message = "WLSC-ERROR: The value for wls_admin_user should be between 8 and 128 characters long and alphanumeric, and can contain underscore (_) and hyphen(-) special characters."
+    condition     = replace(var.wls_admin_user, "/^[a-zA-Z][a-zA-Z0-9_-]{7,127}/", "0") == "0" && !contains(["system", "admin", "administrator", "weblogic"], var.wls_admin_user)
+    error_message = "WLSC-ERROR: The value for wls_admin_user should be between 8 and 128 characters long and alphanumeric, and can contain underscore (_) and hyphen(-) special characters, and should not be system, admin, administrator, or weblogic."
   }
 }
 
@@ -226,5 +227,25 @@ variable "wls_version_to_rcu_component_list_map" {
   default = {
     "12.2.1.3" = "MDS,WLS,STB,IAU_APPEND,IAU_VIEWER,UCSUMS,IAU,OPSS"
     "12.2.1.4" = "MDS,WLS,STB,IAU_APPEND,IAU_VIEWER,UCSUMS,IAU,OPSS"
+  }
+}
+
+# All variables under this comment belong to secure production mode
+variable "wls_admin_user_1" {
+  type        = string
+  description = "Name of second WebLogic administration user"
+  default     = "wls_user_1"
+  validation {
+    condition     = replace(var.wls_admin_user_1, "/^[a-zA-Z][a-zA-Z0-9_-]{7,127}/", "0") == "0" && !contains(["system", "admin", "administrator", "weblogic"], var.wls_admin_user_1)
+    error_message = "WLSC-ERROR: The value for wls_admin_user_1 should be between 8 and 128 characters long and alphanumeric, and can contain underscore (_) and hyphen(-) special characters, and should not be system, admin, administrator, or weblogic."
+  }
+}
+
+variable "wls_admin_password_id_1" {
+  type        = string
+  description = "The OCID of the vault secret with the password for second WebLogic administration user"
+  validation {
+    condition     = length(regexall("^ocid1.vaultsecret.", var.wls_admin_password_id_1)) > 0
+    error_message = "WLSC-ERROR: The value for wls_admin_password_id_1 should start with \"ocid1.vaultsecret.\"."
   }
 }

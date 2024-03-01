@@ -233,3 +233,22 @@ variable "thread_pool_limit" {
   description = "Shared Capacity For Work Managers"
   default     = 65536
 }
+
+variable "wls_admin_user_1" {
+  type        = string
+  description = "Name of second WebLogic administration user"
+  default     = "wls_user_1"
+  validation {
+    condition     = replace(var.wls_admin_user_1, "/^[a-zA-Z][a-zA-Z0-9_-]{7,127}/", "0") == "0" && !contains(["system", "admin", "administrator", "weblogic"], var.wls_admin_user_1)
+    error_message = "WLSC-ERROR: The value for wls_admin_user_1 should be between 8 and 128 characters long and alphanumeric, and can contain underscore (_) and hyphen(-) special characters, and should not be system, admin, administrator, or weblogic."
+  }
+}
+
+variable "wls_admin_password_id_1" {
+  type        = string
+  description = "The OCID of the vault secret with the password for second WebLogic administration user"
+  validation {
+    condition     = length(regexall("^ocid1.vaultsecret.", var.wls_admin_password_id_1)) > 0
+    error_message = "WLSC-ERROR: The value for wls_admin_password_id_1 should start with \"ocid1.vaultsecret.\"."
+  }
+}
