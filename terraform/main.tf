@@ -599,7 +599,7 @@ module "compute" {
   tf_script_version         = var.tf_script_version
   use_regional_subnet       = local.use_regional_subnet
   wls_14c_jdk_version       = var.wls_14c_jdk_version
-  wls_admin_user            = var.wls_admin_user
+  wls_admin_user            = local.wls_admin_user
   wls_admin_password_id     = var.wls_admin_password_id
   wls_admin_server_name     = format("%s_adminserver", local.service_name_prefix)
   wls_ms_server_name        = format("%s_server_", local.service_name_prefix)
@@ -619,14 +619,14 @@ module "compute" {
   wls_existing_vcn_id       = var.wls_existing_vcn_id
 
   # Secure Production Mode
-  configure_secure_mode     = var.configure_secure_mode
-  administration_port       = var.administration_port
-  ms_administration_port    = var.ms_administration_port
-  keystore_password_id      = local.keystore_password_id
-  root_ca_id                = local.root_ca_id
-  thread_pool_limit         = var.thread_pool_limit
-  wls_admin_user_1          = var.wls_admin_user_1
-  wls_admin_password_id_1   = var.wls_admin_password_id_1
+  configure_secure_mode              = var.configure_secure_mode
+  administration_port                = var.administration_port
+  ms_administration_port             = var.ms_administration_port
+  keystore_password_id               = local.keystore_password_id
+  root_ca_id                         = local.root_ca_id
+  thread_pool_limit                  = var.thread_pool_limit
+  wls_secondary_admin_user           = var.wls_secondary_admin_user
+  wls_secondary_admin_password_id    = local.wls_secondary_admin_password_id
 
   #The following two are for adding a dependency on the peering module
   wls_vcn_peering_dns_resolver_id           = element(flatten(concat(module.vcn-peering[*].wls_vcn_dns_resolver_id, [""])), 0)

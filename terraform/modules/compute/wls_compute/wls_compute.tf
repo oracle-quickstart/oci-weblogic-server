@@ -76,8 +76,8 @@ module "wls-instances" {
       keystore_password_id               = var.keystore_password_id
       root_ca_id                         = var.root_ca_id
       thread_pool_limit                  = var.thread_pool_limit
-      wls_admin_user_1                   = var.wls_admin_user_1
-      wls_admin_password_ocid_1          = var.wls_admin_password_id_1
+      wls_secondary_admin_user           = var.wls_secondary_admin_user
+      wls_secondary_admin_password_ocid  = var.wls_secondary_admin_password_id
 
       user_data            = data.template_cloudinit_config.config.rendered
       mode                 = var.mode

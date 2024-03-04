@@ -186,9 +186,11 @@ locals {
   add_existing_rms_private_endpoint = local.is_rms_private_endpoint_required && var.add_rms_private_endpoint == "Use Existing Resource Manager Endpoint" ? true : false
 
   # Secured Production Mode
-  wls_admin_port            = var.configure_secure_mode ? var.administration_port : var.wls_admin_port
-  keystore_password_id      = var.configure_secure_mode ? var.keystore_password_id : ""
-  root_ca_id                = var.configure_secure_mode ? var.root_ca_id : ""
-  wls_domain_configuration  = var.configure_secure_mode ? "Secured Production Mode" : "Production Mode"
-  wls_extern_ssl_admin_port = var.configure_secure_mode ? var.administration_port : var.wls_extern_ssl_admin_port
+  wls_admin_port                    = var.configure_secure_mode ? var.administration_port : var.wls_admin_port
+  keystore_password_id              = var.configure_secure_mode ? var.keystore_password_id : ""
+  root_ca_id                        = var.configure_secure_mode ? var.root_ca_id : ""
+  wls_domain_configuration          = var.configure_secure_mode ? "Secured Production Mode" : "Production Mode"
+  wls_extern_ssl_admin_port         = var.configure_secure_mode ? var.administration_port : var.wls_extern_ssl_admin_port
+  wls_admin_user                    = var.configure_secure_mode ? var.wls_primary_admin_user : var.wls_admin_user
+  wls_secondary_admin_password_id   = var.configure_secure_mode ? var.wls_secondary_admin_password_id : "ocid1.vaultsecret."
 }

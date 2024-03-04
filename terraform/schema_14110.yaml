@@ -37,10 +37,11 @@ groupings:
   - title: "WebLogic Domain Configuration"
     variables:
       - ${wls_admin_user}
+      - ${wls_primary_admin_user}
       - ${wls_admin_secret_compartment_id}
       - ${wls_admin_password_id}
-      - ${wls_admin_user_1}
-      - ${wls_admin_password_id_1}
+      - ${wls_secondary_admin_user}
+      - ${wls_secondary_admin_password_id}
       - ${keystore_password_id}
       - ${root_ca_id}
       - ${wls_14c_jdk_version}
@@ -476,12 +477,16 @@ variables:
     required: true
 
   wls_admin_user:
-    visible: ${orm_create_mode}
+    visible:
+      and:
+        - ${orm_create_mode}
+        - not:
+            - ${configure_secure_mode}
     type: string
     title: "WebLogic Server Admin User Name"
-    description: "The name of the administrator in the WebLogic Server domain. The value should be between 8 and 128 characters long and alphanumeric, and can contain underscore (_) and hyphen(-) special characters, and should not be system, admin, administrator, or weblogic."
-    pattern: "^(?!weblogic$|administrator$)[a-zA-Z][a-zA-Z0-9_-]{7,127}$"
-    default: "wls_user"
+    description: "The name of the administrator in the WebLogic Server domain. The value should be between 8 and 128 characters long and alphanumeric, and can contain underscore (_) and hyphen(-) special characters."
+    pattern: "^[a-zA-Z][a-zA-Z0-9_-]{7,127}$"
+    default: "weblogic"
     minLength: 8
     maxLength: 128
     required: true
@@ -870,28 +875,42 @@ variables:
     description: "Shared Capacity For Work Managers"
     required: true
 
-  wls_admin_user_1:
+  wls_primary_admin_user:
     visible:
       and:
         - ${orm_create_mode}
         - ${configure_secure_mode}
     type: string
     title: "WebLogic Server Admin User Name"
-    description: "The name of the second administrator in the WebLogic Server domain. The value should be between 8 and 128 characters long and alphanumeric, and can contain underscore (_) and hyphen(-) special characters, and should not be system, admin, administrator, or weblogic."
+    description: "The name of the primary administrator in the WebLogic Server domain. The value should be between 8 and 128 characters long and alphanumeric, and can contain underscore (_) and hyphen(-) special characters, and should not be system, admin, administrator, or weblogic."
+    pattern: "^(?!weblogic$|administrator$)[a-zA-Z][a-zA-Z0-9_-]{7,127}$"
+    default: "wls_user"
+    minLength: 8
+    maxLength: 128
+    required: true
+
+  wls_secondary_admin_user:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${configure_secure_mode}
+    type: string
+    title: "WebLogic Server Admin User Name"
+    description: "The name of the secondary administrator in the WebLogic Server domain. The value should be between 8 and 128 characters long and alphanumeric, and can contain underscore (_) and hyphen(-) special characters, and should not be system, admin, administrator, or weblogic."
     pattern: "^(?!weblogic$|administrator$)[a-zA-Z][a-zA-Z0-9_-]{7,127}$"
     default: "wls_user_1"
     minLength: 8
     maxLength: 128
     required: true
 
-  wls_admin_password_id_1:
+  wls_secondary_admin_password_id:
     visible:
       and:
         - ${orm_create_mode}
         - ${configure_secure_mode}
     type: "oci:kms:secret:id"
     title: "Validated Secret for WebLogic Server Admin Password"
-    description: "The secret that contains the administration password of the second administrator in the WebLogic Server domain. Use a WebLogic Administrator password that starts with a letter, is between 8 and 30 characters long, contains at least one number, and, optionally, any number of the special characters ($ # _). For example, Ach1z0#d. To create secrets, see <a target=\"_blank\" href=\"https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/you-begin-oracle-weblogic-cloud.html#GUID-0517A019-4A89-40ED-A568-DD2193733F8B\">Create Secrets for Passwords</a>."
+    description: "The secret that contains the administration password of the secondary administrator in the WebLogic Server domain. Use a WebLogic Administrator password that starts with a letter, is between 8 and 30 characters long, contains at least one number, and, optionally, any number of the special characters ($ # _). For example, Ach1z0#d. To create secrets, see <a target=\"_blank\" href=\"https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/you-begin-oracle-weblogic-cloud.html#GUID-0517A019-4A89-40ED-A568-DD2193733F8B\">Create Secrets for Passwords</a>."
     required: true
     dependsOn:
       compartmentId: ${wls_admin_secret_compartment_id}

@@ -13,11 +13,11 @@ variable "wls_edition" {
 
 variable "wls_admin_user" {
   type        = string
-  description = "The name of the admin user that will be added to the WebLogic domain"
-  default     = "wls_user"
+  description = "Name of WebLogic administration user"
+  default     = "weblogic"
   validation {
-    condition     = replace(var.wls_admin_user, "/^[a-zA-Z][a-zA-Z0-9_-]{7,127}/", "0") == "0" && !contains(["system", "admin", "administrator", "weblogic"], var.wls_admin_user)
-    error_message = "WLSC-ERROR: The value for wls_admin_user should be between 8 and 128 characters long and alphanumeric, and can contain underscore (_) and hyphen(-) special characters, and should not be system, admin, administrator, or weblogic."
+    condition     = replace(var.wls_admin_user, "/^[a-zA-Z][a-zA-Z0-9_-]{7,127}/", "0") == "0"
+    error_message = "WLSC-ERROR: The value for wls_admin_user should be between 8 and 128 characters long and alphanumeric, and can contain underscore (_) and hyphen(-) special characters."
   }
 }
 
@@ -231,21 +231,31 @@ variable "wls_version_to_rcu_component_list_map" {
 }
 
 # All variables under this comment belong to secure production mode
-variable "wls_admin_user_1" {
+variable "wls_primary_admin_user" {
   type        = string
-  description = "Name of second WebLogic administration user"
-  default     = "wls_user_1"
+  description = "Name of primary WebLogic administration user"
+  default     = "wls_user"
   validation {
-    condition     = replace(var.wls_admin_user_1, "/^[a-zA-Z][a-zA-Z0-9_-]{7,127}/", "0") == "0" && !contains(["system", "admin", "administrator", "weblogic"], var.wls_admin_user_1)
-    error_message = "WLSC-ERROR: The value for wls_admin_user_1 should be between 8 and 128 characters long and alphanumeric, and can contain underscore (_) and hyphen(-) special characters, and should not be system, admin, administrator, or weblogic."
+    condition     = replace(var.wls_primary_admin_user, "/^[a-zA-Z][a-zA-Z0-9_-]{7,127}/", "0") == "0" && !contains(["system", "admin", "administrator", "weblogic"], var.wls_primary_admin_user)
+    error_message = "WLSC-ERROR: The value for wls_primary_admin_user should be between 8 and 128 characters long and alphanumeric, and can contain underscore (_) and hyphen(-) special characters, and should not be system, admin, administrator, or weblogic."
   }
 }
 
-variable "wls_admin_password_id_1" {
+variable "wls_secondary_admin_user" {
   type        = string
-  description = "The OCID of the vault secret with the password for second WebLogic administration user"
+  description = "Name of secondary WebLogic administration user"
+  default     = "wls_user_1"
   validation {
-    condition     = length(regexall("^ocid1.vaultsecret.", var.wls_admin_password_id_1)) > 0
-    error_message = "WLSC-ERROR: The value for wls_admin_password_id_1 should start with \"ocid1.vaultsecret.\"."
+    condition     = replace(var.wls_secondary_admin_user, "/^[a-zA-Z][a-zA-Z0-9_-]{7,127}/", "0") == "0" && !contains(["system", "admin", "administrator", "weblogic"], var.wls_secondary_admin_user)
+    error_message = "WLSC-ERROR: The value for wls_secondary_admin_user should be between 8 and 128 characters long and alphanumeric, and can contain underscore (_) and hyphen(-) special characters, and should not be system, admin, administrator, or weblogic."
+  }
+}
+
+variable "wls_secondary_admin_password_id" {
+  type        = string
+  description = "The OCID of the vault secret with the password for secondary WebLogic administration user"
+  validation {
+    condition     = length(regexall("^ocid1.vaultsecret.", var.wls_secondary_admin_password_id)) > 0
+    error_message = "WLSC-ERROR: The value for wls_secondary_admin_password_id should start with \"ocid1.vaultsecret.\"."
   }
 }
