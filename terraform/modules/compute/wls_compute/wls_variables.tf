@@ -254,8 +254,4 @@ variable "wls_secondary_admin_user" {
 variable "wls_secondary_admin_password_id" {
   type        = string
   description = "The OCID of the vault secret with the password for secondary WebLogic administration user"
-  validation {
-    condition     = length(regexall("^ocid1.vaultsecret.", var.wls_secondary_admin_password_id)) > 0
-    error_message = "WLSC-ERROR: The value for wls_secondary_admin_password_id should start with \"ocid1.vaultsecret.\"."
-  }
 }

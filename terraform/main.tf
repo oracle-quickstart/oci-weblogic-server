@@ -469,9 +469,11 @@ module "validators" {
   use_marketplace_image  = var.use_marketplace_image
   wls_edition            = var.wls_edition
 
-  configure_secure_mode  = var.configure_secure_mode
-  keystore_password_id   = local.keystore_password_id
-  root_ca_id             = local.root_ca_id
+  # Secure Production Mode
+  configure_secure_mode           = var.configure_secure_mode
+  keystore_password_id            = local.keystore_password_id
+  root_ca_id                      = local.root_ca_id
+  wls_secondary_admin_password_id = local.wls_secondary_admin_password_id
 }
 
 module "fss" {
