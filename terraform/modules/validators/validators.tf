@@ -71,7 +71,7 @@ locals {
 
   missing_wls_secondary_admin_password_id              = var.configure_secure_mode && var.wls_secondary_admin_password_id == ""
   missing_wls_secondary_admin_password_id_required_msg = "WLSC-ERROR: The value for wls_secondary_admin_password_id is required when enabling secure production mode"
-  invalid_wls_secondary_admin_password_id              = var.configure_secure_mode && length(regexall("^ocid1.vaultsecret.", var.wls_secondary_admin_password_id)) > 0
+  invalid_wls_secondary_admin_password_id              = var.configure_secure_mode && length(regexall("^ocid1.vaultsecret.", var.wls_secondary_admin_password_id)) <= 0
   invalid_wls_secondary_admin_password_id_required_msg = "WLSC-ERROR: The value for wls_secondary_admin_password_id should start with \"ocid1.vaultsecret.\""
   validate_wls_secondary_admin_password_id             = local.missing_wls_secondary_admin_password_id ? local.validators_msg_map[local.missing_wls_secondary_admin_password_id_required_msg] : (local.invalid_wls_secondary_admin_password_id ? local.validators_msg_map[local.invalid_wls_secondary_admin_password_id_required_msg] : null)
 }
