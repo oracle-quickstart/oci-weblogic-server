@@ -2,7 +2,7 @@
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 resource "null_resource" "status_check" {
-  count      = var.is_bastion_instance_required || var.is_rms_private_endpoint_required ? var.num_vm_instances : 0
+  count      = var.assign_public_ip || var.is_bastion_instance_required || var.is_rms_private_endpoint_required ? var.num_vm_instances : 0
   depends_on = [null_resource.dev_mode_provisioning]
 
   // Connection setup for all WLS instances
@@ -121,7 +121,7 @@ resource "null_resource" "status_check" {
 }
 
 resource "null_resource" "print_service_info" {
-  count      = var.is_bastion_instance_required || var.is_rms_private_endpoint_required ? var.num_vm_instances : 0
+  count      = var.assign_public_ip || var.is_bastion_instance_required || var.is_rms_private_endpoint_required ? var.num_vm_instances : 0
   depends_on = [null_resource.status_check]
 
   // Connection setup for all WLS instances
@@ -146,7 +146,7 @@ resource "null_resource" "print_service_info" {
 }
 
 resource "null_resource" "cleanup" {
-  count      = var.is_bastion_instance_required || var.is_rms_private_endpoint_required ? var.num_vm_instances : 0
+  count      = var.assign_public_ip || var.is_bastion_instance_required || var.is_rms_private_endpoint_required ? var.num_vm_instances : 0
   depends_on = [null_resource.print_service_info]
 
 
