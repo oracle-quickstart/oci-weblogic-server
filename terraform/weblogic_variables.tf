@@ -27,10 +27,10 @@ variable "wls_node_count_limit" {
 variable "wls_admin_user" {
   type        = string
   description = "Name of WebLogic administration user"
-  default     = "wls_user"
+  default     = "weblogic"
   validation {
-    condition     = replace(var.wls_admin_user, "/^[a-zA-Z][a-zA-Z0-9_-]{7,127}/", "0") == "0" && !contains(["system", "admin", "administrator", "weblogic"], var.wls_admin_user)
-    error_message = "WLSC-ERROR: The value for wls_admin_user should be between 8 and 128 characters long and alphanumeric, and can contain underscore (_) and hyphen(-) special characters, and should not be system, admin, administrator, or weblogic."
+    condition     = replace(var.wls_admin_user, "/^[a-zA-Z][a-zA-Z0-9_-]{7,127}/", "0") == "0"
+    error_message = "WLSC-ERROR: The value for wls_admin_user should be between 8 and 128 characters long and alphanumeric, and can contain underscore (_) and hyphen(-) special characters."
   }
 }
 
@@ -232,4 +232,30 @@ variable "thread_pool_limit" {
   type        = number
   description = "Shared Capacity For Work Managers"
   default     = 65536
+}
+
+variable "wls_primary_admin_user" {
+  type        = string
+  description = "Name of primary WebLogic administration user"
+  default     = "wls_user"
+  validation {
+    condition     = replace(var.wls_primary_admin_user, "/^[a-zA-Z][a-zA-Z0-9_-]{7,127}/", "0") == "0" && !contains(["system", "admin", "administrator", "weblogic"], var.wls_primary_admin_user)
+    error_message = "WLSC-ERROR: The value for wls_primary_admin_user should be between 8 and 128 characters long and alphanumeric, and can contain underscore (_) and hyphen(-) special characters, and should not be system, admin, administrator, or weblogic."
+  }
+}
+
+variable "wls_secondary_admin_user" {
+  type        = string
+  description = "Name of secondary WebLogic administration user"
+  default     = "wls_user_1"
+  validation {
+    condition     = replace(var.wls_secondary_admin_user, "/^[a-zA-Z][a-zA-Z0-9_-]{7,127}/", "0") == "0" && !contains(["system", "admin", "administrator", "weblogic"], var.wls_secondary_admin_user)
+    error_message = "WLSC-ERROR: The value for wls_secondary_admin_user should be between 8 and 128 characters long and alphanumeric, and can contain underscore (_) and hyphen(-) special characters, and should not be system, admin, administrator, or weblogic."
+  }
+}
+
+variable "wls_secondary_admin_password_id" {
+  type        = string
+  description = "The OCID of the vault secret with the password for secondary WebLogic administration user"
+  default     = ""
 }
