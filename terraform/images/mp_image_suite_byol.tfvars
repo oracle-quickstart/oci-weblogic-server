@@ -10,4 +10,3 @@ instance_image_id        = "ocid1.image.oc1..aaaaaaaalakd5qdicfbwnqljsgw4bwdqhl7
 ucm_listing_id               = "ocid1.appcataloglisting.oc1..aaaaaaaaq2vkow7zwkxg6ky4zxsnckdlfgtgmg7i4kkyev3y6zyo72mpkgza"
 ucm_listing_resource_version = "24.1.2-ol8.8-23.12.13-240226-1"
 ucm_instance_image_id        = "ocid1.image.oc1..aaaaaaaajf5s77j3syb42vtljjsyrnix2ycc6zdaychdaqa7gbncw5ajmelq"
->>>>>>> development
