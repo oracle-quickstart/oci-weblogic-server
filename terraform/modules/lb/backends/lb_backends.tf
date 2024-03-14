@@ -28,7 +28,7 @@ resource "oci_load_balancer_backend_set" "wls_lb_backendset" {
 }
 
 resource "oci_load_balancer_backend_set" "wls_lb_backendset_secure_mode" {
-  # If using existing load balancer, use per-created backend set of existing lb
+  # If using existing load balancer in secured production mode, use per-created backend set of existing lb
   count = var.use_existing_lb ? 0 : var.configure_secure_mode ? 1 : 0
 
   name             = var.lb_backendset_name
