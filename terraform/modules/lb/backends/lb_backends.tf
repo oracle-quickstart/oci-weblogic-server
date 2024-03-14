@@ -50,7 +50,7 @@ resource "oci_load_balancer_backend_set" "wls_lb_backendset_secure_mode" {
   }
 
   # Set the session persistence to lb-session-persistence with all default values.
-  #lb_cookie_session_persistence_configuration {}
+  lb_cookie_session_persistence_configuration {}
 
   lifecycle {
     ignore_changes = [ssl_configuration]
