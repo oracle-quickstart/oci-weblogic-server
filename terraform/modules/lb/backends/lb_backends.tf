@@ -61,7 +61,7 @@ resource "oci_load_balancer_listener" "wls_lb_listener_https" {
   count                    = local.use_https_listener_count
   load_balancer_id         = var.load_balancer_id
   name                     = "${var.resource_name_prefix}_https"
-  default_backend_set_name = var.use_existing_lb ? var.lb_backendset_name : var.configure_secure_mode ? oci_load_balancer_backend_set.wls_lb_backendset_secure_mode[0].name : oci_load_balancer_backend_set.wls_lb_backendset[count.index].name
+  default_backend_set_name = var.use_existing_lb ? var.lb_backendset_name : var.configure_secure_mode ? oci_load_balancer_backend_set.wls_lb_backendset_secure_mode[count.index].name : oci_load_balancer_backend_set.wls_lb_backendset[count.index].name
   port                     = var.lb_https_lstr_port
   protocol                 = var.lb_protocol
   rule_set_names           = [oci_load_balancer_rule_set.SSL_headers[count.index].name]
