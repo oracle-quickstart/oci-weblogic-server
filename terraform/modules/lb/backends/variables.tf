@@ -1,4 +1,4 @@
-# Copyright (c) 2023, Oracle and/or its affiliates.
+# Copyright (c) 2023, 2024, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 variable "instance_private_ips" {
@@ -77,4 +77,15 @@ variable "use_existing_lb" {
 variable "resource_name_prefix" {
   type        = string
   description = "Prefix used by the WebLogic for OCI instance of which this compute is part"
+}
+
+# All the variables under this comment belong to Secure Production Mode
+variable "configure_secure_mode" {
+  type        = bool
+  description = "Set to true to configure a secure WebLogic domain"
+}
+
+variable "root_ca_id" {
+  type        = string
+  description = "The OCID of the existing root certificate authority to issue the certificates"
 }
