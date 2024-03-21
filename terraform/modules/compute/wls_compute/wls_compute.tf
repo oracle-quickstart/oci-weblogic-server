@@ -9,7 +9,7 @@ module "wls-instances" {
 
   source = "../instance"
 
-  instance_params = { for x in range(var.num_vm_instances) : "${local.host_label}-${x}" => {
+  instance_params = { for x in range(var.num_vm_instances) : "${local.host_label}-${format("%02d", x)}" => {
 
     availability_domain = var.use_regional_subnet ? local.ad_names[(x + local.admin_ad_index) % length(local.ad_names)] : var.availability_domain
 
