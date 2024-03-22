@@ -1,4 +1,4 @@
-# Copyright (c) 2023, Oracle and/or its affiliates.
+# Copyright (c) 2023, 2024, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 module "compute-keygen" {
@@ -9,7 +9,7 @@ module "wls-instances" {
 
   source = "../instance"
 
-  instance_params = { for x in range(var.num_vm_instances) : "${local.host_label}-${x}" => {
+  instance_params = { for x in range(var.num_vm_instances) : "${local.host_label}-${format("%02d", x)}" => {
 
     availability_domain = var.use_regional_subnet ? local.ad_names[(x + local.admin_ad_index) % length(local.ad_names)] : var.availability_domain
 
