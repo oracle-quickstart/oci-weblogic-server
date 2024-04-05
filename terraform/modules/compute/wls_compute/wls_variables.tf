@@ -171,8 +171,8 @@ variable "provisioning_timeout_mins" {
 
 variable "wls_admin_server_wait_timeout_mins" {
   type        = number
-  description = "Teh timeout in minutes for the administration server to enroll to node manager"
-  default     = 30
+  description = "The timeout in minutes for the administration server to enroll to node manager"
+  default     = 10
 }
 
 variable "wls_version" {
