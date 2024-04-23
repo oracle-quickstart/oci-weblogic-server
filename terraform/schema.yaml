@@ -44,6 +44,7 @@ groupings:
       - ${wls_secondary_admin_password_id}
       - ${keystore_password_id}
       - ${root_ca_id}
+      - ${preserve_boot_properties}
       - ${add_JRF}
       #Start of JRF fields
       - ${db_strategy}
@@ -798,6 +799,17 @@ variables:
     default: false
     title: "Enable Secure Production Mode"
     description: "Configure a secure domain"
+
+  preserve_boot_properties:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${configure_secure_mode}
+    type: boolean
+    required: true
+    default: false
+    title: "Preserve the boot.properties file for administration server and managed servers"
+    description: "Preserve the boot.properties file for administration server and managed servers. NOTE: Leaving this unchecked (false) will result in node manager being unable to revive servers if they are killed."
 
   administration_port:
     visible:

@@ -295,6 +295,11 @@ variable "configure_secure_mode" {
   description = "Set to true to configure a secure WebLogic domain"
 }
 
+variable "preserve_boot_properties" {
+  type        = bool
+  description = "Set to true to preserve the boot.properties file for administration server and managed servers"
+}
+
 variable "administration_port" {
   type        = number
   description = "The domain-wide administration port to configure a secure WebLogic domain"

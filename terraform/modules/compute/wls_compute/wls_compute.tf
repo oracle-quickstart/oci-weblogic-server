@@ -70,6 +70,7 @@ module "wls-instances" {
 
       # Secure Production Mode
       configure_secure_mode              = var.configure_secure_mode
+      preserve_boot_properties           = var.preserve_boot_properties
       administration_port                = var.administration_port
       ms_administration_port             = var.ms_administration_port
       keystore_dir                       = var.keystore_dir
