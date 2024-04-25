@@ -609,6 +609,7 @@ module "compute" {
   wls_domain_name           = format("%s_domain", local.service_name_prefix)
   wls_server_startup_args   = var.wls_server_startup_args
   wls_existing_vcn_id       = var.wls_existing_vcn_id
+  create_policies           = var.create_policies
 
   #The following two are for adding a dependency on the peering module
   wls_vcn_peering_dns_resolver_id           = element(flatten(concat(module.vcn-peering[*].wls_vcn_dns_resolver_id, [""])), 0)

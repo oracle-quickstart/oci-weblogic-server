@@ -16,6 +16,11 @@ variable "compartment_id" {
   description = "The OCID of the compartment where the compute will be created"
 }
 
+variable "create_policies" {
+  type        = bool
+  description = "Set to true to create OCI IAM policies and dynamic groups required by the WebLogic for OCI stack. If this is set to false, the policies and dynamic groups need to be created manually"
+}
+
 variable "availability_domain" {
   type        = string
   description = "The label of the availability domain where the compute will be created"
