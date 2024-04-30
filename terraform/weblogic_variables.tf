@@ -207,7 +207,7 @@ variable "configure_secure_mode" {
 variable "preserve_boot_properties" {
   type        = bool
   description = "Set to true to preserve the boot.properties file for administration server and managed servers"
-  default     = false
+  default     = "true"
 }
 
 variable "keystore_password_id" {

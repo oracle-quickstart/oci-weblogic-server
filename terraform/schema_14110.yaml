@@ -816,7 +816,7 @@ variables:
         - ${configure_secure_mode}
     type: boolean
     required: true
-    default: false
+    default: true
     title: "Preserve the boot.properties file for administration server and managed servers"
     description: "Preserve the boot.properties file for administration server and managed servers. NOTE: Leaving this unchecked (false) will result in node manager being unable to revive servers if they are killed."
 
