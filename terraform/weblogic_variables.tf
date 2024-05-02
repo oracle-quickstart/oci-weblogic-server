@@ -204,6 +204,12 @@ variable "configure_secure_mode" {
   default     = false
 }
 
+variable "preserve_boot_properties" {
+  type        = bool
+  description = "Set to true to preserve the boot.properties file for administration server and managed servers"
+  default     = "true"
+}
+
 variable "keystore_password_id" {
   type        = string
   description = "The OCID of the vault secret with the password for creating the keystore"

@@ -186,6 +186,7 @@ locals {
   add_existing_rms_private_endpoint = local.is_rms_private_endpoint_required && var.add_rms_private_endpoint == "Use Existing Resource Manager Endpoint" ? true : false
 
   # Secured Production Mode
+  preserve_boot_properties          = var.configure_secure_mode ? var.preserve_boot_properties : true
   wls_admin_port                    = var.configure_secure_mode ? var.administration_port : var.wls_admin_port
   keystore_password_id              = var.configure_secure_mode ? var.keystore_password_id : ""
   root_ca_id                        = var.configure_secure_mode ? var.root_ca_id : ""
