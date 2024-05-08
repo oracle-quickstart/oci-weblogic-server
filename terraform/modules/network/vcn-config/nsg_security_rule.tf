@@ -61,7 +61,7 @@ resource "oci_core_network_security_group_security_rule" "wls_ingress_security_r
 }
 
 resource "oci_core_network_security_group_security_rule" "wls_ingress_internal_security_rule" {
-
+  count                     = var.configure_secure_mode ? 0 : 1
   network_security_group_id = element(var.nsg_ids["managed_nsg_id"], 0)
   direction                 = "INGRESS"
   protocol                  = "6"
@@ -69,6 +69,24 @@ resource "oci_core_network_security_group_security_rule" "wls_ingress_internal_s
   source      = var.wls_subnet_cidr
   source_type = "CIDR_BLOCK"
   stateless   = false
+}
+
+resource "oci_core_network_security_group_security_rule" "wls_ingress_spm_internal_security_rule" {
+  count                     = var.configure_secure_mode ? 1 : 0
+  network_security_group_id = element(var.nsg_ids["managed_nsg_id"], 0)
+  direction                 = "INGRESS"
+  protocol                  = "6"
+
+  source      = var.wls_subnet_cidr
+  source_type = "CIDR_BLOCK"
+  stateless   = false
+
+  tcp_options {
+    destination_port_range {
+      min = var.administration_port
+      max = var.administration_port
+    }
+  }
 }
 
 resource "oci_core_network_security_group_security_rule" "wls_ingress_app_ms_security_rule" {
