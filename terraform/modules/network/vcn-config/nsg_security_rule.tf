@@ -71,7 +71,7 @@ resource "oci_core_network_security_group_security_rule" "wls_ingress_internal_s
   stateless   = false
 }
 
-resource "oci_core_network_security_group_security_rule" "wls_ingress_spm_internal_security_rule" {
+resource "oci_core_network_security_group_security_rule" "wls_ingress_internal_security_rule_secure_mode" {
   count                     = var.configure_secure_mode ? 1 : 0
   network_security_group_id = element(var.nsg_ids["managed_nsg_id"], 0)
   direction                 = "INGRESS"
