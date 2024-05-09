@@ -243,6 +243,7 @@ module "policies" {
   is_rms_private_endpoint_required = local.is_rms_private_endpoint_required
   configure_secure_mode            = var.configure_secure_mode
   keystore_password_id             = local.keystore_password_id
+  cert_compartment_id              = local.cert_compartment_id
 }
 
 module "bastion" {
@@ -627,6 +628,7 @@ module "compute" {
   ms_administration_port             = var.ms_administration_port
   keystore_password_id               = local.keystore_password_id
   root_ca_id                         = local.root_ca_id
+  cert_compartment_id                = local.cert_compartment_id
   thread_pool_limit                  = var.thread_pool_limit
   wls_secondary_admin_user           = var.wls_secondary_admin_user
   wls_secondary_admin_password_id    = local.wls_secondary_admin_password_id

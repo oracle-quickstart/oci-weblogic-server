@@ -202,3 +202,8 @@ variable "keystore_password_id" {
   type        = string
   description = "The OCID of the vault secret with the password for creating the keystore"
 }
+
+variable "cert_compartment_id" {
+  type        = string
+  description = "The OCID of the compartment where the certificate will be created. Leave it blank to use the network compartment for the certificate"
+}

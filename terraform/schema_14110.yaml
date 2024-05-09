@@ -44,6 +44,7 @@ groupings:
       - ${wls_secondary_admin_password_id}
       - ${keystore_password_id}
       - ${root_ca_id}
+      - ${cert_compartment_id}
       - ${preserve_boot_properties}
       - ${wls_14c_jdk_version}
       - ${deploy_sample_app}
@@ -816,7 +817,7 @@ variables:
         - ${configure_secure_mode}
     type: boolean
     required: true
-    default: true
+    default: false
     title: "Preserve the boot.properties file for administration server and managed servers"
     description: "Preserve the boot.properties file for administration server and managed servers. NOTE: Leaving this unchecked (false) will result in node manager being unable to revive servers if they are killed."
 
@@ -874,6 +875,18 @@ variables:
     required: true
     title: "Existing Root Certificate Authority ID"
     description: "The OCID of the existing root certificate authority to issue the certificates"
+
+  cert_compartment_id:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${configure_secure_mode}
+        - ${create_policies}
+    type: oci:identity:compartment:id
+    required: false
+    title: "Certificate Compartment"
+    description: "The compartment where you want to create the certificate"
+    default: ${network_compartment_id}
 
   thread_pool_limit:
     visible:

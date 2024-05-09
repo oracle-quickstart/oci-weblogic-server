@@ -76,6 +76,7 @@ module "wls-instances" {
       keystore_dir                       = var.keystore_dir
       keystore_password_id               = var.keystore_password_id
       root_ca_id                         = var.root_ca_id
+      cert_compartment_id                = var.cert_compartment_id
       thread_pool_limit                  = var.thread_pool_limit
       wls_secondary_admin_user           = var.wls_secondary_admin_user
       wls_secondary_admin_password_ocid  = var.wls_secondary_admin_password_id
