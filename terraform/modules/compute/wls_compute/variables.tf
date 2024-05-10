@@ -326,6 +326,11 @@ variable "root_ca_id" {
   description = "The OCID of the existing root certificate authority to issue the certificates"
 }
 
+variable "cert_compartment_id" {
+  type        = string
+  description = "The OCID of the compartment where the certificate will be created. Leave it blank to use the network compartment for the certificate"
+}
+
 variable "thread_pool_limit" {
   type        = number
   description = "Shared Capacity For Work Managers"

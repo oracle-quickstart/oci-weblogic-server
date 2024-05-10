@@ -207,7 +207,7 @@ variable "configure_secure_mode" {
 variable "preserve_boot_properties" {
   type        = bool
   description = "Set to true to preserve the boot.properties file for administration server and managed servers"
-  default     = "true"
+  default     = "false"
 }
 
 variable "keystore_password_id" {
@@ -219,6 +219,12 @@ variable "keystore_password_id" {
 variable "root_ca_id" {
   type        = string
   description = "The OCID of the existing root certificate authority to issue the certificates"
+  default     = ""
+}
+
+variable "cert_compartment_id" {
+  type        = string
+  description = "The OCID of the compartment where the certificate will be created. Leave it blank to use the network compartment for the certificate"
   default     = ""
 }
 
