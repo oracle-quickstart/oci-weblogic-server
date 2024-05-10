@@ -61,6 +61,7 @@ locals {
   script_version_msg      = "WLSC-ERROR: The value for tf script version cannot be empty. Please provide valid script version that matches with version on the image."
   validate_script_version = local.invalid_script_version ? local.validators_msg_map[local.script_version_msg] : null
 
+  # Validations related to Secure Production Mode
   missing_keystore_password_id          = var.configure_secure_mode && var.keystore_password_id == ""
   keystore_password_id_required_msg     = "WLSC-ERROR: The value for keystore_password_id is required when enabling secure production mode."
   validate_missing_keystore_password_id = local.missing_keystore_password_id ? local.validators_msg_map[local.keystore_password_id_required_msg] : null
@@ -74,4 +75,8 @@ locals {
   invalid_wls_secondary_admin_password_id              = var.configure_secure_mode && length(regexall("^ocid1.vaultsecret.", var.wls_secondary_admin_password_id)) <= 0
   invalid_wls_secondary_admin_password_id_required_msg = "WLSC-ERROR: The value for wls_secondary_admin_password_id should start with \"ocid1.vaultsecret.\""
   validate_wls_secondary_admin_password_id             = local.missing_wls_secondary_admin_password_id ? local.validators_msg_map[local.missing_wls_secondary_admin_password_id_required_msg] : (local.invalid_wls_secondary_admin_password_id ? local.validators_msg_map[local.invalid_wls_secondary_admin_password_id_required_msg] : null)
+
+  invalid_administration_ports     = var.configure_secure_mode && var.administration_port == var.ms_administration_port
+  invalid_administration_ports_msg = "WLSC-ERROR: The value for administration_port=[${var.administration_port}] and ms_administration_port=[${var.ms_administration_port}] cannot be same."
+  validate_administration_ports    = local.invalid_administration_ports ? local.validators_msg_map[local.invalid_administration_ports_msg] : null
 }

@@ -475,6 +475,8 @@ module "validators" {
   keystore_password_id            = local.keystore_password_id
   root_ca_id                      = local.root_ca_id
   wls_secondary_admin_password_id = local.wls_secondary_admin_password_id
+  administration_port             = var.administration_port
+  ms_administration_port          = var.ms_administration_port
 }
 
 module "fss" {

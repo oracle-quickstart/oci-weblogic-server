@@ -554,3 +554,13 @@ variable "wls_secondary_admin_password_id" {
   type        = string
   description = "The OCID of the vault secret with the password for secondary WebLogic administration user"
 }
+
+variable "administration_port" {
+  type        = number
+  description = "The domain-wide administration port to configure a secure WebLogic domain"
+}
+
+variable "ms_administration_port" {
+  type        = number
+  description = "The administration port for managed servers to configure a secure WebLogic domain"
+}
