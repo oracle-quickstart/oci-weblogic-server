@@ -552,6 +552,8 @@ variables:
       and:
         - ${orm_create_mode}
         - ${configure_wls_ports}
+        - not:
+            - ${configure_secure_mode}
     type: integer
     default: 7002
     minimum: 1024
