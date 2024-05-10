@@ -464,6 +464,7 @@ module "validators" {
   provisioned_node_count = length(data.oci_core_instances.provisioned_instances.instances.*.display_name)
   use_marketplace_image  = var.use_marketplace_image
   wls_edition            = var.wls_edition
+  tenancy_id             = var.tenancy_ocid
 }
 
 module "fss" {
