@@ -1,4 +1,4 @@
-# Copyright (c) 2023, Oracle and/or its affiliates.
+# Copyright (c) 2023, 2024 Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 variable "compartment_id" {
@@ -532,4 +532,13 @@ variable "lb_availability_domain_name2" {
 variable "tf_script_version" {
   type        = string
   description = "The version of the provisioning scripts located in the OCI image used to create the WebLogic compute instances"
+}
+
+variable "tenancy_id" {
+  type        = string
+  description = "The OCID of the tenancy where the dynamic group and policy will be created"
+  validation {
+    condition     = length(regexall("^ocid1.tenancy.*$", var.tenancy_id)) > 0
+    error_message = "WLSC-ERROR: The value for tenancy_id should start with \"ocid1.tenancy.\"."
+  }
 }
