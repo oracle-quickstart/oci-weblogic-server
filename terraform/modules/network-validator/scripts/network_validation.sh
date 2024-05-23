@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Copyright (c) 2023, Oracle and/or its affiliates.
+# Copyright (c) 2023, 2024, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 #
 # ############################################################################
@@ -24,6 +24,7 @@ WLS_LB_PORT=7003
 LB_PORT=443
 ADMIN_HTTP_PORT=7001
 ADMIN_HTTPS_PORT=7002
+IDCS_PORT=
 WLS_SUBNET_OCID=""
 BASTION_SUBNET_OCID=""
 BASTION_HOST_IP=""
@@ -38,6 +39,7 @@ FSS_NSG_OCID=""
 LPG_OCID=""
 ALL_IPS="0.0.0.0/0"
 LB_SOURCE_CIDR=""
+SECURE_MODE="false"
 NETWORK_VALIDATION_MSG="Fix the network validation script errors and re-run the script in the cloud shell"
 
 debug=false
@@ -611,6 +613,7 @@ while [[ $1 = -?* ]]; do
     -w|--wlssubnet) shift; WLS_SUBNET_OCID=${1} ;;
     -p|--http_port) shift; ADMIN_HTTP_PORT=${1} ;;
     -s|--https_port) shift; ADMIN_HTTPS_PORT=${1} ;;
+    -c|--idcs_port) shift; IDCS_PORT=${1} ;;
     -d|--ocidbid) shift; OCIDB_OCID=${1} ;;
     -P|--ocidbport) shift; DB_PORT=${1} ;;
     -t|--atpdbid) shift; ATPDB_OCID=${1} ;;
@@ -627,6 +630,7 @@ while [[ $1 = -?* ]]; do
     -o|--lbnsg) shift; LB_NSG_OCID=${1} ;;
     -e|--fssnsg) shift; FSS_NSG_OCID=${1} ;;
     -n|--bastionnsg) shift; BASTION_NSG_OCID=${1} ;;
+    -z|--securemode) shift; SECURE_MODE=${1} ;;
     --debug) debug=true;;
     --endopts) shift; break ;;
     *) "invalid option: '$1'." ; usage >&2; exit 1 ;;
@@ -657,6 +661,21 @@ if ${debug}; then set -x ; fi
 # Bash will remember & return the highest exitcode in a chain of pipes.
 # This way you can catch the error in case mysqldump fails in `mysqldump |gzip`, for example.
 set -o pipefail
+
+# Convert to lowercase for case insensitive check
+secure_mode=$(echo "$SECURE_MODE" | tr '[:upper:]' '[:lower:]')
+
+# Check if script needs  to be validated for secure production mode
+if [ "$secure_mode" = "true" ]; then
+    # Changing the required ports default value for secure production mode
+    if [[ -n ${IDCS_PORT} ]]
+    then
+      WLS_LB_PORT=${IDCS_PORT}
+    else
+      WLS_LB_PORT=7004
+    fi
+    ADMIN_HTTPS_PORT=9002
+fi
 
 ### Validate all required params are present ###
 
@@ -766,17 +785,19 @@ then
     validation_return_code=2
   fi
 
-  # Check if T3 Port is open for access by WLS subnet CIDR
-  res=$(validate_subnet_port_access ${WLS_SUBNET_OCID} ${T3_PORT} ${wls_subnet_cidr_block})
-  if [[ $res == *"WARNING"* ]]
-  then
-    for warning in "${res[@]}"; do
-      echo "$warning"
-    done
-  elif [[ $res -ne 0 ]]
-  then
-    echo "ERROR: Port ${T3_PORT} is not open for access by WLS Subnet CIDR [$wls_subnet_cidr_block] in WLS Subnet [$WLS_SUBNET_OCID]. ${NETWORK_VALIDATION_MSG}"
-    validation_return_code=2
+  # Check if T3 Port is open for access by WLS subnet CIDR for non-secure mode
+  if [ "$secure_mode" = "false" ]; then
+    res=$(validate_subnet_port_access ${WLS_SUBNET_OCID} ${T3_PORT} ${wls_subnet_cidr_block})
+    if [[ $res == *"WARNING"* ]]
+    then
+      for warning in "${res[@]}"; do
+        echo "$warning"
+      done
+    elif [[ $res -ne 0 ]]
+    then
+      echo "ERROR: Port ${T3_PORT} is not open for access by WLS Subnet CIDR [$wls_subnet_cidr_block] in WLS Subnet [$WLS_SUBNET_OCID]. ${NETWORK_VALIDATION_MSG}"
+      validation_return_code=2
+    fi
   fi
 
   # Check if Admin Console HTTP Port is open for access to ALL_IPS by WLS subnet CIDR
@@ -802,6 +823,21 @@ then
   then
     echo "WARNING: Exposing the WebLogic administrator port [${ADMIN_HTTPS_PORT}] in the subnet [{$WLS_SUBNET_OCID}] to the internet [${ALL_IPS}] allows any user to access the WebLogic console, which is not a recommended practice. Ensure that only a specific CIDR range can access the WebLogic console. ${NETWORK_VALIDATION_MSG}"
   fi
+
+  # Check if Admin Console HTTPS Port is open for access by WLS subnet CIDR for secure mode
+  if [ "$secure_mode" = "true" ]; then
+    res=$(validate_subnet_port_access ${WLS_SUBNET_OCID} ${ADMIN_HTTPS_PORT} ${wls_subnet_cidr_block})
+    if [[ $res == *"WARNING"* ]]
+    then
+      for warning in "${res[@]}"; do
+        echo "$warning"
+      done
+    elif [[ $res -ne 0 ]]
+    then
+      echo "ERROR: Port ${ADMIN_HTTPS_PORT} is not open for access by WLS Subnet CIDR [$wls_subnet_cidr_block] in WLS Subnet [$WLS_SUBNET_OCID]. ${NETWORK_VALIDATION_MSG}"
+      validation_return_code=2
+    fi
+  fi
 fi
 
 ### Validation - Only when WLS Subnet OCID, Admin Server NSG & Managed Server NSG are provided ###
@@ -823,17 +859,19 @@ then
     validation_return_code=2
   fi
 
-  # Check if T3 Port is open for access by WLS subnet CIDR in Managed Server NSG
-  res=$(check_tcp_port_open_in_seclist_or_nsg $MANAGED_SRV_NSG_OCID "${T3_PORT}" "$wls_subnet_cidr_block" "nsg")
-  if [[ $res == *"WARNING"* ]]
-  then
-    for warning in "${res[@]}"; do
-      echo "$warning"
-    done
-  elif [[ $res -ne 0 ]]
-  then
-    echo "ERROR: Port ${T3_PORT} is not open for access by WLS Subnet CIDR [$wls_subnet_cidr_block] in Managed Server NSG [$MANAGED_SRV_NSG_OCID]. ${NETWORK_VALIDATION_MSG}"
-    validation_return_code=2
+  # Check if T3 Port is open for access by WLS subnet CIDR in Managed Server NSG for non-secure mode
+  if [ "$secure_mode" = "false" ]; then
+    res=$(check_tcp_port_open_in_seclist_or_nsg $MANAGED_SRV_NSG_OCID "${T3_PORT}" "$wls_subnet_cidr_block" "nsg")
+    if [[ $res == *"WARNING"* ]]
+    then
+      for warning in "${res[@]}"; do
+        echo "$warning"
+      done
+    elif [[ $res -ne 0 ]]
+    then
+      echo "ERROR: Port ${T3_PORT} is not open for access by WLS Subnet CIDR [$wls_subnet_cidr_block] in Managed Server NSG [$MANAGED_SRV_NSG_OCID]. ${NETWORK_VALIDATION_MSG}"
+      validation_return_code=2
+    fi
   fi
 
   # Check if Admin Console HTTP Port is open for access to ALL_IPS by WLS subnet CIDR in Admin Server NSG
@@ -858,6 +896,21 @@ then
   elif [[ $res -eq 0 ]]
   then
     echo "WARNING: Exposing the WebLogic administrator port [${ADMIN_HTTPS_PORT}] in the Admin Server NSG [{$ADMIN_SRV_NSG_OCID}] to the internet [${ALL_IPS}] allows any user to access the WebLogic console, which is not a recommended practice. Ensure that only a specific CIDR range can access the WebLogic console. ${NETWORK_VALIDATION_MSG}"
+  fi
+
+  # Check if Admin Console HTTPS Port is open for access by WLS subnet CIDR in Managed Server NSG for secure mode
+  if [ "$secure_mode" = "true" ]; then
+    res=$(check_tcp_port_open_in_seclist_or_nsg $MANAGED_SRV_NSG_OCID ${ADMIN_HTTPS_PORT} "$wls_subnet_cidr_block" "nsg")
+    if [[ $res == *"WARNING"* ]]
+    then
+      for warning in "${res[@]}"; do
+        echo "$warning"
+      done
+    elif [[ $res -ne 0 ]]
+    then
+      echo "ERROR: Port ${ADMIN_HTTPS_PORT} is not open for access by WLS Subnet CIDR [$wls_subnet_cidr_block] in Managed Server NSG [$MANAGED_SRV_NSG_OCID]. ${NETWORK_VALIDATION_MSG}"
+      validation_return_code=2
+    fi
   fi
 fi
 
@@ -1016,6 +1069,39 @@ then
         elif [[ $res -ne 0 ]]
         then
           echo "WARNING: SSH port ${SSH_PORT} is not open for access by [$bastion_cidr_block] in Managed Server NSG [$MANAGED_SRV_NSG_OCID]. ${NETWORK_VALIDATION_MSG}"
+        fi
+      fi
+    fi
+
+    # In secure production mode, check if Check if bastion Host IP CIDR or Bastion Subnet CIDR has access to Admin HTTPS port on WLS subnet or Admin Server NSG
+    if [ "$secure_mode" = "true" ]; then
+      if [[ -z ${ADMIN_SRV_NSG_OCID} && -z ${MANAGED_SRV_NSG_OCID} ]]
+      then
+        res=$(validate_subnet_port_access ${WLS_SUBNET_OCID} ${ADMIN_HTTPS_PORT} ${bastion_cidr_block})
+        if [[ $res == *"WARNING"* ]]
+        then
+          for warning in "${res[@]}"; do
+            echo "$warning"
+          done
+        elif [[ $res -ne 0 ]]
+        then
+          echo "ERROR: Port ${ADMIN_HTTPS_PORT} is not open for access by [$bastion_cidr_block] in WLS Subnet [$WLS_SUBNET_OCID]. ${NETWORK_VALIDATION_MSG}"
+          validation_return_code=2
+        fi
+      fi
+
+      if [[ -n ${ADMIN_SRV_NSG_OCID} && -n ${MANAGED_SRV_NSG_OCID} ]]
+      then
+        res=$(check_tcp_port_open_in_seclist_or_nsg $ADMIN_SRV_NSG_OCID ${ADMIN_HTTPS_PORT} ${bastion_cidr_block} "nsg")
+        if [[ $res == *"WARNING"* ]]
+        then
+          for warning in "${res[@]}"; do
+            echo "$warning"
+          done
+        elif [[ $res -ne 0 ]]
+        then
+          echo "ERROR: Port ${ADMIN_HTTPS_PORT} is not open for access by [$bastion_cidr_block] in Admin Server NSG [$ADMIN_SRV_NSG_OCID]. ${NETWORK_VALIDATION_MSG}"
+          validation_return_code=2
         fi
       fi
     fi
