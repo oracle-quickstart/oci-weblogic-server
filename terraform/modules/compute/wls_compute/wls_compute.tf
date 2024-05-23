@@ -54,7 +54,6 @@ module "wls-instances" {
       wls_ms_server_name                 = var.wls_ms_server_name
       wls_admin_server_name              = var.wls_admin_server_name
       wls_cluster_name                   = var.wls_cluster_name
-      wls_cluster_mc_port                = var.wls_cluster_mc_port
       wls_machine_name                   = var.wls_machine_name
       wls_server_startup_args            = var.wls_server_startup_args
       total_vm_count                     = var.num_vm_instances
@@ -68,7 +67,7 @@ module "wls-instances" {
       wls_edition                        = var.wls_edition
       is_bastion_instance_required       = var.is_bastion_instance_required
 
-      # Secure Production Mode
+      # Secured Production Mode
       configure_secure_mode              = var.configure_secure_mode
       preserve_boot_properties           = var.preserve_boot_properties
       administration_port                = var.administration_port

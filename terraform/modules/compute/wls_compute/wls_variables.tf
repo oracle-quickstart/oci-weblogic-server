@@ -138,16 +138,6 @@ variable "wls_ms_ssl_port" {
   }
 }
 
-variable "wls_cluster_mc_port" {
-  type        = number
-  description = "The managed server port on which to send heartbeats and other internal cluster traffic"
-  default     = 5555
-  validation {
-    condition     = var.wls_cluster_mc_port > 0
-    error_message = "WLSC-ERROR: The value for wls_cluster_mc_port should be greater than 0."
-  }
-}
-
 variable "wls_nm_port" {
   type        = number
   description = "The listen port number for the node manager process on all compute instances"
@@ -230,7 +220,7 @@ variable "wls_version_to_rcu_component_list_map" {
   }
 }
 
-# All variables under this comment belong to secure production mode
+# All variables under this comment belong to secured production mode
 variable "wls_primary_admin_user" {
   type        = string
   description = "Name of primary WebLogic administration user"

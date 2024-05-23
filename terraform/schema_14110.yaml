@@ -56,7 +56,6 @@ groupings:
       - ${wls_nm_port}
       - ${wls_extern_admin_port}
       - ${wls_extern_ssl_admin_port}
-      - ${wls_cluster_mc_port}
       - ${wls_ms_extern_port}
       - ${wls_ms_extern_ssl_port}
       - ${allow_manual_domain_extension}
@@ -572,20 +571,6 @@ variables:
     description: "The administration server SSL port on which to access the administration console"
     required: true
 
-  wls_cluster_mc_port:
-    visible:
-      and:
-        - ${orm_create_mode}
-        - ${configure_wls_ports}
-    type: integer
-    default: 5555
-    minimum: 1024
-    maximum: 65535
-    multipleOf: 1
-    title: "WebLogic Cluster Port"
-    description: "The managed server port on which to send heartbeats and other internal cluster traffic (not applicable for Standard Edition)"
-    required: true
-
   wls_ms_extern_port:
     visible:
       and:
@@ -803,13 +788,13 @@ variables:
     title: "Existing Network Security Groups"
     description: "Use existing Network Security Groups (NSG) for existing subnets"
 
-  # Secure Production Mode variables
+  # Secured Production Mode variables
   configure_secure_mode:
     visible: ${orm_create_mode}
     type: boolean
     required: true
     default: false
-    title: "Enable Secure Production Mode"
+    title: "Enable Secured Production Mode"
     description: "Configure a secure domain"
 
   preserve_boot_properties:

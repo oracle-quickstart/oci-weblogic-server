@@ -244,6 +244,7 @@ module "policies" {
   configure_secure_mode            = var.configure_secure_mode
   keystore_password_id             = local.keystore_password_id
   cert_compartment_id              = local.cert_compartment_id
+  root_ca_compartment_id           = local.root_ca_compartment_id
 }
 
 module "bastion" {
@@ -470,7 +471,7 @@ module "validators" {
   use_marketplace_image  = var.use_marketplace_image
   wls_edition            = var.wls_edition
 
-  # Secure Production Mode
+  # Secured Production Mode
   configure_secure_mode           = var.configure_secure_mode
   keystore_password_id            = local.keystore_password_id
   root_ca_id                      = local.root_ca_id
@@ -623,7 +624,7 @@ module "compute" {
   wls_server_startup_args   = var.wls_server_startup_args
   wls_existing_vcn_id       = var.wls_existing_vcn_id
 
-  # Secure Production Mode
+  # Secured Production Mode
   configure_secure_mode              = var.configure_secure_mode
   preserve_boot_properties           = local.preserve_boot_properties
   administration_port                = var.administration_port
