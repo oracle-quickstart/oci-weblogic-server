@@ -195,4 +195,5 @@ locals {
   wls_extern_ssl_admin_port         = var.configure_secure_mode ? var.administration_port : var.wls_extern_ssl_admin_port
   wls_admin_user                    = var.configure_secure_mode ? var.wls_primary_admin_user : var.wls_admin_user
   wls_secondary_admin_password_id   = var.configure_secure_mode ? var.wls_secondary_admin_password_id : ""
+  root_ca_compartment_id            = var.configure_secure_mode && var.root_ca_id != "" ? data.oci_certificates_management_certificate_authority.root_certificate_authority[0].compartment_id : ""
 }

@@ -289,7 +289,7 @@ variable "is_ucm_image" {
   description = "The metadata info to send it to instance to determine if its ucm image based instance or not"
 }
 
-# All the variables under this comment belong to Secure Production Mode
+# All the variables under this comment belong to Secured Production Mode
 variable "configure_secure_mode" {
   type        = bool
   description = "Set to true to configure a secure WebLogic domain"

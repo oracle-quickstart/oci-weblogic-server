@@ -207,3 +207,8 @@ variable "cert_compartment_id" {
   type        = string
   description = "The OCID of the compartment where the certificate will be created. Leave it blank to use the network compartment for the certificate"
 }
+
+variable "root_ca_compartment_id" {
+  type        = string
+  description = "The OCID of the compartment where the root certificate authority exists"
+}

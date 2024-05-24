@@ -534,7 +534,7 @@ variable "tf_script_version" {
   description = "The version of the provisioning scripts located in the OCI image used to create the WebLogic compute instances"
 }
 
-# All varaibles under this comment belong to secure production mode
+# All variables under this comment belong to secured production mode
 variable "configure_secure_mode" {
   type        = bool
   description = "Set to true to configure a secure WebLogic domain"

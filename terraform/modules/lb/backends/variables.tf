@@ -79,7 +79,7 @@ variable "resource_name_prefix" {
   description = "Prefix used by the WebLogic for OCI instance of which this compute is part"
 }
 
-# All the variables under this comment belong to Secure Production Mode
+# All the variables under this comment belong to Secured Production Mode
 variable "configure_secure_mode" {
   type        = bool
   description = "Set to true to configure a secure WebLogic domain"

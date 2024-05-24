@@ -165,16 +165,6 @@ variable "wls_extern_admin_port" {
   }
 }
 
-variable "wls_cluster_mc_port" {
-  type        = number
-  description = "The managed server port on which to send heartbeats and other internal cluster traffic"
-  default     = 5555
-  validation {
-    condition     = var.wls_cluster_mc_port > 0
-    error_message = "WLSC-ERROR: The value for wls_cluster_mc_port should be greater than 0."
-  }
-}
-
 variable "wls_nm_port" {
   type        = number
   description = "The listen port number for the node manager process on all compute instances"
@@ -197,7 +187,7 @@ variable "deploy_sample_app" {
   default     = true
 }
 
-# All the variables under this comment belong to Secure Production Mode
+# All the variables under this comment belong to Secured Production Mode
 variable "configure_secure_mode" {
   type        = bool
   description = "Set to true to configure a secure WebLogic domain"
