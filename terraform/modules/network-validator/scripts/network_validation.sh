@@ -662,7 +662,7 @@ if ${debug}; then set -x ; fi
 # This way you can catch the error in case mysqldump fails in `mysqldump |gzip`, for example.
 set -o pipefail
 
-# Setting the WLS LB port when IDCS port is provided
+# Setting the WLS LB port when IDCS is enabled
 if [[ -n ${IDCS_PORT} ]]
 then
   WLS_LB_PORT=${IDCS_PORT}
