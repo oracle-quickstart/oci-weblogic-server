@@ -671,7 +671,7 @@ fi
 # Convert to lowercase for case insensitive check
 secure_mode=$(echo "$SECURE_MODE" | tr '[:upper:]' '[:lower:]')
 
-# Check if script needs to be validated for secured production mode
+# Change the default value of ports for secured production mode
 if [ "$secure_mode" = "true" ]; then
     if [ "${WLS_LB_PORT}" -eq 7003 ]
     then
