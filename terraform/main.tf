@@ -245,6 +245,7 @@ module "policies" {
   keystore_password_id             = local.keystore_password_id
   cert_compartment_id              = local.cert_compartment_id
   root_ca_compartment_id           = local.root_ca_compartment_id
+  wls_secondary_admin_password_id  = local.wls_secondary_admin_password_id
 }
 
 module "bastion" {

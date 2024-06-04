@@ -212,3 +212,8 @@ variable "root_ca_compartment_id" {
   type        = string
   description = "The OCID of the compartment where the root certificate authority exists"
 }
+
+variable "wls_secondary_admin_password_id" {
+  type        = string
+  description = "The OCID of the vault secret with the password for secondary WebLogic administration user"
+}
