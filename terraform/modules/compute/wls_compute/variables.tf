@@ -335,3 +335,9 @@ variable "thread_pool_limit" {
   type        = number
   description = "Shared Capacity For Work Managers"
 }
+
+variable "certificate_id" {
+  type        = string
+  description = "The OCID of the SSL certificate to configure a secure WebLogic domain"
+  default     = ""
+}
