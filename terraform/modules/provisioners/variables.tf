@@ -48,11 +48,9 @@ variable "bastion_host_private_key" {
   default     = ""
 }
 
-#TODO: Check if this variable is really needed.
 variable "assign_public_ip" {
   type        = bool
-  description = "Set to true if you want the compute instance to have a public IP in addition to the private ip. Use with caution"
-  default     = true
+  description = "Set to true if the WebLogic compute instances will be created in a public subnet and should have a public IP"
 }
 
 variable "is_bastion_instance_required" {
