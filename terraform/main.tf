@@ -624,6 +624,7 @@ module "compute" {
   wls_domain_name           = format("%s_domain", local.service_name_prefix)
   wls_server_startup_args   = var.wls_server_startup_args
   wls_existing_vcn_id       = var.wls_existing_vcn_id
+  create_policies           = var.create_policies
 
   # Secured Production Mode
   configure_secure_mode              = var.configure_secure_mode

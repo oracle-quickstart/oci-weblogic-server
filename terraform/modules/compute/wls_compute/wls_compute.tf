@@ -9,7 +9,7 @@ module "wls-instances" {
 
   source = "../instance"
 
-  instance_params = { for x in range(var.num_vm_instances) : "${local.host_label}-${x}" => {
+  instance_params = { for x in range(var.num_vm_instances) : "${local.host_label}-${format("%02d", x)}" => {
 
     availability_domain = var.use_regional_subnet ? local.ad_names[(x + local.admin_ad_index) % length(local.ad_names)] : var.availability_domain
 
@@ -66,6 +66,7 @@ module "wls-instances" {
       wls_subnet_cidr                    = local.wls_subnet_cidr
       wls_edition                        = var.wls_edition
       is_bastion_instance_required       = var.is_bastion_instance_required
+      create_policies                    = var.create_policies
 
       # Secured Production Mode
       configure_secure_mode              = var.configure_secure_mode
