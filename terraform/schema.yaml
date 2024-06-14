@@ -1653,7 +1653,11 @@ variables:
     default: true
 
   add_JRF:
-    visible: ${orm_create_mode}
+    visible:
+      and:
+        - ${orm_create_mode}
+        - not:
+           - ${configure_secure_mode}
     type: boolean
     default: false
     title: "Provision with JRF"
