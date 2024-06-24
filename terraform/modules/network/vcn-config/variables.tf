@@ -215,3 +215,8 @@ variable "administration_port" {
   type        = number
   description = "The domain-wide administration port to configure a secure WebLogic domain"
 }
+
+variable "wls_admin_ssl_port" {
+  type        = number
+  description = "The administration server port for T3s protocol"
+}

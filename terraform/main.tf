@@ -63,6 +63,7 @@ module "network-vcn-config" {
   wls_extern_ssl_admin_port  = var.wls_extern_ssl_admin_port
   wls_extern_admin_port      = var.wls_extern_admin_port
   wls_expose_admin_port      = var.wls_expose_admin_port
+  wls_admin_ssl_port         = var.wls_admin_ssl_port
   wls_admin_port_source_cidr = var.wls_admin_port_source_cidr
   wls_ms_content_port        = local.add_load_balancer ? (var.is_idcs_selected ? var.idcs_cloudgate_port : (var.configure_secure_mode ? var.wls_ms_extern_ssl_port : var.wls_ms_extern_port)) : var.wls_ms_extern_ssl_port
   assign_backend_public_ip   = local.assign_weblogic_public_ip

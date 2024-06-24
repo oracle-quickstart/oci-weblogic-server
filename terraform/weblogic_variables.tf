@@ -106,6 +106,7 @@ variable "wls_admin_ssl_port" {
     error_message = "WLSC-ERROR: The value for wls_admin_ssl_port should be greater than 0."
   }
 }
+
 variable "wls_expose_admin_port" {
   type        = bool
   description = "[WARNING] Selecting this option will expose the console to the internet if the default 0.0.0.0/0 CIDR is used. You should change the CIDR range below to allow access to a trusted IP range."
