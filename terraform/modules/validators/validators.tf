@@ -83,4 +83,11 @@ locals {
   invalid_jrf_12c_secure_mode      = var.configure_secure_mode && (var.is_oci_db || var.is_atp_db || trimspace(var.oci_db_connection_string) != "")
   invalid_jrf_12c_secure_mode_msg  = "WLSC-ERROR: JRF domain is not supported for FMW 12c version in secured production mode."
   validate_jrf_12c_secure_mode     = local.invalid_jrf_12c_secure_mode ? local.validators_msg_map[local.invalid_jrf_12c_secure_mode_msg] : ""
+
+  invalid_vm_count_provisioning_secure_mode      = var.configure_secure_mode && var.provisioned_node_count == 0 && (var.num_vm_instances > 3)
+  invalid_vm_count_scaleout_secure_mode          = var.configure_secure_mode && var.provisioned_node_count > 0 && (var.num_vm_instances - var.provisioned_node_count > 1)
+  invalid_vm_count_provisioning_secure_mode_msg  = "WLSC-ERROR: The value for wls_node_count=[${var.num_vm_instances}] is not valid. The permissible value during provisioning cannot exceed the value 3."
+  invalid_vm_count_scaleout_secure_mode_msg      = "WLSC-ERROR: The value for wls_node_count=[${var.num_vm_instances}] is not valid. The permissible value during scaleout cannot exceed the value [${var.provisioned_node_count + 1}] ."
+  validate_vm_count_provisioning_secure_mode     = local.invalid_vm_count_provisioning_secure_mode ? local.validators_msg_map[local.invalid_vm_count_provisioning_secure_mode_msg] : null
+  validate_vm_count_scaleout_secure_mode         = local.invalid_vm_count_scaleout_secure_mode ? local.validators_msg_map[local.invalid_vm_count_scaleout_secure_mode_msg] : null
 }
