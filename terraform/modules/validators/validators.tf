@@ -86,8 +86,8 @@ locals {
 
   invalid_vm_count_provisioning_secure_mode      = var.configure_secure_mode && var.provisioned_node_count == 0 && (var.num_vm_instances > 3)
   invalid_vm_count_scaleout_secure_mode          = var.configure_secure_mode && var.provisioned_node_count > 0 && (var.num_vm_instances - var.provisioned_node_count > 1)
-  invalid_vm_count_provisioning_secure_mode_msg  = "WLSC-ERROR: The value for wls_node_count=[${var.num_vm_instances}] is not valid. The permissible value during provisioning cannot exceed the value 3."
-  invalid_vm_count_scaleout_secure_mode_msg      = "WLSC-ERROR: The value for wls_node_count=[${var.num_vm_instances}] is not valid. The permissible value during scaleout cannot exceed the value [${var.provisioned_node_count + 1}] ."
+  invalid_vm_count_provisioning_secure_mode_msg  = "WLSC-ERROR: The value for wls_node_count=[${var.num_vm_instances}] is not valid. Provisioning in secured production mode is not supported with more than 4 nodes at a time. So, the value for wls_node_count in this case cannot exceed 3."
+  invalid_vm_count_scaleout_secure_mode_msg      = "WLSC-ERROR: The value for wls_node_count=[${var.num_vm_instances}] is not valid. Scaleout in secured production mode is supported by adding only 1 node at a time. So, the value for wls_node_count in this case cannot exceed [${var.provisioned_node_count + 1}] ."
   validate_vm_count_provisioning_secure_mode     = local.invalid_vm_count_provisioning_secure_mode ? local.validators_msg_map[local.invalid_vm_count_provisioning_secure_mode_msg] : null
   validate_vm_count_scaleout_secure_mode         = local.invalid_vm_count_scaleout_secure_mode ? local.validators_msg_map[local.invalid_vm_count_scaleout_secure_mode_msg] : null
 }
