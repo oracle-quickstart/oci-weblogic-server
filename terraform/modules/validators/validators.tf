@@ -84,6 +84,8 @@ locals {
   invalid_jrf_12c_secure_mode_msg  = "WLSC-ERROR: JRF domain is not supported for FMW 12c version in secured production mode."
   validate_jrf_12c_secure_mode     = local.invalid_jrf_12c_secure_mode ? local.validators_msg_map[local.invalid_jrf_12c_secure_mode_msg] : ""
 
+  # Provisioning in secure mode is not supported with more than 3 nodes at a time.
+  # Scaleout in secure mode is supported by adding only 1 node at a time.
   invalid_vm_count_provisioning_secure_mode      = var.configure_secure_mode && var.provisioned_node_count == 0 && (var.num_vm_instances > 3)
   invalid_vm_count_scaleout_secure_mode          = var.configure_secure_mode && var.provisioned_node_count > 0 && (var.num_vm_instances - var.provisioned_node_count > 1)
   invalid_vm_count_provisioning_secure_mode_msg  = "WLSC-ERROR: The value for wls_node_count=[${var.num_vm_instances}] is not valid. Provisioning in secured production mode is not supported with more than 4 nodes at a time. So, the value for wls_node_count in this case cannot exceed 3."
