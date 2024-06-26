@@ -242,6 +242,7 @@ module "policies" {
   fss_compartment_id               = var.fss_compartment_id == "" ? var.compartment_ocid : var.fss_compartment_id
   mount_target_compartment_id      = var.mount_target_compartment_id == "" ? var.compartment_ocid : var.mount_target_compartment_id
   is_rms_private_endpoint_required = local.is_rms_private_endpoint_required
+  instance_image_id                = var.instance_image_id
   configure_secure_mode            = var.configure_secure_mode
   keystore_password_id             = local.keystore_password_id
   cert_compartment_id              = local.cert_compartment_id

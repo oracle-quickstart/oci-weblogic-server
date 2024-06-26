@@ -193,6 +193,12 @@ variable "is_rms_private_endpoint_required" {
   description = "Set resource manager private endpoint"
 }
 
+variable "instance_image_id" {
+  type        = string
+  description = "The OCID of the compute image used to create the WebLogic compute instances"
+  default     = ""
+}
+
 variable "configure_secure_mode" {
   type        = bool
   description = "Set to true to configure a secure WebLogic domain"

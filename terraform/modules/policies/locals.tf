@@ -79,6 +79,7 @@ locals {
   autoscaling_statement26                       = var.use_autoscaling ? length(oci_identity_dynamic_group.wlsc_functions_principal_group) > 0 ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_functions_principal_group[0].name} to manage policies in tenancy" : "" : ""
   autoscaling_statement27                       = var.use_autoscaling ? length(oci_identity_dynamic_group.wlsc_functions_principal_group) > 0 ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_functions_principal_group[0].name} to use tag-namespaces in tenancy" : "" : ""
   autoscaling_statement28                       = var.use_autoscaling && var.network_compartment_id != var.compartment_id && var.is_rms_private_endpoint_required ? length(oci_identity_dynamic_group.wlsc_functions_principal_group) > 0 ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_functions_principal_group[0].name} to manage orm-family in compartment id ${var.network_compartment_id}" : "" : ""
+  autoscaling_statement29                       = (var.use_autoscaling && var.instance_image_id != "") ? length(oci_identity_dynamic_group.wlsc_functions_principal_group) > 0 ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_functions_principal_group[0].name} to {INSTANCE_IMAGE_READ} in tenancy where target.image.id='${var.instance_image_id}'" : "" : ""
   autoscaling_atp_policy_statement              = (var.atp_db.is_atp && var.use_autoscaling) ? length(oci_identity_dynamic_group.wlsc_functions_principal_group) > 0 ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_functions_principal_group[0].name} to inspect autonomous-transaction-processing-family in compartment id ${var.atp_db.compartment_id}" : "" : ""
   autoscaling_db_policy_statement               = (local.is_oci_db && var.use_autoscaling) ? length(oci_identity_dynamic_group.wlsc_functions_principal_group) > 0 ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_functions_principal_group[0].name} to inspect database-family in compartment id ${var.oci_db.compartment_id}" : "" : ""
   autoscaling_fss_mount_target_policy_statement = (var.add_fss && var.use_autoscaling) ? length(oci_identity_dynamic_group.wlsc_functions_principal_group) > 0 ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_functions_principal_group[0].name} to manage mount-targets in compartment id ${var.mount_target_compartment_id}" : "" : ""
@@ -99,7 +100,7 @@ locals {
     local.autoscaling_statement18, local.autoscaling_statement19, local.autoscaling_statement20,
     local.autoscaling_statement21, local.autoscaling_statement22, local.autoscaling_statement23,
     local.autoscaling_statement24, local.autoscaling_statement25, local.autoscaling_statement26,
-    local.autoscaling_statement27, local.autoscaling_statement28,
+    local.autoscaling_statement27, local.autoscaling_statement28, local.autoscaling_statement29,
     local.autoscaling_logging_policy_1, local.autoscaling_logging_policy_2, local.autoscaling_logging_policy_3,
     local.autoscaling_atp_policy_statement,
     local.autoscaling_db_policy_statement,
@@ -113,11 +114,12 @@ locals {
   secure_mode_statement2 = var.configure_secure_mode ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to manage leaf-certificates in compartment id ${var.cert_compartment_id}" : ""
   secure_mode_statement3 = var.configure_secure_mode ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to read leaf-certificate-bundles in compartment id ${var.cert_compartment_id} where target.leaf-certificate.bundle-type = 'CERTIFICATE_CONTENT_PUBLIC_ONLY'"  : ""
   secure_mode_statement4 = var.configure_secure_mode ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to read certificate-authorities in compartment id ${var.root_ca_compartment_id}" : ""
+  secure_mode_statement5 = (var.configure_secure_mode && var.use_autoscaling) ? length(oci_identity_dynamic_group.wlsc_functions_principal_group) > 0 ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_functions_principal_group[0].name} to read certificate-authorities in compartment id ${var.root_ca_compartment_id}" : "" : ""
 
   #Policy for reading keystore password secret
-  secure_mode_secrets_policy_statement1 = (var.configure_secure_mode && var.keystore_password_id != "") ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to read secret-bundles in tenancy where target.secret.id = '${var.keystore_password_id}'" : ""
+  secure_mode_secrets_policy_statement1 = (var.configure_secure_mode && var.keystore_password_id != "" && var.wls_secondary_admin_password_id != "" && var.keystore_password_id != var.wls_admin_password_id && var.keystore_password_id != var.wls_secondary_admin_password_id) ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to read secret-bundles in tenancy where target.secret.id = '${var.keystore_password_id}'" : ""
   secure_mode_secrets_policy_statement2 = (var.configure_secure_mode && var.wls_secondary_admin_password_id != "" && var.wls_admin_password_id != var.wls_secondary_admin_password_id) ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to read secret-bundles in tenancy where target.secret.id = '${var.wls_secondary_admin_password_id}'" : ""
-  secure_mode_statement  = compact([local.secure_mode_statement1, local.secure_mode_statement2, local.secure_mode_statement3, local.secure_mode_statement4, local.secure_mode_secrets_policy_statement1, local.secure_mode_secrets_policy_statement2])
+  secure_mode_statement  = compact([local.secure_mode_statement1, local.secure_mode_statement2, local.secure_mode_statement3, local.secure_mode_statement4, local.secure_mode_statement5, local.secure_mode_secrets_policy_statement1, local.secure_mode_secrets_policy_statement2])
 
   #TODO: When other categories with more statements are added here, concat them with service_statements
   policy_statements = concat(local.service_statements, local.cloning_policy_statement, local.autoscaling_statements, local.secure_mode_statement)
