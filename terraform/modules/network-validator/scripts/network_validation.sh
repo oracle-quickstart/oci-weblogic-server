@@ -682,6 +682,8 @@ if [ "$secure_mode" = "true" ]; then
     then
       ADMIN_HTTPS_PORT=9002
     fi
+
+    T3_PORT=9072
 fi
 
 ### Validate all required params are present ###
@@ -792,19 +794,17 @@ then
     validation_return_code=2
   fi
 
-  # Check if T3 Port is open for access by WLS subnet CIDR for non-secure mode
-  if [ "$secure_mode" = "false" ]; then
-    res=$(validate_subnet_port_access ${WLS_SUBNET_OCID} ${T3_PORT} ${wls_subnet_cidr_block})
-    if [[ $res == *"WARNING"* ]]
-    then
-      for warning in "${res[@]}"; do
-        echo "$warning"
-      done
-    elif [[ $res -ne 0 ]]
-    then
-      echo "ERROR: Port ${T3_PORT} is not open for access by WLS Subnet CIDR [$wls_subnet_cidr_block] in WLS Subnet [$WLS_SUBNET_OCID]. ${NETWORK_VALIDATION_MSG}"
-      validation_return_code=2
-    fi
+  # Check if T3 Port is open for access by WLS subnet CIDR
+  res=$(validate_subnet_port_access ${WLS_SUBNET_OCID} ${T3_PORT} ${wls_subnet_cidr_block})
+  if [[ $res == *"WARNING"* ]]
+  then
+    for warning in "${res[@]}"; do
+      echo "$warning"
+    done
+  elif [[ $res -ne 0 ]]
+  then
+    echo "ERROR: Port ${T3_PORT} is not open for access by WLS Subnet CIDR [$wls_subnet_cidr_block] in WLS Subnet [$WLS_SUBNET_OCID]. ${NETWORK_VALIDATION_MSG}"
+    validation_return_code=2
   fi
 
   # Check if Admin Console HTTP Port is open for access to ALL_IPS by WLS subnet CIDR
@@ -866,19 +866,17 @@ then
     validation_return_code=2
   fi
 
-  # Check if T3 Port is open for access by WLS subnet CIDR in Managed Server NSG for non-secure mode
-  if [ "$secure_mode" = "false" ]; then
-    res=$(check_tcp_port_open_in_seclist_or_nsg $MANAGED_SRV_NSG_OCID "${T3_PORT}" "$wls_subnet_cidr_block" "nsg")
-    if [[ $res == *"WARNING"* ]]
-    then
-      for warning in "${res[@]}"; do
-        echo "$warning"
-      done
-    elif [[ $res -ne 0 ]]
-    then
-      echo "ERROR: Port ${T3_PORT} is not open for access by WLS Subnet CIDR [$wls_subnet_cidr_block] in Managed Server NSG [$MANAGED_SRV_NSG_OCID]. ${NETWORK_VALIDATION_MSG}"
-      validation_return_code=2
-    fi
+  # Check if T3 Port is open for access by WLS subnet CIDR in Managed Server NSG
+  res=$(check_tcp_port_open_in_seclist_or_nsg $MANAGED_SRV_NSG_OCID "${T3_PORT}" "$wls_subnet_cidr_block" "nsg")
+  if [[ $res == *"WARNING"* ]]
+  then
+    for warning in "${res[@]}"; do
+      echo "$warning"
+    done
+  elif [[ $res -ne 0 ]]
+  then
+    echo "ERROR: Port ${T3_PORT} is not open for access by WLS Subnet CIDR [$wls_subnet_cidr_block] in Managed Server NSG [$MANAGED_SRV_NSG_OCID]. ${NETWORK_VALIDATION_MSG}"
+    validation_return_code=2
   fi
 
   # Check if Admin Console HTTP Port is open for access to ALL_IPS by WLS subnet CIDR in Admin Server NSG
