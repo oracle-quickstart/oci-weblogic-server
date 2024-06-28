@@ -13,7 +13,8 @@ variable "wls_edition" {
 
 variable "wls_admin_user" {
   type        = string
-  description = "The name of the admin user that will be added to the WebLogic domain"
+  description = "Name of WebLogic administration user"
+  default     = "weblogic"
   validation {
     condition     = replace(var.wls_admin_user, "/^[a-zA-Z][a-zA-Z0-9_-]{7,127}/", "0") == "0"
     error_message = "WLSC-ERROR: The value for wls_admin_user should be between 8 and 128 characters long and alphanumeric, and can contain underscore (_) and hyphen(-) special characters."
@@ -137,16 +138,6 @@ variable "wls_ms_ssl_port" {
   }
 }
 
-variable "wls_cluster_mc_port" {
-  type        = number
-  description = "The managed server port on which to send heartbeats and other internal cluster traffic"
-  default     = 5555
-  validation {
-    condition     = var.wls_cluster_mc_port > 0
-    error_message = "WLSC-ERROR: The value for wls_cluster_mc_port should be greater than 0."
-  }
-}
-
 variable "wls_nm_port" {
   type        = number
   description = "The listen port number for the node manager process on all compute instances"
@@ -170,8 +161,8 @@ variable "provisioning_timeout_mins" {
 
 variable "wls_admin_server_wait_timeout_mins" {
   type        = number
-  description = "Teh timeout in minutes for the administration server to enroll to node manager"
-  default     = 30
+  description = "The timeout in minutes for the administration server to enroll to node manager"
+  default     = 10
 }
 
 variable "wls_version" {
@@ -227,4 +218,30 @@ variable "wls_version_to_rcu_component_list_map" {
     "12.2.1.3" = "MDS,WLS,STB,IAU_APPEND,IAU_VIEWER,UCSUMS,IAU,OPSS"
     "12.2.1.4" = "MDS,WLS,STB,IAU_APPEND,IAU_VIEWER,UCSUMS,IAU,OPSS"
   }
+}
+
+# All variables under this comment belong to secured production mode
+variable "wls_primary_admin_user" {
+  type        = string
+  description = "Name of primary WebLogic administration user"
+  default     = "wls_user"
+  validation {
+    condition     = replace(var.wls_primary_admin_user, "/^[a-zA-Z][a-zA-Z0-9_-]{7,127}/", "0") == "0" && !contains(["system", "admin", "administrator", "weblogic"], var.wls_primary_admin_user)
+    error_message = "WLSC-ERROR: The value for wls_primary_admin_user should be between 8 and 128 characters long and alphanumeric, and can contain underscore (_) and hyphen(-) special characters, and should not be system, admin, administrator, or weblogic."
+  }
+}
+
+variable "wls_secondary_admin_user" {
+  type        = string
+  description = "Name of secondary WebLogic administration user"
+  default     = "wls_user_1"
+  validation {
+    condition     = replace(var.wls_secondary_admin_user, "/^[a-zA-Z][a-zA-Z0-9_-]{7,127}/", "0") == "0" && !contains(["system", "admin", "administrator", "weblogic"], var.wls_secondary_admin_user)
+    error_message = "WLSC-ERROR: The value for wls_secondary_admin_user should be between 8 and 128 characters long and alphanumeric, and can contain underscore (_) and hyphen(-) special characters, and should not be system, admin, administrator, or weblogic."
+  }
+}
+
+variable "wls_secondary_admin_password_id" {
+  type        = string
+  description = "The OCID of the vault secret with the password for secondary WebLogic administration user"
 }

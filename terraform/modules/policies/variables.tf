@@ -1,4 +1,4 @@
-# Copyright (c) 2023, Oracle and/or its affiliates.
+# Copyright (c) 2023, 2024, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 variable "tenancy_id" {
@@ -191,4 +191,35 @@ variable "add_load_balancer" {
 variable "is_rms_private_endpoint_required" {
   type        = bool
   description = "Set resource manager private endpoint"
+}
+
+variable "instance_image_id" {
+  type        = string
+  description = "The OCID of the compute image used to create the WebLogic compute instances"
+  default     = ""
+}
+
+variable "configure_secure_mode" {
+  type        = bool
+  description = "Set to true to configure a secure WebLogic domain"
+}
+
+variable "keystore_password_id" {
+  type        = string
+  description = "The OCID of the vault secret with the password for creating the keystore"
+}
+
+variable "cert_compartment_id" {
+  type        = string
+  description = "The OCID of the compartment where the certificate will be created. Leave it blank to use the network compartment for the certificate"
+}
+
+variable "root_ca_compartment_id" {
+  type        = string
+  description = "The OCID of the compartment where the root certificate authority exists"
+}
+
+variable "wls_secondary_admin_password_id" {
+  type        = string
+  description = "The OCID of the vault secret with the password for secondary WebLogic administration user"
 }
