@@ -1,4 +1,4 @@
-# Copyright (c) 2023, Oracle and/or its affiliates.
+# Copyright (c) 2023, 2024, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 output "virtual_cloud_network_id" {
@@ -56,6 +56,10 @@ output "weblogic_version" {
     local.edition_map[upper(var.wls_edition)],
     local.prov_type,
   )
+}
+
+output "webLogic_server_domain_configuration" {
+  value = local.wls_domain_configuration
 }
 
 output "weblogic_server_administration_console" {

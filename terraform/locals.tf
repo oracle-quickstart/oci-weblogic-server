@@ -1,4 +1,4 @@
-# Copyright (c) 2023, Oracle and/or its affiliates.
+# Copyright (c) 2023, 2024, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 locals {
@@ -93,7 +93,7 @@ locals {
   deploy_sample_app = (var.deploy_sample_app && var.wls_edition != "SE")
 
   admin_ip_address      = local.assign_weblogic_public_ip ? module.compute.instance_public_ips[0] : module.compute.instance_private_ips[0]
-  admin_console_app_url = format("https://%s:%s/console", local.admin_ip_address, var.wls_extern_ssl_admin_port)
+  admin_console_app_url = format("https://%s:%s/console", local.admin_ip_address, local.wls_extern_ssl_admin_port)
   sample_app_protocol   = local.add_load_balancer ? "https" : "http"
   sample_app_url_lb_ip  = local.deploy_sample_app && local.add_load_balancer ? format("%s://%s/sample-app", local.sample_app_protocol, local.lb_ip) : ""
   sample_app_url_wls_ip = local.deploy_sample_app ? format("https://%s:%s/sample-app", local.admin_ip_address, var.wls_ms_extern_ssl_port) : ""
@@ -184,4 +184,16 @@ locals {
   is_rms_private_endpoint_required  = var.is_rms_private_endpoint_required && var.wls_existing_vcn_id != "" && var.wls_subnet_id != "" && !local.assign_weblogic_public_ip ? true : false
   add_new_rms_private_endpoint      = local.is_rms_private_endpoint_required && var.add_rms_private_endpoint == "Create New Resource Manager Endpoint" ? true : false
   add_existing_rms_private_endpoint = local.is_rms_private_endpoint_required && var.add_rms_private_endpoint == "Use Existing Resource Manager Endpoint" ? true : false
+
+  # Secured Production Mode
+  preserve_boot_properties          = var.configure_secure_mode ? var.preserve_boot_properties : true
+  wls_admin_port                    = var.configure_secure_mode ? var.administration_port : var.wls_admin_port
+  keystore_password_id              = var.configure_secure_mode ? var.keystore_password_id : ""
+  root_ca_id                        = var.configure_secure_mode ? var.root_ca_id : ""
+  cert_compartment_id               = var.cert_compartment_id == "" ? local.network_compartment_id : var.cert_compartment_id
+  wls_domain_configuration          = var.configure_secure_mode ? "Secured Production Mode" : "Production Mode"
+  wls_extern_ssl_admin_port         = var.configure_secure_mode ? var.administration_port : var.wls_extern_ssl_admin_port
+  wls_admin_user                    = var.configure_secure_mode ? var.wls_primary_admin_user : var.wls_admin_user
+  wls_secondary_admin_password_id   = var.configure_secure_mode ? var.wls_secondary_admin_password_id : ""
+  root_ca_compartment_id            = var.configure_secure_mode && var.root_ca_id != "" ? data.oci_certificates_management_certificate_authority.root_certificate_authority[0].compartment_id : ""
 }

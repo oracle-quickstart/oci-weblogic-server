@@ -1,4 +1,4 @@
-# Copyright (c) 2023,2024, Oracle and/or its affiliates.
+# Copyright (c) 2023, 2024, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 variable "tenancy_id" {
@@ -292,4 +292,57 @@ variable "mp_ucm_listing_resource_version" {
 variable "is_ucm_image" {
   type        = bool
   description = "The metadata info to send it to instance to determine if its ucm image based instance or not"
+}
+
+# All the variables under this comment belong to Secured Production Mode
+variable "configure_secure_mode" {
+  type        = bool
+  description = "Set to true to configure a secure WebLogic domain"
+}
+
+variable "preserve_boot_properties" {
+  type        = bool
+  description = "Set to true to preserve the boot.properties file for administration server and managed servers"
+}
+
+variable "administration_port" {
+  type        = number
+  description = "The domain-wide administration port to configure a secure WebLogic domain"
+}
+
+variable "ms_administration_port" {
+  type        = number
+  description = "The administration port for managed servers to configure a secure WebLogic domain"
+}
+
+variable "keystore_dir" {
+  type        = string
+  description = "The directory where the pkcs12 keystores will be created in the compute instance when secured production mode is enabled."
+  default     = "/u01/data/keystores"
+}
+
+variable "keystore_password_id" {
+  type        = string
+  description = "The OCID of the vault secret with the password for creating the keystore"
+}
+
+variable "root_ca_id" {
+  type        = string
+  description = "The OCID of the existing root certificate authority to issue the certificates"
+}
+
+variable "cert_compartment_id" {
+  type        = string
+  description = "The OCID of the compartment where the certificate will be created. Leave it blank to use the network compartment for the certificate"
+}
+
+variable "thread_pool_limit" {
+  type        = number
+  description = "Shared Capacity For Work Managers"
+}
+
+variable "certificate_id" {
+  type        = string
+  description = "The OCID of the SSL certificate to configure a secure WebLogic domain"
+  default     = ""
 }

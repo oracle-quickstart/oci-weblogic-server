@@ -1,4 +1,4 @@
-# Copyright (c) 2023, Oracle and/or its affiliates.
+# Copyright (c) 2023, 2024, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 locals {
@@ -60,4 +60,27 @@ locals {
   invalid_script_version  = var.mode == "PROD" && var.tf_script_version == ""
   script_version_msg      = "WLSC-ERROR: The value for tf script version cannot be empty. Please provide valid script version that matches with version on the image."
   validate_script_version = local.invalid_script_version ? local.validators_msg_map[local.script_version_msg] : null
+
+  # Validations related to Secured Production Mode
+  missing_keystore_password_id          = var.configure_secure_mode && var.keystore_password_id == ""
+  keystore_password_id_required_msg     = "WLSC-ERROR: The value for keystore_password_id is required when enabling secured production mode."
+  validate_missing_keystore_password_id = local.missing_keystore_password_id ? local.validators_msg_map[local.keystore_password_id_required_msg] : null
+
+  missing_root_ca_id          = var.configure_secure_mode && var.root_ca_id == ""
+  root_ca_id_required_msg     = "WLSC-ERROR: The value for root_ca_id is required when enabling secured production mode."
+  validate_missing_root_ca_id = local.missing_root_ca_id ? local.validators_msg_map[local.root_ca_id_required_msg] : null
+
+  missing_wls_secondary_admin_password_id              = var.configure_secure_mode && var.wls_secondary_admin_password_id == ""
+  missing_wls_secondary_admin_password_id_required_msg = "WLSC-ERROR: The value for wls_secondary_admin_password_id is required when enabling secured production mode"
+  invalid_wls_secondary_admin_password_id              = var.configure_secure_mode && length(regexall("^ocid1.vaultsecret.", var.wls_secondary_admin_password_id)) <= 0
+  invalid_wls_secondary_admin_password_id_required_msg = "WLSC-ERROR: The value for wls_secondary_admin_password_id should start with \"ocid1.vaultsecret.\""
+  validate_wls_secondary_admin_password_id             = local.missing_wls_secondary_admin_password_id ? local.validators_msg_map[local.missing_wls_secondary_admin_password_id_required_msg] : (local.invalid_wls_secondary_admin_password_id ? local.validators_msg_map[local.invalid_wls_secondary_admin_password_id_required_msg] : null)
+
+  invalid_administration_ports     = var.configure_secure_mode && var.administration_port == var.ms_administration_port
+  invalid_administration_ports_msg = "WLSC-ERROR: The value for administration_port=[${var.administration_port}] and ms_administration_port=[${var.ms_administration_port}] cannot be same."
+  validate_administration_ports    = local.invalid_administration_ports ? local.validators_msg_map[local.invalid_administration_ports_msg] : null
+
+  invalid_jrf_12c_secure_mode      = var.configure_secure_mode && (var.is_oci_db || var.is_atp_db || trimspace(var.oci_db_connection_string) != "")
+  invalid_jrf_12c_secure_mode_msg  = "WLSC-ERROR: JRF domain is not supported for FMW 12c version in secured production mode."
+  validate_jrf_12c_secure_mode     = local.invalid_jrf_12c_secure_mode ? local.validators_msg_map[local.invalid_jrf_12c_secure_mode_msg] : ""
 }

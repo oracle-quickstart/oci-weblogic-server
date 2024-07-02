@@ -54,7 +54,6 @@ module "wls-instances" {
       wls_ms_server_name                 = var.wls_ms_server_name
       wls_admin_server_name              = var.wls_admin_server_name
       wls_cluster_name                   = var.wls_cluster_name
-      wls_cluster_mc_port                = var.wls_cluster_mc_port
       wls_machine_name                   = var.wls_machine_name
       wls_server_startup_args            = var.wls_server_startup_args
       total_vm_count                     = var.num_vm_instances
@@ -68,6 +67,20 @@ module "wls-instances" {
       wls_edition                        = var.wls_edition
       is_bastion_instance_required       = var.is_bastion_instance_required
       create_policies                    = var.create_policies
+
+      # Secured Production Mode
+      configure_secure_mode              = var.configure_secure_mode
+      preserve_boot_properties           = var.preserve_boot_properties
+      administration_port                = var.administration_port
+      ms_administration_port             = var.ms_administration_port
+      keystore_dir                       = var.keystore_dir
+      keystore_password_id               = var.keystore_password_id
+      root_ca_id                         = var.root_ca_id
+      cert_compartment_id                = var.cert_compartment_id
+      certificate_id                     = var.certificate_id
+      thread_pool_limit                  = var.thread_pool_limit
+      wls_secondary_admin_user           = var.wls_secondary_admin_user
+      wls_secondary_admin_password_ocid  = var.wls_secondary_admin_password_id
 
       user_data            = data.template_cloudinit_config.config.rendered
       mode                 = var.mode
