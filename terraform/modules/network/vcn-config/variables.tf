@@ -221,6 +221,11 @@ variable "administration_port" {
   description = "The domain-wide administration port to configure a secure WebLogic domain"
 }
 
+variable "ms_administration_port" {
+  type        = number
+  description = "The administration port for managed servers to configure a secure WebLogic domain"
+}
+
 variable "wls_admin_ssl_port" {
   type        = number
   description = "The administration server port for T3s protocol"
