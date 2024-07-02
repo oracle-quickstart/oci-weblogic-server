@@ -1,4 +1,4 @@
-# Copyright (c) 2023, Oracle and/or its affiliates.
+# Copyright (c) 2023,2024, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 resource "oci_monitoring_alarm" "wlsc_scaleout_monitoring_alarm" {
@@ -8,7 +8,7 @@ resource "oci_monitoring_alarm" "wlsc_scaleout_monitoring_alarm" {
   body                  = local.alarm_body[format("%s ScaleOut", var.wls_metric)]
   destinations          = formatlist(oci_ons_notification_topic.wlsc_scaleout_notification_topic.id)
   display_name          = format("%s_scaleout_monitoring_alarm", var.service_prefix_name)
-  is_enabled            = var.create_policies
+  is_enabled            = var.enable_autoscaling_alarms
   metric_compartment_id = var.metric_compartment_id
   namespace             = var.alarm_namspace
   query                 = local.alarm_mql_map[format("%s ScaleOut", var.wls_metric)]
@@ -34,7 +34,7 @@ resource "oci_monitoring_alarm" "wlsc_scalein_monitoring_alarm" {
   body                  = local.alarm_body[format("%s ScaleOut", var.wls_metric)]
   destinations          = formatlist(oci_ons_notification_topic.wlsc_scalein_notification_topic.id)
   display_name          = format("%s_scalein_monitoring_alarm", var.service_prefix_name)
-  is_enabled            = var.create_policies
+  is_enabled            = var.enable_autoscaling_alarms
   metric_compartment_id = var.metric_compartment_id
   namespace             = var.alarm_namspace
   query                 = local.alarm_mql_map[format("%s ScaleIn", var.wls_metric)]
