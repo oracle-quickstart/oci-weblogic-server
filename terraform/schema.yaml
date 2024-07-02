@@ -1,4 +1,4 @@
-# Copyright (c) 2023, Oracle and/or its affiliates.
+# Copyright (c) 2023,2024, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 title: Oracle WebLogic Server for Oracle Cloud Infrastructure
@@ -216,6 +216,7 @@ groupings:
       - ${wls_expose_admin_port}
       - ${mount_path}
       - ${alarm_severity}
+      - ${enable_autoscaling_alarms}
       - ${ocir_region}
       - ${ucm_instance_image_id}
       - ${ucm_listing_id}
