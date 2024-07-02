@@ -70,6 +70,7 @@ module "network-vcn-config" {
   wls_nm_port                = var.wls_nm_port
   configure_secure_mode      = var.configure_secure_mode
   administration_port        = var.administration_port
+  ms_administration_port     = var.ms_administration_port
 
   wls_subnet_cidr              = local.wls_subnet_cidr
   wls_ms_source_cidrs          = local.add_load_balancer ? [local.lb_subnet_1_subnet_cidr] : ["0.0.0.0/0"]
