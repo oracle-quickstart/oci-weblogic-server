@@ -1,4 +1,4 @@
-# Copyright (c) 2023,2024, Oracle and/or its affiliates.
+# Copyright (c) 2023, 2024, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 ### Removing network validation script from provisioning flow temporarily.
@@ -63,9 +63,14 @@ module "network-vcn-config" {
   wls_extern_ssl_admin_port  = var.wls_extern_ssl_admin_port
   wls_extern_admin_port      = var.wls_extern_admin_port
   wls_expose_admin_port      = var.wls_expose_admin_port
+  wls_admin_ssl_port         = var.wls_admin_ssl_port
   wls_admin_port_source_cidr = var.wls_admin_port_source_cidr
-  wls_ms_content_port        = local.add_load_balancer ? (var.is_idcs_selected ? var.idcs_cloudgate_port : var.wls_ms_extern_port) : var.wls_ms_extern_ssl_port
+  wls_ms_content_port        = local.add_load_balancer ? (var.is_idcs_selected ? var.idcs_cloudgate_port : (var.configure_secure_mode ? var.wls_ms_extern_ssl_port : var.wls_ms_extern_port)) : var.wls_ms_extern_ssl_port
   assign_backend_public_ip   = local.assign_weblogic_public_ip
+  wls_nm_port                = var.wls_nm_port
+  configure_secure_mode      = var.configure_secure_mode
+  administration_port        = var.administration_port
+  ms_administration_port     = var.ms_administration_port
 
   wls_subnet_cidr              = local.wls_subnet_cidr
   wls_ms_source_cidrs          = local.add_load_balancer ? [local.lb_subnet_1_subnet_cidr] : ["0.0.0.0/0"]
@@ -239,6 +244,12 @@ module "policies" {
   fss_compartment_id               = var.fss_compartment_id == "" ? var.compartment_ocid : var.fss_compartment_id
   mount_target_compartment_id      = var.mount_target_compartment_id == "" ? var.compartment_ocid : var.mount_target_compartment_id
   is_rms_private_endpoint_required = local.is_rms_private_endpoint_required
+  instance_image_id                = var.instance_image_id
+  configure_secure_mode            = var.configure_secure_mode
+  keystore_password_id             = local.keystore_password_id
+  cert_compartment_id              = local.cert_compartment_id
+  root_ca_compartment_id           = local.root_ca_compartment_id
+  wls_secondary_admin_password_id  = local.wls_secondary_admin_password_id
 }
 
 module "bastion" {
@@ -464,7 +475,15 @@ module "validators" {
   provisioned_node_count = length(data.oci_core_instances.provisioned_instances.instances.*.display_name)
   use_marketplace_image  = var.use_marketplace_image
   wls_edition            = var.wls_edition
-  tenancy_id             = var.tenancy_ocid
+
+  # Secured Production Mode
+  configure_secure_mode           = var.configure_secure_mode
+  keystore_password_id            = local.keystore_password_id
+  root_ca_id                      = local.root_ca_id
+  wls_secondary_admin_password_id = local.wls_secondary_admin_password_id
+  administration_port             = var.administration_port
+  ms_administration_port          = var.ms_administration_port
+  tenancy_id                      = var.tenancy_ocid
 }
 
 module "fss" {
@@ -594,7 +613,7 @@ module "compute" {
   tf_script_version         = var.tf_script_version
   use_regional_subnet       = local.use_regional_subnet
   wls_14c_jdk_version       = var.wls_14c_jdk_version
-  wls_admin_user            = var.wls_admin_user
+  wls_admin_user            = local.wls_admin_user
   wls_admin_password_id     = var.wls_admin_password_id
   wls_admin_server_name     = format("%s_adminserver", local.service_name_prefix)
   wls_ms_server_name        = format("%s_server_", local.service_name_prefix)
@@ -607,12 +626,24 @@ module "compute" {
   wls_machine_name          = format("%s_machine_", local.service_name_prefix)
   wls_extern_admin_port     = var.wls_extern_admin_port
   wls_extern_ssl_admin_port = var.wls_extern_ssl_admin_port
-  wls_admin_port            = var.wls_admin_port
+  wls_admin_port            = local.wls_admin_port
   wls_admin_ssl_port        = var.wls_admin_ssl_port
   wls_domain_name           = format("%s_domain", local.service_name_prefix)
   wls_server_startup_args   = var.wls_server_startup_args
   wls_existing_vcn_id       = var.wls_existing_vcn_id
   create_policies           = var.create_policies
+
+  # Secured Production Mode
+  configure_secure_mode              = var.configure_secure_mode
+  preserve_boot_properties           = local.preserve_boot_properties
+  administration_port                = var.administration_port
+  ms_administration_port             = var.ms_administration_port
+  keystore_password_id               = local.keystore_password_id
+  root_ca_id                         = local.root_ca_id
+  cert_compartment_id                = local.cert_compartment_id
+  thread_pool_limit                  = var.thread_pool_limit
+  wls_secondary_admin_user           = var.wls_secondary_admin_user
+  wls_secondary_admin_password_id    = local.wls_secondary_admin_password_id
 
   #The following two are for adding a dependency on the peering module
   wls_vcn_peering_dns_resolver_id           = element(flatten(concat(module.vcn-peering[*].wls_vcn_dns_resolver_id, [""])), 0)
@@ -712,8 +743,11 @@ module "load-balancer-backends" {
   lb_backendset_name   = local.lb_backendset_name
   num_vm_instances     = var.wls_node_count
   instance_private_ips = module.compute.instance_private_ips
-  backend_port         = var.is_idcs_selected ? var.idcs_cloudgate_port : var.wls_ms_extern_port
+  backend_port         = var.is_idcs_selected ? var.idcs_cloudgate_port : (var.configure_secure_mode ? var.wls_ms_extern_ssl_port : var.wls_ms_extern_port)
   health_check_url     = var.is_idcs_selected ? "/cloudgate" : "/"
+
+  configure_secure_mode    = var.configure_secure_mode
+  root_ca_id               = local.root_ca_id
 }
 
 module "observability-logging" {
