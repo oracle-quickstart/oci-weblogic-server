@@ -206,6 +206,11 @@ variable "add_existing_mount_target" {
   default     = false
 }
 
+variable "wls_nm_port" {
+  type        = number
+  description = "The listen port number for the node manager process on all compute instances"
+}
+
 variable "configure_secure_mode" {
   type        = bool
   description = "Set to true to configure a secure WebLogic domain"
