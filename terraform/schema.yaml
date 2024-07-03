@@ -898,7 +898,7 @@ variables:
         - ${orm_create_mode}
         - ${configure_secure_mode}
     type: string
-    title: "WebLogic Server Admin User Name"
+    title: "Additional WebLogic Server Admin User Name"
     description: "The name of the secondary administrator in the WebLogic Server domain. The value should be between 8 and 128 characters long and alphanumeric, and can contain underscore (_) and hyphen(-) special characters, and should not be system, admin, administrator, or weblogic."
     pattern: "^(?!weblogic$|administrator$)[a-zA-Z][a-zA-Z0-9_-]{7,127}$"
     default: "wls_user_1"
