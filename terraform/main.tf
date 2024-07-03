@@ -483,7 +483,6 @@ module "validators" {
   wls_secondary_admin_password_id = local.wls_secondary_admin_password_id
   administration_port             = var.administration_port
   ms_administration_port          = var.ms_administration_port
-  tenancy_id                      = var.tenancy_ocid
 }
 
 module "fss" {
