@@ -580,6 +580,8 @@ module "observability-autoscaling" {
   create_policies     = var.create_policies
   use_oci_logging     = var.use_oci_logging
 
+  enable_autoscaling_alarms = var.enable_autoscaling_alarms
+
   tags = {
     defined_tags  = local.defined_tags
     freeform_tags = local.free_form_tags

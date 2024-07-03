@@ -226,6 +226,7 @@ groupings:
       - ${wls_expose_admin_port}
       - ${mount_path}
       - ${alarm_severity}
+      - ${enable_autoscaling_alarms}
       - ${ocir_region}
       - ${ucm_instance_image_id}
       - ${ucm_listing_id}

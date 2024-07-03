@@ -224,6 +224,7 @@ groupings:
       - ${oci_db_connection_string}
       - ${use_oci_db_connection_string}
       - ${alarm_severity}
+      - ${enable_autoscaling_alarms}
       - ${ocir_region}
       - ${ucm_instance_image_id}
       - ${ucm_listing_id}
