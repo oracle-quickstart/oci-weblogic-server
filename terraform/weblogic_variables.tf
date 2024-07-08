@@ -1,4 +1,4 @@
-# Copyright (c) 2023, Oracle and/or its affiliates.
+# Copyright (c) 2023, 2024, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 variable "wls_version" {
@@ -106,6 +106,7 @@ variable "wls_admin_ssl_port" {
     error_message = "WLSC-ERROR: The value for wls_admin_ssl_port should be greater than 0."
   }
 }
+
 variable "wls_expose_admin_port" {
   type        = bool
   description = "[WARNING] Selecting this option will expose the console to the internet if the default 0.0.0.0/0 CIDR is used. You should change the CIDR range below to allow access to a trusted IP range."
@@ -165,16 +166,6 @@ variable "wls_extern_admin_port" {
   }
 }
 
-variable "wls_cluster_mc_port" {
-  type        = number
-  description = "The managed server port on which to send heartbeats and other internal cluster traffic"
-  default     = 5555
-  validation {
-    condition     = var.wls_cluster_mc_port > 0
-    error_message = "WLSC-ERROR: The value for wls_cluster_mc_port should be greater than 0."
-  }
-}
-
 variable "wls_nm_port" {
   type        = number
   description = "The listen port number for the node manager process on all compute instances"
@@ -197,3 +188,77 @@ variable "deploy_sample_app" {
   default     = true
 }
 
+# All the variables under this comment belong to Secured Production Mode
+variable "configure_secure_mode" {
+  type        = bool
+  description = "Set to true to configure a secure WebLogic domain"
+  default     = false
+}
+
+variable "preserve_boot_properties" {
+  type        = bool
+  description = "Set to true to preserve the boot.properties file for administration server and managed servers"
+  default     = "false"
+}
+
+variable "keystore_password_id" {
+  type        = string
+  description = "The OCID of the vault secret with the password for creating the keystore"
+  default     = ""
+}
+
+variable "root_ca_id" {
+  type        = string
+  description = "The OCID of the existing root certificate authority to issue the certificates"
+  default     = ""
+}
+
+variable "cert_compartment_id" {
+  type        = string
+  description = "The OCID of the compartment where the certificate will be created. Leave it blank to use the network compartment for the certificate"
+  default     = ""
+}
+
+variable "administration_port" {
+  type        = number
+  description = "The domain-wide administration port to configure a secure WebLogic domain"
+  default     = 9002
+}
+
+variable "ms_administration_port" {
+  type        = number
+  description = "The administration port for managed servers to configure a secure WebLogic domain"
+  default     = 9004
+}
+
+variable "thread_pool_limit" {
+  type        = number
+  description = "Shared Capacity For Work Managers"
+  default     = 65536
+}
+
+variable "wls_primary_admin_user" {
+  type        = string
+  description = "Name of primary WebLogic administration user"
+  default     = "wls_user"
+  validation {
+    condition     = replace(var.wls_primary_admin_user, "/^[a-zA-Z][a-zA-Z0-9_-]{7,127}/", "0") == "0" && !contains(["system", "admin", "administrator", "weblogic"], var.wls_primary_admin_user)
+    error_message = "WLSC-ERROR: The value for wls_primary_admin_user should be between 8 and 128 characters long and alphanumeric, and can contain underscore (_) and hyphen(-) special characters, and should not be system, admin, administrator, or weblogic."
+  }
+}
+
+variable "wls_secondary_admin_user" {
+  type        = string
+  description = "Name of secondary WebLogic administration user"
+  default     = "wls_user_1"
+  validation {
+    condition     = replace(var.wls_secondary_admin_user, "/^[a-zA-Z][a-zA-Z0-9_-]{7,127}/", "0") == "0" && !contains(["system", "admin", "administrator", "weblogic"], var.wls_secondary_admin_user)
+    error_message = "WLSC-ERROR: The value for wls_secondary_admin_user should be between 8 and 128 characters long and alphanumeric, and can contain underscore (_) and hyphen(-) special characters, and should not be system, admin, administrator, or weblogic."
+  }
+}
+
+variable "wls_secondary_admin_password_id" {
+  type        = string
+  description = "The OCID of the vault secret with the password for secondary WebLogic administration user"
+  default     = ""
+}

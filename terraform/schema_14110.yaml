@@ -1,4 +1,4 @@
-# Copyright (c) 2023, Oracle and/or its affiliates.
+# Copyright (c) 2023, 2024, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 title: Oracle WebLogic Server for Oracle Cloud Infrastructure
@@ -20,6 +20,7 @@ groupings:
       - ${use_apm_service}
       - ${use_autoscaling}
       - ${add_fss}
+      - ${configure_secure_mode}
 
   - title: "Virtual Cloud Networking"
     variables:
@@ -36,16 +37,25 @@ groupings:
   - title: "WebLogic Domain Configuration"
     variables:
       - ${wls_admin_user}
+      - ${wls_primary_admin_user}
       - ${wls_admin_secret_compartment_id}
       - ${wls_admin_password_id}
+      - ${wls_secondary_admin_user}
+      - ${wls_secondary_admin_password_id}
+      - ${keystore_password_id}
+      - ${root_ca_id}
+      - ${cert_compartment_id}
+      - ${preserve_boot_properties}
       - ${wls_14c_jdk_version}
       - ${deploy_sample_app}
       - ${wls_server_startup_args}
+      - ${thread_pool_limit}
       - ${configure_wls_ports}
+      - ${administration_port}
+      - ${ms_administration_port}
       - ${wls_nm_port}
       - ${wls_extern_admin_port}
       - ${wls_extern_ssl_admin_port}
-      - ${wls_cluster_mc_port}
       - ${wls_ms_extern_port}
       - ${wls_ms_extern_ssl_port}
       - ${allow_manual_domain_extension}
@@ -214,6 +224,7 @@ groupings:
       - ${oci_db_connection_string}
       - ${use_oci_db_connection_string}
       - ${alarm_severity}
+      - ${enable_autoscaling_alarms}
       - ${ocir_region}
       - ${ucm_instance_image_id}
       - ${ucm_listing_id}
@@ -468,11 +479,16 @@ variables:
     required: true
 
   wls_admin_user:
-    visible: ${orm_create_mode}
+    visible:
+      and:
+        - ${orm_create_mode}
+        - not:
+            - ${configure_secure_mode}
     type: string
     title: "WebLogic Server Admin User Name"
-    description: "The name of the administrator in the WebLogic Server domain"
+    description: "The name of the administrator in the WebLogic Server domain. The value should be between 8 and 128 characters long and alphanumeric, and can contain underscore (_) and hyphen(-) special characters."
     pattern: "^[a-zA-Z][a-zA-Z0-9_-]{7,127}$"
+    default: "weblogic"
     minLength: 8
     maxLength: 128
     required: true
@@ -529,6 +545,8 @@ variables:
       and:
         - ${orm_create_mode}
         - ${configure_wls_ports}
+        - not:
+            - ${configure_secure_mode}
     type: integer
     default: 7001
     minimum: 1024
@@ -543,6 +561,8 @@ variables:
       and:
         - ${orm_create_mode}
         - ${configure_wls_ports}
+        - not:
+            - ${configure_secure_mode}
     type: integer
     default: 7002
     minimum: 1024
@@ -552,25 +572,13 @@ variables:
     description: "The administration server SSL port on which to access the administration console"
     required: true
 
-  wls_cluster_mc_port:
-    visible:
-      and:
-        - ${orm_create_mode}
-        - ${configure_wls_ports}
-    type: integer
-    default: 5555
-    minimum: 1024
-    maximum: 65535
-    multipleOf: 1
-    title: "WebLogic Cluster Port"
-    description: "The managed server port on which to send heartbeats and other internal cluster traffic (not applicable for Standard Edition)"
-    required: true
-
   wls_ms_extern_port:
     visible:
       and:
         - ${orm_create_mode}
         - ${configure_wls_ports}
+        - not:
+            - ${configure_secure_mode}
     type: integer
     default: 7003
     minimum: 1024
@@ -781,6 +789,144 @@ variables:
     title: "Existing Network Security Groups"
     description: "Use existing Network Security Groups (NSG) for existing subnets"
 
+  # Secured Production Mode variables
+  configure_secure_mode:
+    visible: ${orm_create_mode}
+    type: boolean
+    required: true
+    default: false
+    title: "Enable Secured Production Mode"
+    description: "Configure a secure domain"
+
+  preserve_boot_properties:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${configure_secure_mode}
+    type: boolean
+    required: true
+    default: false
+    title: "Preserve the boot.properties file for administration server and managed servers"
+    description: "Preserve the boot.properties file for administration server and managed servers. NOTE: Leaving this unchecked (false) will result in node manager being unable to revive servers if they are killed."
+
+  administration_port:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${configure_wls_ports}
+        - ${configure_secure_mode}
+    type: integer
+    default: 9002
+    minimum: 1024
+    maximum: 65535
+    multipleOf: 1
+    title: "WebLogic Server domain-wide Administration Port"
+    description: "The domain-wide administration port to configure a secure WebLogic domain"
+    required: true
+
+  ms_administration_port:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${configure_wls_ports}
+        - ${configure_secure_mode}
+    type: integer
+    default: 9004
+    minimum: 1024
+    maximum: 65535
+    multipleOf: 1
+    title: "Administration Port for Managed Servers"
+    description: "The administration port for managed servers to configure a secure WebLogic domain"
+    required: true
+
+  keystore_password_id:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${configure_secure_mode}
+    type: "oci:kms:secret:id"
+    minLength: 1
+    maxLength: 1024
+    required: true
+    title: "Validated Secret for Keystore password"
+    description: "The secret that contains the keystore password. To create secrets, see <a target=\"_blank\" href=\"https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/you-begin-oracle-weblogic-cloud.html#GUID-0517A019-4A89-40ED-A568-DD2193733F8B\"> Create Secrets for Passwords</a>."
+    dependsOn:
+      compartmentId: ${wls_admin_secret_compartment_id}
+
+  root_ca_id:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${configure_secure_mode}
+    type: string
+    pattern: ^ocid1.certificateauthority.*$
+    required: true
+    title: "Existing Root Certificate Authority ID"
+    description: "The OCID of the existing root certificate authority to issue the certificates"
+
+  cert_compartment_id:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${configure_secure_mode}
+        - ${create_policies}
+    type: oci:identity:compartment:id
+    required: false
+    title: "Certificate Compartment"
+    description: "The compartment where you want to create the certificate"
+    default: ${network_compartment_id}
+
+  thread_pool_limit:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - and:
+            - ${configure_secure_mode}
+    type: string
+    default: 65536
+    title: "Throttle the thread pool"
+    description: "Shared Capacity For Work Managers"
+    required: true
+
+  wls_primary_admin_user:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${configure_secure_mode}
+    type: string
+    title: "WebLogic Server Admin User Name"
+    description: "The name of the primary administrator in the WebLogic Server domain. The value should be between 8 and 128 characters long and alphanumeric, and can contain underscore (_) and hyphen(-) special characters, and should not be system, admin, administrator, or weblogic."
+    pattern: "^(?!weblogic$|administrator$)[a-zA-Z][a-zA-Z0-9_-]{7,127}$"
+    default: "wls_user"
+    minLength: 8
+    maxLength: 128
+    required: true
+
+  wls_secondary_admin_user:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${configure_secure_mode}
+    type: string
+    title: "Additional WebLogic Server Admin User Name"
+    description: "The name of the secondary administrator in the WebLogic Server domain. The value should be between 8 and 128 characters long and alphanumeric, and can contain underscore (_) and hyphen(-) special characters, and should not be system, admin, administrator, or weblogic."
+    pattern: "^(?!weblogic$|administrator$)[a-zA-Z][a-zA-Z0-9_-]{7,127}$"
+    default: "wls_user_1"
+    minLength: 8
+    maxLength: 128
+    required: true
+
+  wls_secondary_admin_password_id:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${configure_secure_mode}
+    type: "oci:kms:secret:id"
+    title: "Validated Secret for WebLogic Server Admin Password"
+    description: "The secret that contains the administration password of the secondary administrator in the WebLogic Server domain. Use a WebLogic Administrator password that starts with a letter, is between 8 and 30 characters long, contains at least one number, and, optionally, any number of the special characters ($ # _). For example, Ach1z0#d. To create secrets, see <a target=\"_blank\" href=\"https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/you-begin-oracle-weblogic-cloud.html#GUID-0517A019-4A89-40ED-A568-DD2193733F8B\">Create Secrets for Passwords</a>."
+    required: true
+    dependsOn:
+      compartmentId: ${wls_admin_secret_compartment_id}
 
   # WLS Network Configuration
   wls_vcn_name:
