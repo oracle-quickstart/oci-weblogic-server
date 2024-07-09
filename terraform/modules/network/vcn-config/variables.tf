@@ -1,4 +1,4 @@
-# Copyright (c) 2023, Oracle and/or its affiliates.
+# Copyright (c) 2023, 2024, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 variable "compartment_id" {
@@ -206,3 +206,27 @@ variable "add_existing_mount_target" {
   default     = false
 }
 
+variable "wls_nm_port" {
+  type        = number
+  description = "The listen port number for the node manager process on all compute instances"
+}
+
+variable "configure_secure_mode" {
+  type        = bool
+  description = "Set to true to configure a secure WebLogic domain"
+}
+
+variable "administration_port" {
+  type        = number
+  description = "The domain-wide administration port to configure a secure WebLogic domain"
+}
+
+variable "ms_administration_port" {
+  type        = number
+  description = "The administration port for managed servers to configure a secure WebLogic domain"
+}
+
+variable "wls_admin_ssl_port" {
+  type        = number
+  description = "The administration server port for T3s protocol"
+}

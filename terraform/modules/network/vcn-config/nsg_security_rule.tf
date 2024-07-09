@@ -1,4 +1,4 @@
-# Copyright (c) 2023, Oracle and/or its affiliates.
+# Copyright (c) 2023, 2024, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 resource "oci_core_network_security_group_security_rule" "bastion_ingress_security_rule" {
@@ -61,7 +61,7 @@ resource "oci_core_network_security_group_security_rule" "wls_ingress_security_r
 }
 
 resource "oci_core_network_security_group_security_rule" "wls_ingress_internal_security_rule" {
-
+  count                     = var.configure_secure_mode ? 0 : 1
   network_security_group_id = element(var.nsg_ids["managed_nsg_id"], 0)
   direction                 = "INGRESS"
   protocol                  = "6"
@@ -69,6 +69,77 @@ resource "oci_core_network_security_group_security_rule" "wls_ingress_internal_s
   source      = var.wls_subnet_cidr
   source_type = "CIDR_BLOCK"
   stateless   = false
+}
+
+resource "oci_core_network_security_group_security_rule" "wls_ingress_nm_security_rule" {
+  network_security_group_id = element(var.nsg_ids["managed_nsg_id"], 0)
+  direction                 = "INGRESS"
+  protocol                  = "6"
+
+  source      = var.wls_subnet_cidr
+  source_type = "CIDR_BLOCK"
+  stateless   = false
+
+  tcp_options {
+    destination_port_range {
+      min = var.wls_nm_port
+      max = var.wls_nm_port
+    }
+  }
+}
+
+resource "oci_core_network_security_group_security_rule" "wls_ingress_administration_port_secure_mode" {
+  count                     = var.configure_secure_mode ? 1 : 0
+  network_security_group_id = element(var.nsg_ids["managed_nsg_id"], 0)
+  direction                 = "INGRESS"
+  protocol                  = "6"
+
+  source      = var.wls_subnet_cidr
+  source_type = "CIDR_BLOCK"
+  stateless   = false
+
+  tcp_options {
+    destination_port_range {
+      min = var.administration_port
+      max = var.administration_port
+    }
+  }
+}
+
+resource "oci_core_network_security_group_security_rule" "wls_ingress_ms_administration_port_secure_mode" {
+  count                     = var.configure_secure_mode ? 1 : 0
+  network_security_group_id = element(var.nsg_ids["managed_nsg_id"], 0)
+  direction                 = "INGRESS"
+  protocol                  = "6"
+
+  source      = var.wls_subnet_cidr
+  source_type = "CIDR_BLOCK"
+  stateless   = false
+
+  tcp_options {
+    destination_port_range {
+      min = var.ms_administration_port
+      max = var.ms_administration_port
+    }
+  }
+}
+
+resource "oci_core_network_security_group_security_rule" "wls_ingress_internal_ssl_security_rule_secure_mode" {
+  count                     = var.configure_secure_mode ? 1 : 0
+  network_security_group_id = element(var.nsg_ids["managed_nsg_id"], 0)
+  direction                 = "INGRESS"
+  protocol                  = "6"
+
+  source      = var.wls_subnet_cidr
+  source_type = "CIDR_BLOCK"
+  stateless   = false
+
+  tcp_options {
+    destination_port_range {
+      min = var.wls_admin_ssl_port
+      max = var.wls_admin_ssl_port
+    }
+  }
 }
 
 resource "oci_core_network_security_group_security_rule" "wls_ingress_app_ms_security_rule" {
@@ -155,8 +226,8 @@ resource "oci_core_network_security_group_security_rule" "wls_admin_bastion_ingr
 
   tcp_options {
     destination_port_range {
-      max = var.wls_extern_ssl_admin_port
-      min = var.wls_extern_ssl_admin_port
+      max = local.ssl_admin_port
+      min = local.ssl_admin_port
     }
   }
 }
@@ -173,8 +244,8 @@ resource "oci_core_network_security_group_security_rule" "wls_admin_existing_bas
 
   tcp_options {
     destination_port_range {
-      max = var.wls_extern_ssl_admin_port
-      min = var.wls_extern_ssl_admin_port
+      max = local.ssl_admin_port
+      min = local.ssl_admin_port
     }
   }
 }
