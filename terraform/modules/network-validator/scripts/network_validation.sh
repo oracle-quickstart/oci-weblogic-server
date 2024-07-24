@@ -757,7 +757,7 @@ then
   validation_return_code=2
 elif [[ $res -eq 4 ]]
 then
-  echo "ERROR: Route Rule of private WLS subnet [$WLS_SUBNET_OCID] does not use 'ALL Services in Oracle services network' destinationi. ${NETWORK_VALIDATION_MSG}"
+  echo "ERROR: Route Rule of private WLS subnet [$WLS_SUBNET_OCID] does not use 'ALL Services in Oracle services network' destination. ${NETWORK_VALIDATION_MSG}"
   validation_return_code=2
 fi
 
