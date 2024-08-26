@@ -11,8 +11,10 @@ locals {
   oci_db_connection_string = trimspace(var.oci_db.oci_db_connection_string)
   is_oci_db                = var.oci_db.is_oci_db || local.oci_db_connection_string != ""
 
-  # This policy with "use instances" verb is needed because there is code in the WebLogic for OCI compute image that updates metadata of the compute instance, when more than one VM nodes are created
-  core_policy_statement1 = "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to use instances in compartment id ${var.compartment_id}"
+  # This policy with "manage instances" verb is needed for 2 reasons:
+  # 1. "use" is needed because there is code in the WebLogic for OCI compute image that updates metadata of the compute instance, when more than one VM node is created.
+  # 2. "manage" is needed for cloning scenarios where volumes need to be added.
+  core_policy_statement1 = "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to manage instances in compartment id ${var.compartment_id}"
   core_policy_statement2 = "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to manage volumes in compartment id ${var.compartment_id}"
   core_policy_statement3 = "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to manage volume-attachments in compartment id ${var.compartment_id}"
   # These policy statements are required to register Compute instances with the OS Management service
