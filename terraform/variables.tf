@@ -123,8 +123,8 @@ variable "tf_script_version" {
 
 variable "is_rms_private_endpoint_required" {
   type        = bool
-  description = "Set resource manager private endpoint. Default value is true"
-  default     = true
+  description = "Set resource manager private endpoint. Default value is false"
+  default     = false
 }
 
 variable "add_rms_private_endpoint" {
