@@ -69,6 +69,7 @@ groupings:
       #- ${image_mode}
       #- ${terms_and_conditions}
       - ${wls_availability_domain_name}
+      - ${place_all_compute_in_same_ad}
       - ${wls_subnet_id}
       - ${wls_subnet_cidr}
       - ${existing_admin_server_nsg_id}
@@ -455,6 +456,20 @@ variables:
               - eq:
                 - ${subnet_span}
                 - "Regional Subnet"
+
+  place_all_compute_in_same_ad:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - eq:
+          - ${subnet_span}
+          - "Regional Subnet"
+#          - visible: ${wls_availability_domain_name}
+    type: boolean
+    required: true
+    default: false
+    title: "Use Same Availability Domain for all Compute Instances"
+    description: "Use the same Availability Domain for all Compute instances as that of the WebLogic Administration Server's Compute instance."
 
   wls_node_count:
     type: integer

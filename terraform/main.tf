@@ -590,23 +590,24 @@ module "observability-autoscaling" {
 
 
 module "compute" {
-  source                 = "./modules/compute/wls_compute"
-  add_loadbalancer       = local.add_load_balancer
-  is_lb_private          = var.is_lb_private
-  load_balancer_id       = local.add_load_balancer ? (var.existing_load_balancer_id != "" ? var.existing_load_balancer_id : element(coalescelist(module.load-balancer[*].wls_loadbalancer_id, [""]), 0)) : ""
-  assign_public_ip       = local.assign_weblogic_public_ip
-  availability_domain    = local.wls_availability_domain
-  compartment_id         = var.compartment_ocid
-  instance_image_id      = local.vm_instance_image_id
-  is_ucm_image           = var.terms_and_conditions
-  instance_shape         = local.instance_shape
-  network_compartment_id = var.network_compartment_id
-  wls_subnet_cidr        = local.wls_subnet_cidr
-  subnet_id              = var.wls_subnet_id != "" ? var.wls_subnet_id : local.assign_weblogic_public_ip ? element(concat(module.network-wls-public-subnet[*].subnet_id, [""]), 0) : element(concat(module.network-wls-private-subnet[*].subnet_id, [""]), 0)
-  wls_subnet_id          = var.wls_subnet_id
-  region                 = var.region
-  ssh_public_key         = var.ssh_public_key
-  compute_nsg_ids        = local.compute_nsg_ids
+  source                       = "./modules/compute/wls_compute"
+  add_loadbalancer             = local.add_load_balancer
+  is_lb_private                = var.is_lb_private
+  load_balancer_id             = local.add_load_balancer ? (var.existing_load_balancer_id != "" ? var.existing_load_balancer_id : element(coalescelist(module.load-balancer[*].wls_loadbalancer_id, [""]), 0)) : ""
+  assign_public_ip             = local.assign_weblogic_public_ip
+  availability_domain          = local.wls_availability_domain
+  place_all_compute_in_same_ad = var.place_all_compute_in_same_ad
+  compartment_id               = var.compartment_ocid
+  instance_image_id            = local.vm_instance_image_id
+  is_ucm_image                 = var.terms_and_conditions
+  instance_shape               = local.instance_shape
+  network_compartment_id       = var.network_compartment_id
+  wls_subnet_cidr              = local.wls_subnet_cidr
+  subnet_id                    = var.wls_subnet_id != "" ? var.wls_subnet_id : local.assign_weblogic_public_ip ? element(concat(module.network-wls-public-subnet[*].subnet_id, [""]), 0) : element(concat(module.network-wls-private-subnet[*].subnet_id, [""]), 0)
+  wls_subnet_id                = var.wls_subnet_id
+  region                       = var.region
+  ssh_public_key               = var.ssh_public_key
+  compute_nsg_ids              = local.compute_nsg_ids
 
   tenancy_id                = var.tenancy_ocid
   tf_script_version         = var.tf_script_version
