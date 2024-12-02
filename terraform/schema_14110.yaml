@@ -464,7 +464,6 @@ variables:
         - eq:
           - ${subnet_span}
           - "Regional Subnet"
-#          - visible: ${wls_availability_domain_name}
     type: boolean
     required: true
     default: false
