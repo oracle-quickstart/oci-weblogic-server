@@ -26,6 +26,12 @@ variable "availability_domain" {
   description = "The label of the availability domain where the compute will be created"
 }
 
+variable "place_all_compute_in_same_ad" {
+  type        = bool
+  description = "Set to true if you want to use the same Availability Domain (AD) as the admin compute instance for all Compute Instances."
+  default     = false
+}
+
 variable "instance_image_id" {
   type        = string
   description = "The OCID of the image used to create the compute instance"

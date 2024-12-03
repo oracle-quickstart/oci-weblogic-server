@@ -75,6 +75,12 @@ variable "wls_availability_domain_name" {
   default     = ""
 }
 
+variable "place_all_compute_in_same_ad" {
+  type        = bool
+  description = "Set to true if you want to use the same Availability Domain (AD) as the admin compute instance for all Compute Instances."
+  default     = false
+}
+
 variable "assign_weblogic_public_ip" {
   type        = bool
   description = "Set to true if the WebLogic compute instances will be created in a public subnet and should have a public IP"
