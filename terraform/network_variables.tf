@@ -77,7 +77,7 @@ variable "wls_availability_domain_name" {
 
 variable "place_all_compute_in_same_ad" {
   type        = bool
-  description = "Set to true if you want to use the same Availability Domain (AD) as the admin compute instance for all Compute Instances."
+  description = "Set to true if you want to use the same Availability Domain for all Compute instances as the WebLogic Administration Server's Compute instance. Otherwise, instances will be distributed across Availability Domains."
   default     = false
 }
 

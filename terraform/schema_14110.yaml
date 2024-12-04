@@ -464,11 +464,14 @@ variables:
         - eq:
             - ${subnet_span}
             - "Regional Subnet"
+        - gt:
+            - ${wls_node_count}
+            - 1
     type: boolean
     required: true
     default: false
     title: "Use Same Availability Domain for all Compute Instances"
-    description: "Use the same Availability Domain for all Compute instances as that of the WebLogic Administration Server's Compute instance."
+    description: "Use the same Availability Domain for all Compute instances as that of the WebLogic Administration Server's Compute instance. If this option is not selected, the compute instances will be distributed across Availability Domains."
 
   wls_node_count:
     type: integer
