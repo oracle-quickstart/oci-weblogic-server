@@ -464,9 +464,6 @@ variables:
         - eq:
             - ${subnet_span}
             - "Regional Subnet"
-        - gt:
-            - ${wls_node_count}
-            - 1
     type: boolean
     required: true
     default: false
