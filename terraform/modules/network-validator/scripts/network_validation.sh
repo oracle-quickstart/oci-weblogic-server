@@ -886,7 +886,6 @@ then
    fi
 fi
 
-
 ### Validation - Only when WLS Subnet OCID, Admin Server NSG & Managed Server NSG are provided ###
 
 if [[ -n ${WLS_SUBNET_OCID} && -n ${ADMIN_SRV_NSG_OCID} && -n ${MANAGED_SRV_NSG_OCID} ]]
