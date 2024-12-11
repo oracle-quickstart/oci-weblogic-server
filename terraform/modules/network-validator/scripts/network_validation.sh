@@ -679,19 +679,17 @@ secure_mode=$(echo "$SECURE_MODE" | tr '[:upper:]' '[:lower:]')
 
 # Change the default value of ports for secured production mode
 if [ "$secure_mode" = "true" ]; then
-    if [ "${WLS_LB_PORT}" -eq 7003 ]
-    then
+    if [ "${WLS_LB_PORT}" -eq 7003 ]; then
       WLS_LB_PORT=7004
     fi
 
-    if [ "${ADMIN_HTTPS_PORT}" -eq 7002 ]
-    then
+    if [ "${ADMIN_HTTPS_PORT}" -eq 7002 ]; then
       ADMIN_HTTPS_PORT=9002
     fi
-    if [ "${MS_ADMIN_PORT}" -ne 9004 ] then
+    if [ "${MS_ADMIN_PORT}" -ne 9004 ]; then
       MS_ADMIN_PORT=9004
     fi
-    if [ "${WLS_NM_PORT}" -ne 5556 ] then
+    if [ "${WLS_NM_PORT}" -ne 5556 ]; then
       WLS_NM_PORT=5556
     fi
 
