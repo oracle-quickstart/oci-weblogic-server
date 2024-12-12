@@ -840,6 +840,7 @@ then
   then
     echo "WARNING: Exposing the WebLogic administrator port [${ADMIN_HTTPS_PORT}] in the subnet [{$WLS_SUBNET_OCID}] to the internet [${ALL_IPS}] allows any user to access the WebLogic console, which is not a recommended practice. Ensure that only a specific CIDR range can access the WebLogic console. ${NETWORK_VALIDATION_MSG}"
   fi
+  # Check if Weblogic Node Manager Port is open for access  by WLS subnet CIDR.
   res=$(validate_subnet_port_access ${WLS_SUBNET_OCID} ${WLS_NM_PORT} ${wls_subnet_cidr_block})
   if [[ $res == *"WARNING"* ]]
   then
@@ -952,6 +953,7 @@ then
       validation_return_code=2
     fi
   fi
+  # Check if Managed Server Administration Port is open for access by WLS subnet CIDR in Managed Server NSG for secure mode
   if [ "$secure_mode" = "true" ]; then
     res=$(check_tcp_port_open_in_seclist_or_nsg $MANAGED_SRV_NSG_OCID ${MS_ADMIN_PORT} "$wls_subnet_cidr_block" "nsg")
     if [[ $res == *"WARNING"* ]]
@@ -965,6 +967,7 @@ then
       validation_return_code=2
     fi
   fi
+  # Check if Weblogic Node Manager Port is open for access by WLS subnet CIDR in Managed Server NSG.
   res=$(check_tcp_port_open_in_seclist_or_nsg $MANAGED_SRV_NSG_OCID ${WLS_NM_PORT} "$wls_subnet_cidr_block" "nsg")
   if [[ $res == *"WARNING"* ]]
   then
