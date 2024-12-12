@@ -617,8 +617,8 @@ while [[ $1 = -?* ]]; do
     -w|--wlssubnet) shift; WLS_SUBNET_OCID=${1} ;;
     -p|--http_port) shift; ADMIN_HTTP_PORT=${1} ;;
     -s|--https_port) shift; ADMIN_HTTPS_PORT=${1} ;;
-    -r| --ms_port)   shift; MS_ADMIN_PORT=${1} ;;
-    -x| --nm_port)   shift; WLS_NM_PORT=${1} ;;
+    -r|--ms_port)   shift; MS_ADMIN_PORT=${1} ;;
+    -x|--nm_port)   shift; WLS_NM_PORT=${1} ;;
     -c|--idcs_port) shift; IDCS_PORT=${1} ;;
     -d|--ocidbid) shift; OCIDB_OCID=${1} ;;
     -P|--ocidbport) shift; DB_PORT=${1} ;;
@@ -689,11 +689,11 @@ if [ "$secure_mode" = "true" ]; then
     if [ "${MS_ADMIN_PORT}" -ne 9004 ]; then
       MS_ADMIN_PORT=9004
     fi
-    if [ "${WLS_NM_PORT}" -ne 5556 ]; then
-      WLS_NM_PORT=5556
-    fi
 
     T3_PORT=9072
+fi
+if [ "${WLS_NM_PORT}" -ne 5556 ]; then
+        WLS_NM_PORT=5556
 fi
 
 ### Validate all required params are present ###
@@ -840,6 +840,17 @@ then
   then
     echo "WARNING: Exposing the WebLogic administrator port [${ADMIN_HTTPS_PORT}] in the subnet [{$WLS_SUBNET_OCID}] to the internet [${ALL_IPS}] allows any user to access the WebLogic console, which is not a recommended practice. Ensure that only a specific CIDR range can access the WebLogic console. ${NETWORK_VALIDATION_MSG}"
   fi
+  res=$(validate_subnet_port_access ${WLS_SUBNET_OCID} ${WLS_NM_PORT} ${wls_subnet_cidr_block})
+  if [[ $res == *"WARNING"* ]]
+  then
+    for warning in "${res[@]}"; do
+      echo "$warning"
+    done
+  elif [[ $res -ne 0 ]]
+  then
+    echo "ERROR: Port ${WLS_NM_PORT} is not open for access by WLS Subnet CIDR [$wls_subnet_cidr_block] in WLS Subnet [$WLS_SUBNET_OCID]. ${NETWORK_VALIDATION_MSG}"
+    validation_return_code=2
+  fi
 
   # Check if Administration Port is open for access by WLS subnet CIDR for secure mode
   if [ "$secure_mode" = "true" ]; then
@@ -869,19 +880,6 @@ then
       validation_return_code=2
     fi
   fi
-   if [ "$secure_mode" = "true" ]; then
-    res=$(validate_subnet_port_access ${WLS_SUBNET_OCID} ${WLS_NM_PORT} ${wls_subnet_cidr_block})
-    if [[ $res == *"WARNING"* ]]
-    then
-      for warning in "${res[@]}"; do
-        echo "$warning"
-      done
-    elif [[ $res -ne 0 ]]
-    then
-      echo "ERROR: Port ${WLS_NM_PORT} is not open for access by WLS Subnet CIDR [$wls_subnet_cidr_block] in WLS Subnet [$WLS_SUBNET_OCID]. ${NETWORK_VALIDATION_MSG}"
-      validation_return_code=2
-    fi
-   fi
 fi
 
 ### Validation - Only when WLS Subnet OCID, Admin Server NSG & Managed Server NSG are provided ###
@@ -967,18 +965,16 @@ then
       validation_return_code=2
     fi
   fi
-  if [ "$secure_mode" = "true" ]; then
-    res=$(check_tcp_port_open_in_seclist_or_nsg $MANAGED_SRV_NSG_OCID ${WLS_NM_PORT} "$wls_subnet_cidr_block" "nsg")
-    if [[ $res == *"WARNING"* ]]
-    then
-      for warning in "${res[@]}"; do
-        echo "$warning"
-      done
-    elif [[ $res -ne 0 ]]
-    then
-      echo "ERROR: Port ${WLS_NM_PORT} is not open for access by WLS Subnet CIDR [$wls_subnet_cidr_block] in Managed Server NSG [$MANAGED_SRV_NSG_OCID]. ${NETWORK_VALIDATION_MSG}"
-      validation_return_code=2
-    fi
+  res=$(check_tcp_port_open_in_seclist_or_nsg $MANAGED_SRV_NSG_OCID ${WLS_NM_PORT} "$wls_subnet_cidr_block" "nsg")
+  if [[ $res == *"WARNING"* ]]
+  then
+    for warning in "${res[@]}"; do
+      echo "$warning"
+    done
+  elif [[ $res -ne 0 ]]
+  then
+    echo "ERROR: Port ${WLS_NM_PORT} is not open for access by WLS Subnet CIDR [$wls_subnet_cidr_block] in Managed Server NSG [$MANAGED_SRV_NSG_OCID]. ${NETWORK_VALIDATION_MSG}"
+    validation_return_code=2
   fi
 fi
 
