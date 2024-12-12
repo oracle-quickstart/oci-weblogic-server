@@ -867,7 +867,7 @@ then
       validation_return_code=2
     fi
   fi
-
+  # Check if Managed Server Admin Port is open for access by WLS subnet CIDR for secure mode
   if [ "$secure_mode" = "true" ]; then
     res=$(validate_subnet_port_access ${WLS_SUBNET_OCID} ${MS_ADMIN_PORT} ${wls_subnet_cidr_block})
     if [[ $res == *"WARNING"* ]]
