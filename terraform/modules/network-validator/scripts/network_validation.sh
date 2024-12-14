@@ -24,6 +24,8 @@ WLS_LB_PORT=7003
 LB_PORT=443
 ADMIN_HTTP_PORT=7001
 ADMIN_HTTPS_PORT=7002
+MS_ADMIN_PORT=9004
+WLS_NM_PORT=5556
 IDCS_PORT=
 WLS_SUBNET_OCID=""
 BASTION_SUBNET_OCID=""
@@ -544,6 +546,8 @@ This script is used to validate existing subnets, and optionally network securit
   -w, --wlssubnet     WebLogic Subnet OCID (Required)
   -p, --http_port     WebLogic Admin Console http port (defaults to 7001)
   -s, --https_port    WebLogic Admin Console https port (defaults to 7002)
+  -r, --ms_port       Weblogic Managed Server Administration port (defaults to 9004)
+  -x, --nm_port       Weblogic Node Manager Port (default to 5556)
   -d, --ocidbid       OCI Database System OCID
   -P, --ocidbport     OCI Database Port
   -t, --atpdbid       ATP Database OCID
@@ -613,6 +617,8 @@ while [[ $1 = -?* ]]; do
     -w|--wlssubnet) shift; WLS_SUBNET_OCID=${1} ;;
     -p|--http_port) shift; ADMIN_HTTP_PORT=${1} ;;
     -s|--https_port) shift; ADMIN_HTTPS_PORT=${1} ;;
+    -r|--ms_port)   shift; MS_ADMIN_PORT=${1} ;;
+    -x|--nm_port)   shift; WLS_NM_PORT=${1} ;;
     -c|--idcs_port) shift; IDCS_PORT=${1} ;;
     -d|--ocidbid) shift; OCIDB_OCID=${1} ;;
     -P|--ocidbport) shift; DB_PORT=${1} ;;
@@ -673,17 +679,21 @@ secure_mode=$(echo "$SECURE_MODE" | tr '[:upper:]' '[:lower:]')
 
 # Change the default value of ports for secured production mode
 if [ "$secure_mode" = "true" ]; then
-    if [ "${WLS_LB_PORT}" -eq 7003 ]
-    then
+    if [ "${WLS_LB_PORT}" -eq 7003 ]; then
       WLS_LB_PORT=7004
     fi
 
-    if [ "${ADMIN_HTTPS_PORT}" -eq 7002 ]
-    then
+    if [ "${ADMIN_HTTPS_PORT}" -eq 7002 ]; then
       ADMIN_HTTPS_PORT=9002
+    fi
+    if [ "${MS_ADMIN_PORT}" -ne 9004 ]; then
+      MS_ADMIN_PORT=9004
     fi
 
     T3_PORT=9072
+fi
+if [ "${WLS_NM_PORT}" -ne 5556 ]; then
+        WLS_NM_PORT=5556
 fi
 
 ### Validate all required params are present ###
@@ -830,6 +840,18 @@ then
   then
     echo "WARNING: Exposing the WebLogic administrator port [${ADMIN_HTTPS_PORT}] in the subnet [{$WLS_SUBNET_OCID}] to the internet [${ALL_IPS}] allows any user to access the WebLogic console, which is not a recommended practice. Ensure that only a specific CIDR range can access the WebLogic console. ${NETWORK_VALIDATION_MSG}"
   fi
+  # Check if Weblogic Node Manager Port is open for access  by WLS subnet CIDR.
+  res=$(validate_subnet_port_access ${WLS_SUBNET_OCID} ${WLS_NM_PORT} ${wls_subnet_cidr_block})
+  if [[ $res == *"WARNING"* ]]
+  then
+    for warning in "${res[@]}"; do
+      echo "$warning"
+    done
+  elif [[ $res -ne 0 ]]
+  then
+    echo "ERROR: Port ${WLS_NM_PORT} is not open for access by WLS Subnet CIDR [$wls_subnet_cidr_block] in WLS Subnet [$WLS_SUBNET_OCID]. ${NETWORK_VALIDATION_MSG}"
+    validation_return_code=2
+  fi
 
   # Check if Administration Port is open for access by WLS subnet CIDR for secure mode
   if [ "$secure_mode" = "true" ]; then
@@ -842,6 +864,20 @@ then
     elif [[ $res -ne 0 ]]
     then
       echo "ERROR: Port ${ADMIN_HTTPS_PORT} is not open for access by WLS Subnet CIDR [$wls_subnet_cidr_block] in WLS Subnet [$WLS_SUBNET_OCID]. ${NETWORK_VALIDATION_MSG}"
+      validation_return_code=2
+    fi
+  fi
+  # Check if Managed Server Admin Port is open for access by WLS subnet CIDR for secure mode
+  if [ "$secure_mode" = "true" ]; then
+    res=$(validate_subnet_port_access ${WLS_SUBNET_OCID} ${MS_ADMIN_PORT} ${wls_subnet_cidr_block})
+    if [[ $res == *"WARNING"* ]]
+    then
+      for warning in "${res[@]}"; do
+        echo "$warning"
+      done
+    elif [[ $res -ne 0 ]]
+    then
+      echo "ERROR: Port ${MS_ADMIN_PORT} is not open for access by WLS Subnet CIDR [$wls_subnet_cidr_block] in WLS Subnet [$WLS_SUBNET_OCID]. ${NETWORK_VALIDATION_MSG}"
       validation_return_code=2
     fi
   fi
@@ -916,6 +952,32 @@ then
       echo "ERROR: Port ${ADMIN_HTTPS_PORT} is not open for access by WLS Subnet CIDR [$wls_subnet_cidr_block] in Managed Server NSG [$MANAGED_SRV_NSG_OCID]. ${NETWORK_VALIDATION_MSG}"
       validation_return_code=2
     fi
+  fi
+  # Check if Managed Server Administration Port is open for access by WLS subnet CIDR in Managed Server NSG for secure mode
+  if [ "$secure_mode" = "true" ]; then
+    res=$(check_tcp_port_open_in_seclist_or_nsg $MANAGED_SRV_NSG_OCID ${MS_ADMIN_PORT} "$wls_subnet_cidr_block" "nsg")
+    if [[ $res == *"WARNING"* ]]
+    then
+      for warning in "${res[@]}"; do
+        echo "$warning"
+      done
+    elif [[ $res -ne 0 ]]
+    then
+      echo "ERROR: Port ${MS_ADMIN_PORT} is not open for access by WLS Subnet CIDR [$wls_subnet_cidr_block] in Managed Server NSG [$MANAGED_SRV_NSG_OCID]. ${NETWORK_VALIDATION_MSG}"
+      validation_return_code=2
+    fi
+  fi
+  # Check if Weblogic Node Manager Port is open for access by WLS subnet CIDR in Managed Server NSG.
+  res=$(check_tcp_port_open_in_seclist_or_nsg $MANAGED_SRV_NSG_OCID ${WLS_NM_PORT} "$wls_subnet_cidr_block" "nsg")
+  if [[ $res == *"WARNING"* ]]
+  then
+    for warning in "${res[@]}"; do
+      echo "$warning"
+    done
+  elif [[ $res -ne 0 ]]
+  then
+    echo "ERROR: Port ${WLS_NM_PORT} is not open for access by WLS Subnet CIDR [$wls_subnet_cidr_block] in Managed Server NSG [$MANAGED_SRV_NSG_OCID]. ${NETWORK_VALIDATION_MSG}"
+    validation_return_code=2
   fi
 fi
 
@@ -1093,7 +1155,7 @@ then
           echo "ERROR: Port ${ADMIN_HTTPS_PORT} is not open for access by [$bastion_cidr_block] in WLS Subnet [$WLS_SUBNET_OCID]. ${NETWORK_VALIDATION_MSG}"
           validation_return_code=2
         fi
-      fi
+    fi
 
       if [[ -n ${ADMIN_SRV_NSG_OCID} && -n ${MANAGED_SRV_NSG_OCID} ]]
       then
