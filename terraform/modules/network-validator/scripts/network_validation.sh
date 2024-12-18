@@ -791,19 +791,6 @@ if [[ -n ${WLS_SUBNET_OCID} && -z ${ADMIN_SRV_NSG_OCID} && -z ${MANAGED_SRV_NSG_
 then
   wls_subnet_cidr_block=$(oci network subnet get --subnet-id ${WLS_SUBNET_OCID} | jq -r '.data["cidr-block"]')
 
-  # Check if SSH port is open for access by WLS subnet CIDR
-  res=$(validate_subnet_port_access ${WLS_SUBNET_OCID} ${SSH_PORT} ${wls_subnet_cidr_block})
-  if [[ $res == *"WARNING"* ]]
-  then
-    for warning in "${res[@]}"; do
-      echo "$warning"
-    done
-  elif [[ $res -ne 0 ]]
-  then
-    echo "ERROR: Port ${SSH_PORT} is not open for access by WLS Subnet CIDR [$wls_subnet_cidr_block] in WLS Subnet [$WLS_SUBNET_OCID]. ${NETWORK_VALIDATION_MSG}"
-    validation_return_code=2
-  fi
-
   # Check if T3 Port is open for access by WLS subnet CIDR
   res=$(validate_subnet_port_access ${WLS_SUBNET_OCID} ${T3_PORT} ${wls_subnet_cidr_block})
   if [[ $res == *"WARNING"* ]]
@@ -888,19 +875,6 @@ fi
 if [[ -n ${WLS_SUBNET_OCID} && -n ${ADMIN_SRV_NSG_OCID} && -n ${MANAGED_SRV_NSG_OCID} ]]
 then
   wls_subnet_cidr_block=$(oci network subnet get --subnet-id ${WLS_SUBNET_OCID} | jq -r '.data["cidr-block"]')
-
-  # Check if SSH port is open for access by WLS subnet CIDR in Admin Server NSG
-  res=$(check_tcp_port_open_in_seclist_or_nsg $MANAGED_SRV_NSG_OCID "${SSH_PORT}" "$wls_subnet_cidr_block" "nsg")
-  if [[ $res == *"WARNING"* ]]
-  then
-    for warning in "${res[@]}"; do
-      echo "$warning"
-    done
-  elif [[ $res -ne 0 ]]
-  then
-    echo "ERROR: Port ${SSH_PORT} is not open for access by WLS Subnet CIDR [$wls_subnet_cidr_block] in Managed Server NSG [$MANAGED_SRV_NSG_OCID]. ${NETWORK_VALIDATION_MSG}"
-    validation_return_code=2
-  fi
 
   # Check if T3 Port is open for access by WLS subnet CIDR in Managed Server NSG
   res=$(check_tcp_port_open_in_seclist_or_nsg $MANAGED_SRV_NSG_OCID "${T3_PORT}" "$wls_subnet_cidr_block" "nsg")
