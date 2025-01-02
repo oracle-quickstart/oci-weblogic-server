@@ -87,7 +87,7 @@ resource "oci_core_network_security_group_security_rule" "wls_ingress_nm_securit
     }
   }
 }
-resource "oci_core_network_security_group_security_rule" "wls_ingress_nm_security_rule" {
+resource "oci_core_network_security_group_security_rule" "wls_ingress_ssh_security_rule" {
   network_security_group_id = element(var.nsg_ids["managed_nsg_id"], 0)
   direction                 = "INGRESS"
   protocol                  = "6"
