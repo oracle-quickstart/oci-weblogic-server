@@ -347,6 +347,47 @@ function check_udp_port_open_in_seclist_or_nsg() {
     echo 1
   fi
 }
+function check_egress_all_traffic_in_seclist_or_nsg() {
+    local seclist_or_nsg_ocid=$1
+    local ocid_type=$2
+    local egress_is_open=false
+    local egress_rules_count=0
+    declare -A nsg_sec_list_array
+
+    if [[ $ocid_type == "nsg" ]]; then
+        egress_rules=$(oci network nsg rules list --nsg-id $seclist_or_nsg_ocid --direction EGRESS | jq -r '.data')
+    else
+        egress_rules=$(oci network security-list get --security-list-id $seclist_or_nsg_ocid | jq -r '.data["egress-security-rules"]')
+    fi
+
+    egress_rules_count=$(echo $egress_rules | jq '. | length')
+
+    if [[ $egress_rules_count -gt 0 ]]; then
+        for ((j = 0; j < egress_rules_count; j++)); do
+            egress_protocol=$(echo $egress_rules | jq -r --arg i "$j" '.[$i|tonumber].protocol')
+            egress_destination=$(echo $egress_rules | jq -r --arg i "$j" '.[$i|tonumber].destination')
+            egress_destination_type=$(echo $egress_rules | jq -r --arg i "$j" '.[$i|tonumber]."destination-type"')
+
+            if [[ $egress_destination_type != "CIDR_BLOCK" ]]; then
+                nsg_sec_list_array[$j]="WARNING: Source type is either NSG or Service. Skipping the validation check for ${egress_destination}."
+                continue
+            fi
+
+            if [[ $egress_destination == "0.0.0.0/0" && ( $egress_protocol == "all" || $egress_protocol == "1" ) ]]; then
+                echo "egress is open."
+                egress_is_open=true
+                echo 0   # Output 0 when egress is open
+                return
+            fi
+        done
+    fi
+
+    if [[ ${#nsg_sec_list_array[@]} != 0 ]]; then
+        echo "${nsg_sec_list_array[@]}"
+    else
+        echo 1
+    fi
+}
 
 
 ####################################################
@@ -852,7 +893,16 @@ fi
 if [[ -n ${WLS_SUBNET_OCID} && -n ${ADMIN_SRV_NSG_OCID} && -n ${MANAGED_SRV_NSG_OCID} ]]
 then
   wls_subnet_cidr_block=$(oci network subnet get --subnet-id ${WLS_SUBNET_OCID} | jq -r '.data["cidr-block"]')
-
+  # Check if egress rule to allow traffic on all ports in Managed Server NSG.
+  res=$(check_egress_all_traffic_in_seclist_or_nsg ${MANAGED_SRV_NSG_OCID} "nsg")
+  if [[ $res == *"WARNING"* ]]; then
+      for warning in "${res[@]}"; do
+          echo "$warning"
+      done
+  elif [[ $res -ne 0 ]]; then
+      echo "ERROR: Missing egress rule to allow traffic on all ports in Managed Server NSG [$MANAGED_SRV_NSG_OCID]. ${NETWORK_VALIDATION_MSG}"
+      validation_return_code=2
+  fi
   # Check if SSH port is open for access by WLS subnet CIDR in Admin Server NSG
   res=$(check_tcp_port_open_in_seclist_or_nsg $MANAGED_SRV_NSG_OCID "${SSH_PORT}" "$wls_subnet_cidr_block" "nsg")
   if [[ $res == *"WARNING"* ]]
