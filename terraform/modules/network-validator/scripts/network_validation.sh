@@ -347,9 +347,15 @@ function check_udp_port_open_in_seclist_or_nsg() {
     echo 1
   fi
 }
-function check_egress_all_traffic_in_seclist_or_nsg() {
+# Checks if there is an egress rule to  ensure that the network can establish outbound communication to any destination, utilizing all available protocols and ports.
+ Args:
+#     nsg_ocid:  OCID for the  nsg.
+# Returns:
+#   0|1
+function check_egress_all_traffic_in_nsg() {
     local seclist_or_nsg_ocid=$1
     local ocid_type=$2
+    local icmp_protocol="1"
     local egress_is_open=false
     local egress_rules_count=0
     declare -A nsg_sec_list_array
@@ -373,10 +379,9 @@ function check_egress_all_traffic_in_seclist_or_nsg() {
                 continue
             fi
 
-            if [[ $egress_destination == "0.0.0.0/0" && ( $egress_protocol == "all" || $egress_protocol == "1" ) ]]; then
-                echo "egress is open."
+            if [[ $egress_destination == "0.0.0.0/0" && ( $egress_protocol == "all" || $egress_protocol == $icmp_protocol ) ]]; then
                 egress_is_open=true
-                echo 0   # Output 0 when egress is open
+                echo 0
                 return
             fi
         done
@@ -894,7 +899,7 @@ if [[ -n ${WLS_SUBNET_OCID} && -n ${ADMIN_SRV_NSG_OCID} && -n ${MANAGED_SRV_NSG_
 then
   wls_subnet_cidr_block=$(oci network subnet get --subnet-id ${WLS_SUBNET_OCID} | jq -r '.data["cidr-block"]')
   # Check if egress rule to allow traffic on all ports in Managed Server NSG.
-  res=$(check_egress_all_traffic_in_seclist_or_nsg ${MANAGED_SRV_NSG_OCID} "nsg")
+  res=$(check_egress_all_traffic_in_nsg ${MANAGED_SRV_NSG_OCID} "nsg")
   if [[ $res == *"WARNING"* ]]; then
       for warning in "${res[@]}"; do
           echo "$warning"
