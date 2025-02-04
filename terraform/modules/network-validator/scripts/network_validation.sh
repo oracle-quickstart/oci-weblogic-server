@@ -358,7 +358,7 @@ function check_udp_port_open_in_seclist_or_nsg() {
 function check_egress_all_traffic_in_nsg_or_seclist() {
     local nsg_ocid_or_sec_list=$1
     local icmp_protocol="1"
-    local egress_is_open=false
+    local port_is_open=false
     local egress_rules_count=0
     local ocid_type=$2
     declare -A nsg_sec_list_array
