@@ -440,10 +440,10 @@ function validate_subnet_port_access() {
   echo $port_found_open
 }
 ####################################################
-# Validates if egress rule is prresent to allow all traffic on all ports in the specified subnet.
+# Validates if egress rule is present to allow all traffic on all ports in the specified subnet.
 #
 # Args:
-#     subnet:       Subnet OCID
+#     subnet: Subnet OCID
 # Returns:
 #   0|1
 ####################################################
@@ -855,7 +855,7 @@ fi
 
 if [[ -n ${WLS_SUBNET_OCID} && -z ${ADMIN_SRV_NSG_OCID} && -z ${MANAGED_SRV_NSG_OCID} ]]
 then
-# Check  egress rule to allow all traffic on all ports in WLS Subnet CIDR.
+# Check egress rule to allow all traffic on all ports in WLS Subnet CIDR.
   res=$(validate_egress_rule ${WLS_SUBNET_OCID})
 
   if [[ $res == *"WARNING"* ]]
@@ -865,7 +865,7 @@ then
     done
   elif [[ $res -ne 0 ]]
   then
-    echo "ERROR: Missing egress rule to allow all traffic on all ports  in WLS Subnet [$WLS_SUBNET_OCID]. ${NETWORK_VALIDATION_MSG}"
+    echo "ERROR: Missing egress rule to allow all traffic on all ports in WLS Subnet [$WLS_SUBNET_OCID]. ${NETWORK_VALIDATION_MSG}"
     validation_return_code=2
   fi
   wls_subnet_cidr_block=$(oci network subnet get --subnet-id ${WLS_SUBNET_OCID} | jq -r '.data["cidr-block"]')
@@ -940,7 +940,7 @@ fi
 
 if [[ -n ${WLS_SUBNET_OCID} && -n ${ADMIN_SRV_NSG_OCID} && -n ${MANAGED_SRV_NSG_OCID} ]]
 then
-  #Check  egress rule to allow all traffic on all ports in Managed Server NSG.
+  # Check egress rule to allow all traffic on all ports in Managed Server NSG.
   res=$(check_egress_all_traffic_in_nsg_or_seclist ${MANAGED_SRV_NSG_OCID} "nsg")
   if [[ $res == *"WARNING"* ]]; then
       for warning in "${res[@]}"; do
