@@ -1,0 +1,2703 @@
+# Copyright (c) 2023, 2024, Oracle and/or its affiliates.
+# Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
+
+title: Oracle WebLogic Server for Oracle Cloud Infrastructure
+description: Oracle WebLogic Server for Oracle Cloud Infrastructure
+schemaVersion: 1.1.0
+version: "20190304"
+groupings:
+  - title: "Stack Configuration"
+    variables:
+      - ${service_name}
+      - ${ssh_public_key}
+      - ${create_policies}
+      - ${create_new_vcn}
+      - ${is_rms_private_endpoint_required}
+      - ${is_bastion_instance_required}
+      - ${add_load_balancer}
+      - ${is_idcs_selected}
+      - ${use_oci_logging}
+      - ${use_apm_service}
+      - ${use_autoscaling}
+      - ${add_fss}
+      - ${configure_secure_mode}
+
+  - title: "Virtual Cloud Networking"
+    variables:
+      - ${network_compartment_id}
+      - ${wls_existing_vcn_id}
+      - ${wls_vcn_name}
+      - ${wls_vcn_cidr}
+      - ${create_new_subnets}
+      - ${subnet_compartment_id}
+      - ${subnet_type}
+      - ${subnet_span}
+      - ${add_existing_nsg}
+
+  - title: "WebLogic Domain Configuration"
+    variables:
+      - ${wls_admin_user}
+      - ${wls_primary_admin_user}
+      - ${wls_admin_secret_compartment_id}
+      - ${wls_admin_password_id}
+      - ${wls_secondary_admin_user}
+      - ${wls_secondary_admin_password_id}
+      - ${keystore_password_id}
+      - ${root_ca_id}
+      - ${cert_compartment_id}
+      - ${wls_14120_jdk_version}
+      - ${preserve_boot_properties}
+      - ${add_JRF}
+      #Start of JRF fields
+      - ${db_strategy}
+      - ${atp_db_compartment_id}
+      - ${atp_db_id}
+      - ${atp_db_uses_private_endpoint}
+      - ${atp_db_network_compartment_id}
+      - ${atp_db_existing_vcn_id}
+      - ${atp_db_secret_compartment_id}
+      - ${atp_db_password_id}
+      - ${atp_db_level}
+      - ${use_oci_db_connection_string}
+      - ${oci_db_connection_string}
+      - ${oci_db_compartment_id}
+      - ${oci_db_dbsystem_id}
+      - ${oci_db_network_compartment_id}
+      - ${oci_db_existing_vcn_id}
+      - ${oci_db_dbhome_id}
+      - ${oci_db_dbhome_major_version}
+      - ${oci_db_database_id}
+      - ${oci_db_pdb_service_name}
+      - ${oci_db_user}
+      - ${oci_db_secret_compartment_id}
+      - ${oci_db_password_id}
+      - ${oci_db_port}
+      - ${db_existing_vcn_add_secrule}
+      - ${db_vcn_lpg_id}
+      #End of JRF fields
+      - ${deploy_sample_app}
+      - ${wls_server_startup_args}
+      - ${thread_pool_limit}
+      - ${configure_wls_ports}
+      - ${administration_port}
+      - ${ms_administration_port}
+      - ${wls_nm_port}
+      - ${wls_extern_admin_port}
+      - ${wls_extern_ssl_admin_port}
+      - ${wls_ms_extern_port}
+      - ${wls_ms_extern_ssl_port}
+      - ${allow_manual_domain_extension}
+
+  - title: "WebLogic Server Compute Instance"
+    variables:
+      - ${instance_shape}
+      - ${wls_ocpu_count}
+      - ${wls_node_count}
+      - ${wls_node_count_limit}
+      #- ${image_mode}
+      #- ${terms_and_conditions}
+      - ${wls_availability_domain_name}
+      - ${place_all_compute_in_same_ad}
+      - ${wls_subnet_id}
+      - ${wls_subnet_cidr}
+      - ${existing_admin_server_nsg_id}
+      - ${existing_managed_server_nsg_id}
+
+  - title: "Resource Manager Private Endpoint"
+    variables:
+      - ${add_rms_private_endpoint}
+      - ${rms_existing_private_endpoint_id}
+
+  - title: "Bastion Instance"
+    variables:
+      - ${is_bastion_with_reserved_public_ip}
+      - ${bastion_subnet_id}
+      - ${bastion_subnet_cidr}
+      - ${bastion_instance_shape}
+      - ${existing_bastion_nsg_id}
+
+  - title: "Load Balancer"
+    variables:
+      - ${load_balancer_strategy_existing_subnet}
+      - ${load_balancer_strategy_new_subnet}
+      - ${is_lb_private}
+      - ${add_lb_reserved_public_ip_id}
+      - ${lb_reserved_public_ip_id}
+      - ${lb_subnet_1_id}
+      - ${lb_subnet_2_id}
+      - ${lb_subnet_1_cidr}
+      - ${lb_min_bandwidth}
+      - ${lb_max_bandwidth}
+      - ${existing_load_balancer_id}
+      - ${backendset_name_for_existing_load_balancer}
+      - ${existing_lb_nsg_id}
+
+  - title: "Identity Cloud Service (IDCS) Integration"
+    visible: ${is_idcs_selected}
+    variables:
+      - ${idcs_host}
+      - ${idcs_port}
+      - ${idcs_tenant}
+      - ${idcs_client_id}
+      - ${idcs_secret_compartment_id}
+      - ${idcs_client_secret_id}
+      - ${idcs_cloudgate_port}
+
+  - title: "Add File System"
+    visible: ${add_fss}
+    variables:
+      - ${add_existing_fss}
+      - ${fss_availability_domain}
+      - ${fss_compartment_id}
+      - ${existing_fss_id}
+      - ${add_existing_mount_target}
+      - ${mount_target_compartment_id}
+      - ${mount_target_id}
+      - ${mount_target_subnet_id}
+      - ${mount_target_subnet_cidr}
+      - ${existing_mount_target_nsg_id}
+
+  - title: "OCI Logging"
+    variables:
+      - ${dynamic_group_id}
+
+  - title: "Application Performance Monitoring"
+    visible:
+      or:
+        - ${use_apm_service}
+        - ${use_autoscaling}
+    variables:
+      - ${apm_domain_compartment_id}
+      - ${apm_domain_id}
+      - ${apm_private_data_key_name}
+
+  - title: "Autoscaling"
+    visible: ${use_autoscaling}
+    variables:
+      # Metric based autoscaling
+      - ${wls_metric}
+      - ${min_threshold_percent}
+      - ${max_threshold_percent}
+      - ${min_threshold_counter}
+      - ${max_threshold_counter}
+      # Common autoscaling params
+      - ${ocir_user}
+      - ${ocir_auth_token_compartment_id}
+      - ${ocir_auth_token_id}
+      - ${notification_email}
+
+  - title: "Tagging"
+    variables:
+      - ${create_service_tag}
+      - ${service_tags}
+
+  - title: "Hidden Variables"
+    visible: false
+    variables:
+      - ${tenancy_ocid}
+      - ${region}
+      - ${compartment_ocid}
+      - ${mode}
+      - ${wls_subnet_name}
+      - ${bastion_subnet_name}
+      - ${lb_subnet_1_name}
+      - ${lb_subnet_2_name}
+      - ${user_id}
+      - ${fingerprint}
+      - ${private_key_path}
+      - ${wls_edition}
+      - ${use_marketplace_image}
+      - ${use_bastion_marketplace_image}
+      - ${listing_id}
+      - ${listing_resource_version}
+      - ${wls_version}
+      - ${log_level}
+      #- ${instance_image_id}
+      - ${marketplace_source_images}
+      - ${use_regional_subnet}
+      - ${assign_weblogic_public_ip}
+      - ${bastion_image_id}
+      - ${bastion_listing_id}
+      - ${bastion_listing_resource_version}
+      - ${existing_bastion_instance_id}
+      - ${bastion_ssh_private_key}
+      - ${wls_admin_port}
+      - ${wls_admin_ssl_port}
+      - ${wls_ms_port}
+      - ${wls_ms_ssl_port}
+      - ${wls_expose_admin_port}
+      - ${mount_path}
+      - ${alarm_severity}
+      - ${enable_autoscaling_alarms}
+      - ${ocir_region}
+      - ${ucm_instance_image_id}
+      - ${ucm_listing_id}
+      - ${ucm_listing_resource_version}
+      - ${image_mode}
+      - ${terms_and_conditions}
+      - ${generate_dg_tag}
+      - ${wait_time_wls_vnc_dns_resolver}
+      - ${wls_14c_jdk_version}
+      - ${wls_admin_port_source_cidr}
+      - ${wlsoci_vmscripts_zip_bundle_path}
+      - ${tf_script_version}
+      #- ${use_autoscaling}
+
+outputs:
+  virtual_cloud_network_id:
+    type: ocid
+    title: Virtual Cloud Network Id
+  is_vcn_peered:
+    type: link
+    title: Is VCN Peered
+    visible: false
+  weblogic_server_administration_console:
+    type: link
+    title: WebLogic Server Administration Console
+  weblogic_instances:
+    type: json
+    title: WebLogic Instances
+  load_balancer_id:
+    type: ocid
+    title: Load balancer Id
+  load_balancer_ip:
+    type: copyableString
+    title: Load Balancer IP
+  fusion_middleware_control_console:
+    type: link
+    title: Fusion Middleware Control Console
+  provisioning_status:
+    type: link
+    title: Provisioning Status
+    visible: false
+  sample_application:
+    type: link
+    title: Sample Application
+  sample_application_protected_by_idcs:
+    type: link
+    title: Sample Application Protected By IDCS
+  virtual_cloud_network_cidr:
+    type: link
+    title: Virtual Cloud Network CIDR
+  weblogic_version:
+    type: link
+    title: WebLogic Version
+  jdk_version:
+    type: link
+    title: JDK Version
+  rms_private_endpoint_id:
+    type: ocid
+    title: Resource Manager Private Endpoint
+  bastion_instance_id:
+    type: ocid
+    title: Instance Id
+  bastion_instance_public_ip:
+    type: copyableString
+    title: Public Ip
+  ssh_command:
+    type: copyableString
+    title: SSH Command
+  ssh_command_with_dynamic_port_forwarding:
+    type: copyableString
+    title: SSH Command with Dynamic Port Forwarding
+  fss_system_id:
+    type: ocid
+    title: File System Id
+  mount_target_id:
+    type: ocid
+    title: Mount Target Id
+  listing_version:
+    type: copyableString
+    title: Marketplace Listing Version
+  resource_identifier_value:
+    type: copyableString
+    title: Stack Resources System Tag
+  weblogic_agent_configuration_id:
+    type: ocid
+    title: WebLogic Log Agent Configuration Id
+    visible: false
+  weblogic_log_group_id:
+    type: ocid
+    title: WebLogic Log Group Id
+  weblogic_log_id:
+    type: ocid
+    title: WebLogic Log Id
+  autoscaling_scaleout_monitoring_alarm_id:
+    type: ocid
+    title: Autoscaling ScaleOut Monitoring Alarm Id
+  autoscaling_scalein_monitoring_alarm_id:
+    type: ocid
+    title: Autoscaling ScaleIn Monitoring Alarm Id
+  autoscaling_function_application_id:
+    type: ocid
+    title: Autoscaling Function Application Id
+
+outputGroups:
+  - title: WebLogic
+    outputs:
+      - ${weblogic_server_administration_console}
+      - ${sample_application}
+      - ${fusion_middleware_control_console}
+      - ${sample_application_protected_by_idcs}
+      - ${weblogic_version}
+      - ${weblogic_instances}
+      - ${jdk_version}
+      - ${rms_private_endpoint_id}
+  - title: Networking
+    outputs:
+      - ${virtual_cloud_network_id}
+      - ${load_balancer_id}
+      - ${virtual_cloud_network_cidr}
+      - ${load_balancer_ip}
+  - title: Bastion
+    outputs:
+      - ${bastion_instance_id}
+      - ${ssh_command}
+      - ${bastion_instance_public_ip}
+      - ${ssh_command_with_dynamic_port_forwarding}
+  - title: File Storage
+    outputs:
+      - ${fss_system_id}
+      - ${mount_target_id}
+  - title: Observability
+    outputs:
+      - ${weblogic_log_group_id}
+      - ${weblogic_log_id}
+      - ${autoscaling_scaleout_monitoring_alarm_id}
+      - ${autoscaling_scalein_monitoring_alarm_id}
+      - ${autoscaling_function_application_id}
+  - title: Listing
+    outputs:
+      - ${listing_version}
+      - ${resource_identifier_value}
+
+variables:
+  # WLS Instance Configuration
+  service_name:
+    type: string
+    minLength: 1
+    maxLength: 16
+    pattern: "^[a-zA-Z][a-zA-Z0-9]{0,15}$"
+    title: "Resource Name Prefix"
+    description: "The names of all compute and network resources will begin with this prefix. It can only contain letters or numbers and must begin with a letter."
+    required: true
+    visible: ${orm_create_mode}
+
+  instance_image_id:
+    visible: ${orm_create_mode}
+    type: string
+    required: true
+    title: "Instance Image OCID"
+    pattern: ^ocid1.image.*$
+    dependsOn:
+      compartmentId: ${compartment_ocid}
+
+  instance_shape:
+    type: oci:core:instanceshape:name
+    #type: oci:core:instanceshapewithflex:name
+    title: "Compute Shape"
+    description: "The shape for WebLogic Server compute instances. When scaled-out, the changes to instance shape will apply only to the added nodes."
+    required: true
+    default: VM.Standard.E4.Flex
+    dependsOn:
+      compartmentId: ${compartment_ocid}
+      imageId: ${instance_image_id}
+
+  # TODO: remove this when UI uses control with flex shape
+  wls_ocpu_count:
+    type: integer
+    title: "OCPU Count"
+    description: "The number of OCPU count for instances. Only required for VM.Standard.E3.Flex, VM.Standard.E4.Flex, VM.Standard.E5.Flex, VM.Optimized3.Flex, and  VM.Standard3.Flex Shapes. The maximum number of ocpus for VM.Standard.E3.Flex and VM.Standard.E4.Flex is 64, for VM.Standard.E5.Flex is 94, while VM.Optimized3.Flex shape supports 18. When scaled-out, the changes in OCPU count will apply only to the added nodes."
+    minimum: 1
+    maximum: 94
+    multipleOf: 1
+    default: 1
+    required: true
+    dependsOn:
+      instance_shape: ${instance_shape}
+    visible:
+      or:
+        - eq:
+            - ${instance_shape}
+            - "VM.Standard.E3.Flex"
+        - eq:
+            - ${instance_shape}
+            - "VM.Standard.E4.Flex"
+        - eq:
+            - ${instance_shape}
+            - "VM.Standard.E5.Flex"
+        - eq:
+            - ${instance_shape}
+            - "VM.Optimized3.Flex"
+        - eq:
+            - ${instance_shape}
+            - "VM.Standard3.Flex"
+
+  ssh_public_key:
+    type: oci:core:ssh:publickey
+    title: "SSH Public Key"
+    description: "Use the corresponding private key to access new WebLogic Server compute instances. The keys for existing compute instances remain unchanged."
+    required: true
+
+  wls_availability_domain_name:
+    type: oci:identity:availabilitydomain:name
+    title: "WebLogic Administration Server Availability Domain"
+    description: "The availability domain in which to create the WebLogic administration server compute instance. If not specified, by default, the compute instance is created in availability domain 1."
+    required: false
+    dependsOn:
+      compartmentId: ${compartment_ocid}
+    visible:
+      and:
+        - ${orm_create_mode}
+        - or:
+            - or:
+                - ${create_new_vcn}
+                - ${create_new_subnets}
+            - and:
+                - not:
+                    - ${create_new_subnets}
+                - eq:
+                    - ${subnet_span}
+                    - "Regional Subnet"
+
+  place_all_compute_in_same_ad:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - eq:
+            - ${subnet_span}
+            - "Regional Subnet"
+    type: boolean
+    required: true
+    default: false
+    title: "Use Same Availability Domain for all Compute Instances"
+    description: "Use the same Availability Domain for all Compute instances as that of the WebLogic Administration Server's Compute instance. If this option is not selected, the compute instances will be distributed across Availability Domains."
+
+  wls_node_count:
+    type: integer
+    title: "Node Count"
+    description: "The number of WebLogic Server compute instances, and also the number of managed servers in the domain. The maximum is 8, which can be scaled out to 30 when you edit the domain."
+    minimum: 1
+    multipleOf: 1
+    default: 1
+    required: true
+
+  wls_node_count_limit:
+    visible:
+      not:
+        - ${orm_create_mode}
+    type: integer
+    title: "WebLogic Server Nodes Limit"
+    description: "The limit for the maximum number of WebLogic Server compute instances, and also the number of managed servers that can be added in the domain."
+    minimum: 1
+    maximum: 30
+    multipleOf: 1
+    default: 8
+    required: true
+
+  wls_admin_user:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - not:
+            - ${configure_secure_mode}
+    type: string
+    title: "WebLogic Server Admin User Name"
+    description: "The name of the administrator in the WebLogic Server domain. The value should be between 8 and 128 characters long and alphanumeric, and can contain underscore (_) and hyphen(-) special characters."
+    pattern: "^[a-zA-Z][a-zA-Z0-9_-]{7,127}$"
+    default: "weblogic"
+    minLength: 8
+    maxLength: 128
+    required: true
+
+  wls_admin_secret_compartment_id:
+    type: oci:identity:compartment:id
+    title: "WebLogic Server Admin Secret Compartment"
+    description: "The compartment where you have the WebLogic Server administration secret"
+    required: true
+    default: ${compartment_ocid}
+
+  wls_admin_password_id:
+    type: "oci:kms:secret:id"
+    title: "Validated Secret for WebLogic Server Admin Password"
+    description: "The secret that contains the administration password in the WebLogic Server domain. Use a WebLogic Administrator password that starts with a letter, is between 8 and 30 characters long, contains at least one number, and, optionally, any number of the special characters ($ # _). For example, Ach1z0#d. To create secrets, see <a target=\"_blank\" href=\"https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/you-begin-oracle-weblogic-cloud.html#GUID-0517A019-4A89-40ED-A568-DD2193733F8B\">Create Secrets for Passwords</a>."
+    required: true
+    dependsOn:
+      compartmentId: ${wls_admin_secret_compartment_id}
+      
+  wls_14120_jdk_version:
+    visible: ${orm_create_mode}
+    type: enum
+    title: "Java Development Kit version"
+    description: "Select the Java Development Kit (JDK) version"
+    enum:
+      - "jdk17"
+      - "jdk21"
+    required: true
+    default: "jdk17"
+
+  configure_wls_ports:
+    visible: ${orm_create_mode}
+    type: boolean
+    default: false
+    title: "Configure Ports"
+    description: "Configure the ports for administration server, managed server, and cluster. If not selected, default ports will be used. See <a target=\"_blank\" href=\"https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/default-ports.html\">Default Ports</a>."
+
+  wls_nm_port:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${configure_wls_ports}
+    type: integer
+    default: 5556
+    minimum: 1024
+    maximum: 65535
+    multipleOf: 1
+    title: "WebLogic Server Node Manager Port"
+    description: "The listen port number for the node manager process on all compute instances"
+    required: true
+
+  wls_extern_admin_port:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${configure_wls_ports}
+        - not:
+            - ${configure_secure_mode}
+    type: integer
+    default: 7001
+    minimum: 1024
+    maximum: 65535
+    multipleOf: 1
+    title: "WebLogic Server Admin Console Port"
+    description: "The administration server port on which to access the administration console"
+    required: true
+
+  wls_extern_ssl_admin_port:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${configure_wls_ports}
+        - not:
+            - ${configure_secure_mode}
+    type: integer
+    default: 7002
+    minimum: 1024
+    maximum: 65535
+    multipleOf: 1
+    title: "WebLogic Server Admin Console SSL Port"
+    description: "The administration server SSL port on which to access the administration console"
+    required: true
+
+  wls_ms_extern_port:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${configure_wls_ports}
+        - not:
+            - ${configure_secure_mode}
+    type: integer
+    default: 7003
+    minimum: 1024
+    maximum: 65535
+    multipleOf: 1
+    title: "WebLogic Managed Server External Port"
+    description: "The managed server port on which to send application traffic"
+    required: true
+
+  wls_ms_extern_ssl_port:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${configure_wls_ports}
+    type: integer
+    default: 7004
+    minimum: 1024
+    maximum: 65535
+    multipleOf: 1
+    title: "WebLogic Managed Server External SSL Port"
+    description: "The managed server SSL port on which to send application traffic"
+    required: true
+
+  deploy_sample_app:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - not:
+            - eq:
+                - ${wls_edition}
+                - "SE"
+    type: boolean
+    default: true
+    title: "Deploy Sample Application"
+    description: "Deploy an application named sample-app to the WebLogic cluster (Not applicable for Standard Edition)"
+
+  allow_manual_domain_extension:
+    visible:
+      not:
+        - ${orm_create_mode}
+    type: boolean
+    default: false
+    title: "Do Not Update Domain Configuration for Scale Out"
+    description: "When nodes are added to an existing stack, the domain configuration is not modified. You must manually add the managed servers to your domain configuration after updating the stack. This field applies only to editing an existing stack and not to creating a new one. NOTE: Autoscaling feature if previously enabled, will be disabled, if this option is selected."
+
+  wls_server_startup_args:
+    type: string
+    title: "WebLogic Server Startup Arguments"
+    description: "Server Startup Arguments are used for providing arguments to the Java Virtual Machine for WebLogic Server instances. When scaled-out, the changes to server startup arguments will apply only to the added nodes."
+    required: false
+
+  create_new_vcn:
+    visible: ${orm_create_mode}
+    type: boolean
+    default: false
+    title: "Create a Virtual Cloud Network"
+    description: "Create a new Virtual Cloud Network and subnets"
+
+  create_new_subnets:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - not:
+            - ${create_new_vcn}
+    type: boolean
+    default: false
+    title: "Create New Subnets"
+    description: "Create new subnets in the existing Virtual Cloud Network"
+
+  network_compartment_id:
+    visible: ${orm_create_mode}
+    type: oci:identity:compartment:id
+    title: "Network Compartment"
+    description: "The compartment where you want to create the network resources such as Virtual Cloud Network, security lists, route tables and gateways."
+    required: false
+    default: ${compartment_ocid}
+
+  add_fss:
+    visible: ${orm_create_mode}
+    type: boolean
+    default: false
+    title: "Add File System"
+    description: "Add file system"
+
+  add_existing_mount_target:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${add_fss}
+        - not:
+            - ${add_existing_fss}
+        - not:
+            - ${create_new_vcn}
+    type: boolean
+    default: false
+    title: "Add Existing Mount Target"
+    description: "Use the existing mount target"
+
+  mount_target_compartment_id:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${add_fss}
+        - or:
+            - ${add_existing_mount_target}
+            - ${add_existing_fss}
+        - not:
+            - ${create_new_vcn}
+    type: oci:identity:compartment:id
+    required: true
+    title: "Mount Target Compartment"
+    description: "The compartment where you have existing mount target"
+    default: ${compartment_ocid}
+
+  add_existing_fss:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${add_fss}
+        - and:
+            - not:
+                - ${create_new_vcn}
+    type: boolean
+    default: false
+    title: "Existing File System"
+    description: "Use the existing file system"
+
+  existing_mount_target_nsg_id:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${add_fss}
+        - ${add_existing_nsg}
+        - not:
+            - ${create_new_subnets}
+        - not:
+            - ${create_new_vcn}
+        - not:
+            - ${add_existing_mount_target}
+        - not:
+            - ${add_existing_fss}
+    type: oci:core:nsg:id
+    title: "Network Security Group for Mount Target"
+    description: "The pre-created NSG that is assigned to the mount target"
+    required: true
+    dependsOn:
+      compartmentId: ${network_compartment_id}
+      vcnId: ${wls_existing_vcn_id}
+
+  subnet_compartment_id:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - not:
+            - ${create_new_vcn}
+        - not:
+            - ${create_new_subnets}
+    type: oci:identity:compartment:id
+    title: "Subnet Compartment"
+    description: "The compartment where you have subnets created"
+    required: true
+    default: ${compartment_ocid}
+
+  subnet_type:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - not:
+            - ${create_new_vcn}
+        - not:
+            - ${create_new_subnets}
+    type: enum
+    title: "Subnet Type"
+    description: "Choose between private and public subnets. Warning - If you select a public subnet, ensure to limit the CIDR range to access WebLogic administration console ports (defaults are 7001 and 7002 for http and https)."
+    enum:
+      - "Use Private Subnet"
+      - "Use Public Subnet"
+    default: "Use Private Subnet"
+
+  subnet_span:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - not:
+            - ${create_new_vcn}
+        - not:
+            - ${create_new_subnets}
+    type: enum
+    title: "Subnet Span"
+    description: "Choose between regional and AD specific subnets"
+    enum:
+      - "Regional Subnet"
+      - "AD Specific Subnet"
+    required: true
+    default: "Regional Subnet"
+
+  add_existing_nsg:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - not:
+            - ${create_new_vcn}
+        - not:
+            - ${create_new_subnets}
+    type: boolean
+    default: false
+    required: true
+    title: "Existing Network Security Groups"
+    description: "Use existing Network Security Groups (NSG) for existing subnets"
+
+  # Secured Production Mode variables
+  configure_secure_mode:
+    visible: ${orm_create_mode}
+    type: boolean
+    required: true
+    default: true
+    title: "Enable Secured Production Mode"
+    description: "Configure a secure domain"
+
+  preserve_boot_properties:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${configure_secure_mode}
+    type: boolean
+    required: true
+    default: false
+    title: "Preserve the boot.properties file for administration server and managed servers"
+    description: "Preserve the boot.properties file for administration server and managed servers. NOTE: Leaving this unchecked (false) will result in node manager being unable to revive servers if they are killed."
+
+  administration_port:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${configure_wls_ports}
+        - ${configure_secure_mode}
+    type: integer
+    default: 9002
+    minimum: 1024
+    maximum: 65535
+    multipleOf: 1
+    title: "WebLogic Server domain-wide Administration Port"
+    description: "The domain-wide administration port to configure a secure WebLogic domain"
+    required: true
+
+  ms_administration_port:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${configure_wls_ports}
+        - ${configure_secure_mode}
+    type: integer
+    default: 9004
+    minimum: 1024
+    maximum: 65535
+    multipleOf: 1
+    title: "Administration Port for Managed Servers"
+    description: "The administration port for managed servers to configure a secure WebLogic domain"
+    required: true
+
+  keystore_password_id:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${configure_secure_mode}
+    type: "oci:kms:secret:id"
+    minLength: 1
+    maxLength: 1024
+    required: true
+    title: "Validated Secret for Keystore password"
+    description: "The secret that contains the keystore password. To create secrets, see <a target=\"_blank\" href=\"https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/you-begin-oracle-weblogic-cloud.html#GUID-0517A019-4A89-40ED-A568-DD2193733F8B\"> Create Secrets for Passwords</a>."
+    dependsOn:
+      compartmentId: ${wls_admin_secret_compartment_id}
+
+  root_ca_id:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${configure_secure_mode}
+    type: string
+    pattern: ^ocid1.certificateauthority.*$
+    required: true
+    title: "Existing Root Certificate Authority ID"
+    description: "The OCID of the existing root certificate authority to issue the certificates"
+
+  cert_compartment_id:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${configure_secure_mode}
+        - ${create_policies}
+    type: oci:identity:compartment:id
+    required: false
+    title: "Certificate Compartment"
+    description: "The compartment where you want to create the certificate"
+    default: ${network_compartment_id}
+
+  thread_pool_limit:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - and:
+            - ${configure_secure_mode}
+    type: string
+    default: 65536
+    title: "Throttle the thread pool"
+    description: "Shared Capacity For Work Managers"
+    required: true
+
+  wls_primary_admin_user:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${configure_secure_mode}
+    type: string
+    title: "WebLogic Server Admin User Name"
+    description: "The name of the primary administrator in the WebLogic Server domain. The value should be between 8 and 128 characters long and alphanumeric, and can contain underscore (_) and hyphen(-) special characters, and should not be system, admin, administrator, or weblogic."
+    pattern: "^(?!weblogic$|administrator$)[a-zA-Z][a-zA-Z0-9_-]{7,127}$"
+    default: "wls_user"
+    minLength: 8
+    maxLength: 128
+    required: true
+
+  wls_secondary_admin_user:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${configure_secure_mode}
+    type: string
+    title: "Additional WebLogic Server Admin User Name"
+    description: "The name of the secondary administrator in the WebLogic Server domain. The value should be between 8 and 128 characters long and alphanumeric, and can contain underscore (_) and hyphen(-) special characters, and should not be system, admin, administrator, or weblogic."
+    pattern: "^(?!weblogic$|administrator$)[a-zA-Z][a-zA-Z0-9_-]{7,127}$"
+    default: "wls_user_1"
+    minLength: 8
+    maxLength: 128
+    required: true
+
+  wls_secondary_admin_password_id:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${configure_secure_mode}
+    type: "oci:kms:secret:id"
+    title: "Validated Secret for WebLogic Server Admin Password"
+    description: "The secret that contains the administration password of the secondary administrator in the WebLogic Server domain. Use a WebLogic Administrator password that starts with a letter, is between 8 and 30 characters long, contains at least one number, and, optionally, any number of the special characters ($ # _). For example, Ach1z0#d. To create secrets, see <a target=\"_blank\" href=\"https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/you-begin-oracle-weblogic-cloud.html#GUID-0517A019-4A89-40ED-A568-DD2193733F8B\">Create Secrets for Passwords</a>."
+    required: true
+    dependsOn:
+      compartmentId: ${wls_admin_secret_compartment_id}
+
+  # WLS Network Configuration
+  wls_vcn_name:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${create_new_vcn}
+    type: string
+    default: ''
+    minLength: 1
+    maxLength: 255
+    pattern: "^[a-zA-Z_]\\w{0,254}$"
+    required: true
+    title: "Virtual Cloud Network Name"
+    description: "The name of the new Virtual Cloud Network (VCN) to create for this service"
+
+  wls_existing_vcn_id:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - not:
+            - ${create_new_vcn}
+    type: oci:core:vcn:id
+    dependsOn:
+      compartmentId: ${network_compartment_id}
+    required: true
+    default: ''
+    title: "Existing Network"
+    description: "An existing Virtual Cloud Network (VCN) in which to create the compute instances, network resources, and load balancers. Existing Virtual Cloud Network can be validated using the network validation script. See <a target=\"_blank\" href=\"https://docs.oracle.com/pls/topic/lookup?ctx=en/cloud/paas/weblogic-cloud/user&id=oci_network_validate\">Validate Existing Network Setup</a>"
+
+  wls_vcn_cidr:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${create_new_vcn}
+    type: string
+    default: 10.0.0.0/16
+    pattern: "^(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\\/(3[0-2]|[1-2]?[0-9])$"
+    title: "Virtual Cloud Network CIDR"
+    description: "The CIDR to assign to the new Virtual Cloud Network (VCN) to create for this service"
+
+  wls_subnet_cidr:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - and:
+            - or:
+                - ${create_new_vcn}
+                - ${create_new_subnets}
+    type: string
+    default: 10.0.2.0/24
+    pattern: "^(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\\/(3[0-2]|[1-2]?[0-9])$"
+    required: true
+    title: "WebLogic Server Subnet CIDR"
+    description: "The CIDR of the new subnet to create for WebLogic Server compute instances. This field is required only if you want to use new subnets. The new subnet's CIDR should not overlap with any other subnet CIDRs."
+
+  mount_target_subnet_cidr:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${add_fss}
+        - and:
+            - or:
+                - ${create_new_vcn}
+                - ${create_new_subnets}
+        - not:
+            - ${add_existing_fss}
+        - not:
+            - ${add_existing_mount_target}
+    type: string
+    default: 10.0.5.0/24
+    pattern: "^(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\\/(3[0-2]|[1-2]?[0-9])$"
+    required: true
+    title: "Mount Target Subnet CIDR"
+    description: "The CIDR of the new subnet to create for mount target. This field is required only if you want to use new subnets. The new subnet's CIDR should not overlap with any other subnet CIDRs."
+
+  wls_subnet_id:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - not:
+            - ${create_new_vcn}
+        - not:
+            - ${create_new_subnets}
+    type: oci:core:subnet:id
+    dependsOn:
+      vcnId: ${wls_existing_vcn_id}
+      compartmentId: ${subnet_compartment_id}
+      hidePrivateSubnet:
+        not:
+          - eq:
+              - ${subnet_type}
+              - "Use Private Subnet"
+      hidePublicSubnet:
+        not:
+          - eq:
+              - ${subnet_type}
+              - "Use Public Subnet"
+      hideRegionalSubnet:
+        not:
+          - eq:
+              - ${subnet_span}
+              - "Regional Subnet"
+      hideAdSubnet:
+        not:
+          - eq:
+              - ${subnet_span}
+              - "AD Specific Subnet"
+    default: ''
+    required: true
+    title: "Existing Subnet for WebLogic Server"
+    description: "An existing subnet to use for WebLogic Server compute instances. This subnet must already be present in the chosen VCN."
+
+  mount_target_subnet_id:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${add_fss}
+        - not:
+            - ${create_new_subnets}
+        - not:
+            - ${create_new_vcn}
+        - not:
+            - ${add_existing_fss}
+        - not:
+            - ${add_existing_mount_target}
+    type: oci:core:subnet:id
+    dependsOn:
+      vcnId: ${wls_existing_vcn_id}
+      compartmentId: ${subnet_compartment_id}
+      hidePrivateSubnet:
+        not:
+          - eq:
+              - ${subnet_type}
+              - "Use Private Subnet"
+      hidePublicSubnet:
+        not:
+          - eq:
+              - ${subnet_type}
+              - "Use Public Subnet"
+      hideRegionalSubnet:
+        not:
+          - eq:
+              - ${subnet_span}
+              - "Regional Subnet"
+      hideAdSubnet:
+        not:
+          - eq:
+              - ${subnet_span}
+              - "AD Specific Subnet"
+    default: ''
+    required: true
+    title: "Existing Subnet for Mount Target"
+    description: "An existing subnet to use for mount target. This subnet must already be present in the chosen VCN."
+
+  assign_weblogic_public_ip:
+    visible: ${orm_create_mode}
+    type: boolean
+    default: true
+    title: "Assign Public IP Addresses to WebLogic Server"
+    description: "If not selected, the WebLogic Server compute instances are created in a new private subnet. The compute instances, admin console, and applications will not be directly accessible from clients that are external to Oracle Cloud."
+
+  is_bastion_instance_required:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - and:
+            - not:
+                - ${create_new_subnets}
+            - not:
+                - ${create_new_vcn}
+            - not:
+                - eq:
+                    - ${subnet_type}
+                    - "Use Public Subnet"
+    type: boolean
+    default: false
+    title: "Provision Bastion Instance"
+    description: "Provision a bastion compute instance on a public subnet to provide access to the WebLogic Server compute instances on a private subnet. If this and resource manager private endpoint are not selected, you must check the status of domain creation on the compute instance using /u01/logs/provisioning.log file, and any failures during domain creation are reported."
+
+  is_rms_private_endpoint_required:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - and:
+            - not:
+                - ${create_new_subnets}
+            - not:
+                - ${create_new_vcn}
+            - not:
+                - eq:
+                    - ${subnet_type}
+                    - "Use Public Subnet"
+    type: boolean
+    default: true
+    title: "Use Resource Manager Private Endpoint"
+    description: "Provision a resource manager private endpoint on a private subnet to check the provisioning status of the private resources. If this and bastion are not selected, you must check the status of domain creation on the compute instance using /u01/logs/provisioning.log file, and any failures during domain creation are reported."
+
+  add_rms_private_endpoint:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${is_rms_private_endpoint_required}
+        - not:
+            - ${create_new_subnets}
+        - not:
+            - ${create_new_vcn}
+    type: enum
+    enum:
+      - "Use Existing Resource Manager Endpoint"
+      - "Create New Resource Manager Endpoint"
+    default: "Use Existing Resource Manager Endpoint"
+    title: "Create or Use Existing Resource Manager Endpoint"
+    description: "Configure a new or existing resource manager private endpoint."
+    required: true
+
+  rms_existing_private_endpoint_id:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${is_rms_private_endpoint_required}
+        - not:
+            - ${create_new_subnets}
+        - not:
+            - ${create_new_vcn}
+        - eq:
+            - ${add_rms_private_endpoint}
+            - "Use Existing Resource Manager Endpoint"
+    dependsOn:
+      compartmentId: ${network_compartment_id}
+      vcnId: ${wls_existing_vcn_id}
+    type: oci:resourcemanager:privateendpoint:id
+    required: true
+    title: "Resource Manager Private Endpoint"
+    description: "Resource manager private endpoint for private access."
+  
+  is_bastion_with_reserved_public_ip:
+    visible:
+      and:
+        - or:
+            - ${is_bastion_instance_required}
+            - ${create_new_vcn}
+            - ${create_new_subnets}
+        - or:
+            - or:
+                - ${create_new_vcn}
+                - ${create_new_subnets}
+            - and:
+                - not:
+                    - ${create_new_subnets}
+                - eq:
+                    - ${subnet_type}
+                    - "Use Private Subnet"
+    type: boolean
+    default: false
+    title: "Assign Reserved Public IP to Bastion Instance"
+    description: "Provision a bastion compute instance with a reserved public IP"
+
+  bastion_subnet_name:
+    type: string
+    default: 'bastion-subnet'
+    title: "Bastion Host Subnet Name"
+    description: "Subnet name for Bastion host"
+
+  bastion_subnet_cidr:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - or:
+            - ${is_bastion_instance_required}
+            - ${create_new_vcn}
+            - ${create_new_subnets}
+        - and:
+            - or:
+                - ${create_new_vcn}
+                - ${create_new_subnets}
+    type: string
+    default: 10.0.1.0/24
+    pattern: "^(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\\/(3[0-2]|[1-2]?[0-9])$"
+    required: true
+    title: "Bastion Host Subnet CIDR"
+    description: "The CIDR of the new public subnet to create for a Bastion compute instance. This field is required only if you did not assign public IP addresses to WebLogic Server. The new subnet's CIDR should not overlap with any other subnet CIDRs."
+
+  bastion_subnet_id:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - and:
+            - ${is_bastion_instance_required}
+            - eq:
+                - ${subnet_type}
+                - "Use Private Subnet"
+            - not:
+                - ${create_new_vcn}
+            - not:
+                - ${create_new_subnets}
+    type: oci:core:subnet:id
+    dependsOn:
+      vcnId: ${wls_existing_vcn_id}
+      compartmentId: ${subnet_compartment_id}
+      hidePrivateSubnet: true
+      hidePublicSubnet: false
+      hideRegionalSubnet:
+        not:
+          - eq:
+              - ${subnet_span}
+              - "Regional Subnet"
+      hideAdSubnet:
+        not:
+          - eq:
+              - ${subnet_span}
+              - "AD Specific Subnet"
+    default: ''
+    required: true
+    title: "Existing Subnet for Bastion Host"
+    description: "An existing public subnet to use for a Bastion compute instance. This subnet must already be present in the chosen VCN. This field is required only if you did not assign public IP addresses to WebLogic Server."
+
+  bastion_instance_shape:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - and:
+            - or:
+                - ${is_bastion_instance_required}
+                - ${create_new_vcn}
+                - ${create_new_subnets}
+            - eq:
+                - ${subnet_type}
+                - "Use Private Subnet"
+    type: oci:core:instanceshape:name
+    #type: oci:core:instanceshapewithflex:name
+    title: "Bastion Host Shape"
+    description: "The shape for bastion compute instance"
+    required: true
+    dependsOn:
+      compartmentId: ${compartment_ocid}
+      imageId: ${bastion_image_id}
+
+  existing_bastion_nsg_id:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${is_bastion_instance_required}
+        - ${add_existing_nsg}
+        - and:
+            - not:
+                - ${create_new_vcn}
+            - not:
+                - ${create_new_subnets}
+        - not :
+            - eq:
+                - ${subnet_type}
+                - "Use Public Subnet"
+    type: oci:core:nsg:id
+    title: "Network Security Group for Bastion Host"
+    description: "The pre-created NSG that is assigned to the bastion instance"
+    required: true
+    dependsOn:
+      compartmentId: ${network_compartment_id}
+      vcnId: ${wls_existing_vcn_id}
+
+  existing_admin_server_nsg_id:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - and:
+            - ${add_existing_nsg}
+        - and:
+            - not:
+                - ${create_new_vcn}
+            - not:
+                - ${create_new_subnets}
+    type: oci:core:nsg:id
+    title: "Network Security Group for WebLogic Administration Server Node"
+    description: "The pre-created NSG that is assigned to the virtual machine of the administration server node"
+    required: true
+    dependsOn:
+      compartmentId: ${network_compartment_id}
+      vcnId: ${wls_existing_vcn_id}
+
+  existing_managed_server_nsg_id:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - and:
+            - ${add_existing_nsg}
+        - and:
+            - not:
+                - ${create_new_vcn}
+            - not:
+                - ${create_new_subnets}
+    type: oci:core:nsg:id
+    title: "Network Security Group for WebLogic Managed Server Node"
+    description: "The pre-created NSG that is assigned to the virtual machine of the managed server node"
+    required: true
+    dependsOn:
+      compartmentId: ${network_compartment_id}
+      vcnId: ${wls_existing_vcn_id}
+
+
+  # Load Balancer Configuration
+  add_load_balancer:
+    type: boolean
+    default: true
+    title: "Provision Load Balancer"
+    description: "Provision a load balancer in Oracle Cloud Infrastructure to distribute application traffic to the managed servers in the domain"
+
+  load_balancer_strategy_new_subnet:
+    visible:
+      and:
+        - or:
+            - ${add_load_balancer}
+            - ${is_idcs_selected}
+        - and:
+            - or:
+                - ${create_new_vcn}
+                - ${create_new_subnets}
+    type: enum
+    enum:
+      - "Create New Load Balancer"
+    default: "Create New Load Balancer"
+    title: "Create New Load Balancer"
+    description: "Configure a new load balancer in Oracle Cloud Infrastructure to distribute application traffic to the managed servers in the domain. Load balancer is required for metrics based autoscaling and Oracle Identity Cloud Service (IDCS)."
+    required: true
+
+  load_balancer_strategy_existing_subnet:
+    visible:
+      and:
+        - or:
+            - ${add_load_balancer}
+            - ${is_idcs_selected}
+        - and:
+            - not:
+                - ${create_new_vcn}
+            - not:
+                - ${create_new_subnets}
+    type: enum
+    enum:
+      - "Create New Load Balancer"
+      - "Use Existing Load Balancer"
+    default: "Create New Load Balancer"
+    title: "Create or Use Existing Load Balancer"
+    description: "Configure a new or existing load balancer in Oracle Cloud Infrastructure to distribute application traffic to the managed servers in the domain. Load balancer is required for metrics based autoscaling and Oracle Identity Cloud Service (IDCS)."
+    required: true
+
+  existing_load_balancer_id:
+    visible:
+      and:
+        - and:
+            - or:
+                - ${add_load_balancer}
+                - ${is_idcs_selected}
+            - not:
+                - ${create_new_subnets}
+            - not:
+                - ${create_new_vcn}
+            - eq:
+                - ${load_balancer_strategy_existing_subnet}
+                - "Use Existing Load Balancer"
+    type: string
+    pattern: ^ocid1.loadbalancer.*$
+    title: "Existing Load Balancer ID"
+    description: "The OCID of the existing load balancer. If you use an existing load balancer, the WebLogic Server nodes are added to the backend set of the existing load balancer."
+    required: true
+
+  backendset_name_for_existing_load_balancer:
+    visible:
+      and:
+        - and:
+            - or:
+                - ${add_load_balancer}
+                - ${is_idcs_selected}
+            - not:
+                - ${create_new_subnets}
+            - not:
+                - ${create_new_vcn}
+            - eq:
+                - ${load_balancer_strategy_existing_subnet}
+                - "Use Existing Load Balancer"
+    type: string
+    title: "Existing Load Balancer Backend Set Name"
+    description: "Name of the backend set for the existing load balancer. The backend set should not have any associated backends. Ensure that you have configured a routing policy for the backend set."
+    required: true
+
+  is_lb_private:
+    visible:
+      and:
+        - or:
+            - ${add_load_balancer}
+            - ${is_idcs_selected}
+        - eq:
+            - ${subnet_type}
+            - "Use Private Subnet"
+        - not:
+            - eq:
+                - ${load_balancer_strategy_existing_subnet}
+                - "Use Existing Load Balancer"
+    type: boolean
+    default: false
+    title: "Private Load balancer"
+    description: "Provision a private load balancer"
+
+  add_lb_reserved_public_ip_id:
+    visible:
+      and:
+        - or:
+            - ${add_load_balancer}
+            - ${is_idcs_selected}
+        - not:
+            - ${is_lb_private}
+        - not:
+            - eq:
+                - ${load_balancer_strategy_existing_subnet}
+                - "Use Existing Load Balancer"
+    type: boolean
+    default: false
+    title: "Load Balancer with Reserved Public IP"
+    description: "Provision a load balancer with a reserved public IP"
+
+  lb_reserved_public_ip_id:
+    visible:
+      and:
+        - ${add_lb_reserved_public_ip_id}
+        - not:
+            - ${is_lb_private}
+        - not:
+            - eq:
+                - ${load_balancer_strategy_existing_subnet}
+                - "Use Existing Load Balancer"
+    type: string
+    title: "Reserved Public IP OCID for Load Balancer"
+    required: true
+    description: "The OCID of the reserved public IP address for the load balancer"
+    pattern: ^ocid1.publicip.*$
+
+  lb_subnet_1_cidr:
+    visible:
+      and:
+        - or:
+            - ${add_load_balancer}
+            - ${is_idcs_selected}
+        - and:
+            - or:
+                - ${create_new_vcn}
+                - ${create_new_subnets}
+    type: string
+    default: 10.0.3.0/24
+    pattern: "^(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\\/(3[0-2]|[1-2]?[0-9])$"
+    required: true
+    title: "Load Balancer Subnet CIDR"
+    description: "The CIDR of the new subnet to create for the load balancer. The new subnet's CIDR should not overlap with any other subnet CIDRs."
+
+  lb_subnet_1_id:
+    visible:
+      and:
+        - or:
+            - ${add_load_balancer}
+            - ${is_idcs_selected}
+        - and:
+            - not:
+                - ${create_new_subnets}
+            - not:
+                - ${create_new_vcn}
+            - not:
+                - eq:
+                    - ${load_balancer_strategy_existing_subnet}
+                    - "Use Existing Load Balancer"
+    type: oci:core:subnet:id
+    dependsOn:
+      vcnId: ${wls_existing_vcn_id}
+      compartmentId: ${subnet_compartment_id}
+      hidePrivateSubnet:
+        not:
+          - ${is_lb_private}
+      hidePublicSubnet: ${is_lb_private}
+      hideRegionalSubnet:
+        not:
+          - eq:
+              - ${subnet_span}
+              - "Regional Subnet"
+      hideAdSubnet:
+        not:
+          - eq:
+              - ${subnet_span}
+              - "AD Specific Subnet"
+    default: ''
+    required: true
+    title: "Existing Subnet for Load Balancer"
+    description: "An existing subnet to use for the load balancer. This subnet must already be present in the chosen VCN."
+
+  lb_subnet_2_id:
+    visible:
+      and:
+        - or:
+            - ${add_load_balancer}
+            - ${is_idcs_selected}
+        - not:
+            - ${is_lb_private}
+        - and:
+            - not:
+                - ${create_new_subnets}
+            - not:
+                - ${create_new_vcn}
+        - eq:
+            - ${subnet_span}
+            - "AD Specific Subnet"
+    type: oci:core:subnet:id
+    dependsOn:
+      vcnId: ${wls_existing_vcn_id}
+      compartmentId: ${subnet_compartment_id}
+      hidePrivateSubnet:
+        not:
+          - ${is_lb_private}
+      hidePublicSubnet: ${is_lb_private}
+      hideRegionalSubnet:
+        not:
+          - eq:
+              - ${subnet_span}
+              - "Regional Subnet"
+      hideAdSubnet:
+        not:
+          - eq:
+              - ${subnet_span}
+              - "AD Specific Subnet"
+    default: ''
+    required: true
+    title: "Existing Subnet 2 for Load Balancer"
+    description: "An existing subnet to use for the second load balancer node. This field is required only if you are not using regional subnets."
+
+  lb_min_bandwidth:
+    visible:
+      and:
+        - or:
+            - ${add_load_balancer}
+            - ${is_idcs_selected}
+        - or:
+            - and:
+                - not:
+                    - ${create_new_vcn}
+                - not:
+                    - ${create_new_subnets}
+                - eq:
+                    - ${load_balancer_strategy_existing_subnet}
+                    - "Create New Load Balancer"
+            - and:
+                - or:
+                    - and:
+                        - ${create_new_subnets}
+                        - not:
+                            - ${create_new_vcn}
+                    - and:
+                        - or:
+                            - ${create_new_vcn}
+                            - ${create_new_subnets}
+                - eq:
+                    - ${load_balancer_strategy_new_subnet}
+                    - "Create New Load Balancer"
+    type: integer
+    title: "Minimum Bandwidth for Flexible Load Balancer"
+    description: "Create flexible shape load balancer with minimum bandwidth. The minimum service limit is 10 Mbps."
+    minimum: 10
+    maximum: 8000
+    default: 10
+    required: true
+
+  lb_max_bandwidth:
+    visible:
+      and:
+        - or:
+            - ${add_load_balancer}
+            - ${is_idcs_selected}
+        - or:
+            - and:
+                - not:
+                    - ${create_new_vcn}
+                - not:
+                    - ${create_new_subnets}
+                - eq:
+                    - ${load_balancer_strategy_existing_subnet}
+                    - "Create New Load Balancer"
+            - and:
+                - or:
+                    - and:
+                        - ${create_new_subnets}
+                        - not:
+                            - ${create_new_vcn}
+                    - and:
+                        - or:
+                            - ${create_new_vcn}
+                            - ${create_new_subnets}
+                - eq:
+                    - ${load_balancer_strategy_new_subnet}
+                    - "Create New Load Balancer"
+    type: integer
+    title: "Maximum Bandwidth for Flexible Load Balancer"
+    description: "Create flexible shape load balancer with maximum bandwidth. The maximum service limit is 8000 Mbps. Check the service limits page in the Console to provide accurate service limits."
+    minimum: 10
+    maximum: 8000
+    default: 400
+    required: true
+
+  existing_lb_nsg_id:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${add_existing_nsg}
+        - or:
+            - ${add_load_balancer}
+            - ${is_idcs_selected}
+        - and:
+            - not:
+                - ${create_new_vcn}
+            - not:
+                - ${create_new_subnets}
+            - eq:
+                - ${load_balancer_strategy_new_subnet}
+                - "Create New Load Balancer"
+            - eq:
+                - ${load_balancer_strategy_existing_subnet}
+                - "Create New Load Balancer"
+    type: oci:core:nsg:id
+    title: "Network Security Group for Load Balancer"
+    description: "The pre-created NSG that is assigned to the load balancer"
+    required: true
+    dependsOn:
+      compartmentId: ${network_compartment_id}
+      vcnId: ${wls_existing_vcn_id}
+
+  create_policies:
+    type: boolean
+    title: "OCI Policies"
+    description: "Create policies to read Secrets from Vault and manage Autonomous Transaction Processing Database (if applicable). Deselecting this option is for Advanced users only.  Before you deselect the check box, see <a target=\"_blank\" href=\"https://docs.oracle.com/pls/topic/lookup?ctx=en/cloud/paas/weblogic-cloud&id=WLCUG-GUID-4E2AD7BF-592D-4C2C-AF66-D98CB26379A5\">Create Root Policies</a> to create the required groups and relevant policies."
+    required: false
+    default: true
+
+  add_JRF:
+    visible:
+      and:
+        - ${orm_create_mode}
+    type: boolean
+    default: false
+    title: "Provision with JRF"
+    description: "Deploy the Java Required Files (JRF) components and create the JRF schemas on the selected database"
+
+  db_strategy:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${add_JRF}
+    type: enum
+    title: "Database Strategy"
+    description: "Choose the database strategy for WebLogic Server"
+    enum:
+      - "Autonomous Transaction Processing Database"
+      - "Database System"
+    default: "Autonomous Transaction Processing Database"
+    required: true
+
+  use_oci_db_connection_string:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${add_JRF}
+        - and:
+            - not:
+                - ${create_new_vcn}
+            - eq:
+                - ${db_strategy}
+                - "Database System"
+    type: boolean
+    title: "Use Database Connection String"
+    description: "Use database connection string to create a single instance datasource for JRF schemas. You cannot create an Active GridLink or a Multi Data Source using this database connection string. For the database connection string, see <a target=\"_blank\" href=\"https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/configure-database-parameters.html\">Configure Database Parameters and VCN Peering</a>."
+    default: false
+
+  oci_db_connection_string:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${add_JRF}
+        - ${use_oci_db_connection_string}
+        - eq:
+            - ${db_strategy}
+            - "Database System"
+        - not:
+            - ${create_new_vcn}
+    type: string
+    title: "Oracle Database Connection String"
+    description: "Oracle database connection string to connect to database. Example: //{scan_hostname}.{host_domain_name}:{db_port}/{pdb_or_sid}.{Host Domain Name}"
+    pattern: ^(\/\/)
+    required: true
+
+  # ATP DB Configuration
+  atp_db_compartment_id:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${add_JRF}
+        - eq:
+            - ${db_strategy}
+            - "Autonomous Transaction Processing Database"
+    type: oci:identity:compartment:id
+    required: true
+    title: "Autonomous Database Compartment"
+    description: "The compartment in which the Autonomous Transaction Processing (ATP) database is found"
+
+  atp_db_id:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${add_JRF}
+        - eq:
+            - ${db_strategy}
+            - "Autonomous Transaction Processing Database"
+    type: oci:database:autonomousdatabase:id
+    dependsOn:
+      compartmentId: ${atp_db_compartment_id}
+    required: true
+    title: "Autonomous Database"
+    description: "The Autonomous Transaction Processing (ATP) database in which to provision the schemas for a JRF-enabled WebLogic Server domain"
+
+  atp_db_secret_compartment_id:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${add_JRF}
+        - eq:
+            - ${db_strategy}
+            - "Autonomous Transaction Processing Database"
+    type: oci:identity:compartment:id
+    title: "Autonomous Database Secret Compartment"
+    description: "The compartment where you have the ATP database secret"
+    required: true
+    default: ${compartment_ocid}
+
+  atp_db_password_id:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${add_JRF}
+        - eq:
+            - ${db_strategy}
+            - "Autonomous Transaction Processing Database"
+    type: "oci:kms:secret:id"
+    dependsOn:
+      compartmentId: ${atp_db_secret_compartment_id}
+    required: true
+    title: "Validated Secret for Autonomous Database Admin Password"
+    description: "The secret that contains the administration user password in the ATP database. To create secrets, see <a target=\"_blank\" href=\"https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/you-begin-oracle-weblogic-cloud.html#GUID-0517A019-4A89-40ED-A568-DD2193733F8B\"> Create Secrets for Passwords</a>."
+
+  atp_db_level:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${add_JRF}
+        - eq:
+            - ${db_strategy}
+            - "Autonomous Transaction Processing Database"
+    type: enum
+    enum:
+      - low
+      - tp
+      - tpurgent
+    default: low
+    title: "Autonomous Database Service Level"
+    description: "The service level that the WebLogic Server domain should use to connect to the autonomous database. The default is low."
+
+  atp_db_uses_private_endpoint:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${add_JRF}
+        - eq:
+            - ${db_strategy}
+            - "Autonomous Transaction Processing Database"
+    type: boolean
+    default: false
+    title: "Database uses private endpoint"
+    description: "The Autonomous Transaction Processing (ATP) database uses private endpoint for network access"
+
+  atp_db_network_compartment_id:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${add_JRF}
+        - and:
+            - eq:
+                - ${db_strategy}
+                - "Autonomous Transaction Processing Database"
+            - ${atp_db_uses_private_endpoint}
+    type: oci:identity:compartment:id
+    required: true
+    title: "Autonomous Database Network Compartment"
+    description: "The compartment in which the ATP database Virtual Cloud Network is found"
+    default: ${compartment_ocid}
+
+  atp_db_existing_vcn_id:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${add_JRF}
+        - and:
+            - eq:
+                - ${db_strategy}
+                - "Autonomous Transaction Processing Database"
+            - ${atp_db_uses_private_endpoint}
+    type: oci:core:vcn:id
+    dependsOn:
+      compartmentId: ${atp_db_network_compartment_id}
+    required: true
+    default: ''
+    title: "Autonomous Database Network"
+    description: "An existing Virtual Cloud Network (VCN) used by ATP database with private endpoint. If the selected VCN is different from WebLogic Server VCN then local VCN peering will be setup. When using VCN peering ensure that the VCNs being peered have non-overlapping CIDR blocks."
+
+  oci_db_network_compartment_id:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${add_JRF}
+        - and:
+            - eq:
+                - ${db_strategy}
+                - "Database System"
+            - or:
+                - ${create_new_vcn}
+                - not:
+                    - ${use_oci_db_connection_string}
+    type: oci:identity:compartment:id
+    required: true
+    title: "DB System Network Compartment"
+    description: "The compartment in which the DB System Virtual Cloud Network is found"
+    default: ${compartment_ocid}
+
+  db_existing_vcn_add_secrule:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${add_JRF}
+        - ${create_policies}
+        - or:
+            - and:
+                - eq:
+                    - ${db_strategy}
+                    - "Database System"
+                - or:
+                    - ${create_new_vcn}
+                    - not:
+                        - ${use_oci_db_connection_string}
+            - and:
+                - eq:
+                    - ${db_strategy}
+                    - "Autonomous Transaction Processing Database"
+                - ${atp_db_uses_private_endpoint}
+    type: boolean
+    default: true
+    title: "Create Database Security List"
+    description: "Add a security list to the DB subnet or a security rule to the Network Security Group for ATP Database with private endpoint that allows connections from the WebLogic Server subnet"
+
+  # OCI DB Configuration
+
+  oci_db_compartment_id:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${add_JRF}
+        - and:
+            - eq:
+                - ${db_strategy}
+                - "Database System"
+            - or:
+                - ${create_new_vcn}
+                - not:
+                    - ${use_oci_db_connection_string}
+    type: oci:identity:compartment:id
+    required: true
+    title: "DB System Compartment"
+    description: "The compartment in which the DB System is found"
+    default: ${compartment_ocid}
+
+  oci_db_existing_vcn_id:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${add_JRF}
+        - and:
+            - eq:
+                - ${db_strategy}
+                - "Database System"
+            - or:
+                - ${create_new_vcn}
+                - not:
+                    - ${use_oci_db_connection_string}
+    type: oci:core:vcn:id
+    dependsOn:
+      compartmentId: ${oci_db_network_compartment_id}
+    required: true
+    default: ''
+    title: "DB System Network"
+    description: "An existing Virtual Cloud Network (VCN) used by DB System. If the selected VCN is different from WebLogic Server VCN then local VCN peering will be setup. When using VCN peering ensure that the VCNs being peered have non-overlapping CIDR blocks."
+
+  oci_db_dbsystem_id:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${add_JRF}
+        - and:
+            - eq:
+                - ${db_strategy}
+                - "Database System"
+            - or:
+                - ${create_new_vcn}
+                - not:
+                    - ${use_oci_db_connection_string}
+    type: oci:database:dbsystem:id
+    dependsOn:
+      compartmentId: ${oci_db_compartment_id}
+    required: true
+    title: "DB System"
+    description: "The Oracle Cloud Infrastructure DB System to use for this WebLogic Server domain"
+
+  oci_db_dbhome_id:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${add_JRF}
+        - and:
+            - eq:
+                - ${db_strategy}
+                - "Database System"
+            - or:
+                - ${create_new_vcn}
+                - not:
+                    - ${use_oci_db_connection_string}
+    type: oci:database:dbhome:id
+    required: true
+    title: "Database home in the DB System"
+    description: "The database home within the DB System"
+    dependsOn:
+      compartmentId: ${oci_db_compartment_id}
+      dbSystemId: ${oci_db_dbsystem_id}
+
+  oci_db_dbhome_major_version:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${add_JRF}
+        - and:
+            - eq:
+                - ${db_strategy}
+                - "Database System"
+            - or:
+                - ${create_new_vcn}
+                - not:
+                    - ${use_oci_db_connection_string}
+    type: oci:database:dbhome:dbversion
+    title: "Version of Database home in the DB System"
+    description: "The version of database home within the DB System"
+    dependsOn:
+      dbHomeId: ${oci_db_dbhome_id}
+
+  oci_db_database_id:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${add_JRF}
+        - and:
+            - eq:
+                - ${db_strategy}
+                - "Database System"
+            - or:
+                - ${create_new_vcn}
+                - not:
+                    - ${use_oci_db_connection_string}
+    type: oci:database:database:id
+    dependsOn:
+      compartmentId: ${oci_db_compartment_id}
+      dbHomeId: ${oci_db_dbhome_id}
+    required: true
+    title: "Database in the DB System"
+    description: "The database within the DB System in which to provision the schemas for a JRF-enabled WebLogic Server domain"
+
+  oci_db_pdb_service_name:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${add_JRF}
+        - and:
+            - not:
+                - eq:
+                    - ${oci_db_dbhome_major_version}
+                    - "11"
+            - eq:
+                - ${db_strategy}
+                - "Database System"
+
+    type: string
+    required: true
+    title: "PDB"
+    description: "The name of the pluggable database (PDB) in which to provision the schemas for a JRF-enabled WebLogic Server domain. This is required for Oracle Database 12c or later."
+
+  oci_db_user:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${add_JRF}
+        - eq:
+            - ${db_strategy}
+            - "Database System"
+    type: string
+    default: SYS
+    pattern: "^[a-zA-Z][a-zA-Z0-9]{1,49}$"
+    minLength: 2
+    maxLength: 50
+    title: "Database Administrator"
+    description: "The name of a database user with SYSDBA privileges"
+    required: true
+
+  oci_db_port:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${add_JRF}
+        - and:
+            - eq:
+                - ${db_strategy}
+                - "Database System"
+            - or:
+                - ${create_new_vcn}
+                - not:
+                    - ${use_oci_db_connection_string}
+    type: integer
+    default: 1521
+    title: "Database Listener Port"
+    description: "The Listener Port for the Database"
+    required: false
+
+  oci_db_secret_compartment_id:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${add_JRF}
+        - eq:
+            - ${db_strategy}
+            - "Database System"
+    type: oci:identity:compartment:id
+    title: "OCI DB Admin Password Secret Compartment"
+    description: "The compartment where you have the OCI DB administration password secret"
+    required: true
+    default: ${compartment_ocid}
+
+  oci_db_password_id:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${add_JRF}
+        - eq:
+            - ${db_strategy}
+            - "Database System"
+    type: "oci:kms:secret:id"
+    dependsOn:
+      compartmentId: ${oci_db_secret_compartment_id}
+    required: true
+    title: "Validated Secret for OCI DB Admin Password"
+    description: "The secret that contains the database administration password. To create secrets, see <a target=\"_blank\" href=\"https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/you-begin-oracle-weblogic-cloud.html#GUID-0517A019-4A89-40ED-A568-DD2193733F8B\"> Create Secrets for Passwords</a>."
+
+  db_vcn_lpg_id:
+    visible:
+      and:
+        - ${add_JRF}
+        - or:
+            - and:
+                - eq:
+                    - ${db_strategy}
+                    - "Database System"
+                - not:
+                    - ${use_oci_db_connection_string}
+                - or:
+                    - ${create_new_vcn}
+                    - and:
+                        - ${create_new_subnets}
+                        - not:
+                            - eq:
+                                - ${wls_existing_vcn_id}
+                                - ${oci_db_existing_vcn_id}
+            - and:
+                - eq:
+                    - ${db_strategy}
+                    - "Autonomous Transaction Processing Database"
+                - ${atp_db_uses_private_endpoint}
+                - or:
+                    - ${create_new_vcn}
+                    - and:
+                        - ${create_new_subnets}
+                        - not:
+                            - eq:
+                                - ${wls_existing_vcn_id}
+                                - ${atp_db_existing_vcn_id}
+
+    type: string
+    title: "Local Peering Gateway in Database VCN"
+    pattern: ^ocid1.localpeeringgateway.*$
+    required: true
+    description: "The OCID of the Local Peering Gateway (LPG) in the database VCN, used to peer the WebLogic VCN"
+
+  # Tagging variables
+  create_service_tag:
+    visible: ${orm_create_mode}
+    type: boolean
+    title: "Add Tags"
+    default: false
+    description: "Add tags to the resources created by the WebLogic for OCI stack"
+
+  service_tags:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${create_service_tag}
+    type: oci:identity:tag:value
+    title: "Service Tagging"
+    required: false
+
+  # IDCS variables
+  is_idcs_selected:
+    type: boolean
+    default: false
+    title: "Enable Authentication Using Identity Cloud Service"
+    description: "Authenticate WebLogic Server users against Oracle Identity Cloud Service (IDCS). If not selected, WebLogic Server uses the local identity store. If you select the check box, load balancer will be provisioned."
+    visible: ${orm_create_mode}
+
+  idcs_host:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - and:
+            - ${is_idcs_selected}
+    type: string
+    minLength: 1
+    maxLength: 1024
+    title: "IDCS Host Domain Name"
+    description: "The domain name for the host that you use to access Identity Cloud Service"
+    required: true
+    default: "identity.oraclecloud.com"
+
+  idcs_port:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - and:
+            - ${is_idcs_selected}
+    type: integer
+    default: 443
+    minimum: 0
+    maximum: 65535
+    multipleOf: 1
+    title: "IDCS Port"
+    description: "The port number that you use to access Identity Cloud Service"
+    required: true
+
+  idcs_tenant:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - and:
+            - ${is_idcs_selected}
+    type: string
+    minLength: 1
+    maxLength: 1024
+    title: "IDCS Tenant"
+    description: "The ID of your Identity Cloud Service tenant, which typically has the format idcs-{guid}, and is part of the host name that you use to access Identity Cloud Service"
+    required: true
+
+  idcs_client_id:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - and:
+            - ${is_idcs_selected}
+    type: string
+    minLength: 1
+    maxLength: 1024
+    title: "IDCS Client ID"
+    description: "The client ID of a confidential application in Identity Cloud Service that is used to create the necessary artifacts in Identity Cloud Service. This application needs to be configured as client, and has to be granted with access to Identity Cloud Service Admin APIs, with Identity Domain Administrator app role. See <a target=\"_blank\" href=\"https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/you-begin-oracle-weblogic-cloud.html#GUID-807D5863-04A3-47A3-8D65-443B859B80FD\">Create a Confidential Application</a>."
+    required: true
+
+  idcs_secret_compartment_id:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - and:
+            - ${is_idcs_selected}
+    type: oci:identity:compartment:id
+    title: "IDCS Secret Compartment"
+    description: "The compartment where you have the IDCS secret"
+    required: true
+    default: ${compartment_ocid}
+
+  idcs_client_secret_id:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - and:
+            - ${is_idcs_selected}
+    type: "oci:kms:secret:id"
+    minLength: 1
+    maxLength: 1024
+    title: "Validated Secret for IDCS Client"
+    description: "The secret that contains the client secret of the confidential application password in IDCS, which is used to create the necessary artifacts in IDCS. To create secrets, see <a target=\"_blank\" href=\"https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/you-begin-oracle-weblogic-cloud.html#GUID-0517A019-4A89-40ED-A568-DD2193733F8B\"> Create Secrets for Passwords</a>."
+    required: true
+    dependsOn:
+      compartmentId: ${idcs_secret_compartment_id}
+
+  idcs_cloudgate_port:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - and:
+            - ${is_idcs_selected}
+    type: integer
+    default: 9999
+    minimum: 1024
+    maximum: 65535
+    multipleOf: 1
+    title: "IDCS Redirect Port"
+    description: "The listen port for the Identity Cloud Service App Gateway, which authenticates requests and redirects them to WebLogic Server"
+    required: true
+
+  fss_availability_domain:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${add_fss}
+        - not:
+            - and:
+                - eq:
+                    - ${subnet_span}
+                    - "AD Specific Subnet"
+                - not:
+                    - ${add_existing_fss}
+                - not:
+                    - ${add_existing_mount_target}
+    type: oci:identity:availabilitydomain:name
+    title: "File System Availability Domain"
+    description: "The name of the availability domain for the file system and mount target"
+    dependsOn:
+      compartmentId: ${compartment_ocid}
+    required: true
+
+  fss_compartment_id:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${add_fss}
+        - ${add_existing_fss}
+        - not:
+            - ${create_new_vcn}
+    type: oci:identity:compartment:id
+    required: true
+    title: "Existing File System Compartment"
+    description: "The compartment where the file system exists"
+    default: ${compartment_ocid}
+
+  mount_target_id:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${add_fss}
+        - or:
+            - ${add_existing_mount_target}
+            - ${add_existing_fss}
+        - not:
+            - ${create_new_vcn}
+    type: oci:mount:target:id
+    title: "Existing Mount Target"
+    description: "The existing mount target to select from file system availability domain and mount target compartment"
+    dependsOn:
+      compartmentId: ${mount_target_compartment_id}
+      availabilityDomain: ${fss_availability_domain}
+    required: true
+
+  existing_fss_id:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${add_fss}
+        - ${add_existing_fss}
+        - not:
+            - ${create_new_vcn}
+    type: string
+    title: "Existing File System ID"
+    description: "The Oracle Cloud Identifier (OCID) of your existing file system. The existing file system must be in the same availability domain as the existing mount target."
+    pattern: ^$|^ocid1.filesystem.*$
+    required: true
+
+
+  use_oci_logging:
+    type: boolean
+    default: false
+    title: "Enable Exporting Logs to OCI Logging Service"
+    description: "Enable logging service integration for WebLogic instances"
+
+  dynamic_group_id:
+    visible:
+      and:
+        - ${use_oci_logging}
+        - not:
+            - ${create_policies}
+    type: oci:identity:dynamicgroups:id
+    title: "Dynamic Group OCID for WebLogic Server Instances"
+    dependsOn:
+      compartmentId: ${tenancy_ocid}
+    description: "The OCID of the dynamic group that contains the WebLogic instances from which logs will be exported to OCI Logging Service."
+    required: true
+
+  image_mode:
+    visible:
+      not:
+        - ${orm_create_mode}
+    type: enum
+    title: "Image for Scale Out"
+    description: "The selected image is used for scale out. A BYOL image requires a WebLogic License with valid support contract. UCM images are charged per OCPU/hour for the entitlement and WebLogic support."
+    required: true
+    enum:
+      - "Oracle WebLogic Server BYOL Image"
+      - "Oracle WebLogic Server Enterprise Edition UCM Image"
+    default: "Oracle WebLogic Server BYOL Image"
+
+  terms_and_conditions:
+    visible:
+      and:
+        - eq:
+            - ${image_mode}
+            - "Oracle WebLogic Server Enterprise Edition UCM Image"
+    type: boolean
+    default: false
+    title: "Terms of use"
+    description: "I have reviewed and accept the <a target=\"_blank\" href=\"https://objectstorage.us-phoenix-1.oraclecloud.com/n/axxu7cichsnt/b/terms/o/wlsoci_ee_terms_and_conditions.txt\">Oracle terms of use</a>"
+    required: true
+
+  use_apm_service:
+    type: boolean
+    default: false
+    title: "Enable Application Performance Monitoring"
+    description: "Enable Application Performance Monitoring for WebLogic instances, which is required for automatic scaling of the stack. If you automatically scale the stack, you must not unselect the Enable Application Performance Monitoring option when editing the stack."
+
+  apm_domain_compartment_id:
+    visible:
+      -or:
+        - ${use_apm_service}
+        - ${use_autoscaling}
+    type: oci:identity:compartment:id
+    title: "Application Performance Monitoring Domain Compartment"
+    description: "The compartment where you have the Application Performance Monitoring domain to be used by this WebLogic instance"
+    required: true
+    default: ${compartment_ocid}
+
+  apm_domain_id:
+    visible:
+      -or:
+        - ${use_apm_service}
+        - ${use_autoscaling}
+    type: oci:apm:domain:id
+    title: "Application Performance Monitoring Domain"
+    description: "The Application Performance Monitoring domain used by this WebLogic instance"
+    required: true
+    dependsOn:
+      compartmentId: ${apm_domain_compartment_id}
+
+  apm_private_data_key_name:
+    visible:
+      -or:
+        - ${use_apm_service}
+        - ${use_autoscaling}
+    type: string
+    title: "Application Performance Monitoring Private Data Key Name"
+    description: "The name of the private data key used by this WebLogic instance to push metrics to the Application Performance Monitoring domain"
+    required: true
+
+  use_autoscaling:
+    visible:
+      and:
+        - ${orm_create_mode}
+    type: boolean
+    default: false
+    title: "Enable Autoscaling"
+    description: "Enable Auto Scaling of WebLogic Instances based on WebLogic Monitoring Metrics. If you select the check box,  Application Performance Monitoring will be enabled."
+  
+  # Metric based autoscaling UI
+  wls_metric:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - and:
+            - ${use_autoscaling}
+    type: enum
+    title: "WebLogic Monitoring Metrics"
+    description: "WebLogic monitoring metrics type"
+    enum:
+      - CPU Load
+      - Used Heap Percent
+      - Queue Length
+      - Stuck Threads
+    default: CPU Load
+    required: true
+
+  min_threshold_percent:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - and:
+            - ${use_autoscaling}
+            - and:
+                - or:
+                    - eq:
+                        - ${wls_metric}
+                        - "CPU Load"
+                    - eq:
+                        - ${wls_metric}
+                        - "Used Heap Percent"
+
+    type: integer
+    title: "Minimum Threshold Percent"
+    description: "Minimum Threshold Percent for the metric"
+    minimum: 0
+    maximum: 100
+    required: true
+
+  max_threshold_percent:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - and:
+            - ${use_autoscaling}
+            - and:
+                - or:
+                    - eq:
+                        - ${wls_metric}
+                        - "CPU Load"
+                    - eq:
+                        - ${wls_metric}
+                        - "Used Heap Percent"
+    
+    type: integer
+    title: "Maximum Threshold Percent"
+    description: "Maximum threshold percentage for the metric"
+    minimum: 0
+    maximum: 100
+    required: true
+
+  min_threshold_counter:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - and:
+            - ${use_autoscaling}
+            - and:
+                - or:
+                    - eq:
+                        - ${wls_metric}
+                        - "Queue Length"
+                    - eq:
+                        - ${wls_metric}
+                        - "Stuck Threads"
+    type: integer
+    title: "Minimum Threshold Counter"
+    description: "Minimum threshold counter for the metric"
+    minimum: 0
+    required: true
+
+  max_threshold_counter:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - and:
+            - ${use_autoscaling}
+            - and:
+                - or:
+                    - eq:
+                        - ${wls_metric}
+                        - "Queue Length"
+                    - eq:
+                        - ${wls_metric}
+                        - "Stuck Threads"
+    type: integer
+    title: "Maximum Threshold Counter"
+    description: "Maximum threshold counter for the metric"
+    minimum: 0
+    required: true
+  
+  # Common autoscaling UI
+  ocir_user:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - and:
+            - ${use_autoscaling}
+    type: string
+    title: "Registry User Name"
+    description: "The user name to access the Oracle Cloud Infrastructure Registry (OCIR) for deploying autoscaling OCI functions, which has the format {identity domain name}/{username}. If your tenancy is using Oracle Identity Cloud Service, use the format oracleidentitycloudservice/{username}."
+    required: true
+
+  ocir_auth_token_compartment_id:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - and:
+            - ${use_autoscaling}
+            - and:
+                - ${config_observability}
+    type: oci:identity:compartment:id
+    title: "OCIR Auth Token Secret Compartment"
+    description: "The compartment where you have the OCIR auth token"
+    required: true
+    default: ${compartment_ocid}
+
+  ocir_auth_token_id:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - and:
+            - ${use_autoscaling}
+            - and:
+                - ${config_observability}
+    type: "oci:kms:secret:id"
+    title: "Validated Secret for OCIR Auth Token"
+    description: "The secret that contains the OCIR auth token that you generated for the user to access the image registry"
+    required: true
+    dependsOn:
+      compartmentId: ${ocir_auth_token_compartment_id}
+
+  notification_email:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - and:
+            - ${use_autoscaling}
+    type: string
+    title: "Notification Email"
+    description: "Email address to which scaling notifications are sent"
+    pattern: ^$|^(?!^[.+&'_-]*@.*$)(^[_\w\d+&'-]+(\.[_\w\d+&'-]*)*@[\w\d-]+(\.[\w\d-]+)*\.(([\d]{1,3})|([\w]{2,}))$)$
+    required: false
+
+  # Hidden Variables
+  mount_path:
+    type: string
+    title: "Mount Path on the WebLogic Server instances"
+    description: "The path to mount the file system on the WebLogic Server instances"
+
+  mode:
+    type: enum
+    title: "Terraform mode"
+    description: "Select Terraform mode for development or production. In development mode, local VM scripts zip is seeded on WLS VMs."
+    enum:
+      - PROD
+      - DEV
+    default: PROD
+
+  wls_subnet_name:
+    type: string
+    default: 'wls-subnet'
+    title: "WebLogic Server Subnet Name"
+    description: "The name of the new subnet to create for WebLogic Server compute instances. This field is required only if you want to use an existing VCN."
+
+  lb_subnet_1_name:
+    type: string
+    default: 'lb-subnet-1'
+    title: "Load Balancer Subnet Name"
+    description: "The name of the new subnet to create for the load balancer"
+
+  lb_subnet_2_name:
+    type: string
+    default: 'lb-subnet-2'
+    title: "Load Balancer Subnet 2 Name"
+    description: "The name of the subnet to create for the second load balancer node. This field is required only if you are not using regional subnets."
+
+  user_id:
+    type: string
+
+  private_key_path:
+    type: string
+
+  fingerprint:
+    type: string
+
+  wls_edition:
+    type: string
+
+  use_regional_subnet:
+    type: boolean
+
+  use_marketplace_image:
+    type: boolean
+    default: true
+
+  use_bastion_marketplace_image:
+    type: boolean
+    default: true
+
+  listing_resource_version:
+    type: string
+
+  listing_id:
+    type: string
+
+  tf_script_version:
+    type: string
+
+  # tenancy_ocid, compartment_ocid, and user_ocid are predefined variables. Do not change them.
+
+  tenancy_ocid:
+    type: string
+    title: "Tenancy ID"
+    description: "The Oracle Cloud Identifier (OCID) for your tenancy"
+    required: true
+
+  region:
+    type: oci:identity:region:name
+    title: "Region"
+    description: "The region in which to create all resources"
+    required: true
+
+  log_level:
+    type: enum
+    title: "Log Level"
+    description: "Log level"
+    enum:
+      - DEBUG
+      - INFO
+    default: INFO
+
+  bastion_image_id:
+    type: string
+    title: "Base Linux Instance OCID"
+    description: "The Oracle Cloud Identifier (OCID) for PIC image"
+
+  bastion_listing_id:
+    type: string
+    title: "Base Linux  Marketplace listing Id"
+    description: "The Base Linux  Marketplace listing Id for PIC image"
+
+  bastion_listing_resource_version:
+    type: string
+    title: "Base Linux  Marketplace listing version"
+    description: "The Base Linux  Marketplace listing version for PIC image"
+
+  compartment_ocid:
+    type: oci:identity:compartment:id
+    title: "WebLogic Server Compartment"
+    description: "The compartment in which to create the WebLogic Server compute instances"
+    required: true
+
+  wls_version:
+    type: enum
+    title: "Weblogic Server Version"
+    description: "The version of WebLogic Server to provision"
+    enum:
+      - 12.2.1.4
+      - 14.1.1.0
+    default: 12.2.1.4
