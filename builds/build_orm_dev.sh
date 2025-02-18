@@ -73,7 +73,7 @@ validate()
     echo "WebLogic version is not provided"
     help
     exit 1
-  elif [ "${WLS_VERSION}" != "12.2.1.4" ] && [ "${WLS_VERSION}" != "14.1.2.0" && "${WLS_VERSION}" != "14.1.1.0" ]; then
+  elif [ "${WLS_VERSION}" != "12.2.1.4" ] && [ "${WLS_VERSION}" != "14.1.2.0" ] && [ "${WLS_VERSION}" != "14.1.1.0" ]; then
     echo "Please provide valid WebLogic version"
     help
     exit 1

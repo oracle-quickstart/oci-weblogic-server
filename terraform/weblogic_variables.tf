@@ -59,6 +59,7 @@ variable "wls_14c_jdk_version" {
     error_message = "WLSC-ERROR: Allowed values for wls_14c_jdk_version are jdk8, jdk11."
   }
 }
+
 variable "wls_14120_jdk_version" {
   type        = string
   description = "JDK version to use when installing WebLogic 14.1.2.0 version. Ignored when WebLogic version is not 14.1.2.0. Allowed values: jdk21, jdk17"
