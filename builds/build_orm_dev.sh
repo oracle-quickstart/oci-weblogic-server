@@ -16,7 +16,7 @@ help()
   echo
   echo "Arguments: build_orm_dev.sh -v|--version <12.2.1.4|14.1.1.0|14.1.2.0> -t|--scripts_version --all"
   echo "options:"
-  echo "-v, --version             WebLogic version. Supported values are 12.2.1.4,14.1.2.0. or 14.1.1.0 Optional when --all option is provided"
+  echo "-v, --version             WebLogic version. Supported values are 12.2.1.4,14.1.2.0 or 14.1.1.0 Optional when --all option is provided"
   echo "-t, --scripts_version     VM scripts version"
   echo "--all                     All bundles"
   echo
@@ -73,7 +73,7 @@ validate()
     echo "WebLogic version is not provided"
     help
     exit 1
-  elif [ "${WLS_VERSION}" != "12.2.1.4" ] && [ "${WLS_VERSION}" != "14.1.2.0" &&  "${WLS_VERSION}" != "14.1.1.0" ]; then
+  elif [ "${WLS_VERSION}" != "12.2.1.4" ] && [ "${WLS_VERSION}" != "14.1.2.0" && "${WLS_VERSION}" != "14.1.1.0" ]; then
     echo "Please provide valid WebLogic version"
     help
     exit 1

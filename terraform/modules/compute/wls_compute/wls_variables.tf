@@ -198,7 +198,7 @@ variable "wls_version_to_fmw_map" {
     "12.2.1.3" = "/u01/zips/jcs/FMW/12.2.1.3.0/fmiddleware.zip"
     "12.2.1.4" = "/u01/zips/jcs/FMW/12.2.1.4.0/fmiddleware.zip"
     "14.1.1.0" = "/u01/zips/jcs/FMW/14.1.1.0.0/fmiddleware.zip"
-    "14.1.2.0" = "/uo1/zips/FMW/14.1.2.0/fmw_14.1.2.0.0_wls.zip"
+    "14.1.2.0" = "/u01/zips/FMW/14.1.2.0/fmw_14.1.2.0.0_wls.zip"
   }
 }
 

@@ -61,8 +61,8 @@ variable "wls_14c_jdk_version" {
 }
 variable "wls_14120_jdk_version" {
   type        = string
-  description = "JDK version to use when installing WebLogic 14c. Ignored when WebLogic version is not 14c. Allowed values: jdk8, jdk11"
-  default     = "jdk8"
+  description = "JDK version to use when installing WebLogic 14.1.2.0 version. Ignored when WebLogic version is not 14.1.2.0. Allowed values: jdk21, jdk17"
+  default     = "jdk17"
   validation {
     condition     = contains(["jdk17", "jdk21"], var.wls_14120_jdk_version)
     error_message = "WLSC-ERROR: Allowed values for wls_14120_jdk_version are jdk17, jdk21."

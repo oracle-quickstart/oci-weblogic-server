@@ -184,6 +184,7 @@ groupings:
       - ${listing_resource_version}
       - ${wls_version}
       - ${log_level}
+      - ${wls_14120_jdk_version}
       #- ${instance_image_id}
       - ${marketplace_source_images}
       - ${use_regional_subnet}
