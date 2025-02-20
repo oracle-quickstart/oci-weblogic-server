@@ -106,7 +106,7 @@ locals {
 
   async_prov_mode = !local.assign_weblogic_public_ip && !var.is_rms_private_endpoint_required && !var.is_bastion_instance_required ? "Asynchronous provisioning is enabled. Connect to each compute instance and confirm that the file /u01/data/domains/${format("%s_domain", local.service_name_prefix)}/provCompletedMarker exists. Details are found in the file /u01/logs/provisioning.log." : ""
 
-  jdk_labels  = { jdk7 = "JDK 7", jdk8 = "JDK 8", jdk11 = "JDK 11",jdk17 = "JDK 17",jdk21 = "JDK 21" }
+  jdk_labels  = { jdk7 = "JDK 7", jdk8 = "JDK 8", jdk11 = "JDK 11", jdk17 = "JDK 17", jdk21 = "JDK 21" }
   jdk_version = lookup(
   local.jdk_labels,
   var.wls_version == "14.1.1.0" ? var.wls_14c_jdk_version :
