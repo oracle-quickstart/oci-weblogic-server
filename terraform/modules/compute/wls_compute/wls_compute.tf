@@ -67,6 +67,7 @@ module "wls-instances" {
       wls_edition                        = var.wls_edition
       is_bastion_instance_required       = var.is_bastion_instance_required
       create_policies                    = var.create_policies
+      enable_restful_management_services = var.wls_version == "14.1.2.0" ? true : false
 
       # Secured Production Mode
       configure_secure_mode              = var.configure_secure_mode
