@@ -150,7 +150,7 @@ locals {
   fmw_console_app_url = local.requires_JRF ? format(
     "https://%s:%s/em",
     local.admin_ip_address,
-    var.wls_extern_ssl_admin_port,
+    local.wls_extern_ssl_admin_port,
   ) : ""
 
   use_apm_service           = (var.use_apm_service || var.use_autoscaling)
