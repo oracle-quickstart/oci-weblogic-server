@@ -87,6 +87,22 @@ resource "oci_core_network_security_group_security_rule" "wls_ingress_nm_securit
     }
   }
 }
+resource "oci_core_network_security_group_security_rule" "wls_ingress_ssh_security_rule" {
+  network_security_group_id = element(var.nsg_ids["managed_nsg_id"], 0)
+  direction                 = "INGRESS"
+  protocol                  = "6"
+
+  source      = var.wls_subnet_cidr
+  source_type = "CIDR_BLOCK"
+  stateless   = false
+
+  tcp_options {
+    destination_port_range {
+      min = 22
+      max = 22
+    }
+  }
+}
 
 resource "oci_core_network_security_group_security_rule" "wls_ingress_administration_port_secure_mode" {
   count                     = var.configure_secure_mode ? 1 : 0
