@@ -1127,16 +1127,14 @@ variables:
   is_rms_private_endpoint_required:
     visible:
       and:
-        - ${orm_create_mode}
-        - and:
-            - not:
-                - ${create_new_subnets}
-            - not:
-                - ${create_new_vcn}
-            - not:
-                - eq:
-                    - ${subnet_type}
-                    - "Use Public Subnet"
+        - not:
+            - ${create_new_subnets}
+        - not:
+            - ${create_new_vcn}
+        - not:
+            - eq:
+                - ${subnet_type}
+                - "Use Public Subnet"
     type: boolean
     default: true
     title: "Use Resource Manager Private Endpoint"
@@ -1145,7 +1143,6 @@ variables:
   add_rms_private_endpoint:
     visible:
       and:
-        - ${orm_create_mode}
         - ${is_rms_private_endpoint_required}
         - not:
             - ${create_new_subnets}
@@ -1163,7 +1160,6 @@ variables:
   rms_existing_private_endpoint_id:
     visible:
       and:
-        - ${orm_create_mode}
         - ${is_rms_private_endpoint_required}
         - not:
             - ${create_new_subnets}
