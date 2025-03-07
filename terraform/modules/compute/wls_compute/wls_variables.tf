@@ -234,6 +234,7 @@ variable "wls_version_to_rcu_component_list_map" {
   default = {
     "12.2.1.3" = "MDS,WLS,STB,IAU_APPEND,IAU_VIEWER,UCSUMS,IAU,OPSS"
     "12.2.1.4" = "MDS,WLS,STB,IAU_APPEND,IAU_VIEWER,UCSUMS,IAU,OPSS"
+    "14.1.2.0" = "MDS,WLS,STB,IAU_APPEND,IAU_VIEWER,IAU,OPSS"
   }
 }
 
