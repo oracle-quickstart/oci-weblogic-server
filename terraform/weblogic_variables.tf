@@ -202,7 +202,6 @@ variable "deploy_sample_app" {
 variable "configure_secure_mode" {
   type        = bool
   description = "Set to true to configure a secure WebLogic domain"
-  default     = false
 }
 
 variable "preserve_boot_properties" {
