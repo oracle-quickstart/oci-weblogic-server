@@ -45,6 +45,7 @@ groupings:
       - ${keystore_password_id}
       - ${root_ca_id}
       - ${cert_compartment_id}
+      - ${wls_14120_jdk_version}
       - ${preserve_boot_properties}
       - ${add_JRF}
       #Start of JRF fields
@@ -237,7 +238,6 @@ groupings:
       - ${generate_dg_tag}
       - ${wait_time_wls_vnc_dns_resolver}
       - ${wls_14c_jdk_version}
-      - ${wls_14120_jdk_version}
       - ${wls_admin_port_source_cidr}
       - ${wlsoci_vmscripts_zip_bundle_path}
       - ${tf_script_version}
@@ -418,20 +418,20 @@ variables:
     visible:
       or:
         - eq:
-          - ${instance_shape}
-          - "VM.Standard.E3.Flex"
+            - ${instance_shape}
+            - "VM.Standard.E3.Flex"
         - eq:
-          - ${instance_shape}
-          - "VM.Standard.E4.Flex"
+            - ${instance_shape}
+            - "VM.Standard.E4.Flex"
         - eq:
-          - ${instance_shape}
-          - "VM.Standard.E5.Flex"
+            - ${instance_shape}
+            - "VM.Standard.E5.Flex"
         - eq:
-          - ${instance_shape}
-          - "VM.Optimized3.Flex"
+            - ${instance_shape}
+            - "VM.Optimized3.Flex"
         - eq:
-          - ${instance_shape}
-          - "VM.Standard3.Flex"
+            - ${instance_shape}
+            - "VM.Standard3.Flex"
 
   ssh_public_key:
     type: oci:core:ssh:publickey
@@ -450,15 +450,15 @@ variables:
       and:
         - ${orm_create_mode}
         - or:
-           - or:
-              - ${create_new_vcn}
-              - ${create_new_subnets}
-           - and:
-              - not:
+            - or:
+                - ${create_new_vcn}
                 - ${create_new_subnets}
-              - eq:
-                - ${subnet_span}
-                - "Regional Subnet"
+            - and:
+                - not:
+                    - ${create_new_subnets}
+                - eq:
+                    - ${subnet_span}
+                    - "Regional Subnet"
 
   place_all_compute_in_same_ad:
     visible:
@@ -524,6 +524,17 @@ variables:
     required: true
     dependsOn:
       compartmentId: ${wls_admin_secret_compartment_id}
+      
+  wls_14120_jdk_version:
+    visible: ${orm_create_mode}
+    type: enum
+    title: "Java Development Kit version"
+    description: "Select the Java Development Kit (JDK) version"
+    enum:
+      - "jdk17"
+      - "jdk21"
+    required: true
+    default: "jdk17"
 
   configure_wls_ports:
     visible: ${orm_create_mode}
@@ -689,8 +700,8 @@ variables:
         - ${orm_create_mode}
         - ${add_fss}
         - or:
-          - ${add_existing_mount_target}
-          - ${add_existing_fss}
+            - ${add_existing_mount_target}
+            - ${add_existing_fss}
         - not:
             - ${create_new_vcn}
     type: oci:identity:compartment:id
@@ -800,7 +811,7 @@ variables:
     visible: ${orm_create_mode}
     type: boolean
     required: true
-    default: false
+    default: true
     title: "Enable Secured Production Mode"
     description: "Configure a secure domain"
 
@@ -954,7 +965,7 @@ variables:
       and:
         - ${orm_create_mode}
         - not:
-          - ${create_new_vcn}
+            - ${create_new_vcn}
     type: oci:core:vcn:id
     dependsOn:
       compartmentId: ${network_compartment_id}
@@ -979,7 +990,7 @@ variables:
       and:
         - ${orm_create_mode}
         - and:
-             - or:
+            - or:
                 - ${create_new_vcn}
                 - ${create_new_subnets}
     type: string
@@ -1151,12 +1162,12 @@ variables:
       and:
         - ${is_rms_private_endpoint_required}
         - not:
-           - ${create_new_subnets}
+            - ${create_new_subnets}
         - not:
-           - ${create_new_vcn}
+            - ${create_new_vcn}
         - eq:
-           - ${add_rms_private_endpoint}
-           - "Use Existing Resource Manager Endpoint"
+            - ${add_rms_private_endpoint}
+            - "Use Existing Resource Manager Endpoint"
     dependsOn:
       compartmentId: ${network_compartment_id}
       vcnId: ${wls_existing_vcn_id}
@@ -1164,7 +1175,7 @@ variables:
     required: true
     title: "Resource Manager Private Endpoint"
     description: "Resource manager private endpoint for private access."
-    
+  
   is_bastion_with_reserved_public_ip:
     visible:
       and:
@@ -1202,7 +1213,7 @@ variables:
             - ${create_new_vcn}
             - ${create_new_subnets}
         - and:
-             - or:
+            - or:
                 - ${create_new_vcn}
                 - ${create_new_subnets}
     type: string
@@ -1217,14 +1228,14 @@ variables:
       and:
         - ${orm_create_mode}
         - and:
-          - ${is_bastion_instance_required}
-          - eq:
-              - ${subnet_type}
-              - "Use Private Subnet"
-          - not:
-              - ${create_new_vcn}
-          - not:
-              - ${create_new_subnets}
+            - ${is_bastion_instance_required}
+            - eq:
+                - ${subnet_type}
+                - "Use Private Subnet"
+            - not:
+                - ${create_new_vcn}
+            - not:
+                - ${create_new_subnets}
     type: oci:core:subnet:id
     dependsOn:
       vcnId: ${wls_existing_vcn_id}
@@ -1471,7 +1482,7 @@ variables:
             - ${add_load_balancer}
             - ${is_idcs_selected}
         - and:
-             - or:
+            - or:
                 - ${create_new_vcn}
                 - ${create_new_subnets}
     type: string
@@ -1667,8 +1678,6 @@ variables:
     visible:
       and:
         - ${orm_create_mode}
-        - not:
-           - ${configure_secure_mode}
     type: boolean
     default: false
     title: "Provision with JRF"
@@ -2099,33 +2108,33 @@ variables:
       and:
         - ${add_JRF}
         - or:
-          - and:
-              - eq:
-                  - ${db_strategy}
-                  - "Database System"
-              - not:
-                  - ${use_oci_db_connection_string}
-              - or:
-                  - ${create_new_vcn}
-                  - and:
-                      - ${create_new_subnets}
-                      - not:
-                          - eq:
-                              - ${wls_existing_vcn_id}
-                              - ${oci_db_existing_vcn_id}
-          - and:
-              - eq:
-                  - ${db_strategy}
-                  - "Autonomous Transaction Processing Database"
-              - ${atp_db_uses_private_endpoint}
-              - or:
-                  - ${create_new_vcn}
-                  - and:
-                      - ${create_new_subnets}
-                      - not:
-                          - eq:
-                              - ${wls_existing_vcn_id}
-                              - ${atp_db_existing_vcn_id}
+            - and:
+                - eq:
+                    - ${db_strategy}
+                    - "Database System"
+                - not:
+                    - ${use_oci_db_connection_string}
+                - or:
+                    - ${create_new_vcn}
+                    - and:
+                        - ${create_new_subnets}
+                        - not:
+                            - eq:
+                                - ${wls_existing_vcn_id}
+                                - ${oci_db_existing_vcn_id}
+            - and:
+                - eq:
+                    - ${db_strategy}
+                    - "Autonomous Transaction Processing Database"
+                - ${atp_db_uses_private_endpoint}
+                - or:
+                    - ${create_new_vcn}
+                    - and:
+                        - ${create_new_subnets}
+                        - not:
+                            - eq:
+                                - ${wls_existing_vcn_id}
+                                - ${atp_db_existing_vcn_id}
 
     type: string
     title: "Local Peering Gateway in Database VCN"
@@ -2163,7 +2172,7 @@ variables:
       and:
         - ${orm_create_mode}
         - and:
-          - ${is_idcs_selected}
+            - ${is_idcs_selected}
     type: string
     minLength: 1
     maxLength: 1024
@@ -2177,7 +2186,7 @@ variables:
       and:
         - ${orm_create_mode}
         - and:
-          - ${is_idcs_selected}
+            - ${is_idcs_selected}
     type: integer
     default: 443
     minimum: 0
@@ -2192,7 +2201,7 @@ variables:
       and:
         - ${orm_create_mode}
         - and:
-          - ${is_idcs_selected}
+            - ${is_idcs_selected}
     type: string
     minLength: 1
     maxLength: 1024
@@ -2205,7 +2214,7 @@ variables:
       and:
         - ${orm_create_mode}
         - and:
-          - ${is_idcs_selected}
+            - ${is_idcs_selected}
     type: string
     minLength: 1
     maxLength: 1024
@@ -2245,7 +2254,7 @@ variables:
       and:
         - ${orm_create_mode}
         - and:
-          - ${is_idcs_selected}
+            - ${is_idcs_selected}
     type: integer
     default: 9999
     minimum: 1024
@@ -2296,8 +2305,8 @@ variables:
         - ${orm_create_mode}
         - ${add_fss}
         - or:
-          - ${add_existing_mount_target}
-          - ${add_existing_fss}
+            - ${add_existing_mount_target}
+            - ${add_existing_fss}
         - not:
             - ${create_new_vcn}
     type: oci:mount:target:id
@@ -2359,8 +2368,8 @@ variables:
     visible:
       and:
         - eq:
-          - ${image_mode}
-          - "Oracle WebLogic Server Enterprise Edition UCM Image"
+            - ${image_mode}
+            - "Oracle WebLogic Server Enterprise Edition UCM Image"
     type: boolean
     default: false
     title: "Terms of use"
@@ -2414,8 +2423,8 @@ variables:
     default: false
     title: "Enable Autoscaling"
     description: "Enable Auto Scaling of WebLogic Instances based on WebLogic Monitoring Metrics. If you select the check box,  Application Performance Monitoring will be enabled."
-
-# Metric based autoscaling UI
+  
+  # Metric based autoscaling UI
   wls_metric:
     visible:
       and:
@@ -2441,12 +2450,12 @@ variables:
             - ${use_autoscaling}
             - and:
                 - or:
-                  - eq:
-                    - ${wls_metric}
-                    - "CPU Load"
-                  - eq:
-                    - ${wls_metric}
-                    - "Used Heap Percent"
+                    - eq:
+                        - ${wls_metric}
+                        - "CPU Load"
+                    - eq:
+                        - ${wls_metric}
+                        - "Used Heap Percent"
 
     type: integer
     title: "Minimum Threshold Percent"
@@ -2456,46 +2465,46 @@ variables:
     required: true
 
   max_threshold_percent:
-      visible:
-        and:
-          - ${orm_create_mode}
-          - and:
-              - ${use_autoscaling}
-              - and:
-                  - or:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - and:
+            - ${use_autoscaling}
+            - and:
+                - or:
                     - eq:
-                      - ${wls_metric}
-                      - "CPU Load"
+                        - ${wls_metric}
+                        - "CPU Load"
                     - eq:
-                      - ${wls_metric}
-                      - "Used Heap Percent"
-
-      type: integer
-      title: "Maximum Threshold Percent"
-      description: "Maximum threshold percentage for the metric"
-      minimum: 0
-      maximum: 100
-      required: true
+                        - ${wls_metric}
+                        - "Used Heap Percent"
+    
+    type: integer
+    title: "Maximum Threshold Percent"
+    description: "Maximum threshold percentage for the metric"
+    minimum: 0
+    maximum: 100
+    required: true
 
   min_threshold_counter:
-      visible:
-        and:
-          - ${orm_create_mode}
-          - and:
-              - ${use_autoscaling}
-              - and:
-                  - or:
-                      - eq:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - and:
+            - ${use_autoscaling}
+            - and:
+                - or:
+                    - eq:
                         - ${wls_metric}
                         - "Queue Length"
-                      - eq:
+                    - eq:
                         - ${wls_metric}
                         - "Stuck Threads"
-      type: integer
-      title: "Minimum Threshold Counter"
-      description: "Minimum threshold counter for the metric"
-      minimum: 0
-      required: true
+    type: integer
+    title: "Minimum Threshold Counter"
+    description: "Minimum threshold counter for the metric"
+    minimum: 0
+    required: true
 
   max_threshold_counter:
     visible:
@@ -2505,19 +2514,19 @@ variables:
             - ${use_autoscaling}
             - and:
                 - or:
-                  - eq:
-                    - ${wls_metric}
-                    - "Queue Length"
-                  - eq:
-                    - ${wls_metric}
-                    - "Stuck Threads"
+                    - eq:
+                        - ${wls_metric}
+                        - "Queue Length"
+                    - eq:
+                        - ${wls_metric}
+                        - "Stuck Threads"
     type: integer
     title: "Maximum Threshold Counter"
     description: "Maximum threshold counter for the metric"
     minimum: 0
     required: true
-
-# Common autoscaling UI
+  
+  # Common autoscaling UI
   ocir_user:
     visible:
       and:
