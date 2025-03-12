@@ -169,8 +169,8 @@ variable "wls_version" {
   type        = string
   description = "The WebLogic version to be installed in this instance. Accepted values are: 12.2.1.4, 14.1.1.0"
   validation {
-    condition     = contains(["12.2.1.4", "14.1.1.0"], var.wls_version)
-    error_message = "WLSC-ERROR: WebLogic Versions 12.2.1.4 and 14.1.1.0 are the only versions supported."
+    condition     = contains(["12.2.1.4", "14.1.1.0", "14.1.2.0"], var.wls_version)
+    error_message = "WLSC-ERROR: WebLogic Versions 12.2.1.4 , 14.1.1.0 and 14.1.2.0 are the only versions supported."
   }
 }
 
@@ -183,6 +183,14 @@ variable "wls_14c_jdk_version" {
   }
 }
 
+variable "wls_14120_jdk_version" {
+  type        = string
+  description = "JDK version to use when installing WebLogic 14.1.2.0. Ignored when WebLogic version is not 14c. Allowed values: jdk17, jdk21"
+  validation {
+    condition     = var.wls_14120_jdk_version == "" || contains(["jdk17", "jdk21"], var.wls_14120_jdk_version)
+    error_message = "WLSC-ERROR: Only jdk17 and jdk21 are supported with WebLogic version 14.1.2.0."
+  }
+}
 variable "wls_version_to_fmw_map" {
   type        = map(string)
   description = "Defines the mapping between wls_version and corresponding FMW zip"
@@ -190,6 +198,7 @@ variable "wls_version_to_fmw_map" {
     "12.2.1.3" = "/u01/zips/jcs/FMW/12.2.1.3.0/fmiddleware.zip"
     "12.2.1.4" = "/u01/zips/jcs/FMW/12.2.1.4.0/fmiddleware.zip"
     "14.1.1.0" = "/u01/zips/jcs/FMW/14.1.1.0.0/fmiddleware.zip"
+    "14.1.2.0" = "/u01/zips/jcs/FMW/14.1.2.0.0/fmiddleware.zip"
   }
 }
 
@@ -211,12 +220,21 @@ variable "wls_14c_to_jdk_map" {
   }
 }
 
+variable "wls_14120_to_jdk_map"{
+  type        = map(string)
+  description = "Defines the mapping between jdk version and corresponding JDK zip."
+  default = {
+    "jdk17"  = "/u01/zips/jcs/JDK17.0/jdk.zip"
+    "jdk21" = "/u01/zips/jcs/JDK21.0/jdk.zip"
+  }   
+}
 variable "wls_version_to_rcu_component_list_map" {
   type        = map(string)
   description = "Defines the mapping between wls_version version and corresponding RCU components."
   default = {
     "12.2.1.3" = "MDS,WLS,STB,IAU_APPEND,IAU_VIEWER,UCSUMS,IAU,OPSS"
     "12.2.1.4" = "MDS,WLS,STB,IAU_APPEND,IAU_VIEWER,UCSUMS,IAU,OPSS"
+    "14.1.2.0" = "MDS,WLS,STB,IAU_APPEND,IAU_VIEWER,IAU,OPSS"
   }
 }
 

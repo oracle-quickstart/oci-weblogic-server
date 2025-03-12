@@ -12,8 +12,8 @@ locals {
   wls_port_list      = tolist(["9071", "9072", "9073", "9074"])
   reserved_wls_ports = contains(local.wls_port_list, var.wls_ms_port) || contains(local.wls_port_list, var.wls_ms_ssl_port) || contains(local.wls_port_list, var.wls_extern_admin_port) || contains(local.wls_port_list, var.wls_extern_ssl_admin_port)
 
-  is14cVersion               = var.wls_version == "14.1.1.0"
-  invalid_14c_jrf            = local.is14cVersion && (var.is_atp_db || var.is_oci_db || var.oci_db_connection_string != "")
+  is14110Version               = var.wls_version == "14.1.1.0"
+  invalid_14110_jrf            = local.is14110Version && (var.is_atp_db || var.is_oci_db || var.oci_db_connection_string != "")
   invalid_multiple_infra_dbs = ((var.is_oci_db || var.oci_db_connection_string != "") && var.is_atp_db)
   both_vcn_param             = local.has_existing_vcn && local.has_vcn_name
 
@@ -28,8 +28,8 @@ locals {
   multiple_infra_dbs_msg              = "WLSC-ERROR: Both OCI and ATP database parameters are provided. Only one infra database is required."
   validate_invalid_multiple_infra_dbs = local.invalid_multiple_infra_dbs ? local.validators_msg_map[local.multiple_infra_dbs_msg] : null
 
-  jrf_14c_msg      = "WLSC-ERROR: JRF domain is not supported for FMW 14c version"
-  validate_14c_jrf = local.invalid_14c_jrf ? local.validators_msg_map[local.jrf_14c_msg] : ""
+   jrf_14110_msg      = "WLSC-ERROR: JRF domain is not supported for FMW 14.1.1.0 version"
+   validate_14c_jrf   = local.invalid_14110_jrf ? local.validators_msg_map[local.jrf_14110_msg] : ""
 
   missing_dynamic_group_oci_logging_enabled_create_policies_unset  = "WLSC-ERROR: Dynamic Group id is required when enabling integration with OCI Logging Service with create policies unset "
   validate_dynamic_group_oci_logging_enabled_create_policies_unset = !var.create_policies && var.use_oci_logging && var.dynamic_group_id == "" ? local.validators_msg_map[local.missing_dynamic_group_oci_logging_enabled_create_policies_unset] : null
@@ -80,7 +80,8 @@ locals {
   invalid_administration_ports_msg = "WLSC-ERROR: The value for administration_port=[${var.administration_port}] and ms_administration_port=[${var.ms_administration_port}] cannot be same."
   validate_administration_ports    = local.invalid_administration_ports ? local.validators_msg_map[local.invalid_administration_ports_msg] : null
 
-  invalid_jrf_12c_secure_mode      = var.configure_secure_mode && (var.is_oci_db || var.is_atp_db || trimspace(var.oci_db_connection_string) != "")
+  is12cVersion                     = var.wls_version == "12.2.1.4"
+  invalid_jrf_12c_secure_mode      = var.configure_secure_mode && local.is12cVersion && (var.is_oci_db || var.is_atp_db || trimspace(var.oci_db_connection_string) != "")
   invalid_jrf_12c_secure_mode_msg  = "WLSC-ERROR: JRF domain is not supported for FMW 12c version in secured production mode."
   validate_jrf_12c_secure_mode     = local.invalid_jrf_12c_secure_mode ? local.validators_msg_map[local.invalid_jrf_12c_secure_mode_msg] : ""
 }

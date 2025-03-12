@@ -3,11 +3,11 @@
 
 variable "wls_version" {
   type        = string
-  description = "The WebLogic version to be installed for this stack. Accepted values are: 12.2.1.4, 14.1.1.0"
+  description = "The WebLogic version to be installed for this stack. Accepted values are: 12.2.1.4, 14.1.1.0, 14.1.2.0"
   default     = "12.2.1.4"
   validation {
-    condition     = contains(["12.2.1.4", "14.1.1.0"], var.wls_version)
-    error_message = "WLSC-ERROR: Allowed values for wls_version are 12.2.1.4, 14.1.1.0."
+    condition     = contains(["12.2.1.4", "14.1.1.0","14.1.2.0"], var.wls_version)
+    error_message = "WLSC-ERROR: Allowed values for wls_version are 12.2.1.4, 14.1.1.0 & 14.1.2.0."
   }
 }
 
@@ -57,6 +57,16 @@ variable "wls_14c_jdk_version" {
   validation {
     condition     = contains(["jdk8", "jdk11"], var.wls_14c_jdk_version)
     error_message = "WLSC-ERROR: Allowed values for wls_14c_jdk_version are jdk8, jdk11."
+  }
+}
+
+variable "wls_14120_jdk_version" {
+  type        = string
+  description = "JDK version to use when installing WebLogic 14.1.2.0 version. Ignored when WebLogic version is not 14.1.2.0. Allowed values: jdk21, jdk17"
+  default     = "jdk17"
+  validation {
+    condition     = contains(["jdk17", "jdk21"], var.wls_14120_jdk_version)
+    error_message = "WLSC-ERROR: Allowed values for wls_14120_jdk_version are jdk17, jdk21."
   }
 }
 
@@ -192,7 +202,6 @@ variable "deploy_sample_app" {
 variable "configure_secure_mode" {
   type        = bool
   description = "Set to true to configure a secure WebLogic domain"
-  default     = false
 }
 
 variable "preserve_boot_properties" {
