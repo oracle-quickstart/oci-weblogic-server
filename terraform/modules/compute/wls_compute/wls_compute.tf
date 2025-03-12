@@ -67,7 +67,7 @@ module "wls-instances" {
       wls_edition                        = var.wls_edition
       is_bastion_instance_required       = var.is_bastion_instance_required
       create_policies                    = var.create_policies
-
+      enable_restful_management_services = var.wls_version == "14.1.2.0" ? true : false
       # Secured Production Mode
       configure_secure_mode              = var.configure_secure_mode
       preserve_boot_properties           = var.preserve_boot_properties
@@ -87,7 +87,7 @@ module "wls-instances" {
       wls_version          = var.wls_version
       wls_14c_jdk_version  = var.wls_14c_jdk_version
       fmiddleware_zip      = var.wls_version_to_fmw_map[var.wls_version]
-      jdk_zip              = var.wls_version == "14.1.1.0" ? var.wls_14c_to_jdk_map[var.wls_14c_jdk_version] : var.wls_version_to_jdk_map[var.wls_version]
+      jdk_zip              = var.wls_version == "14.1.1.0" ? var.wls_14c_to_jdk_map[var.wls_14c_jdk_version] :var.wls_version == "14.1.2.0" ? var.wls_14120_to_jdk_map[var.wls_14120_jdk_version] :var.wls_version_to_jdk_map[var.wls_version]
       vmscripts_path       = var.vmscripts_path
       log_level            = var.log_level
       mw_vol_mount_point   = lookup(var.volume_map[0], "volume_mount_point")

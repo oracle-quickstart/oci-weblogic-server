@@ -58,5 +58,6 @@ locals {
   validate_oci_db_connect_str_use_3 = var.oci_db_connection_string != "" && var.existing_vcn_id == "" ? local.validators_msg_map[local.invalid_oci_db_connect_msg_use_3] : null
 
   invalid_oci_db_connect_msg_use_4  = "WLSC-ERROR: The value of database connection string [oci_db_connection_string] can be provided only for WebLogic 12c versions [wls_version]."
-  validate_oci_db_connect_str_use_4 = var.oci_db_connection_string == "" || var.wls_version == "12.2.1.4" ? null : local.validators_msg_map[local.invalid_oci_db_connect_msg_use_4]
+  validate_oci_db_connect_str_use_4 = var.oci_db_connection_string == "" || var.wls_version == "12.2.1.4" || var.wls_version == "14.1.2.0" ? null : local.validators_msg_map[local.invalid_oci_db_connect_msg_use_4]
+
 }

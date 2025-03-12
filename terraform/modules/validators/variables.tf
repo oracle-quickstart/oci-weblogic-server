@@ -154,8 +154,8 @@ variable "wls_version" {
   type        = string
   description = "The WebLogic version to be installed for this stack. Accepted values are: 12.2.1.4, 14.1.1.0"
   validation {
-    condition     = contains(["12.2.1.4", "14.1.1.0"], var.wls_version)
-    error_message = "WLSC-ERROR: Allowed values for wls_version are 12.2.1.4, 14.1.1.0."
+    condition     = contains(["12.2.1.4", "14.1.1.0","14.1.2.0"], var.wls_version)
+    error_message = "WLSC-ERROR: Allowed values for wls_version are 12.2.1.4, 14.1.1.0, 14.1.2.0."
   }
 }
 

@@ -129,7 +129,7 @@ locals {
   secure_mode_statement  = compact([local.secure_mode_statement1, local.secure_mode_statement2, local.secure_mode_statement3, local.secure_mode_statement4, local.secure_mode_statement5, local.secure_mode_secrets_policy_statement1, local.secure_mode_secrets_policy_statement2])
 
   #TODO: When other categories with more statements are added here, concat them with service_statements
-  policy_statements = concat(local.service_statements, local.cloning_policy_statement, local.plugin_policy_statement, local.autoscaling_statements, local.secure_mode_statement)
+  policy_statements = concat(local.service_statements, local.cloning_policy_statement, local.plugin_policy_statement, local.secure_mode_statement)
 
   reserved_ips_info = var.compartment_id == "" ? [{ id = var.resource_name_prefix }] : []
 
