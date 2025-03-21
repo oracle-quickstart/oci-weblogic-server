@@ -44,6 +44,11 @@ resource "oci_core_instance" "these" {
       desired_state = "ENABLED"
       name          = "Bastion"
     }
+    plugins_config {
+      #Required to remove OSMS
+      desired_state = "DISABLED"
+      name          = "OS Management Service Agent"
+    }
   }
 
   metadata = each.value.metadata
