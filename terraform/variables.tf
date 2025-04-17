@@ -138,3 +138,26 @@ variable "rms_existing_private_endpoint_id" {
   description = "The OCID for the existing resource manager private endpoint"
   default     = ""
 }
+variable "profile_name" {
+  type        = string
+  description = "The name specified by user for creating the profile"
+  default     = ""
+}
+
+
+variable "profile_compartment_id"{
+    type = string
+    description = "The compartment Id to create the profile"
+    default = ""
+}
+
+variable "enable_osmh"{
+  type = bool
+  description = ""
+  default = true
+}
+variable "create_profile"{
+  type =  bool
+  description = ""
+  default = false
+}
