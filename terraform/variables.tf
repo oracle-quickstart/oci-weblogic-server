@@ -146,18 +146,18 @@ variable "profile_name" {
 
 
 variable "profile_compartment_id"{
-    type = string
+    type        = string
     description = "The compartment Id to create the profile"
-    default = ""
+    default     = ""
 }
 
 variable "enable_osmh"{
-  type = bool
+  type        = bool
   description = ""
-  default = true
+  default     = true
 }
 variable "create_profile"{
-  type =  bool
+  type        =  bool
   description = ""
-  default = false
+  default     = false
 }

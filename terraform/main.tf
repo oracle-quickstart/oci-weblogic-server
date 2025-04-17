@@ -640,7 +640,7 @@ module "compute" {
   wls_server_startup_args   = var.wls_server_startup_args
   wls_existing_vcn_id       = var.wls_existing_vcn_id
   create_policies           = var.create_policies
-  enable_osmh                = var.enable_osmh
+  enable_osmh               = var.enable_osmh
   place_all_compute_in_same_ad = var.place_all_compute_in_same_ad
 
   # Secured Production Mode

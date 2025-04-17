@@ -192,7 +192,7 @@ locals {
   add_existing_rms_private_endpoint = local.is_rms_private_endpoint_required && var.add_rms_private_endpoint == "Use Existing Resource Manager Endpoint" ? true : false
   
   # OMH enabled
-  enable_osmh                      = var.enable_osmh
+  enable_osmh                     = var.enable_osmh
   create_profile                  = local.enable_osmh ? true : false
   profile_compartment_id          = var.profile_compartment_id
   profile_name                    = var.profile_name

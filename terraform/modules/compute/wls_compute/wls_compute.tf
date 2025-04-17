@@ -178,7 +178,7 @@ module "wls-instances" {
       use_oci_logging = var.use_oci_logging
       
       enable_osmh      = var.enable_osmh
-      profile_ocid    = var.profile_ocid
+      profile_ocid     = var.profile_ocid
 
       mount_ip    = var.mount_ip
       mount_path  = var.mount_path

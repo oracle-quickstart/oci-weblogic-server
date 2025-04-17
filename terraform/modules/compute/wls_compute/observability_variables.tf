@@ -89,10 +89,10 @@ variable "scaleout_notification_topic_id" {
   description = "The OCID of the notification topic for scale out operation"
 }
 variable "profile_ocid"{
-  type = string
+  type        = string
   description = "The ocid of the created profile"
 }
 variable "enable_osmh"{
-  type = bool
+  type        = bool
   description = ""
 }

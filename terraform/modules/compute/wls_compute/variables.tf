@@ -352,8 +352,4 @@ variable "certificate_id" {
   description = "The OCID of the SSL certificate to configure a secure WebLogic domain"
   default     = ""
 }
-variable "profile_name"{
-  type = string
-  description = "The name specified by user for creating the profile"
-  default = ""
-}
+
