@@ -191,6 +191,7 @@ groupings:
       - ${listing_resource_version}
       - ${wls_version}
       - ${log_level}
+      - ${wls_14120_jdk_version}
       #- ${instance_image_id}
       - ${marketplace_source_images}
       - ${use_regional_subnet}
@@ -1155,17 +1156,15 @@ variables:
 
   is_rms_private_endpoint_required:
     visible:
-      and: 
-        - ${orm_create_mode}
-        - and:
-            - not:
-                - ${create_new_subnets}
-            - not:
-                - ${create_new_vcn}
-            - not:
-                - eq: 
-                    - ${subnet_type}
-                    - "Use Public Subnet"
+      and:
+        - not:
+            - ${create_new_subnets}
+        - not:
+            - ${create_new_vcn}
+        - not:
+            - eq:
+                - ${subnet_type}
+                - "Use Public Subnet"
     type: boolean
     default: true
     title: "Use Resource Manager Private Endpoint"
@@ -1174,7 +1173,6 @@ variables:
   add_rms_private_endpoint:
     visible:
       and:
-        - ${orm_create_mode}
         - ${is_rms_private_endpoint_required}
         - not:
             - ${create_new_subnets}
@@ -1192,7 +1190,6 @@ variables:
   rms_existing_private_endpoint_id:
     visible:
       and:
-        - ${orm_create_mode}
         - ${is_rms_private_endpoint_required}
         - not:
            - ${create_new_subnets}
@@ -1676,7 +1673,6 @@ variables:
   existing_lb_nsg_id:
     visible:
       and:
-        - ${orm_create_mode}
         - ${add_existing_nsg}
         - or:
             - ${add_load_balancer}
@@ -2266,4 +2262,5 @@ variables:
     enum:
       - 12.2.1.4
       - 14.1.1.0
+      - 14.1.2.0
     default: 12.2.1.4

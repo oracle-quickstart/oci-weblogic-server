@@ -620,6 +620,7 @@ module "compute" {
   tf_script_version         = var.tf_script_version
   use_regional_subnet       = local.use_regional_subnet
   wls_14c_jdk_version       = var.wls_14c_jdk_version
+  wls_14120_jdk_version     = var.wls_14120_jdk_version
   wls_admin_user            = local.wls_admin_user
   wls_admin_password_id     = var.wls_admin_password_id
   wls_admin_server_name     = format("%s_adminserver", local.service_name_prefix)

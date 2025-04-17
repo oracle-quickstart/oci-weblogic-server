@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Copyright (c) 2023, 2024, Oracle and/or its affiliates.
+# Copyright (c) 2023, 2025, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 #
 # ############################################################################
@@ -347,6 +347,54 @@ function check_udp_port_open_in_seclist_or_nsg() {
     echo 1
   fi
 }
+###################################################
+# Checks if there is an egress rule to  ensure that the network can establish outbound communication to any destination, utilizing all available protocols and ports.
+# Args:
+#     seclist_or_nsg_ocid:  OCID for the security list or nsg.
+#     ocid_type: Valid values: "nsg" for Network Security Group OCID, "seclist" for Security List OCID (default)
+# Returns:
+#   0|1
+###################################################
+function check_egress_all_traffic_in_nsg_or_seclist() {
+    local nsg_ocid_or_sec_list=$1
+    local icmp_protocol="1"
+    local port_is_open=false
+    local egress_rules_count=0
+    local ocid_type=$2
+    declare -A nsg_sec_list_array
+
+    if [[ $ocid_type == "nsg" ]]; then
+        egress_rules=$(oci network nsg rules list --nsg-id $nsg_ocid_or_sec_list --direction EGRESS | jq -r '.data')
+    else
+        egress_rules=$(oci network security-list get --security-list-id $nsg_ocid_or_sec_list | jq -r '.data["egress-security-rules"]')
+    fi
+    egress_rules_count=$(echo $egress_rules | jq '. | length')
+
+    if [[ $egress_rules_count -gt 0 ]]; then
+        for ((j = 0; j < egress_rules_count; j++)); do
+            egress_protocol=$(echo $egress_rules | jq -r --arg i "$j" '.[$i|tonumber].protocol')
+            egress_destination=$(echo $egress_rules | jq -r --arg i "$j" '.[$i|tonumber].destination')
+            egress_destination_type=$(echo $egress_rules | jq -r --arg i "$j" '.[$i|tonumber]."destination-type"')
+
+            if [[ $egress_destination_type != "CIDR_BLOCK" ]]; then
+                nsg_sec_list_array[$j]="WARNING: Destinantion type is either NSG or Service. Skipping the validation check for ${egress_destination}."
+                continue
+            fi
+
+            if [[ $egress_destination == "0.0.0.0/0" && ( $egress_protocol == "all" || $egress_protocol == $icmp_protocol ) ]]; then
+                egress_is_open=true
+                echo 0
+                return
+            fi
+        done
+    fi
+
+    if [[ ${#nsg_sec_list_array[@]} != 0 ]]; then
+        echo "${nsg_sec_list_array[@]}"
+    else
+        echo 1
+    fi
+}
 
 
 ####################################################
@@ -391,7 +439,35 @@ function validate_subnet_port_access() {
   done
   echo $port_found_open
 }
+####################################################
+# Validates if egress rule is present to allow all traffic on all ports in the specified subnet.
+#
+# Args:
+#     subnet: Subnet OCID
+# Returns:
+#   0|1
+####################################################
+function validate_egress_rule() {
+  local port_found_open=1
+  local subnet=$1
 
+  sec_lists=$(oci network subnet get --subnet-id ${subnet} | jq -c '.data["security-list-ids"]')
+
+  declare -A seclists_array
+
+  while IFS="=" read -r key value
+  do
+      seclists_array[$key]="$value"
+  done < <(jq -r 'to_entries|map("\(.key)=\(.value|tostring)")|.[]' <<< "$sec_lists")
+   # Check the ingress rules for specified destination port is open for access by source CIDR
+  for seclist_ocid in "${seclists_array[@]}"
+  do
+    if [[ $port_found_open -ne 0 ]]; then
+        port_found_open=$(check_egress_all_traffic_in_nsg_or_seclist $seclist_ocid  "seclist")
+    fi
+  done
+  echo $port_found_open
+}
 ####################################################
 # Validates if the ATP_PORT is open for the WLS subnet CIDR.
 # This is applicable for ATP DB with private endpoint only.
@@ -779,6 +855,19 @@ fi
 
 if [[ -n ${WLS_SUBNET_OCID} && -z ${ADMIN_SRV_NSG_OCID} && -z ${MANAGED_SRV_NSG_OCID} ]]
 then
+# Check egress rule to allow all traffic on all ports in WLS Subnet CIDR.
+  res=$(validate_egress_rule ${WLS_SUBNET_OCID})
+
+  if [[ $res == *"WARNING"* ]]
+  then
+    for warning in "${res[@]}"; do
+      echo "$warning"
+    done
+  elif [[ $res -ne 0 ]]
+  then
+    echo "ERROR: Missing egress rule to allow all traffic on all ports in WLS Subnet [$WLS_SUBNET_OCID]. ${NETWORK_VALIDATION_MSG}"
+    validation_return_code=2
+  fi
   wls_subnet_cidr_block=$(oci network subnet get --subnet-id ${WLS_SUBNET_OCID} | jq -r '.data["cidr-block"]')
 
   # Check if SSH port is open for access by WLS subnet CIDR
@@ -851,9 +940,18 @@ fi
 
 if [[ -n ${WLS_SUBNET_OCID} && -n ${ADMIN_SRV_NSG_OCID} && -n ${MANAGED_SRV_NSG_OCID} ]]
 then
-  wls_subnet_cidr_block=$(oci network subnet get --subnet-id ${WLS_SUBNET_OCID} | jq -r '.data["cidr-block"]')
-
+  # Check egress rule to allow all traffic on all ports in Managed Server NSG.
+  res=$(check_egress_all_traffic_in_nsg_or_seclist ${MANAGED_SRV_NSG_OCID} "nsg")
+  if [[ $res == *"WARNING"* ]]; then
+      for warning in "${res[@]}"; do
+          echo "$warning"
+      done
+  elif [[ $res -ne 0 ]]; then
+      echo "ERROR: Missing egress rule to allow traffic on all ports in Managed Server NSG [$MANAGED_SRV_NSG_OCID]. ${NETWORK_VALIDATION_MSG}"
+      validation_return_code=2
+  fi
   # Check if SSH port is open for access by WLS subnet CIDR in Admin Server NSG
+  wls_subnet_cidr_block=$(oci network subnet get --subnet-id ${WLS_SUBNET_OCID} | jq -r '.data["cidr-block"]')
   res=$(check_tcp_port_open_in_seclist_or_nsg $MANAGED_SRV_NSG_OCID "${SSH_PORT}" "$wls_subnet_cidr_block" "nsg")
   if [[ $res == *"WARNING"* ]]
   then
