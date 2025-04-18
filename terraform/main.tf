@@ -713,7 +713,7 @@ module "compute" {
   log_group_id    = element(concat(module.observability-common[*].log_group_id, [""]), 0)
   use_oci_logging = var.use_oci_logging
 
-  profile_ocid = element(concat(module.observability-osmh[*].profile_ocid, [""]), 0)
+  profile_ocid = var.profile_ocid == "" ? (element(concat(module.observability-osmh[*].profile_ocid, [""]), 0)) : var.profile_ocid
 
   use_apm_service           = local.use_apm_service
   apm_domain_compartment_id = local.apm_domain_compartment_id

@@ -146,18 +146,28 @@ variable "profile_name" {
 
 
 variable "profile_compartment_id"{
-    type        = string
-    description = "The compartment Id to create the profile"
-    default     = ""
+  type        = string
+  description = "The compartment Id to create the profile"
+  default     = ""
 }
 
 variable "enable_osmh"{
   type        = bool
-  description = ""
+  description = "To check if OSMH is enabled"
   default     = true
 }
 variable "create_profile"{
-  type        =  bool
-  description = ""
+  type        = bool
+  description = "To check if new profile is to be created"
   default     = false
+}
+variable "select_existing_profile"{
+  type        = bool
+  description = "To check if existing profile is to be used"
+  default     = false
+}
+variable "profile_ocid"{
+  type        = string
+  description = "The OCID for the existing profile"
+  default     = ""
 }

@@ -60,7 +60,7 @@ variable "tenancy_id" {
   description = "The OCID of the tenancy"
   type        = string
 }
-variable "software_source_change_availability_management_software_source_availabilities_availability_at_oci" {
+variable "software_availabilty" {
   description = "Availability at OCI for the software sources"
   type        = string
   default     = "SELECTED"

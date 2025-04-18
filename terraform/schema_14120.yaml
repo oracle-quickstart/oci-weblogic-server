@@ -104,7 +104,7 @@ groupings:
       - ${existing_admin_server_nsg_id}
       - ${existing_managed_server_nsg_id}
         
-  - title: "Osmh Profile"
+  - title: "OS Management Hub Profile"
     variables:
       - ${profile_compartment_id}
       - ${profile_name}
@@ -489,31 +489,6 @@ variables:
     default: 1
     required: true
 
-  profile_compartment_id:
-    visible:
-      and:
-        - ${orm_create_mode}
-        - ${enable_osmh}
-    type: oci:identity:compartment:id
-    required: false
-    default: ${compartment_ocid}
-    title: "Profile Compartment"
-    description: "The compartment where you want to create the profile for OMH plugin integration."
-
-  profile_name:
-    visible:
-      and:
-        - ${orm_create_mode}
-        - ${enable_osmh}
-    type: string
-    minLength: 1
-    maxLength: 256
-    pattern: "^[a-zA-Z][a-zA-Z0-9]{0,15}$"
-    required: true
-    default : ""
-    title: "Profile Name"
-    description: "The display name of the profile that  will be created.Name can't start with a number or dash, contain spaces or special characters, or be empty."
-
   wls_node_count_limit:
     visible:
       not:
@@ -526,6 +501,57 @@ variables:
     multipleOf: 1
     default: 8
     required: true
+
+  select_existing_profile:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${enable_osmh}
+    type: boolean
+    required: true
+    default: false
+    title: "Select Existing Profile"
+    description: "Select if you want to use an existing profile for OSMH"
+
+  profile_compartment_id:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${enable_osmh}
+        - not:
+            - ${select_existing_profile}
+    type: oci:identity:compartment:id
+    required: false
+    default: ${compartment_ocid}
+    title: "Profile Compartment"
+    description: "The compartment where you want to create the profile for OMH plugin integration."
+
+  profile_name:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${enable_osmh}
+        - not:
+            - ${select_existing_profile}
+    type: string
+    minLength: 1
+    maxLength: 256
+    pattern: "^[a-zA-Z][a-zA-Z0-9]{0,15}$"
+    required: true
+    default : ""
+    title: "Profile Name"
+    description: "The display name of the profile that will be created. Name can't start with a number or dash, contain spaces or special characters, or be empty."
+  
+  profile_ocid:
+    visible:
+      and: 
+        - ${orm_create_mode}
+        - ${enable_osmh}
+        - ${select_existing_profile}
+    type: string
+    required: true
+    title: "Profile Ocid"
+    pattern: ^ocid1.osmhprofile.*$
 
   wls_admin_user:
     visible:
@@ -1710,7 +1736,7 @@ variables:
   enable_osmh:
     type: boolean
     title: "Enable OS Management Hub"
-    description: "Enale OMH plugin for Management"
+    description: "Enable OSMH plugin for Management"
     required: true
     default: true
 

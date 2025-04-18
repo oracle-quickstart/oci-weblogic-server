@@ -193,7 +193,9 @@ locals {
   
   # OMH enabled
   enable_osmh                     = var.enable_osmh
-  create_profile                  = local.enable_osmh ? true : false
+  select_existing_profile         = var.select_existing_profile
+  create_profile                  = (local.enable_osmh && !local.select_existing_profile) ? true : false
+  profile_ocid                    = local.select_existing_profile ? var.profile_ocid : ""
   profile_compartment_id          = var.profile_compartment_id
   profile_name                    = var.profile_name
 
