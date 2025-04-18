@@ -225,6 +225,6 @@ variable "wls_secondary_admin_password_id" {
 }
 variable "enable_osmh" {
   type = bool
-  description = "To check if omh plugin is enabled"
+  description = "Indicating that OSMH is enabled"
 }
   

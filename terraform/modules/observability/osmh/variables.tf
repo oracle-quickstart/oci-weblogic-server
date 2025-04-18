@@ -12,13 +12,13 @@ variable "profile_type" {
 variable "arch_type" {
   description = "The architecture type of the profile"
   type        = string
-  default     = "X86_64"  # Replace with the desired default value or leave it empty
+  default     = "X86_64"
 }
 
 variable "description" {
   description = "A description for the profile"
   type        = string
-  default     = ""  # Optional, can be left empty or set to a default
+  default     = ""
 }
 
 variable "os_family" {
@@ -31,7 +31,7 @@ variable "os_family" {
 variable "registration_type" {
   description = "The registration type for the profile"
   type        = string
-  default     = "OCI_LINUX"  # Replace with the desired default or leave empty
+  default     = "OCI_LINUX"
 }
 
 variable "software_source_ids" {
@@ -65,5 +65,3 @@ variable "software_availabilty" {
   type        = string
   default     = "SELECTED"
 }
-
-

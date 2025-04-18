@@ -153,7 +153,7 @@ variable "profile_compartment_id"{
 
 variable "enable_osmh"{
   type        = bool
-  description = "To check if OSMH is enabled"
+  description = "Indicating that OSMH is enabled"
   default     = true
 }
 variable "create_profile"{

@@ -52,10 +52,10 @@ locals {
   plugin_policy_statement2 = "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to use wlms-managed-instance-plugins in tenancy"
   plugin_policy_statement = compact([local.plugin_policy_statement1, local.plugin_policy_statement2])
 
-  # Policies required for enabling the osmh plugin
+  # Policies required for enabling the OSMH plugin
   osmh_policy_statement1 = var.enable_osmh? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to manage osmh-family in tenancy" : ""
-  osmh_policy_statement2 = var.enable_osmh? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to {OSMH_MANAGED_INSTANCE_ACCESS} in tenancy where request.principal.id = target.managed-instance.id": ""
-  osmh_policy_statement3 = var.enable_osmh? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to manage management-agent-install-keys in tenancy":""
+  osmh_policy_statement2 = var.enable_osmh? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to {OSMH_MANAGED_INSTANCE_ACCESS} in tenancy where request.principal.id = target.managed-instance.id" : ""
+  osmh_policy_statement3 = var.enable_osmh? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to manage management-agent-install-keys in tenancy" : ""
   osmh_policy_statement  = compact([local.osmh_policy_statement1, local.osmh_policy_statement2, local.osmh_policy_statement3])
 
   #Policies for WLS instance principal dynamic group

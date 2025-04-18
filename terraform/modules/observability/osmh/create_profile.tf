@@ -5,7 +5,6 @@ resource "oci_os_management_hub_software_source_change_availability_management" 
     software_source_id  = each.value  
     availability_at_oci = var.software_availabilty
   }
-
 }
 
 resource "oci_os_management_hub_profile" "create_profile" {

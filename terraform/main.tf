@@ -614,8 +614,7 @@ module "compute" {
   wls_subnet_id          = var.wls_subnet_id
   region                 = var.region
   ssh_public_key         = var.ssh_public_key
-  compute_nsg_ids        = local.compute_nsg_ids
-  
+  compute_nsg_ids        = local.compute_nsg_ids  
   tenancy_id                = var.tenancy_ocid
   tf_script_version         = var.tf_script_version
   use_regional_subnet       = local.use_regional_subnet

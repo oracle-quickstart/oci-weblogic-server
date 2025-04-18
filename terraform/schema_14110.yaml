@@ -550,7 +550,7 @@ variables:
         - ${select_existing_profile}
     type: string
     required: true
-    title: "Profile Ocid"
+    title: "Profile OCID"
     pattern: ^ocid1.osmhprofile.*$
 
   wls_admin_user:

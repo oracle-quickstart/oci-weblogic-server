@@ -107,6 +107,8 @@ groupings:
     variables:
       - ${profile_compartment_id}
       - ${profile_name}
+      - ${select_existing_profile}
+      - ${profile_ocid}
 
   - title: "Resource Manager Private Endpoint"
     variables:
@@ -550,7 +552,7 @@ variables:
         - ${select_existing_profile}
     type: string
     required: true
-    title: "Profile Ocid"
+    title: "Profile OCID"
     pattern: ^ocid1.osmhprofile.*$
 
   wls_admin_user:

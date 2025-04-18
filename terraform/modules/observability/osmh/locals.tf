@@ -1,5 +1,5 @@
 locals {
-  all_tenancy_osmh_software_sources = data.oci_os_management_hub_software_sources.all_tenancy_osmh_software_sources
+  all_tenancy_osmh_software_sources = data.oci_os_management_hub_software_sources.all_tenancy_osmh_software_sources.software_source_collection[0].items
   software_source_names = [
     "ol8_addons-x86_64",
     "ol8_appstream-x86_64",
