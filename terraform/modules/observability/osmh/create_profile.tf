@@ -17,4 +17,7 @@ resource "oci_os_management_hub_profile" "create_profile" {
     os_family           = var.os_family
     registration_type   = var.registration_type
     vendor_name         = var.vendor_name
+    depends_on = [
+    oci_os_management_hub_software_source_change_availability_management.software_source_change_availability_management
+  ]
 }
