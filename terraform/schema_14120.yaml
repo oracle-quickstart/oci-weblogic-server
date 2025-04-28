@@ -1704,7 +1704,6 @@ variables:
   existing_lb_nsg_id:
     visible:
       and:
-        - ${orm_create_mode}
         - ${add_existing_nsg}
         - or:
             - ${add_load_balancer}
