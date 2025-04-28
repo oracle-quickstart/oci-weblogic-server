@@ -7,7 +7,6 @@ locals {
     "ol8_ksplice-x86_64",
     "ol8_mysql80_connectors_community-x86_64",
     "ol8_mysql80_tools_community-x86_64",
-    "ol8_oci_included-x86_64",
     "ol8_uekr7-x86_64",
     "ol8_mysql80_community-x86_64"
   ]
