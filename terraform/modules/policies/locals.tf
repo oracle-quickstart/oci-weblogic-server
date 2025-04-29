@@ -52,6 +52,11 @@ locals {
   plugin_policy_statement2 = "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to use wlms-managed-instance-plugins in tenancy"
   plugin_policy_statement = compact([local.plugin_policy_statement1, local.plugin_policy_statement2])
 
+  # Policies required for enabling the OSMH plugin
+  osmh_policy_statement1 = var.enable_osmh? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to manage osmh-family in tenancy" : ""
+  osmh_policy_statement2 = var.enable_osmh? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to {OSMH_MANAGED_INSTANCE_ACCESS} in tenancy where request.principal.id = target.managed-instance.id" : ""
+  osmh_policy_statement  = compact([local.osmh_policy_statement1, local.osmh_policy_statement2])
+
   #Policies for WLS instance principal dynamic group
   autoscaling_statement1 = var.use_autoscaling ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to use repos in tenancy" : ""
   autoscaling_statement2 = var.use_autoscaling ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to manage functions-family in compartment id ${var.compartment_id}" : ""
@@ -127,7 +132,7 @@ locals {
   secure_mode_statement  = compact([local.secure_mode_statement1, local.secure_mode_statement2, local.secure_mode_statement3, local.secure_mode_statement4, local.secure_mode_statement5, local.secure_mode_secrets_policy_statement1, local.secure_mode_secrets_policy_statement2])
 
   #TODO: When other categories with more statements are added here, concat them with service_statements
-  policy_statements = concat(local.service_statements, local.cloning_policy_statement, local.plugin_policy_statement, local.secure_mode_statement)
+  policy_statements = concat(local.service_statements, local.cloning_policy_statement, local.plugin_policy_statement, local.secure_mode_statement, local.osmh_policy_statement)
 
   reserved_ips_info = var.compartment_id == "" ? [{ id = var.resource_name_prefix }] : []
 
