@@ -190,6 +190,14 @@ locals {
   is_rms_private_endpoint_required  = var.is_rms_private_endpoint_required && var.wls_existing_vcn_id != "" && var.wls_subnet_id != "" && !local.assign_weblogic_public_ip ? true : false
   add_new_rms_private_endpoint      = local.is_rms_private_endpoint_required && var.add_rms_private_endpoint == "Create New Resource Manager Endpoint" ? true : false
   add_existing_rms_private_endpoint = local.is_rms_private_endpoint_required && var.add_rms_private_endpoint == "Use Existing Resource Manager Endpoint" ? true : false
+  
+  # OS Management Hub
+  enable_osmh                     = var.enable_osmh
+  select_existing_profile         = var.select_existing_profile
+  create_profile                  = (local.enable_osmh && !local.select_existing_profile) ? true : false
+  profile_ocid                    = local.select_existing_profile ? var.profile_ocid : ""
+  profile_compartment_id          = var.profile_compartment_id
+  profile_name                    = var.profile_name
 
   # Secured Production Mode
   preserve_boot_properties          = var.configure_secure_mode ? var.preserve_boot_properties : true

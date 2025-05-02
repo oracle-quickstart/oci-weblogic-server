@@ -352,3 +352,4 @@ variable "certificate_id" {
   description = "The OCID of the SSL certificate to configure a secure WebLogic domain"
   default     = ""
 }
+
