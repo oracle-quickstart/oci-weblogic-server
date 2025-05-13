@@ -105,9 +105,9 @@ groupings:
 
   - title: "OS Management Hub Profile"
     variables:
+      - ${select_existing_profile}
       - ${profile_compartment_id}
       - ${profile_name}
-      - ${select_existing_profile}
       - ${profile_ocid}
 
   - title: "Resource Manager Private Endpoint"
