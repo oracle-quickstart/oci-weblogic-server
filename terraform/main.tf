@@ -221,6 +221,7 @@ module "policies" {
   resource_name_prefix   = local.service_name_prefix
   tenancy_id             = var.tenancy_ocid
   wls_admin_password_id  = var.wls_admin_password_id
+  profile_compartment_id = var.profile_compartment_id
   providers = {
     oci = oci.home
   }
