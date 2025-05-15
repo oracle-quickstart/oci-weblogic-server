@@ -54,7 +54,7 @@ locals {
 
   # Policies required for enabling the OSMH plugin
   osmh_policy_statement1 = var.enable_osmh? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to manage osmh-family in compartment id ${var.compartment_id}" : ""
-  osmh_policy_statement2 = var.enable_osmh? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name}  to manage osmh-family in compartment id  ${var.profile_compartment_id}" : ""
+  osmh_policy_statement2 = var.enable_osmh? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to manage osmh-family in compartment id  ${var.profile_compartment_id}" : ""
   osmh_policy_statement3 = var.enable_osmh? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to {OSMH_MANAGED_INSTANCE_ACCESS} in tenancy where request.principal.id = target.managed-instance.id" : ""
   osmh_policy_statement4 = var.enable_osmh? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to {MGMT_AGENT_DEPLOY_PLUGIN_CREATE, MGMT_AGENT_INSPECT, MGMT_AGENT_READ} in compartment id ${var.compartment_id}" : ""
   osmh_policy_statement  = compact([local.osmh_policy_statement1, local.osmh_policy_statement2, local.osmh_policy_statement3, local.osmh_policy_statement4])
