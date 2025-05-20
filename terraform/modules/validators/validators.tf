@@ -84,11 +84,7 @@ locals {
   invalid_jrf_12c_secure_mode      = var.configure_secure_mode && local.is12cVersion && (var.is_oci_db || var.is_atp_db || trimspace(var.oci_db_connection_string) != "")
   invalid_jrf_12c_secure_mode_msg  = "WLSC-ERROR: JRF domain is not supported for FMW 12c version in secured production mode."
   validate_jrf_12c_secure_mode     = local.invalid_jrf_12c_secure_mode ? local.validators_msg_map[local.invalid_jrf_12c_secure_mode_msg] : ""
-  
+
   missing_profile_id_msg = "WLSC-ERROR: The value for profile id is required if existing profile is used for OSMH"
-  validate_profile_id = (
-    var.select_existing_profile && var.profile_ocid == ""
-    ? local.validators_msg_map[local.missing_profile_id_msg]
-    : null
-  )
+  validate_profile_id    = (var.select_existing_profile && var.profile_ocid == "" ? local.validators_msg_map[local.missing_profile_id_msg] : null)
 }

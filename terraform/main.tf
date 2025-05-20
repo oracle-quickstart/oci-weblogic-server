@@ -486,7 +486,7 @@ module "validators" {
   administration_port             = var.administration_port
   ms_administration_port          = var.ms_administration_port
 
-  profile_ocid = local.profile_ocid
+  profile_ocid            = local.profile_ocid
   select_existing_profile = local.select_existing_profile
 }
 
