@@ -564,3 +564,11 @@ variable "ms_administration_port" {
   type        = number
   description = "The administration port for managed servers to configure a secure WebLogic domain"
 }
+variable "select_existing_profile"{
+  type        = bool
+  description = "Set to true to use an existing profile"
+}
+variable "profile_ocid"{
+  type        = string
+  description = "The ocid of the profile used for OSMH registration."
+}
