@@ -239,6 +239,7 @@ module "policies" {
   apm_domain_compartment_id        = local.apm_domain_compartment_id
   use_autoscaling                  = var.use_autoscaling
   enable_osmh                      = var.enable_osmh
+  profile_compartment_id           = var.profile_compartment_id
   ocir_auth_token_id               = var.ocir_auth_token_id
   add_fss                          = var.add_fss
   add_load_balancer                = local.add_load_balancer
@@ -484,6 +485,9 @@ module "validators" {
   wls_secondary_admin_password_id = local.wls_secondary_admin_password_id
   administration_port             = var.administration_port
   ms_administration_port          = var.ms_administration_port
+
+  profile_ocid            = local.profile_ocid
+  select_existing_profile = local.select_existing_profile
 }
 
 module "fss" {
@@ -593,7 +597,7 @@ module "observability-osmh"{
   source              = "./modules/observability/osmh"
   count               = local.create_profile ? 1 : 0
   tenancy_id          = var.tenancy_ocid
-  display_name        = var.profile_name
+  display_name        = local.profile_name
   compartment_id      = local.profile_compartment_id
 }
 
