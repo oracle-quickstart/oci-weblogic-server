@@ -224,7 +224,12 @@ variable "wls_secondary_admin_password_id" {
   description = "The OCID of the vault secret with the password for secondary WebLogic administration user"
 }
 variable "enable_osmh" {
-  type = bool
+  type        = bool
   description = "Indicating that OSMH is enabled"
 }
+variable "profile_compartment_id"{
+  type        = string
+  description = "The compartment Id to create the profile"
+}
+
   
