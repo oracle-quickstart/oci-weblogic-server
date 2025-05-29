@@ -199,6 +199,7 @@ locals {
   profile_compartment_id          = var.profile_compartment_id == "" ? var.compartment_ocid : var.profile_compartment_id
   profile_name                    = var.profile_name == "" ? format("%s_profile", local.service_name_prefix) : var.profile_name
 
+
   # Secured Production Mode
   preserve_boot_properties          = var.configure_secure_mode ? var.preserve_boot_properties : true
   wls_admin_port                    = var.configure_secure_mode ? var.administration_port : var.wls_admin_port

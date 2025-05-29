@@ -240,6 +240,7 @@ module "policies" {
   use_autoscaling                  = var.use_autoscaling
   enable_osmh                      = var.enable_osmh
   profile_compartment_id           = var.profile_compartment_id
+
   ocir_auth_token_id               = var.ocir_auth_token_id
   add_fss                          = var.add_fss
   add_load_balancer                = local.add_load_balancer
