@@ -143,8 +143,6 @@ variable "profile_name" {
   description = "The name specified by user for creating the profile"
   default     = ""
 }
-
-
 variable "profile_compartment_id"{
   type        = string
   description = "The compartment Id to create the profile"

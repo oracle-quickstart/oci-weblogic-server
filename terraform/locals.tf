@@ -196,8 +196,9 @@ locals {
   select_existing_profile         = var.select_existing_profile
   create_profile                  = (local.enable_osmh && !local.select_existing_profile) ? true : false
   profile_ocid                    = local.select_existing_profile ? var.profile_ocid : ""
-  profile_compartment_id          = var.profile_compartment_id
-  profile_name                    = var.profile_name
+  profile_compartment_id          = var.profile_compartment_id == "" ? var.compartment_ocid : var.profile_compartment_id
+  profile_name                    = var.profile_name == "" ? format("%s_profile", local.service_name_prefix) : var.profile_name
+
 
   # Secured Production Mode
   preserve_boot_properties          = var.configure_secure_mode ? var.preserve_boot_properties : true
