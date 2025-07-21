@@ -238,6 +238,9 @@ module "policies" {
   use_apm_service                  = local.use_apm_service
   apm_domain_compartment_id        = local.apm_domain_compartment_id
   use_autoscaling                  = var.use_autoscaling
+  enable_osmh                      = var.enable_osmh
+  profile_compartment_id           = var.profile_compartment_id
+
   ocir_auth_token_id               = var.ocir_auth_token_id
   add_fss                          = var.add_fss
   add_load_balancer                = local.add_load_balancer
@@ -483,6 +486,9 @@ module "validators" {
   wls_secondary_admin_password_id = local.wls_secondary_admin_password_id
   administration_port             = var.administration_port
   ms_administration_port          = var.ms_administration_port
+
+  profile_ocid            = local.profile_ocid
+  select_existing_profile = local.select_existing_profile
 }
 
 module "fss" {
@@ -588,6 +594,13 @@ module "observability-autoscaling" {
   }
 }
 
+module "observability-osmh"{
+  source              = "./modules/observability/osmh"
+  count               = local.create_profile ? 1 : 0
+  tenancy_id          = var.tenancy_ocid
+  display_name        = local.profile_name
+  compartment_id      = local.profile_compartment_id
+}
 
 module "compute" {
   source                 = "./modules/compute/wls_compute"
@@ -606,8 +619,7 @@ module "compute" {
   wls_subnet_id          = var.wls_subnet_id
   region                 = var.region
   ssh_public_key         = var.ssh_public_key
-  compute_nsg_ids        = local.compute_nsg_ids
-
+  compute_nsg_ids        = local.compute_nsg_ids  
   tenancy_id                = var.tenancy_ocid
   tf_script_version         = var.tf_script_version
   use_regional_subnet       = local.use_regional_subnet
@@ -632,6 +644,7 @@ module "compute" {
   wls_server_startup_args   = var.wls_server_startup_args
   wls_existing_vcn_id       = var.wls_existing_vcn_id
   create_policies           = var.create_policies
+  enable_osmh               = var.enable_osmh
   place_all_compute_in_same_ad = var.place_all_compute_in_same_ad
 
   # Secured Production Mode
@@ -703,6 +716,8 @@ module "compute" {
 
   log_group_id    = element(concat(module.observability-common[*].log_group_id, [""]), 0)
   use_oci_logging = var.use_oci_logging
+
+  profile_ocid = var.profile_ocid == "" ? (element(concat(module.observability-osmh[*].profile_ocid, [""]), 0)) : var.profile_ocid
 
   use_apm_service           = local.use_apm_service
   apm_domain_compartment_id = local.apm_domain_compartment_id

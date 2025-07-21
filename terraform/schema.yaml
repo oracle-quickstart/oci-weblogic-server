@@ -16,6 +16,7 @@ groupings:
       - ${is_bastion_instance_required}
       - ${add_load_balancer}
       - ${is_idcs_selected}
+      - ${enable_osmh}
       - ${use_oci_logging}
       - ${use_apm_service}
       - ${use_autoscaling}
@@ -101,6 +102,13 @@ groupings:
       - ${wls_subnet_cidr}
       - ${existing_admin_server_nsg_id}
       - ${existing_managed_server_nsg_id}
+
+  - title: "OS Management Hub Profile"
+    variables:
+      - ${select_existing_profile}
+      - ${profile_compartment_id}
+      - ${profile_name}
+      - ${profile_ocid}
 
   - title: "Resource Manager Private Endpoint"
     variables:
@@ -202,6 +210,7 @@ groupings:
       - ${lb_subnet_1_name}
       - ${lb_subnet_2_name}
       - ${user_id}
+      - ${create_profile}
       - ${fingerprint}
       - ${private_key_path}
       - ${wls_edition}
@@ -494,6 +503,57 @@ variables:
     multipleOf: 1
     default: 8
     required: true
+
+  select_existing_profile:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${enable_osmh}
+    type: boolean
+    required: true
+    default: false
+    title: "Select Existing Profile"
+    description: "Select if you want to use an existing profile for OSMH"
+
+  profile_compartment_id:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${enable_osmh}
+        - not:
+            - ${select_existing_profile}
+    type: oci:identity:compartment:id
+    required: false
+    default: ${compartment_ocid}
+    title: "Profile Compartment"
+    description: "The compartment where you want to create the profile for OMH plugin integration."
+
+  profile_name:
+    visible:
+      and:
+        - ${orm_create_mode}
+        - ${enable_osmh}
+        - not:
+            - ${select_existing_profile}
+    type: string
+    minLength: 1
+    maxLength: 256
+    pattern: "^[a-zA-Z][a-zA-Z0-9]{0,15}$"
+    required: true
+    default : ""
+    title: "Profile Name"
+    description: "The display name of the profile that will be created. Name can't start with a number or dash, contain spaces or special characters, or be empty."
+  
+  profile_ocid:
+    visible:
+      and: 
+        - ${orm_create_mode}
+        - ${enable_osmh}
+        - ${select_existing_profile}
+    type: string
+    required: true
+    title: "Profile OCID"
+    pattern: ^ocid1.osmhprofile.*$
 
   wls_admin_user:
     visible:
@@ -1661,6 +1721,13 @@ variables:
     title: "OCI Policies"
     description: "Create policies to read Secrets from Vault and manage Autonomous Transaction Processing Database (if applicable). Deselecting this option is for Advanced users only.  Before you deselect the check box, see <a target=\"_blank\" href=\"https://docs.oracle.com/pls/topic/lookup?ctx=en/cloud/paas/weblogic-cloud&id=WLCUG-GUID-4E2AD7BF-592D-4C2C-AF66-D98CB26379A5\">Create Root Policies</a> to create the required groups and relevant policies."
     required: false
+    default: true
+
+  enable_osmh:
+    type: boolean
+    title: "Enable OS Management Hub"
+    description: "Enable OSMH plugin for Management"
+    required: true
     default: true
 
   add_JRF:

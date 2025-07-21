@@ -17,9 +17,7 @@ locals {
   core_policy_statement1 = "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to manage instances in compartment id ${var.compartment_id}"
   core_policy_statement2 = "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to manage volumes in compartment id ${var.compartment_id}"
   core_policy_statement3 = "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to manage volume-attachments in compartment id ${var.compartment_id}"
-  # These policy statements are required to register Compute instances with the OS Management service
-  osms_policy_statement1 = "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to read instance-family in compartment id ${var.compartment_id}"
-  osms_policy_statement2 = "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to use osms-managed-instances in compartment id ${var.compartment_id}"
+  core_policy_statement4 = "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to read instance-family in compartment id ${var.compartment_id}"
   # This policy with "inspect virtual-network-family" verb is needed to read VCN information like CIDR, etc, for VCN validation
   network_policy_statement1 = var.network_compartment_id != "" ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to inspect virtual-network-family in compartment id ${var.network_compartment_id}" : ""
   secrets_policy_statement1 = "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to read secret-bundles in tenancy where target.secret.id = '${var.wls_admin_password_id}'"
@@ -38,9 +36,9 @@ locals {
   logging_policy = var.use_oci_logging ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to use logging-family in compartment id ${var.compartment_id}" : ""
   # This policy with "use apm-domains" verb is needed to list the data keys of the APM domain
   apm_domain_policy_statement = var.use_apm_service ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to use apm-domains in compartment id ${var.apm_domain_compartment_id}" : ""
-  # This policy with "use load_balancer" verb is needed to create load balancer for new vcn
+  # This policy with "use load_balancer" verb is needed because there is code in the Weblogic for OCI compute image that sets the lb backend states.
   lb_policy_statement = var.add_load_balancer ? length(oci_identity_dynamic_group.wlsc_instance_principal_group) > 0 ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to use load-balancers in compartment id ${var.network_compartment_id}" : "" : ""
-  service_statements = compact([local.core_policy_statement1, local.core_policy_statement2, local.core_policy_statement3, local.osms_policy_statement1, local.osms_policy_statement2, local.network_policy_statement1, local.secrets_policy_statement1, local.secrets_policy_statement2,
+  service_statements = compact([local.core_policy_statement1, local.core_policy_statement2, local.core_policy_statement3, local.core_policy_statement4, local.network_policy_statement1, local.secrets_policy_statement1, local.secrets_policy_statement2,
     local.atp_policy_statement1, local.atp_policy_statement2, local.atp_policy_statement3, local.oci_db_policy_statement1, local.oci_db_policy_statement2, local.oci_db_policy_statement3, local.logging_policy,
     local.apm_domain_policy_statement, local.lb_policy_statement
   ])
@@ -53,6 +51,14 @@ locals {
   plugin_policy_statement1 = "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to manage instance-agent-plugins in compartment id ${var.compartment_id}"
   plugin_policy_statement2 = "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to use wlms-managed-instance-plugins in tenancy"
   plugin_policy_statement = compact([local.plugin_policy_statement1, local.plugin_policy_statement2])
+
+  # Policies required for enabling the OSMH plugin
+  osmh_policy_statement1 = var.enable_osmh? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to manage osmh-family in compartment id ${var.compartment_id}" : ""
+  osmh_policy_statement2 = var.enable_osmh? var.profile_compartment_id != var.compartment_id? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to manage osmh-family in compartment id  ${var.profile_compartment_id}" : "" : ""
+  osmh_policy_statement3 = var.enable_osmh? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to {OSMH_MANAGED_INSTANCE_ACCESS} in tenancy where request.principal.id = target.managed-instance.id" : ""
+  osmh_policy_statement4 = var.enable_osmh? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to {MGMT_AGENT_DEPLOY_PLUGIN_CREATE, MGMT_AGENT_INSPECT, MGMT_AGENT_READ} in compartment id ${var.compartment_id}" : ""
+  osmh_policy_statement  = compact([local.osmh_policy_statement1, local.osmh_policy_statement2, local.osmh_policy_statement3, local.osmh_policy_statement4])
+
 
   #Policies for WLS instance principal dynamic group
   autoscaling_statement1 = var.use_autoscaling ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to use repos in tenancy" : ""
@@ -129,7 +135,7 @@ locals {
   secure_mode_statement  = compact([local.secure_mode_statement1, local.secure_mode_statement2, local.secure_mode_statement3, local.secure_mode_statement4, local.secure_mode_statement5, local.secure_mode_secrets_policy_statement1, local.secure_mode_secrets_policy_statement2])
 
   #TODO: When other categories with more statements are added here, concat them with service_statements
-  policy_statements = concat(local.service_statements, local.cloning_policy_statement, local.plugin_policy_statement, local.secure_mode_statement)
+  policy_statements = concat(local.service_statements, local.cloning_policy_statement, local.plugin_policy_statement, local.secure_mode_statement, local.osmh_policy_statement)
 
   reserved_ips_info = var.compartment_id == "" ? [{ id = var.resource_name_prefix }] : []
 
