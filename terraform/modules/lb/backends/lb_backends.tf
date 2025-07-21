@@ -67,7 +67,7 @@ resource "oci_load_balancer_listener" "wls_lb_listener_https" {
   rule_set_names           = [oci_load_balancer_rule_set.SSL_headers[count.index].name]
 
   connection_configuration {
-    idle_timeout_in_seconds = "10"
+    idle_timeout_in_seconds = "300"
   }
   ssl_configuration {
     #Required

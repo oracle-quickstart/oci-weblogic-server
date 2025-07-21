@@ -36,7 +36,7 @@ locals {
   logging_policy = var.use_oci_logging ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to use logging-family in compartment id ${var.compartment_id}" : ""
   # This policy with "use apm-domains" verb is needed to list the data keys of the APM domain
   apm_domain_policy_statement = var.use_apm_service ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to use apm-domains in compartment id ${var.apm_domain_compartment_id}" : ""
-  # This policy with "use load_balancer" verb is needed to create load balancer for new vcn
+  # This policy with "use load_balancer" verb is needed because there is code in the Weblogic for OCI compute image that sets the lb backend states.
   lb_policy_statement = var.add_load_balancer ? length(oci_identity_dynamic_group.wlsc_instance_principal_group) > 0 ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to use load-balancers in compartment id ${var.network_compartment_id}" : "" : ""
   service_statements = compact([local.core_policy_statement1, local.core_policy_statement2, local.core_policy_statement3, local.core_policy_statement4, local.network_policy_statement1, local.secrets_policy_statement1, local.secrets_policy_statement2,
     local.atp_policy_statement1, local.atp_policy_statement2, local.atp_policy_statement3, local.oci_db_policy_statement1, local.oci_db_policy_statement2, local.oci_db_policy_statement3, local.logging_policy,
