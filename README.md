@@ -329,6 +329,14 @@ When you no longer need the deployment, you can run a
 Refer to [documentation](https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/troubleshoot-oracle-weblogic-cloud.html)
 to identify common problems and learn how to diagnose and solve them.
 
+## Contributing
+
+This project welcomes contributions from the community. Before submitting a pull request, please [review our contribution guide](./CONTRIBUTING.md)
+
+## Security
+
+Please consult the [security guide](./SECURITY.md) for our responsible security vulnerability disclosure process
+
 ## License
 
 The OCI Terraform stack for WebLogic Server is licensed under the Universal Permissive License 1.0.
