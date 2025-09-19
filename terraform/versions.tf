@@ -6,7 +6,7 @@ terraform {
   required_providers {
     oci = {
       source  = "oracle/oci"
-      version = "~> 7.18.0"
+      version = "~> 7.17.0"
     }
     random = {
       version = "~> 3.7.2"
