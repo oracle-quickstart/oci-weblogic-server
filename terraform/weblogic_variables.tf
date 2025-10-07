@@ -1,13 +1,13 @@
-# Copyright (c) 2023, 2024, Oracle and/or its affiliates.
+# Copyright (c) 2023, 2024, 2025, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 variable "wls_version" {
   type        = string
-  description = "The WebLogic version to be installed for this stack. Accepted values are: 12.2.1.4, 14.1.1.0, 14.1.2.0"
+  description = "The WebLogic version to be installed for this stack. Accepted values are: 12.2.1.4, 14.1.1.0, 14.1.2.0, 15.1.1.0"
   default     = "12.2.1.4"
   validation {
-    condition     = contains(["12.2.1.4", "14.1.1.0","14.1.2.0"], var.wls_version)
-    error_message = "WLSC-ERROR: Allowed values for wls_version are 12.2.1.4, 14.1.1.0 & 14.1.2.0."
+    condition     = contains(["12.2.1.4", "14.1.1.0","14.1.2.0","15.1.1.0"], var.wls_version)
+    error_message = "WLSC-ERROR: Allowed values for wls_version are 12.2.1.4, 14.1.1.0, 14.1.2.0, 15.1.1.0."
   }
 }
 
@@ -67,6 +67,16 @@ variable "wls_14120_jdk_version" {
   validation {
     condition     = contains(["jdk17", "jdk21"], var.wls_14120_jdk_version)
     error_message = "WLSC-ERROR: Allowed values for wls_14120_jdk_version are jdk17, jdk21."
+  }
+}
+
+variable "wls_15110_jdk_version" {
+  type        = string
+  description = "JDK version to use when installing WebLogic 15.1.1.0 version. Ignored when WebLogic version is not 15.1.1.0. Allowed values: jdk21, jdk17"
+  default     = "jdk17"
+  validation {
+    condition     = contains(["jdk17", "jdk21"], var.wls_15110_jdk_version)
+    error_message = "WLSC-ERROR: Allowed values for wls_15110_jdk_version are jdk17, jdk21."
   }
 }
 

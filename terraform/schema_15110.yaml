@@ -47,34 +47,7 @@ groupings:
       - ${root_ca_id}
       - ${cert_compartment_id}
       - ${preserve_boot_properties}
-      - ${add_JRF}
-      #Start of JRF fields
-      - ${db_strategy}
-      - ${atp_db_compartment_id}
-      - ${atp_db_id}
-      - ${atp_db_uses_private_endpoint}
-      - ${atp_db_network_compartment_id}
-      - ${atp_db_existing_vcn_id}
-      - ${atp_db_secret_compartment_id}
-      - ${atp_db_password_id}
-      - ${atp_db_level}
-      - ${use_oci_db_connection_string}
-      - ${oci_db_connection_string}
-      - ${oci_db_compartment_id}
-      - ${oci_db_dbsystem_id}
-      - ${oci_db_network_compartment_id}
-      - ${oci_db_existing_vcn_id}
-      - ${oci_db_dbhome_id}
-      - ${oci_db_dbhome_major_version}
-      - ${oci_db_database_id}
-      - ${oci_db_pdb_service_name}
-      - ${oci_db_user}
-      - ${oci_db_secret_compartment_id}
-      - ${oci_db_password_id}
-      - ${oci_db_port}
-      - ${db_existing_vcn_add_secrule}
-      - ${db_vcn_lpg_id}
-      #End of JRF fields
+      - ${wls_14c_jdk_version}
       - ${deploy_sample_app}
       - ${wls_server_startup_args}
       - ${thread_pool_limit}
@@ -102,7 +75,7 @@ groupings:
       - ${wls_subnet_cidr}
       - ${existing_admin_server_nsg_id}
       - ${existing_managed_server_nsg_id}
-
+      
   - title: "OS Management Hub Profile"
     variables:
       - ${select_existing_profile}
@@ -220,6 +193,8 @@ groupings:
       - ${listing_resource_version}
       - ${wls_version}
       - ${log_level}
+      - ${wls_14120_jdk_version}
+      - ${wls_15110_jdk_version}
       #- ${instance_image_id}
       - ${marketplace_source_images}
       - ${use_regional_subnet}
@@ -233,8 +208,33 @@ groupings:
       - ${wls_admin_ssl_port}
       - ${wls_ms_port}
       - ${wls_ms_ssl_port}
+      - ${add_JRF}
+      - ${oci_db_compartment_id}
+      - ${oci_db_network_compartment_id}
+      - ${oci_db_existing_vcn_id}
+      - ${db_existing_vcn_add_secrule}
+      - ${oci_db_dbsystem_id}
+      - ${oci_db_dbhome_id}
+      - ${oci_db_dbhome_major_version}
+      - ${oci_db_database_id}
+      - ${oci_db_pdb_service_name}
+      - ${oci_db_user}
+      - ${oci_db_secret_compartment_id}
+      - ${oci_db_password_id}
+      - ${oci_db_port}
+      - ${atp_db_compartment_id}
+      - ${atp_db_id}
+      - ${atp_db_uses_private_endpoint}
+      - ${atp_db_network_compartment_id}
+      - ${atp_db_existing_vcn_id}
+      - ${atp_db_secret_compartment_id}
+      - ${atp_db_password_id}
+      - ${atp_db_level}
+      - ${db_strategy}
       - ${wls_expose_admin_port}
       - ${mount_path}
+      - ${oci_db_connection_string}
+      - ${use_oci_db_connection_string}
       - ${alarm_severity}
       - ${enable_autoscaling_alarms}
       - ${ocir_region}
@@ -244,10 +244,8 @@ groupings:
       - ${image_mode}
       - ${terms_and_conditions}
       - ${generate_dg_tag}
+      - ${db_vcn_lpg_id}
       - ${wait_time_wls_vnc_dns_resolver}
-      - ${wls_14c_jdk_version}
-      - ${wls_14120_jdk_version}
-      - ${wls_15110_jdk_version}
       - ${wls_admin_port_source_cidr}
       - ${wlsoci_vmscripts_zip_bundle_path}
       - ${tf_script_version}
@@ -586,6 +584,17 @@ variables:
     dependsOn:
       compartmentId: ${wls_admin_secret_compartment_id}
 
+  wls_15110_jdk_version:
+    visible: ${orm_create_mode}
+    type: enum
+    title: "Java Development Kit version"
+    description: "Select the Java Development Kit (JDK) version"
+    enum:
+      - "jdk17"
+      - "jdk21"
+    required: true
+    default: "jdk17"
+
   configure_wls_ports:
     visible: ${orm_create_mode}
     type: boolean
@@ -861,7 +870,7 @@ variables:
     visible: ${orm_create_mode}
     type: boolean
     required: true
-    default: false
+    default: true
     title: "Enable Secured Production Mode"
     description: "Configure a secure domain"
 
@@ -1189,7 +1198,7 @@ variables:
     default: true
     title: "Use Resource Manager Private Endpoint"
     description: "Provision a resource manager private endpoint on a private subnet to check the provisioning status of the private resources. If this and bastion are not selected, you must check the status of domain creation on the compute instance using /u01/logs/provisioning.log file, and any failures during domain creation are reported."
-
+    
   add_rms_private_endpoint:
     visible:
       and:
@@ -1225,7 +1234,7 @@ variables:
     required: true
     title: "Resource Manager Private Endpoint"
     description: "Resource manager private endpoint for private access."
-    
+
   is_bastion_with_reserved_public_ip:
     visible:
       and:
@@ -1263,7 +1272,7 @@ variables:
             - ${create_new_vcn}
             - ${create_new_subnets}
         - and:
-             - or:
+            - or:
                 - ${create_new_vcn}
                 - ${create_new_subnets}
     type: string
@@ -1388,7 +1397,6 @@ variables:
     dependsOn:
       compartmentId: ${network_compartment_id}
       vcnId: ${wls_existing_vcn_id}
-
 
   # Load Balancer Configuration
   add_load_balancer:
@@ -1731,476 +1739,6 @@ variables:
     required: true
     default: true
 
-  add_JRF:
-    visible:
-      and:
-        - ${orm_create_mode}
-        - not:
-           - ${configure_secure_mode}
-    type: boolean
-    default: false
-    title: "Provision with JRF"
-    description: "Deploy the Java Required Files (JRF) components and create the JRF schemas on the selected database"
-
-  db_strategy:
-    visible:
-      and:
-        - ${orm_create_mode}
-        - ${add_JRF}
-    type: enum
-    title: "Database Strategy"
-    description: "Choose the database strategy for WebLogic Server"
-    enum:
-      - "Autonomous Transaction Processing Database"
-      - "Database System"
-    default: "Autonomous Transaction Processing Database"
-    required: true
-
-  use_oci_db_connection_string:
-    visible:
-      and:
-        - ${orm_create_mode}
-        - ${add_JRF}
-        - and:
-            - not:
-                - ${create_new_vcn}
-            - eq:
-                - ${db_strategy}
-                - "Database System"
-    type: boolean
-    title: "Use Database Connection String"
-    description: "Use database connection string to create a single instance datasource for JRF schemas. You cannot create an Active GridLink or a Multi Data Source using this database connection string. For the database connection string, see <a target=\"_blank\" href=\"https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/configure-database-parameters.html\">Configure Database Parameters and VCN Peering</a>."
-    default: false
-
-  oci_db_connection_string:
-    visible:
-      and:
-        - ${orm_create_mode}
-        - ${add_JRF}
-        - ${use_oci_db_connection_string}
-        - eq:
-            - ${db_strategy}
-            - "Database System"
-        - not:
-            - ${create_new_vcn}
-    type: string
-    title: "Oracle Database Connection String"
-    description: "Oracle database connection string to connect to database. Example: //{scan_hostname}.{host_domain_name}:{db_port}/{pdb_or_sid}.{Host Domain Name}"
-    pattern: ^(\/\/)
-    required: true
-
-  # ATP DB Configuration
-  atp_db_compartment_id:
-    visible:
-      and:
-        - ${orm_create_mode}
-        - ${add_JRF}
-        - eq:
-            - ${db_strategy}
-            - "Autonomous Transaction Processing Database"
-    type: oci:identity:compartment:id
-    required: true
-    title: "Autonomous Database Compartment"
-    description: "The compartment in which the Autonomous Transaction Processing (ATP) database is found"
-
-  atp_db_id:
-    visible:
-      and:
-        - ${orm_create_mode}
-        - ${add_JRF}
-        - eq:
-            - ${db_strategy}
-            - "Autonomous Transaction Processing Database"
-    type: oci:database:autonomousdatabase:id
-    dependsOn:
-      compartmentId: ${atp_db_compartment_id}
-    required: true
-    title: "Autonomous Database"
-    description: "The Autonomous Transaction Processing (ATP) database in which to provision the schemas for a JRF-enabled WebLogic Server domain"
-
-  atp_db_secret_compartment_id:
-    visible:
-      and:
-        - ${orm_create_mode}
-        - ${add_JRF}
-        - eq:
-            - ${db_strategy}
-            - "Autonomous Transaction Processing Database"
-    type: oci:identity:compartment:id
-    title: "Autonomous Database Secret Compartment"
-    description: "The compartment where you have the ATP database secret"
-    required: true
-    default: ${compartment_ocid}
-
-  atp_db_password_id:
-    visible:
-      and:
-        - ${orm_create_mode}
-        - ${add_JRF}
-        - eq:
-            - ${db_strategy}
-            - "Autonomous Transaction Processing Database"
-    type: "oci:kms:secret:id"
-    dependsOn:
-      compartmentId: ${atp_db_secret_compartment_id}
-    required: true
-    title: "Validated Secret for Autonomous Database Admin Password"
-    description: "The secret that contains the administration user password in the ATP database. To create secrets, see <a target=\"_blank\" href=\"https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/you-begin-oracle-weblogic-cloud.html#GUID-0517A019-4A89-40ED-A568-DD2193733F8B\"> Create Secrets for Passwords</a>."
-
-  atp_db_level:
-    visible:
-      and:
-        - ${orm_create_mode}
-        - ${add_JRF}
-        - eq:
-            - ${db_strategy}
-            - "Autonomous Transaction Processing Database"
-    type: enum
-    enum:
-      - low
-      - tp
-      - tpurgent
-    default: low
-    title: "Autonomous Database Service Level"
-    description: "The service level that the WebLogic Server domain should use to connect to the autonomous database. The default is low."
-
-  atp_db_uses_private_endpoint:
-    visible:
-      and:
-        - ${orm_create_mode}
-        - ${add_JRF}
-        - eq:
-            - ${db_strategy}
-            - "Autonomous Transaction Processing Database"
-    type: boolean
-    default: false
-    title: "Database uses private endpoint"
-    description: "The Autonomous Transaction Processing (ATP) database uses private endpoint for network access"
-
-  atp_db_network_compartment_id:
-    visible:
-      and:
-        - ${orm_create_mode}
-        - ${add_JRF}
-        - and:
-            - eq:
-                - ${db_strategy}
-                - "Autonomous Transaction Processing Database"
-            - ${atp_db_uses_private_endpoint}
-    type: oci:identity:compartment:id
-    required: true
-    title: "Autonomous Database Network Compartment"
-    description: "The compartment in which the ATP database Virtual Cloud Network is found"
-    default: ${compartment_ocid}
-
-  atp_db_existing_vcn_id:
-    visible:
-      and:
-        - ${orm_create_mode}
-        - ${add_JRF}
-        - and:
-            - eq:
-                - ${db_strategy}
-                - "Autonomous Transaction Processing Database"
-            - ${atp_db_uses_private_endpoint}
-    type: oci:core:vcn:id
-    dependsOn:
-      compartmentId: ${atp_db_network_compartment_id}
-    required: true
-    default: ''
-    title: "Autonomous Database Network"
-    description: "An existing Virtual Cloud Network (VCN) used by ATP database with private endpoint. If the selected VCN is different from WebLogic Server VCN then local VCN peering will be setup. When using VCN peering ensure that the VCNs being peered have non-overlapping CIDR blocks."
-
-  oci_db_network_compartment_id:
-    visible:
-      and:
-        - ${orm_create_mode}
-        - ${add_JRF}
-        - and:
-            - eq:
-                - ${db_strategy}
-                - "Database System"
-            - or:
-                - ${create_new_vcn}
-                - not:
-                    - ${use_oci_db_connection_string}
-    type: oci:identity:compartment:id
-    required: true
-    title: "DB System Network Compartment"
-    description: "The compartment in which the DB System Virtual Cloud Network is found"
-    default: ${compartment_ocid}
-
-  db_existing_vcn_add_secrule:
-    visible:
-      and:
-        - ${orm_create_mode}
-        - ${add_JRF}
-        - ${create_policies}
-        - or:
-            - and:
-                - eq:
-                    - ${db_strategy}
-                    - "Database System"
-                - or:
-                    - ${create_new_vcn}
-                    - not:
-                        - ${use_oci_db_connection_string}
-            - and:
-                - eq:
-                    - ${db_strategy}
-                    - "Autonomous Transaction Processing Database"
-                - ${atp_db_uses_private_endpoint}
-    type: boolean
-    default: true
-    title: "Create Database Security List"
-    description: "Add a security list to the DB subnet or a security rule to the Network Security Group for ATP Database with private endpoint that allows connections from the WebLogic Server subnet"
-
-  # OCI DB Configuration
-
-  oci_db_compartment_id:
-    visible:
-      and:
-        - ${orm_create_mode}
-        - ${add_JRF}
-        - and:
-            - eq:
-                - ${db_strategy}
-                - "Database System"
-            - or:
-                - ${create_new_vcn}
-                - not:
-                    - ${use_oci_db_connection_string}
-    type: oci:identity:compartment:id
-    required: true
-    title: "DB System Compartment"
-    description: "The compartment in which the DB System is found"
-    default: ${compartment_ocid}
-
-  oci_db_existing_vcn_id:
-    visible:
-      and:
-        - ${orm_create_mode}
-        - ${add_JRF}
-        - and:
-            - eq:
-                - ${db_strategy}
-                - "Database System"
-            - or:
-                - ${create_new_vcn}
-                - not:
-                    - ${use_oci_db_connection_string}
-    type: oci:core:vcn:id
-    dependsOn:
-      compartmentId: ${oci_db_network_compartment_id}
-    required: true
-    default: ''
-    title: "DB System Network"
-    description: "An existing Virtual Cloud Network (VCN) used by DB System. If the selected VCN is different from WebLogic Server VCN then local VCN peering will be setup. When using VCN peering ensure that the VCNs being peered have non-overlapping CIDR blocks."
-
-  oci_db_dbsystem_id:
-    visible:
-      and:
-        - ${orm_create_mode}
-        - ${add_JRF}
-        - and:
-            - eq:
-                - ${db_strategy}
-                - "Database System"
-            - or:
-                - ${create_new_vcn}
-                - not:
-                    - ${use_oci_db_connection_string}
-    type: oci:database:dbsystem:id
-    dependsOn:
-      compartmentId: ${oci_db_compartment_id}
-    required: true
-    title: "DB System"
-    description: "The Oracle Cloud Infrastructure DB System to use for this WebLogic Server domain"
-
-  oci_db_dbhome_id:
-    visible:
-      and:
-        - ${orm_create_mode}
-        - ${add_JRF}
-        - and:
-            - eq:
-                - ${db_strategy}
-                - "Database System"
-            - or:
-                - ${create_new_vcn}
-                - not:
-                    - ${use_oci_db_connection_string}
-    type: oci:database:dbhome:id
-    required: true
-    title: "Database home in the DB System"
-    description: "The database home within the DB System"
-    dependsOn:
-      compartmentId: ${oci_db_compartment_id}
-      dbSystemId: ${oci_db_dbsystem_id}
-
-  oci_db_dbhome_major_version:
-    visible:
-      and:
-        - ${orm_create_mode}
-        - ${add_JRF}
-        - and:
-            - eq:
-                - ${db_strategy}
-                - "Database System"
-            - or:
-                - ${create_new_vcn}
-                - not:
-                    - ${use_oci_db_connection_string}
-    type: oci:database:dbhome:dbversion
-    title: "Version of Database home in the DB System"
-    description: "The version of database home within the DB System"
-    dependsOn:
-      dbHomeId: ${oci_db_dbhome_id}
-
-  oci_db_database_id:
-    visible:
-      and:
-        - ${orm_create_mode}
-        - ${add_JRF}
-        - and:
-            - eq:
-                - ${db_strategy}
-                - "Database System"
-            - or:
-                - ${create_new_vcn}
-                - not:
-                    - ${use_oci_db_connection_string}
-    type: oci:database:database:id
-    dependsOn:
-      compartmentId: ${oci_db_compartment_id}
-      dbHomeId: ${oci_db_dbhome_id}
-    required: true
-    title: "Database in the DB System"
-    description: "The database within the DB System in which to provision the schemas for a JRF-enabled WebLogic Server domain"
-
-  oci_db_pdb_service_name:
-    visible:
-      and:
-        - ${orm_create_mode}
-        - ${add_JRF}
-        - and:
-            - not:
-                - eq:
-                    - ${oci_db_dbhome_major_version}
-                    - "11"
-            - eq:
-                - ${db_strategy}
-                - "Database System"
-
-    type: string
-    required: true
-    title: "PDB"
-    description: "The name of the pluggable database (PDB) in which to provision the schemas for a JRF-enabled WebLogic Server domain. This is required for Oracle Database 12c or later."
-
-  oci_db_user:
-    visible:
-      and:
-        - ${orm_create_mode}
-        - ${add_JRF}
-        - eq:
-            - ${db_strategy}
-            - "Database System"
-    type: string
-    default: SYS
-    pattern: "^[a-zA-Z][a-zA-Z0-9]{1,49}$"
-    minLength: 2
-    maxLength: 50
-    title: "Database Administrator"
-    description: "The name of a database user with SYSDBA privileges"
-    required: true
-
-  oci_db_port:
-    visible:
-      and:
-        - ${orm_create_mode}
-        - ${add_JRF}
-        - and:
-            - eq:
-                - ${db_strategy}
-                - "Database System"
-            - or:
-                - ${create_new_vcn}
-                - not:
-                    - ${use_oci_db_connection_string}
-    type: integer
-    default: 1521
-    title: "Database Listener Port"
-    description: "The Listener Port for the Database"
-    required: false
-
-  oci_db_secret_compartment_id:
-    visible:
-      and:
-        - ${orm_create_mode}
-        - ${add_JRF}
-        - eq:
-            - ${db_strategy}
-            - "Database System"
-    type: oci:identity:compartment:id
-    title: "OCI DB Admin Password Secret Compartment"
-    description: "The compartment where you have the OCI DB administration password secret"
-    required: true
-    default: ${compartment_ocid}
-
-  oci_db_password_id:
-    visible:
-      and:
-        - ${orm_create_mode}
-        - ${add_JRF}
-        - eq:
-            - ${db_strategy}
-            - "Database System"
-    type: "oci:kms:secret:id"
-    dependsOn:
-      compartmentId: ${oci_db_secret_compartment_id}
-    required: true
-    title: "Validated Secret for OCI DB Admin Password"
-    description: "The secret that contains the database administration password. To create secrets, see <a target=\"_blank\" href=\"https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/you-begin-oracle-weblogic-cloud.html#GUID-0517A019-4A89-40ED-A568-DD2193733F8B\"> Create Secrets for Passwords</a>."
-
-  db_vcn_lpg_id:
-    visible:
-      and:
-        - ${add_JRF}
-        - or:
-          - and:
-              - eq:
-                  - ${db_strategy}
-                  - "Database System"
-              - not:
-                  - ${use_oci_db_connection_string}
-              - or:
-                  - ${create_new_vcn}
-                  - and:
-                      - ${create_new_subnets}
-                      - not:
-                          - eq:
-                              - ${wls_existing_vcn_id}
-                              - ${oci_db_existing_vcn_id}
-          - and:
-              - eq:
-                  - ${db_strategy}
-                  - "Autonomous Transaction Processing Database"
-              - ${atp_db_uses_private_endpoint}
-              - or:
-                  - ${create_new_vcn}
-                  - and:
-                      - ${create_new_subnets}
-                      - not:
-                          - eq:
-                              - ${wls_existing_vcn_id}
-                              - ${atp_db_existing_vcn_id}
-
-    type: string
-    title: "Local Peering Gateway in Database VCN"
-    pattern: ^ocid1.localpeeringgateway.*$
-    required: true
-    description: "The OCID of the Local Peering Gateway (LPG) in the database VCN, used to peer the WebLogic VCN"
-
   # Tagging variables
   create_service_tag:
     visible: ${orm_create_mode}
@@ -2389,7 +1927,6 @@ variables:
     description: "The Oracle Cloud Identifier (OCID) of your existing file system. The existing file system must be in the same availability domain as the existing mount target."
     pattern: ^$|^ocid1.filesystem.*$
     required: true
-
 
   use_oci_logging:
     type: boolean

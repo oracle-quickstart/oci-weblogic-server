@@ -1,4 +1,4 @@
-# Copyright (c) 2023, 2024, Oracle and/or its affiliates.
+# Copyright (c) 2023, 2024, 2025, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 locals {
@@ -14,6 +14,10 @@ locals {
 
   is14110Version               = var.wls_version == "14.1.1.0"
   invalid_14110_jrf            = local.is14110Version && (var.is_atp_db || var.is_oci_db || var.oci_db_connection_string != "")
+
+  is15110Version               = var.wls_version == "15.1.1.0"
+  invalid_15110_jrf            = local.is15110Version && (var.is_atp_db || var.is_oci_db || var.oci_db_connection_string != "")
+
   invalid_multiple_infra_dbs = ((var.is_oci_db || var.oci_db_connection_string != "") && var.is_atp_db)
   both_vcn_param             = local.has_existing_vcn && local.has_vcn_name
 
@@ -28,8 +32,11 @@ locals {
   multiple_infra_dbs_msg              = "WLSC-ERROR: Both OCI and ATP database parameters are provided. Only one infra database is required."
   validate_invalid_multiple_infra_dbs = local.invalid_multiple_infra_dbs ? local.validators_msg_map[local.multiple_infra_dbs_msg] : null
 
-   jrf_14110_msg      = "WLSC-ERROR: JRF domain is not supported for FMW 14.1.1.0 version"
-   validate_14c_jrf   = local.invalid_14110_jrf ? local.validators_msg_map[local.jrf_14110_msg] : ""
+  jrf_14110_msg      = "WLSC-ERROR: JRF domain is not supported for FMW 14.1.1.0 version"
+  validate_14c_jrf   = local.invalid_14110_jrf ? local.validators_msg_map[local.jrf_14110_msg] : ""
+
+  jrf_15110_msg      = "WLSC-ERROR: JRF domain is not supported for 15.1.1.0 version"
+  validate_14c_jrf   = local.invalid_15110_jrf ? local.validators_msg_map[local.jrf_15110_msg] : ""
 
   missing_dynamic_group_oci_logging_enabled_create_policies_unset  = "WLSC-ERROR: Dynamic Group id is required when enabling integration with OCI Logging Service with create policies unset "
   validate_dynamic_group_oci_logging_enabled_create_policies_unset = !var.create_policies && var.use_oci_logging && var.dynamic_group_id == "" ? local.validators_msg_map[local.missing_dynamic_group_oci_logging_enabled_create_policies_unset] : null

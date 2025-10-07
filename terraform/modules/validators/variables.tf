@@ -1,4 +1,4 @@
-# Copyright (c) 2023, Oracle and/or its affiliates.
+# Copyright (c) 2023, 2025, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 variable "compartment_id" {
@@ -154,8 +154,8 @@ variable "wls_version" {
   type        = string
   description = "The WebLogic version to be installed for this stack. Accepted values are: 12.2.1.4, 14.1.1.0"
   validation {
-    condition     = contains(["12.2.1.4", "14.1.1.0","14.1.2.0"], var.wls_version)
-    error_message = "WLSC-ERROR: Allowed values for wls_version are 12.2.1.4, 14.1.1.0, 14.1.2.0."
+    condition     = contains(["12.2.1.4", "14.1.1.0","14.1.2.0", "15.1.1.0"], var.wls_version)
+    error_message = "WLSC-ERROR: Allowed values for wls_version are 12.2.1.4, 14.1.1.0, 14.1.2.0, 15.1.1.0."
   }
 }
 
