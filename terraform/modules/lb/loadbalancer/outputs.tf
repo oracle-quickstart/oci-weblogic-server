@@ -1,4 +1,4 @@
-# Copyright (c) 2023, Oracle and/or its affiliates.
+# Copyright (c) 2023, 2025, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 output "wls_loadbalancer_id" {
@@ -7,6 +7,6 @@ output "wls_loadbalancer_id" {
 }
 
 output "wls_loadbalancer_ip_addresses" {
-  value       = oci_load_balancer_load_balancer.wls_loadbalancer.ip_addresses
+  value       = oci_load_balancer_load_balancer.wls_loadbalancer.ip_address_details[*].ip_address
   description = "The list of IP addresses of the load balancer"
 }
