@@ -36,7 +36,7 @@ locals {
   validate_14c_jrf   = local.invalid_14110_jrf ? local.validators_msg_map[local.jrf_14110_msg] : ""
 
   jrf_15110_msg      = "WLSC-ERROR: JRF domain is not supported for 15.1.1.0 version"
-  validate_14c_jrf   = local.invalid_15110_jrf ? local.validators_msg_map[local.jrf_15110_msg] : ""
+  validate_15110_jrf   = local.invalid_15110_jrf ? local.validators_msg_map[local.jrf_15110_msg] : ""
 
   missing_dynamic_group_oci_logging_enabled_create_policies_unset  = "WLSC-ERROR: Dynamic Group id is required when enabling integration with OCI Logging Service with create policies unset "
   validate_dynamic_group_oci_logging_enabled_create_policies_unset = !var.create_policies && var.use_oci_logging && var.dynamic_group_id == "" ? local.validators_msg_map[local.missing_dynamic_group_oci_logging_enabled_create_policies_unset] : null

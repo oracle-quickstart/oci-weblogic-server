@@ -47,7 +47,6 @@ groupings:
       - ${root_ca_id}
       - ${cert_compartment_id}
       - ${wls_14120_jdk_version}
-      - ${wls_15110_jdk_version}
       - ${preserve_boot_properties}
       - ${add_JRF}
       #Start of JRF fields
@@ -248,6 +247,7 @@ groupings:
       - ${generate_dg_tag}
       - ${wait_time_wls_vnc_dns_resolver}
       - ${wls_14c_jdk_version}
+      - ${wls_15110_jdk_version}
       - ${wls_admin_port_source_cidr}
       - ${wlsoci_vmscripts_zip_bundle_path}
       - ${tf_script_version}

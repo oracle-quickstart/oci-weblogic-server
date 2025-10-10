@@ -47,7 +47,7 @@ groupings:
       - ${root_ca_id}
       - ${cert_compartment_id}
       - ${preserve_boot_properties}
-      - ${wls_14c_jdk_version}
+      - ${wls_15110_jdk_version}
       - ${deploy_sample_app}
       - ${wls_server_startup_args}
       - ${thread_pool_limit}
@@ -193,8 +193,8 @@ groupings:
       - ${listing_resource_version}
       - ${wls_version}
       - ${log_level}
+      - ${wls_14c_jdk_version}
       - ${wls_14120_jdk_version}
-      - ${wls_15110_jdk_version}
       #- ${instance_image_id}
       - ${marketplace_source_images}
       - ${use_regional_subnet}
