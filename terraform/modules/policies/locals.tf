@@ -123,7 +123,7 @@ locals {
   ])
 
   #Policies for creating wildcard certificate to configure SSL in secured production mode
-  secure_mode_statement1 = var.configure_secure_mode ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to use certificate-authority-delegates in compartment id ${var.cert_compartment_id}" : ""
+  secure_mode_statement1 = var.configure_secure_mode ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to use certificate-authority-delegates in compartment id ${var.root_ca_compartment_id}" : ""
   secure_mode_statement2 = var.configure_secure_mode ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to manage leaf-certificates in compartment id ${var.cert_compartment_id}" : ""
   secure_mode_statement3 = var.configure_secure_mode ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to read leaf-certificate-bundles in compartment id ${var.cert_compartment_id} where target.leaf-certificate.bundle-type = 'CERTIFICATE_CONTENT_PUBLIC_ONLY'"  : ""
   secure_mode_statement4 = var.configure_secure_mode ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to read certificate-authorities in compartment id ${var.root_ca_compartment_id}" : ""
