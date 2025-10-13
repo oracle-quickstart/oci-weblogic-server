@@ -47,7 +47,7 @@ groupings:
       - ${root_ca_id}
       - ${cert_compartment_id}
       - ${preserve_boot_properties}
-      - ${wls_14c_jdk_version}
+      - ${wls_15110_jdk_version}
       - ${deploy_sample_app}
       - ${wls_server_startup_args}
       - ${thread_pool_limit}
@@ -193,8 +193,8 @@ groupings:
       - ${listing_resource_version}
       - ${wls_version}
       - ${log_level}
+      - ${wls_14c_jdk_version}
       - ${wls_14120_jdk_version}
-      - ${wls_15110_jdk_version}
       #- ${instance_image_id}
       - ${marketplace_source_images}
       - ${use_regional_subnet}
@@ -584,16 +584,16 @@ variables:
     dependsOn:
       compartmentId: ${wls_admin_secret_compartment_id}
 
-  wls_14c_jdk_version:
+  wls_15110_jdk_version:
     visible: ${orm_create_mode}
     type: enum
     title: "Java Development Kit version"
     description: "Select the Java Development Kit (JDK) version"
     enum:
-      - "jdk8"
-      - "jdk11"
+      - "jdk17"
+      - "jdk21"
     required: true
-    default: "jdk8"
+    default: "jdk17"
 
   configure_wls_ports:
     visible: ${orm_create_mode}
@@ -870,7 +870,7 @@ variables:
     visible: ${orm_create_mode}
     type: boolean
     required: true
-    default: false
+    default: true
     title: "Enable Secured Production Mode"
     description: "Configure a secure domain"
 

@@ -1,4 +1,4 @@
-# Copyright (c) 2023, 2024, Oracle and/or its affiliates.
+# Copyright (c) 2023, 2025, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 locals {
@@ -111,6 +111,7 @@ locals {
   local.jdk_labels,
   var.wls_version == "14.1.1.0" ? var.wls_14c_jdk_version :
   var.wls_version == "14.1.2.0" ? var.wls_14120_jdk_version :
+  var.wls_version == "15.1.1.0" ? var.wls_15110_jdk_version :
   var.wls_version == "11.1.1.7" ? "jdk7" : "jdk8"
 )
 
