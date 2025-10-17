@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Copyright (c) 2023, Oracle and/or its affiliates.
+# Copyright (c) 2023, 2025, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 #######################################################################################################
@@ -14,9 +14,9 @@ help()
 {
   echo "Build the Oracle Resource Manager (ORM) bundles for developers to deploy in Marketplace"
   echo
-  echo "Arguments: build_orm_dev.sh -v|--version <12.2.1.4|14.1.1.0|14.1.2.0> -t|--scripts_version --all"
+  echo "Arguments: build_orm_dev.sh -v|--version <12.2.1.4|14.1.1.0|14.1.2.0|15.1.1.0> -t|--scripts_version --all"
   echo "options:"
-  echo "-v, --version             WebLogic version. Supported values are 12.2.1.4,14.1.2.0 or 14.1.1.0 Optional when --all option is provided"
+  echo "-v, --version             WebLogic version. Supported values are 12.2.1.4, 14.1.2.0, 15.1.1.0, or 14.1.1.0. Optional when --all option is provided"
   echo "-t, --scripts_version     VM scripts version"
   echo "--all                     All bundles"
   echo
@@ -73,7 +73,7 @@ validate()
     echo "WebLogic version is not provided"
     help
     exit 1
-  elif [ "${WLS_VERSION}" != "12.2.1.4" ] && [ "${WLS_VERSION}" != "14.1.2.0" ] && [ "${WLS_VERSION}" != "14.1.1.0" ]; then
+  elif [ "${WLS_VERSION}" != "12.2.1.4" ] && [ "${WLS_VERSION}" != "14.1.2.0" ] && [ "${WLS_VERSION}" != "15.1.1.0" ] && [ "${WLS_VERSION}" != "14.1.1.0" ]; then
     echo "Please provide valid WebLogic version"
     help
     exit 1
@@ -113,6 +113,13 @@ create_14120_bundle()
   replace_14120_variables
   (cd ${TMP_BUILD}; zip -r ${SCRIPT_DIR}/binaries/wlsoci-resource-manager-ee-14120.zip *; rm -Rf ${TMP_BUILD}/*)
 }
+create_15110_bundle()
+{
+  cp -Rf ${SCRIPT_DIR}/../terraform/modules ${SCRIPT_DIR}/../terraform/*.tf ${SCRIPT_DIR}/../terraform/schema_15110.yaml ${TMP_BUILD}
+  cp -f ${SCRIPT_DIR}/../terraform/orm/orm_provider.tf ${TMP_BUILD}/provider.tf
+  replace_15110_variables
+  (cd ${TMP_BUILD}; zip -r ${SCRIPT_DIR}/binaries/wlsoci-resource-manager-ee-15110.zip *; rm -Rf ${TMP_BUILD}/*)
+}
 
 #need to change it to false after RM UI fix
 replace_12214_variables()
@@ -137,16 +144,26 @@ replace_14120_variables()
   sed -i '/variable "use_marketplace_image" {/!b;n;n;n;cdefault = false' ${TMP_BUILD}/mp_variables.tf
   sed -i '/variable "tf_script_version" {/!b;n;n;n;cdefault = \"'"$SCRIPTS_VERSION"'\"' ${TMP_BUILD}/variables.tf
 }
+replace_15110_variables()
+{
+  sed -i '/variable "generate_dg_tag" {/!b;n;n;n;cdefault = false' ${TMP_BUILD}/variables.tf
+  sed -i '/variable "wls_version" {/!b;n;n;n;cdefault = \"15.1.1.0\"' ${TMP_BUILD}/weblogic_variables.tf
+  sed -i '/variable "use_marketplace_image" {/!b;n;n;n;cdefault = false' ${TMP_BUILD}/mp_variables.tf
+  sed -i '/variable "tf_script_version" {/!b;n;n;n;cdefault = \"'"$SCRIPTS_VERSION"'\"' ${TMP_BUILD}/variables.tf
+}
 
 if [ "${CREATE_ALL_BUNDLES}" == "true" ]; then
   create_12214_bundle
   create_14110_bundle
   create_14120_bundle
+  create_15110_bundle
 else
   if [ "${WLS_VERSION}" == "12.2.1.4" ]; then
       create_12214_bundle
   elif [ "${WLS_VERSION}" == "14.1.2.0" ]; then
       create_14120_bundle
+  elif [ "${WLS_VERSION}" == "15.1.1.0" ]; then
+      create_15110_bundle
   else
       create_14110_bundle
   fi

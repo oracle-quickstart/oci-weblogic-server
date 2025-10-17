@@ -1,4 +1,4 @@
-# Copyright (c) 2023, 2024, Oracle and/or its affiliates.
+# Copyright (c) 2023, 2025, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 title: Oracle WebLogic Server for Oracle Cloud Infrastructure
@@ -247,6 +247,7 @@ groupings:
       - ${generate_dg_tag}
       - ${wait_time_wls_vnc_dns_resolver}
       - ${wls_14c_jdk_version}
+      - ${wls_15110_jdk_version}
       - ${wls_admin_port_source_cidr}
       - ${wlsoci_vmscripts_zip_bundle_path}
       - ${tf_script_version}
@@ -2763,4 +2764,5 @@ variables:
       - 12.2.1.4
       - 14.1.1.0
       - 14.1.2.0
+      - 15.1.1.0
     default: 12.2.1.4

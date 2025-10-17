@@ -1,4 +1,4 @@
-# Copyright (c) 2023, 2024, Oracle and/or its affiliates.
+# Copyright (c) 2023, 2025, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 ### Removing network validation script from provisioning flow temporarily.
@@ -625,6 +625,7 @@ module "compute" {
   use_regional_subnet       = local.use_regional_subnet
   wls_14c_jdk_version       = var.wls_14c_jdk_version
   wls_14120_jdk_version     = var.wls_14120_jdk_version
+  wls_15110_jdk_version     = var.wls_15110_jdk_version
   wls_admin_user            = local.wls_admin_user
   wls_admin_password_id     = var.wls_admin_password_id
   wls_admin_server_name     = format("%s_adminserver", local.service_name_prefix)
