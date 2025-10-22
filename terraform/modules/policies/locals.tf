@@ -47,10 +47,9 @@ locals {
   cloning_policy_statement2 = "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to inspect compartments in tenancy"
   cloning_policy_statement  = compact([local.cloning_policy_statement1, local.cloning_policy_statement2])
 
-  # These policy statements are required for enabling the plugin
+  # These policy statements are required for disabling the OSMS plugin
   plugin_policy_statement1 = "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to manage instance-agent-plugins in compartment id ${var.compartment_id}"
-  plugin_policy_statement2 = "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to use wlms-managed-instance-plugins in tenancy"
-  plugin_policy_statement = compact([local.plugin_policy_statement1, local.plugin_policy_statement2])
+  plugin_policy_statement = compact([local.plugin_policy_statement1])
 
   # Policies required for enabling the OSMH plugin
   osmh_policy_statement1 = var.enable_osmh? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to manage osmh-family in compartment id ${var.compartment_id}" : ""
