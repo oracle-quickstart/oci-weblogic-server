@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Copyright (c) 2023, Oracle and/or its affiliates.
+# Copyright (c) 2023, 2025, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 ############################################################
@@ -10,10 +10,10 @@ help()
 {
   echo "Build the Oracle Resource Manager (ORM) bundles to deploy in Marketplace"
   echo
-  echo "Arguments: build_mp_bundles.sh -e|--edition <EE|SUITE|SE> -v|--version <12.2.1.4|14.1.1.0|14.1.2.0> -t|--type <UCM|BYOL> --all"
+  echo "Arguments: build_mp_bundles.sh -e|--edition <EE|SUITE|SE> -v|--version <12.2.1.4|14.1.1.0|14.1.2.0|15.1.1.0> -t|--type <UCM|BYOL> --all"
   echo "options:"
   echo "-e, --edition     WebLogic edition. Supported values are EE, SUITE, or SE. Optional when --all option is provided"
-  echo "-v, --version     WebLogic version. Supported values are 12.2.1.4 or 14.1.1.0 or 14.1.2.0. Optional when --all option is provided"
+  echo "-v, --version     WebLogic version. Supported values are 12.2.1.4 or 14.1.1.0 or 14.1.2.0 or 15.1.1.0. Optional when --all option is provided"
   echo "-t, --type        Type of bundle. Supported values are UCM or BYOL. Optional when --all option is provided"
   echo "--all             All bundles"
   echo
@@ -78,7 +78,7 @@ validate()
     echo "WebLogic version is not provided"
     help
     exit 1
-  elif [ "${WLS_VERSION}" != "12.2.1.4" ] && [ "${WLS_VERSION}" != "14.1.1.0" ] && [ "${WLS_VERSION}" != "14.1.2.0" ]; then
+  elif [ "${WLS_VERSION}" != "12.2.1.4" ] && [ "${WLS_VERSION}" != "14.1.1.0" ] && [ "${WLS_VERSION}" != "14.1.2.0" ] && [ "${WLS_VERSION}" != "15.1.1.0" ]; then
     echo "Please provide valid WebLogic version"
     help
     exit 1
@@ -134,6 +134,13 @@ create_ucm_ee_14120()
   replace_ucm_ee_14120_variables
   (cd ${TMP_BUILD}; zip -r ${SCRIPT_DIR}/binaries/wlsoci-resource-manager-ee-ucm-mp-14120.zip *; rm -Rf ${TMP_BUILD}/*)
 }
+create_ucm_ee_15110()
+{
+  cp -Rf ${SCRIPT_DIR}/../terraform/modules ${SCRIPT_DIR}/../terraform/*.tf ${SCRIPT_DIR}/../terraform/schema_15110.yaml ${TMP_BUILD}
+  cp -f ${SCRIPT_DIR}/../terraform/orm/orm_provider.tf ${TMP_BUILD}/provider.tf
+  replace_ucm_ee_15110_variables
+  (cd ${TMP_BUILD}; zip -r ${SCRIPT_DIR}/binaries/wlsoci-resource-manager-ee-ucm-mp-15110.zip *; rm -Rf ${TMP_BUILD}/*)
+}
 create_ucm_suite_12214()
 {
   cp -Rf ${SCRIPT_DIR}/../terraform/modules ${SCRIPT_DIR}/../terraform/*.tf ${SCRIPT_DIR}/../terraform/schema.yaml ${TMP_BUILD}
@@ -154,6 +161,13 @@ create_ucm_suite_14120()
   cp -f ${SCRIPT_DIR}/../terraform/orm/orm_provider.tf ${TMP_BUILD}/provider.tf
   replace_ucm_suite_14120_variables
   (cd ${TMP_BUILD}; zip -r ${SCRIPT_DIR}/binaries/wlsoci-resource-manager-suite-ucm-mp-14120.zip *; rm -Rf ${TMP_BUILD}/*)
+}
+create_ucm_suite_15110()
+{
+  cp -Rf ${SCRIPT_DIR}/../terraform/modules ${SCRIPT_DIR}/../terraform/*.tf ${SCRIPT_DIR}/../terraform/schema_15110.yaml ${TMP_BUILD}
+  cp -f ${SCRIPT_DIR}/../terraform/orm/orm_provider.tf ${TMP_BUILD}/provider.tf
+  replace_ucm_suite_15110_variables
+  (cd ${TMP_BUILD}; zip -r ${SCRIPT_DIR}/binaries/wlsoci-resource-manager-suite-ucm-mp-15110.zip *; rm -Rf ${TMP_BUILD}/*)
 }
 create_byol_ee_12214()
 {
@@ -176,6 +190,13 @@ create_byol_ee_14120()
   replace_byol_ee_14120_variables
   (cd ${TMP_BUILD}; zip -r ${SCRIPT_DIR}/binaries/wlsoci-resource-manager-ee-byol-mp-14120.zip *; rm -Rf ${TMP_BUILD}/*)
 }
+create_byol_ee_15110()
+{
+  cp -Rf ${SCRIPT_DIR}/../terraform/modules ${SCRIPT_DIR}/../terraform/*.tf ${SCRIPT_DIR}/../terraform/schema_15110.yaml ${TMP_BUILD}
+  cp -f ${SCRIPT_DIR}/../terraform/orm/orm_provider.tf ${TMP_BUILD}/provider.tf
+  replace_byol_ee_15110_variables
+  (cd ${TMP_BUILD}; zip -r ${SCRIPT_DIR}/binaries/wlsoci-resource-manager-ee-byol-mp-15110.zip *; rm -Rf ${TMP_BUILD}/*)
+}
 create_byol_suite_12214()
 {
   cp -Rf ${SCRIPT_DIR}/../terraform/modules ${SCRIPT_DIR}/../terraform/*.tf ${SCRIPT_DIR}/../terraform/schema.yaml ${TMP_BUILD}
@@ -197,6 +218,13 @@ create_byol_suite_14120()
   replace_byol_suite_14120_variables
   (cd ${TMP_BUILD}; zip -r ${SCRIPT_DIR}/binaries/wlsoci-resource-manager-suite-byol-mp-14120.zip *; rm -Rf ${TMP_BUILD}/*)
 }
+create_byol_suite_15110()
+{
+  cp -Rf ${SCRIPT_DIR}/../terraform/modules ${SCRIPT_DIR}/../terraform/*.tf ${SCRIPT_DIR}/../terraform/schema_15110.yaml ${TMP_BUILD}
+  cp -f ${SCRIPT_DIR}/../terraform/orm/orm_provider.tf ${TMP_BUILD}/provider.tf
+  replace_byol_suite_15110_variables
+  (cd ${TMP_BUILD}; zip -r ${SCRIPT_DIR}/binaries/wlsoci-resource-manager-suite-byol-mp-15110.zip *; rm -Rf ${TMP_BUILD}/*)
+}
 create_byol_standard_12214()
 {
   cp -Rf ${SCRIPT_DIR}/../terraform/modules ${SCRIPT_DIR}/../terraform/*.tf ${SCRIPT_DIR}/../terraform/schema.yaml ${TMP_BUILD}
@@ -217,6 +245,13 @@ create_byol_standard_14120()
   cp -f ${SCRIPT_DIR}/../terraform/orm/orm_provider.tf ${TMP_BUILD}/provider.tf
   replace_byol_se_14120_variables
   (cd ${TMP_BUILD}; zip -r ${SCRIPT_DIR}/binaries/wlsoci-resource-manager-se-byol-mp-14120.zip *; rm -Rf ${TMP_BUILD}/*)
+}
+create_byol_standard_15110()
+{
+  cp -Rf ${SCRIPT_DIR}/../terraform/modules ${SCRIPT_DIR}/../terraform/*.tf ${SCRIPT_DIR}/../terraform/schema_15110.yaml ${TMP_BUILD}
+  cp -f ${SCRIPT_DIR}/../terraform/orm/orm_provider.tf ${TMP_BUILD}/provider.tf
+  replace_byol_se_15110_variables
+  (cd ${TMP_BUILD}; zip -r ${SCRIPT_DIR}/binaries/wlsoci-resource-manager-se-byol-mp-15110.zip *; rm -Rf ${TMP_BUILD}/*)
 }
 
 replace_byol_ee_12214_variables()
@@ -281,6 +316,27 @@ replace_byol_ee_14120_variables()
   sed -i '/main_mktpl_image/ { n; s/ocid                  = ""/ocid = '"${instance_image_id}"'/; }' ${TMP_BUILD}/oci_images.tf
   sed -i '/ucm_image/ { n; s/ocid                  = ""/ocid = '"${ucm_instance_image_id}"'/; }' ${TMP_BUILD}/oci_images.tf
 }
+replace_byol_ee_15110_variables()
+{
+  export TF_VAR_FILE=${SCRIPT_DIR}/../terraform/images/mp_image_ee_byol.tfvars
+  get_mp_values
+  sed -i '/variable "tf_script_version" {/!b;n;n;n;cdefault = '"$tf_script_version"'' ${TMP_BUILD}/variables.tf
+  sed -i '/variable "wls_version" {/!b;n;n;n;cdefault = \"15.1.1.0\"' ${TMP_BUILD}/weblogic_variables.tf
+  sed -i '/variable "instance_image_id" {/!b;n;n;n;cdefault = '"$instance_image_id"'' ${TMP_BUILD}/mp_variables.tf
+  sed -i '/variable "use_marketplace_image" {/!b;n;n;n;cdefault = '"true"'' ${TMP_BUILD}/mp_variables.tf
+  sed -i '/variable "listing_id" {/!b;n;n;n;cdefault = '"$listing_id"'' ${TMP_BUILD}/mp_variables.tf
+  sed -i '/variable "listing_resource_version" {/!b;n;n;n;cdefault = '"$listing_resource_version"'' ${TMP_BUILD}/mp_variables.tf
+  sed -i '/variable "ucm_instance_image_id" {/!b;n;n;n;cdefault = '"${ucm_instance_image_id}"'' ${TMP_BUILD}/mp_variables.tf
+  sed -i '/variable "ucm_listing_id" {/!b;n;n;n;cdefault = '"$ucm_listing_id"'' ${TMP_BUILD}/mp_variables.tf
+  sed -i '/variable "ucm_listing_resource_version" {/!b;n;n;n;cdefault = '"$ucm_listing_resource_version"'' ${TMP_BUILD}/mp_variables.tf
+  sed -i 's/#- ${instance_image_id}/- ${instance_image_id}/' ${TMP_BUILD}/schema_15110.yaml
+  sed -i 's/#- ${image_mode}/- ${image_mode}/' ${TMP_BUILD}/schema_15110.yaml
+  sed -i 's/#- ${terms_and_conditions}/- ${terms_and_conditions}/' ${TMP_BUILD}/schema_15110.yaml
+  sed -i ':a;$!{N;ba};s/- ${image_mode}/#- ${image_mode}/2' ${TMP_BUILD}/schema_15110.yaml
+  sed -i ':a;$!{N;ba};s/- ${terms_and_conditions}/#- ${terms_and_conditions}/2' ${TMP_BUILD}/schema_15110.yaml
+  sed -i '/main_mktpl_image/ { n; s/ocid                  = ""/ocid = '"${instance_image_id}"'/; }' ${TMP_BUILD}/oci_images.tf
+  sed -i '/ucm_image/ { n; s/ocid                  = ""/ocid = '"${ucm_instance_image_id}"'/; }' ${TMP_BUILD}/oci_images.tf
+}
 replace_byol_se_12214_variables()
 {
   export TF_VAR_FILE=${SCRIPT_DIR}/../terraform/images/mp_image_se_byol.tfvars
@@ -332,6 +388,25 @@ replace_byol_se_14120_variables()
   sed -i 's/#- ${instance_image_id}/- ${instance_image_id}/' ${TMP_BUILD}/schema_14120.yaml
   sed -i 's/#- ${use_autoscaling}/- ${use_autoscaling}/' ${TMP_BUILD}/schema_14120.yaml
   sed -i ':a;$!{N;ba};s/- ${use_autoscaling}/#- ${use_autoscaling}/1' ${TMP_BUILD}/schema_14120.yaml
+  sed -i '/main_mktpl_image/ { n; s/ocid                  = ""/ocid = '"${instance_image_id}"'/; }' ${TMP_BUILD}/oci_images.tf
+  export TF_VAR_FILE=${SCRIPT_DIR}/../terraform/images/mp_image_ee_byol.tfvars
+  get_mp_values
+  sed -i '/ucm_image/ { n; s/ocid                  = ""/ocid = '"${ucm_instance_image_id}"'/; }' ${TMP_BUILD}/oci_images.tf
+}
+replace_byol_se_15110_variables()
+{
+  export TF_VAR_FILE=${SCRIPT_DIR}/../terraform/images/mp_image_se_byol.tfvars
+  get_mp_values
+  sed -i '/variable "tf_script_version" {/!b;n;n;n;cdefault = '"$tf_script_version"'' ${TMP_BUILD}/variables.tf
+  sed -i 's/default     = "EE"/default     = "SE"/' ${TMP_BUILD}/edition.tf
+  sed -i '/variable "wls_version" {/!b;n;n;n;cdefault = \"15.1.1.0\"' ${TMP_BUILD}/weblogic_variables.tf
+  sed -i '/variable "instance_image_id" {/!b;n;n;n;cdefault = '"$instance_image_id"'' ${TMP_BUILD}/mp_variables.tf
+  sed -i '/variable "use_marketplace_image" {/!b;n;n;n;cdefault = '"true"'' ${TMP_BUILD}/mp_variables.tf
+  sed -i '/variable "listing_id" {/!b;n;n;n;cdefault = '"$listing_id"'' ${TMP_BUILD}/mp_variables.tf
+  sed -i '/variable "listing_resource_version" {/!b;n;n;n;cdefault = '"$listing_resource_version"'' ${TMP_BUILD}/mp_variables.tf
+  sed -i 's/#- ${instance_image_id}/- ${instance_image_id}/' ${TMP_BUILD}/schema_15110.yaml
+  sed -i 's/#- ${use_autoscaling}/- ${use_autoscaling}/' ${TMP_BUILD}/schema_15110.yaml
+  sed -i ':a;$!{N;ba};s/- ${use_autoscaling}/#- ${use_autoscaling}/1' ${TMP_BUILD}/schema_15110.yaml
   sed -i '/main_mktpl_image/ { n; s/ocid                  = ""/ocid = '"${instance_image_id}"'/; }' ${TMP_BUILD}/oci_images.tf
   export TF_VAR_FILE=${SCRIPT_DIR}/../terraform/images/mp_image_ee_byol.tfvars
   get_mp_values
@@ -402,6 +477,28 @@ replace_byol_suite_14120_variables()
   sed -i '/main_mktpl_image/ { n; s/ocid                  = ""/ocid = '"${instance_image_id}"'/; }' ${TMP_BUILD}/oci_images.tf
   sed -i '/ucm_image/ { n; s/ocid                  = ""/ocid = '"${ucm_instance_image_id}"'/; }' ${TMP_BUILD}/oci_images.tf
 }
+replace_byol_suite_15110_variables()
+{
+  export TF_VAR_FILE=${SCRIPT_DIR}/../terraform/images/mp_image_suite_byol.tfvars
+  get_mp_values
+  sed -i '/variable "tf_script_version" {/!b;n;n;n;cdefault = '"$tf_script_version"'' ${TMP_BUILD}/variables.tf
+  sed -i 's/default     = "EE"/default     = "SUITE"/' ${TMP_BUILD}/edition.tf
+  sed -i '/variable "wls_version" {/!b;n;n;n;cdefault = \"15.1.1.0\"' ${TMP_BUILD}/weblogic_variables.tf
+  sed -i '/variable "instance_image_id" {/!b;n;n;n;cdefault = '"$instance_image_id"'' ${TMP_BUILD}/mp_variables.tf
+  sed -i '/variable "use_marketplace_image" {/!b;n;n;n;cdefault = '"true"'' ${TMP_BUILD}/mp_variables.tf
+  sed -i '/variable "listing_id" {/!b;n;n;n;cdefault = '"$listing_id"'' ${TMP_BUILD}/mp_variables.tf
+  sed -i '/variable "listing_resource_version" {/!b;n;n;n;cdefault = '"$listing_resource_version"'' ${TMP_BUILD}/mp_variables.tf
+  sed -i '/variable "ucm_instance_image_id" {/!b;n;n;n;cdefault = '"${ucm_instance_image_id}"'' ${TMP_BUILD}/mp_variables.tf
+  sed -i '/variable "ucm_listing_id" {/!b;n;n;n;cdefault = '"$ucm_listing_id"'' ${TMP_BUILD}/mp_variables.tf
+  sed -i '/variable "ucm_listing_resource_version" {/!b;n;n;n;cdefault = '"$ucm_listing_resource_version"'' ${TMP_BUILD}/mp_variables.tf
+  sed -i 's/#- ${instance_image_id}/- ${instance_image_id}/' ${TMP_BUILD}/schema_15110.yaml
+  sed -i 's/#- ${image_mode}/- ${image_mode}/' ${TMP_BUILD}/schema_15110.yaml
+  sed -i 's/#- ${terms_and_conditions}/- ${terms_and_conditions}/' ${TMP_BUILD}/schema_15110.yaml
+  sed -i ':a;$!{N;ba};s/- ${image_mode}/#- ${image_mode}/2' ${TMP_BUILD}/schema_15110.yaml
+  sed -i ':a;$!{N;ba};s/- ${terms_and_conditions}/#- ${terms_and_conditions}/2' ${TMP_BUILD}/schema_15110.yaml
+  sed -i '/main_mktpl_image/ { n; s/ocid                  = ""/ocid = '"${instance_image_id}"'/; }' ${TMP_BUILD}/oci_images.tf
+  sed -i '/ucm_image/ { n; s/ocid                  = ""/ocid = '"${ucm_instance_image_id}"'/; }' ${TMP_BUILD}/oci_images.tf
+}
 replace_ucm_suite_12214_variables()
 {  
   export TF_VAR_FILE=${SCRIPT_DIR}/../terraform/images/mp_image_suite_ucm.tfvars
@@ -447,6 +544,23 @@ replace_ucm_suite_14120_variables()
   sed -i '/variable "listing_id" {/!b;n;n;n;cdefault = '"$listing_id"'' ${TMP_BUILD}/mp_variables.tf
   sed -i '/variable "listing_resource_version" {/!b;n;n;n;cdefault = '"$listing_resource_version"'' ${TMP_BUILD}/mp_variables.tf
   sed -i 's/#- ${instance_image_id}/- ${instance_image_id}/' ${TMP_BUILD}/schema_14120.yaml
+  sed -i '/main_mktpl_image/ { n; s/ocid                  = ""/ocid = '"${instance_image_id}"'/; }' ${TMP_BUILD}/oci_images.tf
+  export TF_VAR_FILE=${SCRIPT_DIR}/../terraform/images/mp_image_suite_byol.tfvars
+  get_mp_values
+  sed -i '/ucm_image/ { n; s/ocid                  = ""/ocid = '"${ucm_instance_image_id}"'/; }' ${TMP_BUILD}/oci_images.tf
+}
+replace_ucm_suite_15110_variables()
+{
+  export TF_VAR_FILE=${SCRIPT_DIR}/../terraform/images/mp_image_suite_ucm.tfvars
+  get_mp_values
+  sed -i '/variable "tf_script_version" {/!b;n;n;n;cdefault = '"$tf_script_version"'' ${TMP_BUILD}/variables.tf
+  sed -i 's/default     = "EE"/default     = "SUITE"/' ${TMP_BUILD}/edition.tf
+  sed -i '/variable "wls_version" {/!b;n;n;n;cdefault = \"15.1.1.0\"' ${TMP_BUILD}/weblogic_variables.tf
+  sed -i '/variable "instance_image_id" {/!b;n;n;n;cdefault = '"$instance_image_id"'' ${TMP_BUILD}/mp_variables.tf
+  sed -i '/variable "use_marketplace_image" {/!b;n;n;n;cdefault = '"true"'' ${TMP_BUILD}/mp_variables.tf
+  sed -i '/variable "listing_id" {/!b;n;n;n;cdefault = '"$listing_id"'' ${TMP_BUILD}/mp_variables.tf
+  sed -i '/variable "listing_resource_version" {/!b;n;n;n;cdefault = '"$listing_resource_version"'' ${TMP_BUILD}/mp_variables.tf
+  sed -i 's/#- ${instance_image_id}/- ${instance_image_id}/' ${TMP_BUILD}/schema_15110.yaml
   sed -i '/main_mktpl_image/ { n; s/ocid                  = ""/ocid = '"${instance_image_id}"'/; }' ${TMP_BUILD}/oci_images.tf
   export TF_VAR_FILE=${SCRIPT_DIR}/../terraform/images/mp_image_suite_byol.tfvars
   get_mp_values
@@ -499,6 +613,22 @@ replace_ucm_ee_14120_variables()
   get_mp_values
   sed -i '/ucm_image/ { n; s/ocid                  = ""/ocid = '"${ucm_instance_image_id}"'/; }' ${TMP_BUILD}/oci_images.tf
 }
+replace_ucm_ee_15110_variables()
+{
+  export TF_VAR_FILE=${SCRIPT_DIR}/../terraform/images/mp_image_ee_ucm.tfvars
+  get_mp_values
+  sed -i '/variable "tf_script_version" {/!b;n;n;n;cdefault = '"$tf_script_version"'' ${TMP_BUILD}/variables.tf
+  sed -i '/variable "wls_version" {/!b;n;n;n;cdefault = \"15.1.1.0\"' ${TMP_BUILD}/weblogic_variables.tf
+  sed -i '/variable "instance_image_id" {/!b;n;n;n;cdefault = '"$instance_image_id"'' ${TMP_BUILD}/mp_variables.tf
+  sed -i '/variable "use_marketplace_image" {/!b;n;n;n;cdefault = '"true"'' ${TMP_BUILD}/mp_variables.tf
+  sed -i '/variable "listing_id" {/!b;n;n;n;cdefault = '"$listing_id"'' ${TMP_BUILD}/mp_variables.tf
+  sed -i '/variable "listing_resource_version" {/!b;n;n;n;cdefault = '"$listing_resource_version"'' ${TMP_BUILD}/mp_variables.tf
+  sed -i 's/#- ${instance_image_id}/- ${instance_image_id}/' ${TMP_BUILD}/schema_15110.yaml
+  sed -i '/main_mktpl_image/ { n; s/ocid                  = ""/ocid = '"${instance_image_id}"'/; }' ${TMP_BUILD}/oci_images.tf
+  export TF_VAR_FILE=${SCRIPT_DIR}/../terraform/images/mp_image_ee_byol.tfvars
+  get_mp_values
+  sed -i '/ucm_image/ { n; s/ocid                  = ""/ocid = '"${ucm_instance_image_id}"'/; }' ${TMP_BUILD}/oci_images.tf
+}
 
 get_mp_values()
 {
@@ -515,18 +645,23 @@ if [ "${CREATE_ALL_BUNDLES}" == "true" ]; then
   create_ucm_ee_12214
   create_ucm_ee_14110
   create_ucm_ee_14120
+  create_ucm_ee_15110
   create_ucm_suite_12214
   create_ucm_suite_14110
   create_ucm_suite_14120
+  create_ucm_suite_15110
   create_byol_ee_12214
   create_byol_ee_14110
   create_byol_ee_14120
+  create_byol_ee_15110
   create_byol_suite_12214
   create_byol_suite_14110
   create_byol_suite_14120
+  create_byol_suite_15110
   create_byol_standard_12214
   create_byol_standard_14110
   create_byol_standard_14120
+  create_byol_standard_15110
 else
   if [ "${BUNDLE_TYPE}" == "UCM" ]; then
     if [ "${WLS_EDITION}" == "EE" ]; then
@@ -534,8 +669,10 @@ else
         create_ucm_ee_12214
       elif [ "${WLS_VERSION}" == "14.1.1.0" ]; then
         create_ucm_ee_14110
+      elif [ "${WLS_VERSION}" == "14.1.2.0" ]; then
+        create_ucm_ee_14120
       else
-	create_ucm_ee_14120
+	      create_ucm_ee_15110
       fi
 
     elif [ "${WLS_EDITION}" == "SUITE" ]; then
@@ -543,8 +680,10 @@ else
         create_ucm_suite_12214
       elif [ "${WLS_VERSION}" == "14.1.1.0" ]; then
         create_ucm_suite_14110
+      elif [ "${WLS_VERSION}" == "14.1.2.0" ]; then
+        create_ucm_suite_14120
       else
-	create_ucm_suite_14120
+	      create_ucm_suite_15110
       fi
     fi
   else
@@ -553,24 +692,30 @@ else
         create_byol_ee_12214
       elif [ "${WLS_VERSION}" == "14.1.1.0" ]; then
         create_byol_ee_14110
+      elif [ "${WLS_VERSION}" == "14.1.2.0" ]; then
+        create_byol_ee_14120
       else
-	create_byol_ee_14120
+	      create_byol_ee_15110
       fi
     elif [ "${WLS_EDITION}" == "SUITE" ]; then
       if [ "${WLS_VERSION}" == "12.2.1.4" ]; then
         create_byol_suite_12214
       elif [ "${WLS_VERSION}" == "14.1.1.0" ]; then
         create_byol_suite_14110
+      elif [ "${WLS_VERSION}" == "14.1.2.0" ]; then
+        create_byol_suite_14120
       else
-	create_byol_suite_14120
+	      create_byol_suite_15110
       fi
     else
       if [ "${WLS_VERSION}" == "12.2.1.4" ]; then
         create_byol_se_12214
       elif [ "${WLS_VERSION}" == "14.1.1.0" ]; then
         create_byol_se_14110
+      elif [ "${WLS_VERSION}" == "14.1.2.0" ]; then
+        create_byol_se_14120
       else
-	create_byol_se_14120
+	      create_byol_se_15110
       fi
     fi
   fi
