@@ -215,3 +215,10 @@ data "oci_certificates_management_certificate_authority" "root_certificate_autho
   certificate_authority_id = var.root_ca_id
 }
 
+data "oci_os_management_hub_profile" "osmh_profile" {
+  count = var.select_existing_profile ? 1 : 0
+
+  #Required
+  profile_id = var.profile_ocid
+}
+

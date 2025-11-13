@@ -197,7 +197,7 @@ locals {
   select_existing_profile         = var.select_existing_profile
   create_profile                  = (local.enable_osmh && !local.select_existing_profile) ? true : false
   profile_ocid                    = local.select_existing_profile ? var.profile_ocid : ""
-  profile_compartment_id          = var.profile_compartment_id == "" ? var.compartment_ocid : var.profile_compartment_id
+  profile_compartment_id          = var.profile_compartment_id == "" ? (var.select_existing_profile ? data.oci_os_management_hub_profile.osmh_profile[0].compartment_id : var.compartment_ocid) : var.profile_compartment_id
   profile_name                    = var.profile_name == "" ? format("%s_profile", local.service_name_prefix) : var.profile_name
 
 
