@@ -1,4 +1,4 @@
-# Copyright (c) 2023, 2024, Oracle and/or its affiliates.
+# Copyright (c) 2023, 2025, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 data "oci_identity_regions" "home_region" {
@@ -213,5 +213,12 @@ data "oci_certificates_management_certificate_authority" "root_certificate_autho
   count = var.configure_secure_mode && var.root_ca_id != "" ? 1 : 0
   #Required
   certificate_authority_id = var.root_ca_id
+}
+
+data "oci_os_management_hub_profile" "osmh_profile" {
+  count = var.select_existing_profile ? 1 : 0
+
+  #Required
+  profile_id = var.profile_ocid
 }
 
