@@ -172,14 +172,15 @@ function validate_service_or_nat_gw_exist() {
   echo 0
 }
 
-####################################################
+###########################################################
 # Validates if the Subnet has a specific Route Rule for LPG.
 # Args:
-#
+#   subnet_ocid: OCID of the VCN Subnet
+#   cidr_subnet: CIDR subnet of the VCN
 #
 # Returns:
-#   0|1
-####################################################
+#   0|2|4
+############################################################
 function validate_lpg_route_rule() {
   local subnet_ocid=$1
   local cidr_subnet=$2
@@ -188,7 +189,7 @@ function validate_lpg_route_rule() {
   rt_ocid=$(oci network subnet get --subnet-id ${subnet_ocid} | jq -r '.data["route-table-id"]')
   rt_rules=$(oci network route-table get --rt-id ${rt_ocid} | jq -r '.data["route-rules"]')
   rt_rules_count=$(echo $rt_rules | jq '.|length')
-  ``
+
   lpg=""
   lpg_gw_id=""
 
@@ -404,7 +405,7 @@ function check_udp_port_open_in_seclist_or_nsg() {
 #     seclist_or_nsg_ocid:  OCID for the security list or nsg.
 #     ocid_type: Valid values: "nsg" for Network Security Group OCID, "seclist" for Security List OCID (default)
 # Returns:
-#   0|1
+#   0|1|Content of nsg_sec_list_array
 ###################################################
 function check_egress_all_traffic_in_nsg_or_seclist() {
     local nsg_ocid_or_sec_list=$1
