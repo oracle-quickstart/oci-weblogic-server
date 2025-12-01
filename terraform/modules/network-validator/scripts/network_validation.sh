@@ -219,8 +219,9 @@ function validate_lpg_route_rule() {
         fi
       fi
     done
-    else
-      echo 4
+
+    # executes only if loop never returned
+    echo 4
   fi
 }
 
@@ -987,7 +988,8 @@ if [[ -n ${LPG_OCID} ]]
 then
   if [[ -z ${WLS_LPG_OCID} ]]
   then
-    echo "One or more required parameters are not specified."
+    echo "When --lpg or -g is set then --wlslpg -r must also be set.
+    Only the --lpg argument is specified. Add the --wlslpg with the WLS VCN Local Peering Gateway OCID value."
     usage >&2
     exit 1
    fi
@@ -997,7 +999,8 @@ if [[ -n ${WLS_LPG_OCID} ]]
 then
   if [[ -z ${LPG_OCID} ]]
   then
-    echo "One or more required parameters are not specified."
+    echo "When --lpg or -g is set then --wlslpg -r must also be set.
+    Only the --wlslpg argument is specified. Add the --lpg with the Database VCN Local Peering Gateway OCID value."
     usage >&2
     exit 1
    fi
