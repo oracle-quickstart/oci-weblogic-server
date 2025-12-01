@@ -458,7 +458,7 @@ function check_egress_all_traffic_in_nsg_or_seclist() {
 #     db_cidr: CIDR block of the Database
 #     db_port: Database Port
 # Returns:
-#   0|1
+#   0|1|Content of nsg_sec_list_array
 ###################################################
 function check_egress_db_traffic_in_nsg_or_seclist() {
     local nsg_ocid_or_sec_list=$1
