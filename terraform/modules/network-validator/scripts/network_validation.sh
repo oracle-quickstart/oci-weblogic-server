@@ -9,7 +9,7 @@
 # ############################################################################
 #
 
-version="1.1.0"
+version="1.1.1"
 
 # Set Flags
 # -----------------------------------
@@ -170,6 +170,59 @@ function validate_service_or_nat_gw_exist() {
     fi
   fi
   echo 0
+}
+
+###########################################################
+# Validates if the Subnet has a specific Route Rule for LPG.
+# Args:
+#   subnet_ocid: OCID of the VCN Subnet
+#   cidr_subnet: CIDR subnet of the VCN
+#
+# Returns:
+#   0|2|4
+############################################################
+function validate_lpg_route_rule() {
+  local subnet_ocid=$1
+  local cidr_subnet=$2
+
+  #Check if the Subnet's route rule contains LPG entry
+  rt_ocid=$(oci network subnet get --subnet-id ${subnet_ocid} | jq -r '.data["route-table-id"]')
+  rt_rules=$(oci network route-table get --rt-id ${rt_ocid} | jq -r '.data["route-rules"]')
+  rt_rules_count=$(echo $rt_rules | jq '.|length')
+
+  lpg=""
+  lpg_gw_id=""
+
+  for ((i = 0 ; i < $rt_rules_count ; i++))
+  do
+    network_entity_ocid=$(echo $rt_rules | jq -r --arg i "$i" '.[$i|tonumber]["network-entity-id"]')
+    lpg_id=$(echo $network_entity_ocid | grep localpeeringgateway)
+    if [[ -n $lpg_id ]]; then lpg_gw_id=$lpg_id; fi
+  done
+
+  if [[ -z $lpg_gw_id ]]; then
+    echo 2
+    return
+  else
+    for ((k = 0 ; k < $rt_rules_count ; k++))
+    do
+      network_entity_ocid=$(echo $rt_rules | jq -r --arg i "$k" '.[$i|tonumber]["network-entity-id"]')
+      res=$(echo $network_entity_ocid | grep localpeeringgateway)
+      if [[ -n $res ]]
+      then
+        cidr_range=$(echo $rt_rules | jq -r --arg i "$k" '.[$i|tonumber].destination')
+        res=$(in_cidr_range ${cidr_subnet} ${cidr_range})
+        if [[ $res -eq 0 ]]
+        then
+          echo 0
+          return
+        fi
+      fi
+    done
+
+    # executes only if loop never returned
+    echo 4
+  fi
 }
 
 ####################################################
@@ -353,7 +406,7 @@ function check_udp_port_open_in_seclist_or_nsg() {
 #     seclist_or_nsg_ocid:  OCID for the security list or nsg.
 #     ocid_type: Valid values: "nsg" for Network Security Group OCID, "seclist" for Security List OCID (default)
 # Returns:
-#   0|1
+#   0|1|Content of nsg_sec_list_array
 ###################################################
 function check_egress_all_traffic_in_nsg_or_seclist() {
     local nsg_ocid_or_sec_list=$1
@@ -376,6 +429,7 @@ function check_egress_all_traffic_in_nsg_or_seclist() {
             egress_destination=$(echo $egress_rules | jq -r --arg i "$j" '.[$i|tonumber].destination')
             egress_destination_type=$(echo $egress_rules | jq -r --arg i "$j" '.[$i|tonumber]."destination-type"')
 
+
             if [[ $egress_destination_type != "CIDR_BLOCK" ]]; then
                 nsg_sec_list_array[$j]="WARNING: Destinantion type is either NSG or Service. Skipping the validation check for ${egress_destination}."
                 continue
@@ -385,6 +439,64 @@ function check_egress_all_traffic_in_nsg_or_seclist() {
                 egress_is_open=true
                 echo 0
                 return
+            fi
+        done
+    fi
+
+    if [[ ${#nsg_sec_list_array[@]} != 0 ]]; then
+        echo "${nsg_sec_list_array[@]}"
+    else
+        echo 1
+    fi
+}
+
+###################################################
+# Checks if there is an egress rule to  ensure that the network can establish outbound communication to the Database on the specific port.
+# Args:
+#     seclist_or_nsg_ocid:  OCID for the security list or nsg.
+#     ocid_type: Valid values: "nsg" for Network Security Group OCID, "seclist" for Security List OCID (default)
+#     db_cidr: CIDR block of the Database
+#     db_port: Database Port
+# Returns:
+#   0|1|Content of nsg_sec_list_array
+###################################################
+function check_egress_db_traffic_in_nsg_or_seclist() {
+    local nsg_ocid_or_sec_list=$1
+    local db_cidr=$3
+    local db_port=$4
+    local icmp_protocol="1"
+    local port_is_open=false
+    local egress_rules_count=0
+    local ocid_type=$2
+    declare -A nsg_sec_list_array
+
+    if [[ $ocid_type == "nsg" ]]; then
+        egress_rules=$(oci network nsg rules list --nsg-id $nsg_ocid_or_sec_list --direction EGRESS | jq -r '.data')
+    else
+        egress_rules=$(oci network security-list get --security-list-id $nsg_ocid_or_sec_list | jq -r '.data["egress-security-rules"]')
+    fi
+    egress_rules_count=$(echo $egress_rules | jq '. | length')
+
+    if [[ $egress_rules_count -gt 0 ]]; then
+        for ((j = 0; j < egress_rules_count; j++)); do
+            egress_protocol=$(echo $egress_rules | jq -r --arg i "$j" '.[$i|tonumber].protocol')
+            egress_destination=$(echo $egress_rules | jq -r --arg i "$j" '.[$i|tonumber].destination')
+            egress_destination_type=$(echo $egress_rules | jq -r --arg i "$j" '.[$i|tonumber]."destination-type"')
+            tcp_options=$(echo $egress_rules | jq -r --arg i "$j" '.[$i|tonumber]["tcp-options"]')
+            port_min=$(echo $egress_rules | jq -r --arg i "$j" '.[$i|tonumber]["tcp-options"]["destination-port-range"].min')
+            port_max=$(echo $egress_rules | jq -r --arg i "$j" '.[$i|tonumber]["tcp-options"]["destination-port-range"].max')
+
+
+            if [[ $egress_destination_type != "CIDR_BLOCK" ]]; then
+                nsg_sec_list_array[$j]="WARNING: Destinantion type is either NSG or Service. Skipping the validation check for ${egress_destination}."
+                continue
+            fi
+
+            if [[ $egress_protocol == "6"  && $egress_destination == "$db_cidr" && ( $db_port -ge $port_min && $db_port -le $port_max )  ]]
+            then
+              port_is_open=true
+              echo 0
+              return
             fi
         done
     fi
@@ -463,11 +575,46 @@ function validate_egress_rule() {
   for seclist_ocid in "${seclists_array[@]}"
   do
     if [[ $port_found_open -ne 0 ]]; then
-        port_found_open=$(check_egress_all_traffic_in_nsg_or_seclist $seclist_ocid  "seclist")
+      port_found_open=$(check_egress_all_traffic_in_nsg_or_seclist $seclist_ocid  "seclist")
     fi
   done
   echo $port_found_open
 }
+
+###################################################
+# Validates if egress rule is present to allow DB traffic for WLS subnet.
+#
+# Args:
+#     subnet: Subnet OCID
+#     db_cidr_block: CIDR block for the DB subnet
+#     port: Database port
+# Returns:
+#   0|1
+####################################################
+function validate_db_egress_rule() {
+  local port_found_open=1
+  local subnet=$1
+  local db_cidr_block=$2
+  local port=$3
+
+  sec_lists=$(oci network subnet get --subnet-id ${subnet} | jq -c '.data["security-list-ids"]')
+
+  declare -A seclists_array
+
+  while IFS="=" read -r key value
+  do
+      seclists_array[$key]="$value"
+  done < <(jq -r 'to_entries|map("\(.key)=\(.value|tostring)")|.[]' <<< "$sec_lists")
+   # Check the ingress rules for specified destination port is open for access by source CIDR
+  for seclist_ocid in "${seclists_array[@]}"
+  do
+    if [[ $port_found_open -ne 0 ]]; then
+      port_found_open=$(check_egress_db_traffic_in_nsg_or_seclist $seclist_ocid  "seclist" $db_cidr_block $port)
+    fi
+  done
+  echo $port_found_open
+}
+
 ####################################################
 # Validates if the ATP_PORT is open for the WLS subnet CIDR.
 # This is applicable for ATP DB with private endpoint only.
@@ -570,11 +717,11 @@ function validate_ocidb_port_access() {
 function validate_dhcp_options() {
   local subnet_id=$1
   dhcp_id=$(oci network subnet get --subnet-id ${subnet_id} | jq -r '.data["dhcp-options-id"]')
-  resolver_type=$(oci network dhcp-options get --dhcp-id ${dhcp_id} | jq -r '.data["options"][0]["server-type"]')
+  resolver_type=$(oci network dhcp-options get --dhcp-id ${dhcp_id} | jq -r '.data["options"][1]["server-type"]')
 
   if [[ $resolver_type == "CustomDnsServer" ]]; then
     dhcp_options=$(oci network dhcp-options get --dhcp-id ${dhcp_id})
-    dns_servers=($(jq -r '.data["options"][0]["custom-dns-servers"]|.[]' <<< "$dhcp_options"))
+    dns_servers=($(jq -r '.data["options"][1]["custom-dns-servers"]|.[]' <<< "$dhcp_options"))
     for dns_server in "${dns_servers[@]}"
     do
       if [[ $dns_server == '169.254.169.254' ]];then
@@ -587,6 +734,26 @@ function validate_dhcp_options() {
     return
   fi
   echo 1
+}
+
+####################################################
+# Validates if VCN is created with "Use DNS hostnames in this VCN"
+#
+# Args:
+#     subnet_id:    Subnet Id
+#
+# Returns:
+#   0|1
+####################################################
+function validate_vcn_with_dns_hostname_set() {
+  local subnet_id=$1
+
+  dns_label=$(oci network subnet get --subnet-id ${subnet_id} | jq -r '.data["dns-label"]')
+  if [[ "${dns_label}" == "null" ]];then
+    echo 1
+  else
+    echo 0
+  fi
 }
 
 ####################################################
@@ -623,7 +790,8 @@ This script is used to validate existing subnets, and optionally network securit
   -d, --ocidbid       OCI Database System OCID
   -P, --ocidbport     OCI Database Port
   -t, --atpdbid       ATP Database OCID
-  -g, --lpg           OCID of the Local Peering Gateway (LPG) in the DB VCN
+  -g, --lpg           OCID of the Local Peering Gateway (LPG) in the DB VCN (Required if WLS VCN LPG is specified)
+  -r, --wlslpg        OCID of the Local Peering Gateway (LPG) in the WLS VCN (Required if DB VCN LPG is specified)
   -b, --bastionsubnet Bastion Subnet OCID
   -i, --bastionip     Bastion Host IP. Provide this if using existing bastion
   -j, --lbsourcecidr  Load Balance Source CIDR
@@ -694,6 +862,7 @@ while [[ $1 = -?* ]]; do
     -P|--ocidbport) shift; DB_PORT=${1} ;;
     -t|--atpdbid) shift; ATPDB_OCID=${1} ;;
     -g|--lpg) shift; LPG_OCID=${1} ;;
+    -r|--wlslpg) shift; WLS_LPG_OCID=${1};;
     -b|--bastionsubnet) shift; BASTION_SUBNET_OCID=${1} ;;
     -i|--bastionip) shift; BASTION_HOST_IP=${1} ;;
     -j|--lbsourcecidr) shift; LB_SOURCE_CIDR=${1} ;;
@@ -814,6 +983,28 @@ then
    exit 1
    fi
 fi
+#If DB VCN LPG is provided, then WLS VCN LPG is required.
+if [[ -n ${LPG_OCID} ]]
+then
+  if [[ -z ${WLS_LPG_OCID} ]]
+  then
+    echo "When --lpg or -g is set then --wlslpg -r must also be set.
+    Only the --lpg argument is specified. Add the --wlslpg with the WLS VCN Local Peering Gateway OCID value."
+    usage >&2
+    exit 1
+   fi
+fi
+#If WLS VCN LPG is provided, then DB VCN LPG is required.
+if [[ -n ${WLS_LPG_OCID} ]]
+then
+  if [[ -z ${LPG_OCID} ]]
+  then
+    echo "When --lpg or -g is set then --wlslpg -r must also be set.
+    Only the --wlslpg argument is specified. Add the --lpg with the Database VCN Local Peering Gateway OCID value."
+    usage >&2
+    exit 1
+   fi
+fi
 
 validation_return_code=0
 
@@ -849,6 +1040,14 @@ res=$(validate_internet_gw_exist)
 if [[ $res -ne 0 ]]
 then
   echo "WARNING: Missing internet gateway in the VCN of the WLS subnet [$WLS_SUBNET_OCID]. ${NETWORK_VALIDATION_MSG}"
+fi
+
+#Check if the subnet is created with USE DNS HOSTNAMES IN THIS SUBNET
+res=$(validate_vcn_with_dns_hostname_set ${WLS_SUBNET_OCID})
+if [[ $res -ne 0 ]]
+then
+  echo "ERROR: Subnet [$WLS_SUBNET_OCID] needs to be created with the USE DNS HOSTNAMES IN THIS SUBNET enabled."
+  validation_return_code=2
 fi
 
 ### Validation - Only when WLS Subnet OCID is provided ###
@@ -1038,21 +1237,53 @@ then
       echo "WARNING: Subnet security list limit reached for the DB subnet [${ocidb_subnet_ocid}]. Five security lists are already associated with it and a new security list cannot be added. Ensure that one of the security rules opens the DB port ${DB_PORT} for WLS Subnet CIDR [$wls_subnet_cidr_block] in DB Subnet [$ocidb_subnet_ocid] or in DB NSG [$ocidb_nsg_ocid]. Also, when creating a stack, do not select the Create Database Security List option. ${NETWORK_VALIDATION_MSG}"
     fi
 
-    # Check if LPG is in OCI DB VCN & peering status is valid
-    if [[ -n ${LPG_OCID}  ]]
+    # Check if LPG is in OCI DB VCN & WLS LPG is in WLS VCN & peering status is valid
+    if [[ -n ${LPG_OCID} && -n ${WLS_LPG_OCID} ]]
     then
-      ocidb_vcn_ocid=$(oci network subnet get --subnet-id ${ocidb_subnet_ocid} | jq -c '.data["vcn-id"]')
-      lpg_vcn_ocid=$(oci network local-peering-gateway get --local-peering-gateway-id ${LPG_OCID} | jq -c '.data["vcn-id"]')
+      ocidb_vcn_ocid=$(oci network subnet get --subnet-id ${ocidb_subnet_ocid} | jq -r '.data["vcn-id"]')
+      lpg_vcn_ocid=$(oci network local-peering-gateway get --local-peering-gateway-id ${LPG_OCID} | jq -r '.data["vcn-id"]')
       if [[ "${lpg_vcn_ocid//\"}" != "${ocidb_vcn_ocid//\"}" ]]; then
         echo "ERROR: LPG [${LPG_OCID}] is not in OCI DB VCN [${ocidb_vcn_ocid}]. ${NETWORK_VALIDATION_MSG}"
         validation_return_code=2
       fi
+      wls_vcn_ocid=$(oci network subnet get --subnet-id ${WLS_SUBNET_OCID} | jq -r '.data["vcn-id"]')
+      wls_lpg_vcn_ocid=$(oci network local-peering-gateway get --local-peering-gateway-id ${WLS_LPG_OCID} | jq -r '.data["vcn-id"]')
+      if [[ "${wls_lpg_vcn_ocid//\"}" != "${wls_vcn_ocid//\"}" ]]; then
+        echo "ERROR: LPG [${WLS_LPG_OCID}] is not in WLS VCN [${wls_vcn_ocid}]. ${NETWORK_VALIDATION_MSG}"
+        validation_return_code=2
+      fi
       lpg_peering_status=$(oci network local-peering-gateway get --local-peering-gateway-id ${LPG_OCID} | jq -c '.data["peering-status"]')
-      if [[ "${lpg_peering_status//\"}" != "NEW" ]]; then
+      if [[ "${lpg_peering_status//\"}" != "PEERED" ]]; then
         echo "ERROR: LPG [${LPG_OCID}] cannot be used to provision a new stack. The peering status is [${lpg_peering_status}]. ${NETWORK_VALIDATION_MSG}"
         validation_return_code=2
       fi
+      #Check if the DB Subnet has a Route rule to  WLS CIDR
+      vcn_cidr=$(oci network vcn get --vcn-id ${ocidb_vcn_ocid} | jq -r '.data["cidr-block"]')
+      res=$(validate_lpg_route_rule ${ocidb_subnet_ocid} ${vcn_cidr})
+      if [[ $res -ne 0 ]]; then
+        echo "ERROR: Route Rule in the DB Subnet[${ocidb_subnet_ocid}] is not having an entry with LPG for WLS VCN CIDR"
+        validation_return_code=2
+      fi
+      #Check if the WLS Subnet has a Route rule to DB CIDR
+      wls_vcn_cidr=$(oci network vcn get --vcn-id ${wls_vcn_ocid} | jq -r '.data["cidr-block"]')
+      res=$(validate_lpg_route_rule ${WLS_SUBNET_OCID} ${wls_vcn_cidr})
+      if [[ $res -ne 0 ]]; then
+        echo "ERROR: Route Rule in the WLS Subnet[${WLS_SUBNET_OCID}] is not having an entry with LPG for DB VCN CIDR"
+        validation_return_code=2
+      fi
     fi
+  fi
+  # Check if Egress rule to DB port is present in WLS subnet security list or Managed Server NSG
+  db_subnet_cidr_block=$(oci network subnet get --subnet-id ${ocidb_subnet_ocid} | jq -r '.data["cidr-block"]')
+  if [[ -n ${MANAGED_SRV_NSG_OCID} ]]; then
+    res=$(check_egress_db_traffic_in_nsg_or_seclist ${MANAGED_SRV_NSG_OCID}  "nsg" ${db_subnet_cidr_block} ${DB_PORT})
+  else
+    res=$(validate_db_egress_rule ${WLS_SUBNET_OCID} ${db_subnet_cidr_block} ${DB_PORT})
+  fi
+
+  if [[ $res -ne 0 ]]; then
+    echo "ERROR: Egress rule - DB port ${DB_PORT} is not open for access by DB Subnet CIDR [${db_subnet_cidr_block}] in WLS Subnet [${WLS_SUBNET_OCID}] or in WLS NSG [${MANAGED_SRV_NSG_OCID}]."
+    validation_return_code=2
   fi
 fi
 
@@ -1070,21 +1301,53 @@ then
       validation_return_code=2
     fi
 
-    # Check if LPG is in ATP DB VCN & peering status is valid
-    if [[ -n ${LPG_OCID}  ]]
+    # Check if LPG is in ATP DB VCN & WLS LPG is in WLS VCN & peering status is valid
+    if [[ -n ${LPG_OCID} && -n ${WLS_LPG_OCID} ]]
     then
       atp_vcn_ocid=$(oci network subnet get --subnet-id $atp_subnet_ocid | jq -r '.data["vcn-id"]')
-      lpg_vcn_ocid=$(oci network local-peering-gateway get --local-peering-gateway-id ${LPG_OCID} | jq -c '.data["vcn-id"]')
+      lpg_vcn_ocid=$(oci network local-peering-gateway get --local-peering-gateway-id ${LPG_OCID} | jq -r '.data["vcn-id"]')
       if [[ "${lpg_vcn_ocid//\"}" != "${atp_vcn_ocid//\"}" ]]; then
         echo "ERROR: LPG [${LPG_OCID}] is not in ATP DB VCN [${atp_vcn_ocid}]. ${NETWORK_VALIDATION_MSG}"
         validation_return_code=2
       fi
-      lpg_peering_status=$(oci network local-peering-gateway get --local-peering-gateway-id ${LPG_OCID} | jq -c '.data["peering-status"]')
-      if [[ "${lpg_peering_status//\"}" != "NEW" ]]; then
+      wls_vcn_ocid=$(oci network subnet get --subnet-id ${WLS_SUBNET_OCID} | jq -r '.data["vcn-id"]')
+      wls_lpg_vcn_ocid=$(oci network local-peering-gateway get --local-peering-gateway-id ${WLS_LPG_OCID} | jq -r '.data["vcn-id"]')
+      if [[ "${wls_lpg_vcn_ocid//\"}" != "${wls_vcn_ocid//\"}" ]]; then
+        echo "ERROR: LPG [${WLS_LPG_OCID}] is not in WLS VCN [${wls_vcn_ocid}]. ${NETWORK_VALIDATION_MSG}"
+        validation_return_code=2
+      fi
+      lpg_peering_status=$(oci network local-peering-gateway get --local-peering-gateway-id ${LPG_OCID} | jq -r '.data["peering-status"]')
+      if [[ "${lpg_peering_status//\"}" != "PEERED" ]]; then
         echo "ERROR: LPG [${LPG_OCID}] cannot be used to provision a new stack. The peering status is [${lpg_peering_status}]. ${NETWORK_VALIDATION_MSG}"
         validation_return_code=2
       fi
+      #Check if the DB Subnet has a Route rule to  WLS CIDR
+      vcn_cidr=$(oci network vcn get --vcn-id ${atp_vcn_ocid} | jq -r '.data["cidr-block"]')
+      res=$(validate_lpg_route_rule ${atp_subnet_ocid} ${vcn_cidr})
+      if [[ $res -ne 0 ]]; then
+        echo "ERROR: Route Rule in the DB Subnet[${atp_subnet_ocid}] is not having an entry with LPG for WLS VCN CIDR"
+        validation_return_code=2
+      fi
+      #Check if the WLS Subnet has a Route rule to DB CIDR
+      wls_vcn_cidr=$(oci network vcn get --vcn-id ${wls_vcn_ocid} | jq -r '.data["cidr-block"]')
+      res=$(validate_lpg_route_rule ${WLS_SUBNET_OCID} ${wls_vcn_cidr})
+      if [[ $res -ne 0 ]]; then
+        echo "ERROR: Route Rule in the WLS Subnet[${WLS_SUBNET_OCID}] is not having an entry with LPG for DB VCN CIDR"
+        validation_return_code=2
+      fi
     fi
+  fi
+  # Check if Egress rule to DB port is present in WLS subnet security list or Managed Server NSG
+  db_subnet_cidr_block=$(oci network subnet get --subnet-id ${atp_subnet_ocid} | jq -r '.data["cidr-block"]')
+  if [[ -n ${MANAGED_SRV_NSG_OCID} ]]; then
+    res=$(check_egress_db_traffic_in_nsg_or_seclist ${MANAGED_SRV_NSG_OCID}  "nsg" ${db_subnet_cidr_block} ${ATP_DB_PORT})
+  else
+    res=$(validate_db_egress_rule ${WLS_SUBNET_OCID} ${db_subnet_cidr_block} ${ATP_DB_PORT})
+  fi
+
+  if [[ $res -ne 0 ]]; then
+    echo "ERROR: Egress rule - DB port ${DB_PORT} is not open for access by DB Subnet CIDR [${db_subnet_cidr_block}] in WLS Subnet [${WLS_SUBNET_OCID}] or in WLS NSG [${MANAGED_SRV_NSG_OCID}]."
+    validation_return_code=2
   fi
 fi
 
