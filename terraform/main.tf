@@ -239,7 +239,7 @@ module "policies" {
   apm_domain_compartment_id        = local.apm_domain_compartment_id
   use_autoscaling                  = var.use_autoscaling
   enable_osmh                      = var.enable_osmh
-  profile_compartment_id           = var.profile_compartment_id
+  profile_compartment_id           = local.profile_compartment_id
 
   ocir_auth_token_id               = var.ocir_auth_token_id
   add_fss                          = var.add_fss
