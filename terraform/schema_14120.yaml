@@ -2449,6 +2449,7 @@ variables:
     default: false
     title: "Enable Application Performance Monitoring"
     description: "Enable Application Performance Monitoring for WebLogic instances, which is required for automatic scaling of the stack. If you automatically scale the stack, you must not unselect the Enable Application Performance Monitoring option when editing the stack."
+    visible: ${orm_create_mode}
 
   apm_domain_compartment_id:
     visible:
