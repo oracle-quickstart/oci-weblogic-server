@@ -1980,9 +1980,11 @@ variables:
 
   apm_domain_compartment_id:
     visible:
-      -or:
-        - ${use_apm_service}
-        - ${use_autoscaling}
+      and:
+        - ${orm_create_mode}
+        - or:
+            - ${use_apm_service}
+            - ${use_autoscaling}
     type: oci:identity:compartment:id
     title: "Application Performance Monitoring Domain Compartment"
     description: "The compartment where you have the Application Performance Monitoring domain to be used by this WebLogic instance"
@@ -1991,9 +1993,11 @@ variables:
 
   apm_domain_id:
     visible:
-      -or:
-        - ${use_apm_service}
-        - ${use_autoscaling}
+      and:
+        - ${orm_create_mode}
+        - or:
+            - ${use_apm_service}
+            - ${use_autoscaling}
     type: oci:apm:domain:id
     title: "Application Performance Monitoring Domain"
     description: "The Application Performance Monitoring domain used by this WebLogic instance"
@@ -2003,9 +2007,11 @@ variables:
 
   apm_private_data_key_name:
     visible:
-      -or:
-        - ${use_apm_service}
-        - ${use_autoscaling}
+      and:
+        - ${orm_create_mode}
+        - or:
+            - ${use_apm_service}
+            - ${use_autoscaling}
     type: string
     title: "Application Performance Monitoring Private Data Key Name"
     description: "The name of the private data key used by this WebLogic instance to push metrics to the Application Performance Monitoring domain"
