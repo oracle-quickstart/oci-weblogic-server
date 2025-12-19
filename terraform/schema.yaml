@@ -2601,7 +2601,7 @@ variables:
             - ${use_autoscaling}
     type: string
     title: "Registry User Name"
-    description: "The user name to access the Oracle Cloud Infrastructure Registry (OCIR) for deploying autoscaling OCI functions, which has the format {identity domain name}/{username}. If your tenancy is using Oracle Identity Cloud Service, use the format oracleidentitycloudservice/{username}."
+    description: "The user name to access the Oracle Cloud Infrastructure Registry (OCIR) for deploying autoscaling OCI functions has the format {tenancy namespace}/{identity domain name}/{user name}. If the user is in the Default identity domain, do not include {identity domain name}. If you do not know the tenancy namespace do not add {tenancy_namespace} and let the stack set this for you. For example, if you don't know your tenancy namespace and your tenancy is federated with Oracle Identity Cloud Service with an identity domain of oracleidentitycloudservice you would set oracleidentitycloudservice/{username}."
     required: true
 
   ocir_auth_token_compartment_id:
