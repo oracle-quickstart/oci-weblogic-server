@@ -1,4 +1,4 @@
-# Copyright (c) 2023, 2025, Oracle and/or its affiliates.
+# Copyright (c) 2023, 2026, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 title: Oracle WebLogic Server for Oracle Cloud Infrastructure
@@ -166,7 +166,9 @@ groupings:
 
   - title: "OCI Logging"
     variables:
+      - ${use_dg_from_default_identity_domain}
       - ${dynamic_group_id}
+      - ${dynamic_group_id_text}
 
   - title: "Application Performance Monitoring"
     visible:
@@ -2401,14 +2403,41 @@ variables:
     visible:
       and:
         - ${use_oci_logging}
+        - ${use_dg_from_default_identity_domain}
         - not:
             - ${create_policies}
     type: oci:identity:dynamicgroups:id
-    title: "Dynamic Group OCID for WebLogic Server Instances"
+    title: "Dynamic Group in Default Identity Domain for WebLogic Server Instances"
     dependsOn:
       compartmentId: ${tenancy_ocid}
-    description: "The OCID of the dynamic group that contains the WebLogic instances from which logs will be exported to OCI Logging Service."
+    description: "The dynamic group that contains the WebLogic instances from which logs will be exported to OCI Logging Service."
     required: true
+
+  use_dg_from_default_identity_domain:
+    visible:
+      and:
+        - ${use_oci_logging}
+        - not:
+            - ${create_policies}
+    type: boolean
+    required: true
+    default: true
+    title: "Select Dynamic Group from Default Identity Domain"
+    description: "Select a dynamic group from the default identity domain."
+
+  dynamic_group_id_text:
+    visible:
+      and:
+        - ${use_oci_logging}
+        - not:
+            - ${use_dg_from_default_identity_domain}
+        - not:
+            - ${create_policies}
+    type: string
+    required: true
+    title: "Dynamic Group OCID for WebLogic Server Instances"
+    description: "The OCID of the dynamic group that contains the WebLogic instances from which logs will be exported to OCI Logging Service."
+    pattern: ^ocid1.dynamicgroup.*$
 
   image_mode:
     visible:
