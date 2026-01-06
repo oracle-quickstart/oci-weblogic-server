@@ -2416,7 +2416,7 @@ variables:
         - not:
             - ${create_policies}
     type: oci:identity:dynamicgroups:id
-    title: "Dynamic Group in Default Identity Domain for WebLogic Server Instances"
+    title: "Dynamic Group in the Default Identity Domain for WebLogic Server Instances"
     dependsOn:
       compartmentId: ${tenancy_ocid}
     description: "The dynamic group that contains the WebLogic instances from which logs will be exported to OCI Logging Service."
