@@ -74,13 +74,13 @@ variable "idcs_cloudgate_config_file" {
 variable "idcs_cloudgate_docker_image_tar" {
   type        = string
   description = "Path of the binary file with the container image to run IDCS cloudgate container in the WebLogic VM"
-  default     = "/u01/zips/jcs/app_gateway_docker/25.1.03/app-gateway-docker-image.tar.gz"
+  default     = "/u01/zips/jcs/app_gateway_docker/25.3.32/app-gateway-docker-image.tar.gz"
 }
 
 variable "idcs_cloudgate_docker_image_version" {
   type        = string
   description = "Version of the container image to run IDCS cloudgate container in the WebLogic VM"
-  default     = "25.1.03-2501230623"
+  default     = "25.3.32-2508110511"
 }
 
 variable "idcs_cloudgate_docker_image_name" {
