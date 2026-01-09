@@ -1,4 +1,4 @@
-# Copyright (c) 2023, Oracle and/or its affiliates.
+# Copyright (c) 2023, 2026, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 variable "use_oci_logging" {
@@ -8,6 +8,20 @@ variable "use_oci_logging" {
 }
 
 variable "dynamic_group_id" {
+  type        = string
+  description = "The dynamic group that contains the WebLogic instances from which logs will be exported to OCI Logging Service"
+  default     = ""
+}
+
+# Variable used in UI only
+variable "use_dg_from_default_identity_domain" {
+  type        = bool
+  description = "Indicates if the user wants to select the dynamic group in the ORM UI, which currently supports selecting dynamic groups from the default identity domain only"
+  default     = true
+}
+
+# Variable used in UI only
+variable "dynamic_group_id_text" {
   type        = string
   description = "The dynamic group that contains the WebLogic instances from which logs will be exported to OCI Logging Service"
   default     = ""

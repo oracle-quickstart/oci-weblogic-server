@@ -1,4 +1,4 @@
-# Copyright (c) 2023, 2025, Oracle and/or its affiliates.
+# Copyright (c) 2023, 2026, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 locals {
@@ -156,6 +156,8 @@ locals {
 
   use_apm_service           = (var.use_apm_service || var.use_autoscaling)
   apm_domain_compartment_id = local.use_apm_service ? lookup(data.oci_apm_apm_domain.apm_domain[0], "compartment_id") : ""
+
+  dynamic_group_id = var.use_dg_from_default_identity_domain ? var.dynamic_group_id : var.dynamic_group_id_text
 
   ocir_namespace = data.oci_objectstorage_namespace.object_namespace.namespace
 
