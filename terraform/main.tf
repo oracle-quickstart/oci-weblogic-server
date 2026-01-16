@@ -361,7 +361,6 @@ module "vcn-peering" {
 }
 
 module "validators" {
-  depends_on = [module.network-validation]
   source                     = "./modules/validators"
   compartment_id             = var.compartment_ocid
   service_name               = var.service_name
@@ -604,6 +603,7 @@ module "observability-osmh"{
 }
 
 module "compute" {
+  depends_on             = [module.network-validation]
   source                 = "./modules/compute/wls_compute"
   add_loadbalancer       = local.add_load_balancer
   is_lb_private          = var.is_lb_private
