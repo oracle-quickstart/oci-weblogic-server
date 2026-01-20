@@ -1,8 +1,8 @@
 resource "oci_os_management_hub_software_source_change_availability_management" "software_source_change_availability_management" {
-   for_each = toset(local.filtered_sources)  
+   for_each = toset(local.filtered_sources)
 
   software_source_availabilities {
-    software_source_id  = each.value  
+    software_source_id  = each.value
     availability_at_oci = var.software_availabilty
   }
 }

@@ -594,7 +594,6 @@ module "observability-autoscaling" {
 }
 
 module "observability-osmh"{
-  depends_on          = [module.network-validation]
   source              = "./modules/observability/osmh"
   count               = local.create_profile ? 1 : 0
   tenancy_id          = var.tenancy_ocid
@@ -603,7 +602,6 @@ module "observability-osmh"{
 }
 
 module "compute" {
-  depends_on             = [module.network-validation]
   source                 = "./modules/compute/wls_compute"
   add_loadbalancer       = local.add_load_balancer
   is_lb_private          = var.is_lb_private
