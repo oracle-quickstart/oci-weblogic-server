@@ -1,4 +1,4 @@
-# Copyright (c) 2023, 2025, Oracle and/or its affiliates.
+# Copyright (c) 2023, 2026, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 locals {
@@ -63,6 +63,7 @@ locals {
   autoscaling_statement1 = var.use_autoscaling ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to use repos in tenancy" : ""
   autoscaling_statement2 = var.use_autoscaling ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to manage functions-family in compartment id ${var.compartment_id}" : ""
   autoscaling_statement3 = var.use_autoscaling ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to manage ons-subscriptions in compartment id ${var.compartment_id}" : ""
+  autoscaling_logging_statement = var.use_autoscaling ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_instance_principal_group.name} to manage log-groups in compartment id ${var.compartment_id}" : ""
 
   #Policies for OCI Functions principal dynamic group
   autoscaling_statement4  = var.use_autoscaling ? length(oci_identity_dynamic_group.wlsc_functions_principal_group) > 0 ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_functions_principal_group[0].name} to inspect tenancies in tenancy" : "" : ""
@@ -103,8 +104,11 @@ locals {
   autoscaling_logging_policy_2 = (var.use_oci_logging && var.use_autoscaling) ? length(oci_identity_dynamic_group.wlsc_functions_principal_group) > 0 ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_functions_principal_group[0].name} to use log-content in compartment id ${var.compartment_id}" : "" : ""
   autoscaling_logging_policy_3 = (var.use_oci_logging && var.use_autoscaling) ? length(oci_identity_dynamic_group.wlsc_functions_principal_group) > 0 ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_functions_principal_group[0].name} to manage unified-configuration in compartment id ${var.compartment_id}" : "" : ""
 
+  autoscaling_osmh_policy_1 = (var.enable_osmh && var.use_autoscaling) ? length(oci_identity_dynamic_group.wlsc_functions_principal_group) > 0 ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_functions_principal_group[0].name} to read osmh-software-sources in tenancy" : "" : ""
+  autoscaling_osmh_policy_2 = (var.enable_osmh && var.use_autoscaling) ? length(oci_identity_dynamic_group.wlsc_functions_principal_group) > 0 ? "Allow dynamic-group ${oci_identity_dynamic_group.wlsc_functions_principal_group[0].name} to manage osmh-profiles in compartment id ${var.profile_compartment_id}" : "" : ""
+
   autoscaling_statements = compact([local.autoscaling_statement1, local.autoscaling_statement2,
-    local.autoscaling_statement3, local.autoscaling_statement4, local.autoscaling_statement5,
+    local.autoscaling_statement3, local.autoscaling_logging_statement, local.autoscaling_statement4, local.autoscaling_statement5,
     local.autoscaling_statement6, local.autoscaling_statement7, local.autoscaling_statement8,
     local.autoscaling_statement9, local.autoscaling_statement10, local.autoscaling_statement11,
     local.autoscaling_statement12, local.autoscaling_statement13, local.autoscaling_statement14,
@@ -118,7 +122,9 @@ locals {
     local.autoscaling_db_policy_statement,
     local.autoscaling_fss_mount_target_policy_statement,
     local.autoscaling_fss_file_system_policy_statement,
-    local.autoscaling_fss_export_sets_policy_statement
+    local.autoscaling_fss_export_sets_policy_statement,
+    local.autoscaling_osmh_policy_1,
+    local.autoscaling_osmh_policy_2
   ])
 
   #Policies for creating wildcard certificate to configure SSL in secured production mode
