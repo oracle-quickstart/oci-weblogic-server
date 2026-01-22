@@ -20,26 +20,8 @@ data "oci_limits_limit_values" "compute_shape_service_limits" {
 
 locals {
   eligible_ads = [
-    for ad in data.oci_identity_availability_domains.ADs.availability_domains :
-    ad.name
-    if (
-    # Flex / BM shapes bypass limits
-    length(regexall("^.*Flex", var.instance_shape.instanceShape)) > 0 ||
-    length(regexall("^BM.*", var.instance_shape.instanceShape)) > 0 ||
-
-    # Otherwise check per-AD capacity
-    try(
-      tonumber(
-        data.oci_limits_limit_values.compute_shape_service_limits.limit_values[
-        index(
-          data.oci_limits_limit_values.compute_shape_service_limits.limit_values[*].scope,
-          ad.name
-        )
-        ].value
-      ) > 0,
-      false
-    )
-    )
+    for ad in data.oci_identity_availability_domains.ADs.availability_domains : ad.name
+    if (length(regexall("^.*Flex", var.instance_shape.instanceShape)) > 0 || length(regexall("^BM.*", var.instance_shape.instanceShape)) > 0 || tonumber(data.oci_limits_limit_values.compute_shape_service_limits.limit_values[index(data.oci_limits_limit_values.compute_shape_service_limits.limit_values[*].scope, ad.name)].value) > 0)
   ]
 }
 
@@ -99,4 +81,3 @@ data "oci_database_db_home" "ocidb_db_home" {
   count      = local.is_ocidb_system_id_available && !local.is_db_deleted ? 1 : 0
   db_home_id = data.oci_database_database.ocidb_database[0].db_home_id
 }
-
