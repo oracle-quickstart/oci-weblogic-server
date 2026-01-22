@@ -1007,6 +1007,7 @@ variables:
     dependsOn:
       compartmentId: ${wls_admin_secret_compartment_id}
     
+
   #Network Validation script execution
   skip_network_validation:
     visible:
@@ -1019,8 +1020,8 @@ variables:
             - ${create_new_subnets}
     type: boolean
     default: false
-    title: "Acknowledge if Existing Network is Validated"
-    description: "Check the box if you want to skip the validation using the network validation script of the existing Virtual Cloud Network you selected. See <a target=\"_blank\" href=\"https://docs.oracle.com/pls/topic/lookup?ctx=en/cloud/paas/weblogic-cloud/user&id=oci_network_validate\">Validate Existing Network Setup</a>"
+    title: "Skip Existing Network Validation"
+    description: "Skip running the network validation script for the selected existing VCN. See <a target=\"_blank\" href=\"https://docs.oracle.com/pls/topic/lookup?ctx=en/cloud/paas/weblogic-cloud/user&id=oci_network_validate\">Validate Existing Network Setup</a>"
   
   
   # WLS Network Configuration

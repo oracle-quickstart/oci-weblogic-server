@@ -267,6 +267,6 @@ variable "wait_time_wls_vnc_dns_resolver" {
 
 variable "skip_network_validation" {
   type        = bool
-  description = "Used in case there is something really wrong with the validation and we need to skip it"
+  description = "Allows skipping the network validation when the validation cannot be completed successfully."
   default     = false
 }
