@@ -3,7 +3,7 @@
 
 locals {
   host_label     = "${var.resource_name_prefix}-${var.vnic_prefix}"
-  ad_names       = local.eligible_ads
+  ad_names       = compact(data.template_file.ad_names.*.rendered)
   admin_ad_index = index(local.ad_names, var.availability_domain == "" ? local.ad_names[0] : var.availability_domain)
 
   num_fault_domains = length(data.oci_identity_fault_domains.wls_fault_domains.fault_domains)

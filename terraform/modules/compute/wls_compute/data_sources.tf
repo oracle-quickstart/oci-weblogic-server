@@ -6,23 +6,22 @@ data "oci_identity_fault_domains" "wls_fault_domains" {
   compartment_id      = var.compartment_id
 }
 
+data "template_file" "ad_names" {
+  count    = length(data.oci_identity_availability_domains.ADs.availability_domains)
+  template = (length(regexall("^.*Flex", var.instance_shape.instanceShape)) > 0 || length(regexall("^BM.*", var.instance_shape.instanceShape)) > 0 || (tonumber(lookup(data.oci_limits_limit_values.compute_shape_service_limits[count.index].limit_values[0], "value")) > 0)) ? lookup(data.oci_identity_availability_domains.ADs.availability_domains[count.index], "name") : ""
+}
+
 data "oci_identity_availability_domains" "ADs" {
   compartment_id = var.tenancy_id
 }
 
 data "oci_limits_limit_values" "compute_shape_service_limits" {
+  count          = length(data.oci_identity_availability_domains.ADs.availability_domains)
   compartment_id = var.tenancy_id
   service_name   = "compute"
-  scope_type     = "AD"
 
-  name           = length(regexall("^.*Flex", var.instance_shape.instanceShape)) > 0 || length(regexall("^BM.*", var.instance_shape.instanceShape)) > 0 ? "" : format("%s-count", replace(var.instance_shape.instanceShape, ".", "-"))
-}
-
-locals {
-  eligible_ads = [
-    for ad in data.oci_identity_availability_domains.ADs.availability_domains : ad.name
-    if (length(regexall("^.*Flex", var.instance_shape.instanceShape)) > 0 || length(regexall("^BM.*", var.instance_shape.instanceShape)) > 0 || tonumber(data.oci_limits_limit_values.compute_shape_service_limits.limit_values[index(data.oci_limits_limit_values.compute_shape_service_limits.limit_values[*].scope, ad.name)].value) > 0)
-  ]
+  availability_domain = lookup(data.oci_identity_availability_domains.ADs.availability_domains[count.index], "name")
+  name                = length(regexall("^.*Flex", var.instance_shape.instanceShape)) > 0 || length(regexall("^BM.*", var.instance_shape.instanceShape)) > 0 ? "" : format("%s-count", replace(var.instance_shape.instanceShape, ".", "-"))
 }
 
 data "template_file" "key_script" {
@@ -36,17 +35,16 @@ data "template_file" "key_script" {
   }
 }
 
-# Commented as it was not being used anywhere.
-# data "oci_core_shapes" "oci_shapes" {
-#   count               = length(data.oci_identity_availability_domains.ADs.availability_domains)
-#   compartment_id      = var.compartment_id
-#   image_id            = var.instance_image_id
-#   availability_domain = lookup(data.oci_identity_availability_domains.ADs.availability_domains[count.index], "name")
-#   filter {
-#     name   = "name"
-#     values = [var.instance_shape.instanceShape]
-#   }
-# }
+data "oci_core_shapes" "oci_shapes" {
+  count               = length(data.oci_identity_availability_domains.ADs.availability_domains)
+  compartment_id      = var.compartment_id
+  image_id            = var.instance_image_id
+  availability_domain = lookup(data.oci_identity_availability_domains.ADs.availability_domains[count.index], "name")
+  filter {
+    name   = "name"
+    values = [var.instance_shape.instanceShape]
+  }
+}
 
 data "oci_database_autonomous_database" "atp_db" {
   count                  = local.is_atp_db ? 1 : 0
