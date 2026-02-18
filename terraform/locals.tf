@@ -1,4 +1,4 @@
-# Copyright (c) 2023, 2025, Oracle and/or its affiliates.
+# Copyright (c) 2023, 2026, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 locals {
@@ -157,11 +157,14 @@ locals {
   use_apm_service           = (var.use_apm_service || var.use_autoscaling)
   apm_domain_compartment_id = local.use_apm_service ? lookup(data.oci_apm_apm_domain.apm_domain[0], "compartment_id") : ""
 
+  dynamic_group_id = var.use_dg_from_default_identity_domain ? var.dynamic_group_id : var.dynamic_group_id_text
+
   ocir_namespace = data.oci_objectstorage_namespace.object_namespace.namespace
 
   ocir_namespace_with_slash = format("%s/", local.ocir_namespace)
-  ocir_user_starts_with     = substr(var.ocir_user, 0, length(local.ocir_namespace_with_slash))
-  ocir_user                 = local.ocir_user_starts_with == local.ocir_namespace_with_slash ? var.ocir_user : "${format("%s%s", local.ocir_namespace_with_slash, var.ocir_user)}"
+  ocir_user_starts_with     = substr(var.ocir_user, 0, length(local.ocir_namespace_with_slash)) == local.ocir_namespace_with_slash
+  ocir_user_boat_access     = strcontains(var.ocir_user, "bmc_operator_access")
+  ocir_user                 = (local.ocir_user_boat_access || local.ocir_user_starts_with) ? var.ocir_user : "${format("%s%s", local.ocir_namespace_with_slash, var.ocir_user)}"
 
   region_keys         = data.oci_identity_regions.all_regions.regions.*.key
   region_names        = data.oci_identity_regions.all_regions.regions.*.name
@@ -197,7 +200,7 @@ locals {
   select_existing_profile         = var.select_existing_profile
   create_profile                  = (local.enable_osmh && !local.select_existing_profile) ? true : false
   profile_ocid                    = local.select_existing_profile ? var.profile_ocid : ""
-  profile_compartment_id          = var.profile_compartment_id == "" ? var.compartment_ocid : var.profile_compartment_id
+  profile_compartment_id          = var.profile_compartment_id == "" ? (var.select_existing_profile ? data.oci_os_management_hub_profile.osmh_profile[0].compartment_id : var.compartment_ocid) : var.profile_compartment_id
   profile_name                    = var.profile_name == "" ? format("%s_profile", local.service_name_prefix) : var.profile_name
 
 

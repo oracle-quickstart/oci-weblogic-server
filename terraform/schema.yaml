@@ -1,4 +1,4 @@
-# Copyright (c) 2023, 2025, Oracle and/or its affiliates.
+# Copyright (c) 2023, 2026, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 title: Oracle WebLogic Server for Oracle Cloud Infrastructure
@@ -166,7 +166,9 @@ groupings:
 
   - title: "OCI Logging"
     variables:
+      - ${use_dg_from_default_identity_domain}
       - ${dynamic_group_id}
+      - ${dynamic_group_id_text}
 
   - title: "Application Performance Monitoring"
     visible:
@@ -2401,14 +2403,41 @@ variables:
     visible:
       and:
         - ${use_oci_logging}
+        - ${use_dg_from_default_identity_domain}
         - not:
             - ${create_policies}
     type: oci:identity:dynamicgroups:id
-    title: "Dynamic Group OCID for WebLogic Server Instances"
+    title: "Dynamic Group in the Default Identity Domain for WebLogic Server Instances"
     dependsOn:
       compartmentId: ${tenancy_ocid}
-    description: "The OCID of the dynamic group that contains the WebLogic instances from which logs will be exported to OCI Logging Service."
+    description: "The dynamic group that contains the WebLogic instances from which logs will be exported to OCI Logging Service."
     required: true
+
+  use_dg_from_default_identity_domain:
+    visible:
+      and:
+        - ${use_oci_logging}
+        - not:
+            - ${create_policies}
+    type: boolean
+    required: true
+    default: true
+    title: "Select Dynamic Group from Default Identity Domain"
+    description: "Select a dynamic group from the default identity domain."
+
+  dynamic_group_id_text:
+    visible:
+      and:
+        - ${use_oci_logging}
+        - not:
+            - ${use_dg_from_default_identity_domain}
+        - not:
+            - ${create_policies}
+    type: string
+    required: true
+    title: "Dynamic Group OCID for WebLogic Server Instances"
+    description: "The OCID of the dynamic group that contains the WebLogic instances from which logs will be exported to OCI Logging Service."
+    pattern: ^ocid1.dynamicgroup.*$
 
   image_mode:
     visible:
@@ -2440,12 +2469,15 @@ variables:
     default: false
     title: "Enable Application Performance Monitoring"
     description: "Enable Application Performance Monitoring for WebLogic instances, which is required for automatic scaling of the stack. If you automatically scale the stack, you must not unselect the Enable Application Performance Monitoring option when editing the stack."
+    visible: ${orm_create_mode}
 
   apm_domain_compartment_id:
     visible:
-      -or:
-        - ${use_apm_service}
-        - ${use_autoscaling}
+      and:
+        - ${orm_create_mode}
+        - or:
+            - ${use_apm_service}
+            - ${use_autoscaling}
     type: oci:identity:compartment:id
     title: "Application Performance Monitoring Domain Compartment"
     description: "The compartment where you have the Application Performance Monitoring domain to be used by this WebLogic instance"
@@ -2454,9 +2486,11 @@ variables:
 
   apm_domain_id:
     visible:
-      -or:
-        - ${use_apm_service}
-        - ${use_autoscaling}
+      and:
+        - ${orm_create_mode}
+        - or:
+            - ${use_apm_service}
+            - ${use_autoscaling}
     type: oci:apm:domain:id
     title: "Application Performance Monitoring Domain"
     description: "The Application Performance Monitoring domain used by this WebLogic instance"
@@ -2466,9 +2500,11 @@ variables:
 
   apm_private_data_key_name:
     visible:
-      -or:
-        - ${use_apm_service}
-        - ${use_autoscaling}
+      and:
+        - ${orm_create_mode}
+        - or:
+            - ${use_apm_service}
+            - ${use_autoscaling}
     type: string
     title: "Application Performance Monitoring Private Data Key Name"
     description: "The name of the private data key used by this WebLogic instance to push metrics to the Application Performance Monitoring domain"
@@ -2594,7 +2630,7 @@ variables:
             - ${use_autoscaling}
     type: string
     title: "Registry User Name"
-    description: "The user name to access the Oracle Cloud Infrastructure Registry (OCIR) for deploying autoscaling OCI functions, which has the format {identity domain name}/{username}. If your tenancy is using Oracle Identity Cloud Service, use the format oracleidentitycloudservice/{username}."
+    description: "The user name to access the Oracle Cloud Infrastructure Registry (OCIR) for deploying autoscaling OCI functions has the format {tenancy namespace}/{identity domain name}/{user name}. If the user is in the Default identity domain, do not include {identity domain name}. If you do not know the tenancy namespace do not add {tenancy_namespace} and let the stack set this for you. For example, if you don't know your tenancy namespace and your tenancy is federated with Oracle Identity Cloud Service with an identity domain of oracleidentitycloudservice you would set oracleidentitycloudservice/{username}."
     required: true
 
   ocir_auth_token_compartment_id:
