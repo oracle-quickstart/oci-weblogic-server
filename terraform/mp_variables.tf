@@ -11,7 +11,7 @@ variable "use_bastion_marketplace_image" {
 variable "bastion_image_id" {
   type        = string
   description = "The OCID of the marketplace bastion image"
-  default     = "ocid1.image.oc1..aaaaaaaablqmvpn633emdv7o2k42km6nxjt4i44aqwab3wxwquyz3ag6hvmq"
+  default     = "ocid1.image.oc1..aaaaaaaaze4v7mhg6xyewlvcul72fjoeryb3s4uttccocif6dii26ft5mblq"
 }
 
 variable "bastion_listing_id" {
@@ -23,7 +23,7 @@ variable "bastion_listing_id" {
 variable "bastion_listing_resource_version" {
   type        = string
   description = "The OCID of the marketplace bastion image listing resource version"
-  default     = "23.2.3-ol8.7-23.04.25-230702-1"
+  default     = "26.1.1-ol8.10-26.01.29-260305-1"
 }
 
 variable "use_marketplace_image" {
