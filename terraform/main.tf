@@ -1,4 +1,4 @@
-# Copyright (c) 2023, 2025, Oracle and/or its affiliates.
+# Copyright (c) 2023, 2026, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 ### Removing network validation script from provisioning flow temporarily.
@@ -240,7 +240,7 @@ module "policies" {
   apm_domain_compartment_id        = local.apm_domain_compartment_id
   use_autoscaling                  = var.use_autoscaling
   enable_osmh                      = var.enable_osmh
-  profile_compartment_id           = var.profile_compartment_id
+  profile_compartment_id           = local.profile_compartment_id
 
   ocir_auth_token_id               = var.ocir_auth_token_id
   add_fss                          = var.add_fss
@@ -444,7 +444,7 @@ module "validators" {
 
   create_policies  = var.create_policies
   use_oci_logging  = var.use_oci_logging
-  dynamic_group_id = var.dynamic_group_id
+  dynamic_group_id = local.dynamic_group_id
 
   use_apm_service           = local.use_apm_service
   apm_domain_id             = var.apm_domain_id
@@ -780,7 +780,7 @@ module "observability-logging" {
   oci_managed_instances_principal_group = element(concat(module.policies[*].oci_managed_instances_principal_group, [""]), 0)
   service_prefix_name                   = local.service_name_prefix
   create_policies                       = var.create_policies
-  dynamic_group_id                      = var.dynamic_group_id
+  dynamic_group_id                      = local.dynamic_group_id
   log_group_id                          = module.observability-common[0].log_group_id
   use_oci_logging                       = var.use_oci_logging
   tags = {
