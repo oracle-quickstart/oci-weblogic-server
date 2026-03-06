@@ -1346,7 +1346,7 @@ then
   fi
 
   if [[ $res -ne 0 ]]; then
-    echo "ERROR: Egress rule - DB port ${DB_PORT} is not open for access by DB Subnet CIDR [${db_subnet_cidr_block}] in WLS Subnet [${WLS_SUBNET_OCID}] or in WLS NSG [${MANAGED_SRV_NSG_OCID}]."
+    echo "ERROR: Egress rule - DB port ${ATP_DB_PORT} is not open for access by DB Subnet CIDR [${db_subnet_cidr_block}] in WLS Subnet [${WLS_SUBNET_OCID}] or in WLS NSG [${MANAGED_SRV_NSG_OCID}]."
     validation_return_code=2
   fi
 fi
@@ -1451,7 +1451,7 @@ then
           done
         elif [[ $res -ne 0 ]]
         then
-          echo "ERROR: Port ${ADMIN_HTTPS_PORT} is not open for access by [$bastion_cidr_block] in WLS Subnet [$WLS_SUBNET_OCID]. ${NETWORK_VALIDATION_MSG}"
+          echo "ERROR: Port ${ADMIN_HTTPS_PORT} is not open for access by bastion subnet cidr [$bastion_cidr_block] in WLS Subnet [$WLS_SUBNET_OCID]. ${NETWORK_VALIDATION_MSG}"
           validation_return_code=2
         fi
       fi
@@ -1466,7 +1466,7 @@ then
           done
         elif [[ $res -ne 0 ]]
         then
-          echo "ERROR: Port ${ADMIN_HTTPS_PORT} is not open for access by [$bastion_cidr_block] in Admin Server NSG [$ADMIN_SRV_NSG_OCID]. ${NETWORK_VALIDATION_MSG}"
+          echo "ERROR: Port ${ADMIN_HTTPS_PORT} is not open for access by bastion subnet cidr [$bastion_cidr_block] in Admin Server NSG [$ADMIN_SRV_NSG_OCID]. ${NETWORK_VALIDATION_MSG}"
           validation_return_code=2
         fi
       fi

@@ -353,3 +353,8 @@ variable "certificate_id" {
   default     = ""
 }
 
+variable "num_ads" {
+  type = number
+  description = "Number of availability domains in the tenancy"
+}
+

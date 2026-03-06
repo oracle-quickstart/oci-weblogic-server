@@ -20,4 +20,6 @@ locals {
   validation_script_existing_lb_nsg_id_param             = var.existing_lb_nsg_id != "" ? format("--lbnsg %s", var.existing_lb_nsg_id) : ""
   validation_script_existing_mount_target_nsg_id_param   = var.existing_mount_target_nsg_id != "" ? format("--fssnsg %s", var.existing_mount_target_nsg_id) : ""
   validation_script_existing_bastion_nsg_id_param        = var.existing_bastion_nsg_id != "" ? format("--bastionnsg %s", var.existing_bastion_nsg_id) : ""
+  validation_script_secure_mode_param                    = var.secure_mode != "" ? format("--securemode %s", var.secure_mode) : ""
+  validation_script_idcs_port_param                      = var.idcs_port != "" ? format("--idcs_port %s", var.idcs_port) : ""
 }

@@ -90,3 +90,14 @@ variable "lb_source_cidr" {
   type        = string
   description = "Set to empty value if loadbalancer is set to private"
 }
+
+variable "secure_mode" {
+  type = bool
+  description = "Indicates whether the secure mode is enabled or not"
+}
+
+variable "idcs_port" {
+  type        = number
+  description = "The port number that you use to access Identity Cloud Service"
+  default     = 443
+}

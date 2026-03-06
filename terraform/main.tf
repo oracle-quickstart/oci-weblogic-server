@@ -24,6 +24,8 @@ module "network-validation" {
   existing_mount_target_nsg_id   = var.add_existing_nsg && var.add_fss ? var.existing_mount_target_nsg_id : ""
   existing_bastion_nsg_id        = var.add_existing_nsg && var.is_bastion_instance_required ? var.existing_bastion_nsg_id : ""
   lb_source_cidr                 = var.add_load_balancer ? (var.is_lb_private ? "" : "0.0.0.0/0") : ""
+  secure_mode                    = var.configure_secure_mode
+  idcs_port                      = var.idcs_port
 }
 
 module "system-tags" {
@@ -621,6 +623,7 @@ module "compute" {
   region                 = var.region
   ssh_public_key         = var.ssh_public_key
   compute_nsg_ids        = local.compute_nsg_ids
+  num_ads                = local.num_ads
   tenancy_id                = var.tenancy_ocid
   tf_script_version         = var.tf_script_version
   use_regional_subnet       = local.use_regional_subnet
