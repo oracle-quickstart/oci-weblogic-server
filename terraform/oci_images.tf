@@ -19,7 +19,7 @@ variable "marketplace_source_images" {
       compatible_shapes     = []
     }
     baselinux_instance_image = {
-      ocid                  = "ocid1.image.oc1..aaaaaaaablqmvpn633emdv7o2k42km6nxjt4i44aqwab3wxwquyz3ag6hvmq"
+      ocid                  = "ocid1.image.oc1..aaaaaaaaze4v7mhg6xyewlvcul72fjoeryb3s4uttccocif6dii26ft5mblq"
       is_pricing_associated = false
       compatible_shapes     = []
     }
