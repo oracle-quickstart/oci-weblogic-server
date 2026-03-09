@@ -1,3 +1,6 @@
+# Copyright (c) 2023, 2026, Oracle and/or its affiliates.
+# Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
+
 locals {
   all_tenancy_osmh_software_sources = data.oci_os_management_hub_software_sources.all_tenancy_osmh_software_sources.software_source_collection[0].items
   software_source_names = [

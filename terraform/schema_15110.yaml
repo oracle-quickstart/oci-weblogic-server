@@ -1019,7 +1019,7 @@ variables:
             - ${create_new_subnets}
     type: boolean
     default: false
-    title: "Skip Existing Network Validation"
+    title: "Skip Validation of Existing Network"
     description: "Skip running the network validation script for the selected existing VCN. See <a target=\"_blank\" href=\"https://docs.oracle.com/pls/topic/lookup?ctx=en/cloud/paas/weblogic-cloud/user&id=oci_network_validate\">Validate Existing Network Setup</a>"  
   
   # WLS Network Configuration

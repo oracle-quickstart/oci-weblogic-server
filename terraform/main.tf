@@ -1,8 +1,6 @@
 # Copyright (c) 2023, 2026, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
-### Removing network validation script from provisioning flow temporarily.
-
 module "network-validation" {
   source                         = "./modules/network-validator"
   count                          = local.use_existing_subnets && !var.skip_network_validation ? 1 : 0

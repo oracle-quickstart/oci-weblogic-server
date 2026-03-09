@@ -1,4 +1,4 @@
-# Copyright (c) 2023, 2024, Oracle and/or its affiliates.
+# Copyright (c) 2023, 2026, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 variable "tenancy_id" {
@@ -355,6 +355,6 @@ variable "certificate_id" {
 
 variable "num_ads" {
   type = number
-  description = "Number of availability domains in the tenancy"
+  description = "Number of availability domains per region in the tenancy"
 }
 

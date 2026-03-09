@@ -1,4 +1,4 @@
-# Copyright (c) 2023, Oracle and/or its affiliates.
+# Copyright (c) 2023, 2026, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 locals {
@@ -29,4 +29,5 @@ locals {
   db_storage_management = try(lookup(local.db_options[0], "storage_management", "ASM"), "ASM")
 
   is_db_deleted = local.apply_JRF ? (local.is_atp_db ? (try(data.oci_database_autonomous_database.atp_db[0].id, null) == null ? true : false) : (try(data.oci_database_database.ocidb_database[0].id, null) == null ? true : false)) : false
+
 }
