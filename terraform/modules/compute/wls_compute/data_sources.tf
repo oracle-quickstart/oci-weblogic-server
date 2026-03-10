@@ -41,7 +41,7 @@ data "oci_database_autonomous_database" "atp_db" {
 }
 
 data "template_file" "atp_nsg_id" {
-  count    = local.is_atp_db ? 1 : 0
+  count    = local.is_atp_db && !local.is_db_deleted ? 1 : 0? 1 : 0
   template = length(data.oci_database_autonomous_database.atp_db[0].nsg_ids) > 0 ? data.oci_database_autonomous_database.atp_db[0].nsg_ids[0] : ""
 }
 

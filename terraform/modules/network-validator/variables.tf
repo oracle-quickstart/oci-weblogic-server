@@ -96,8 +96,7 @@ variable "secure_mode" {
   description = "Indicates whether the secure mode is enabled or not"
 }
 
-variable "idcs_port" {
+variable "idcs_cloudgate_port" {
   type        = number
   description = "The port number that you use to access Identity Cloud Service"
-  default     = 443
 }

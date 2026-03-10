@@ -23,7 +23,7 @@ module "network-validation" {
   existing_bastion_nsg_id        = var.add_existing_nsg && var.is_bastion_instance_required ? var.existing_bastion_nsg_id : ""
   lb_source_cidr                 = var.add_load_balancer ? (var.is_lb_private ? "" : "0.0.0.0/0") : ""
   secure_mode                    = var.configure_secure_mode
-  idcs_port                      = var.idcs_port
+  idcs_cloudgate_port            = var.idcs_cloudgate_port
 }
 
 module "system-tags" {
