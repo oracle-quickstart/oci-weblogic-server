@@ -98,5 +98,5 @@ variable "secure_mode" {
 
 variable "idcs_cloudgate_port" {
   type        = number
-  description = "The port number that you use to access Identity Cloud Service"
+  description = "The listen port for the Identity Cloud Service App Gateway, which authenticates requests and redirects them to WebLogic Server"
 }
