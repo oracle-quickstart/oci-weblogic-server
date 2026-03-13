@@ -1,6 +1,6 @@
 # Copyright (c) 2023, 2025, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
-
+# Verify for PR from IDE
 ### Removing network validation script from provisioning flow temporarily.
 /*
 module "network-validation" {
