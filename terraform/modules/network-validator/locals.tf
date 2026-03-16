@@ -1,4 +1,4 @@
-# Copyright (c) 2023, Oracle and/or its affiliates.
+# Copyright (c) 2023, 2026, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 locals {
@@ -20,4 +20,6 @@ locals {
   validation_script_existing_lb_nsg_id_param             = var.existing_lb_nsg_id != "" ? format("--lbnsg %s", var.existing_lb_nsg_id) : ""
   validation_script_existing_mount_target_nsg_id_param   = var.existing_mount_target_nsg_id != "" ? format("--fssnsg %s", var.existing_mount_target_nsg_id) : ""
   validation_script_existing_bastion_nsg_id_param        = var.existing_bastion_nsg_id != "" ? format("--bastionnsg %s", var.existing_bastion_nsg_id) : ""
+  validation_script_secure_mode_param                    = var.secure_mode != "" ? format("--securemode %s", var.secure_mode) : ""
+  validation_script_idcs_cloudgate_port_param            = var.idcs_cloudgate_port != "" ? format("--idcs_port %s", var.idcs_cloudgate_port) : ""
 }

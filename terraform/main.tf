@@ -1,8 +1,6 @@
 # Copyright (c) 2023, 2026, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
-### Removing network validation script from provisioning flow temporarily.
-/*
 module "network-validation" {
   source                         = "./modules/network-validator"
   count                          = local.use_existing_subnets && !var.skip_network_validation ? 1 : 0
@@ -24,11 +22,12 @@ module "network-validation" {
   existing_mount_target_nsg_id   = var.add_existing_nsg && var.add_fss ? var.existing_mount_target_nsg_id : ""
   existing_bastion_nsg_id        = var.add_existing_nsg && var.is_bastion_instance_required ? var.existing_bastion_nsg_id : ""
   lb_source_cidr                 = var.add_load_balancer ? (var.is_lb_private ? "" : "0.0.0.0/0") : ""
+  secure_mode                    = var.configure_secure_mode
+  idcs_cloudgate_port            = var.idcs_cloudgate_port
 }
-*/
 
 module "system-tags" {
-  #depends_on     = [module.network-validation]
+  depends_on     = [module.network-validation]
   source         = "./modules/resource-tags"
   compartment_id = var.compartment_ocid
   service_name   = var.service_name
@@ -212,7 +211,7 @@ module "network-bastion-subnet" {
 }
 
 module "policies" {
-  #depends_on             = [module.network-validation]
+  depends_on             = [module.network-validation]
   source                 = "./modules/policies"
   count                  = var.create_policies ? 1 : 0
   compartment_id         = var.compartment_ocid
@@ -256,7 +255,7 @@ module "policies" {
 }
 
 module "bastion" {
-  #depends_on          = [module.network-validation]
+  depends_on          = [module.network-validation]
   source              = "./modules/compute/bastion"
   count               = (!local.assign_weblogic_public_ip && local.is_bastion_instance_required && var.existing_bastion_instance_id == "") ? 1 : 0
   availability_domain = local.bastion_availability_domain
@@ -344,7 +343,7 @@ module "network-mount-target-private-subnet" {
 }
 
 module "vcn-peering" {
-  #depends_on                     = [module.network-validation]
+  depends_on                     = [module.network-validation]
   count                          = local.is_vcn_peering ? 1 : 0
   source                         = "./modules/network/vcn-peering"
   resource_name_prefix           = local.service_name_prefix
@@ -362,7 +361,6 @@ module "vcn-peering" {
 }
 
 module "validators" {
-  #depends_on = [module.network-validation]
   source                     = "./modules/validators"
   compartment_id             = var.compartment_ocid
   service_name               = var.service_name
@@ -492,7 +490,7 @@ module "validators" {
 }
 
 module "fss" {
-  #depends_on = [module.network-validation]
+  depends_on = [module.network-validation]
   source = "./modules/fss"
   count  = var.add_fss ? 1 : 0
 
@@ -515,7 +513,7 @@ module "fss" {
 }
 
 module "load-balancer" {
-  #depends_on = [module.network-validation]
+  depends_on = [module.network-validation]
   source = "./modules/lb/loadbalancer"
   count  = (local.add_load_balancer && var.existing_load_balancer_id == "") ? 1 : 0
 
@@ -536,6 +534,7 @@ module "load-balancer" {
 }
 
 module "rms-private-endpoint" {
+  depends_on = [module.network-validation]
   source = "./modules/rms-private-endpoint"
   count  = local.is_rms_private_endpoint_required && local.add_new_rms_private_endpoint ? 1 : 0
 
@@ -552,7 +551,7 @@ module "rms-private-endpoint" {
 }
 
 module "observability-common" {
-  #depends_on = [module.network-validation]
+  depends_on = [module.network-validation]
   source = "./modules/observability/common"
   count  = var.use_oci_logging ? 1 : 0
 
@@ -562,7 +561,7 @@ module "observability-common" {
 }
 
 module "observability-autoscaling" {
-  #depends_on = [module.network-validation]
+  depends_on = [module.network-validation]
   source = "./modules/observability/autoscaling"
   count  = var.use_autoscaling ? 1 : 0
 
@@ -595,6 +594,7 @@ module "observability-autoscaling" {
 }
 
 module "observability-osmh"{
+  depends_on          = [module.network-validation]
   source              = "./modules/observability/osmh"
   count               = local.create_profile ? 1 : 0
   tenancy_id          = var.tenancy_ocid
@@ -603,6 +603,7 @@ module "observability-osmh"{
 }
 
 module "compute" {
+  depends_on             = [module.network-validation]
   source                 = "./modules/compute/wls_compute"
   add_loadbalancer       = local.add_load_balancer
   is_lb_private          = var.is_lb_private
@@ -619,7 +620,8 @@ module "compute" {
   wls_subnet_id          = var.wls_subnet_id
   region                 = var.region
   ssh_public_key         = var.ssh_public_key
-  compute_nsg_ids        = local.compute_nsg_ids  
+  compute_nsg_ids        = local.compute_nsg_ids
+  num_ads                = local.num_ads
   tenancy_id                = var.tenancy_ocid
   tf_script_version         = var.tf_script_version
   use_regional_subnet       = local.use_regional_subnet
@@ -750,7 +752,7 @@ module "compute" {
 }
 
 module "load-balancer-backends" {
-  #depends_on = [module.network-validation]
+  depends_on = [module.network-validation]
   source = "./modules/lb/backends"
   count  = local.add_load_balancer ? 1 : 0
 
@@ -768,7 +770,7 @@ module "load-balancer-backends" {
 }
 
 module "observability-logging" {
-  #depends_on = [module.network-validation]
+  depends_on = [module.network-validation]
   source = "./modules/observability/logging"
   count  = var.use_oci_logging ? 1 : 0
 
@@ -786,7 +788,7 @@ module "observability-logging" {
 }
 
 module "provisioners" {
-  #depends_on = [module.network-validation]
+  depends_on = [module.network-validation]
   source = "./modules/provisioners"
 
   existing_bastion_instance_id     = var.existing_bastion_instance_id

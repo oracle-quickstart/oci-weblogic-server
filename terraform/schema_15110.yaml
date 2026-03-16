@@ -34,6 +34,7 @@ groupings:
       - ${subnet_type}
       - ${subnet_span}
       - ${add_existing_nsg}
+      - ${skip_network_validation}
 
   - title: "WebLogic Domain Configuration"
     variables:
@@ -1005,7 +1006,22 @@ variables:
     required: true
     dependsOn:
       compartmentId: ${wls_admin_secret_compartment_id}
-
+  
+  #Network Validation script execution
+  skip_network_validation:
+    visible:
+      and:
+        - not:
+            - ${orm_create_mode}
+        - not:
+            - ${create_new_vcn}
+        - not:
+            - ${create_new_subnets}
+    type: boolean
+    default: false
+    title: "Skip Validation of Existing Network"
+    description: "Skip running the network validation script for the selected existing VCN. See <a target=\"_blank\" href=\"https://docs.oracle.com/pls/topic/lookup?ctx=en/cloud/paas/weblogic-cloud/user&id=oci_network_validate\">Validate Existing Network Setup</a>"  
+  
   # WLS Network Configuration
   wls_vcn_name:
     visible:
