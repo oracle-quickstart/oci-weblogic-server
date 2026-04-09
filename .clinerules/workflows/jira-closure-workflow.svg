@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="980" viewBox="0 0 1200 980">
+  <defs>
+    <style>
+      .title { font: 700 20px Arial, sans-serif; fill: #1f2933; }
+      .label { font: 600 14px Arial, sans-serif; fill: #1f2933; }
+      .text { font: 13px Arial, sans-serif; fill: #1f2933; }
+      .box { fill: #f5f7fa; stroke: #3e4c59; stroke-width: 1.5; rx: 10; ry: 10; }
+      .arrow { stroke: #52606d; stroke-width: 2; fill: none; marker-end: url(#arrowhead); }
+    </style>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#52606d" />
+    </marker>
+  </defs>
+
+  <rect width="1200" height="980" fill="#ffffff" />
+  <text x="40" y="40" class="title">Jira Closure Workflow</text>
+
+  <rect x="60" y="80" width="320" height="90" class="box" />
+  <text x="80" y="115" class="label">1) Inputs &amp; Preconditions</text>
+  <text x="80" y="140" class="text">PR merged + ticket info, Slack, branch</text>
+
+  <rect x="440" y="80" width="320" height="90" class="box" />
+  <text x="460" y="115" class="label">2) Confirm PR Merge</text>
+  <text x="460" y="140" class="text">Collect merge commit, base branch, CI</text>
+
+  <rect x="820" y="80" width="320" height="90" class="box" />
+  <text x="840" y="115" class="label">3) Review Follow-ups</text>
+  <text x="840" y="140" class="text">Identify docs, backports, rollouts</text>
+
+  <rect x="60" y="230" width="320" height="90" class="box" />
+  <text x="80" y="265" class="label">4) Update Jira Subtasks</text>
+  <text x="80" y="290" class="text">Close or create follow-up tickets</text>
+
+  <rect x="440" y="230" width="320" height="90" class="box" />
+  <text x="460" y="265" class="label">5) Update Parent Ticket</text>
+  <text x="460" y="290" class="text">Move to Done/Resolved &amp; link follow-ups</text>
+
+  <rect x="820" y="230" width="320" height="90" class="box" />
+  <text x="840" y="265" class="label">6) Final Jira Comment</text>
+  <text x="840" y="290" class="text">PR link, merge commit, verification</text>
+
+  <rect x="60" y="380" width="320" height="90" class="box" />
+  <text x="80" y="415" class="label">7) Notify Slack</text>
+  <text x="80" y="440" class="text">Post closeout message if requested</text>
+
+  <rect x="440" y="380" width="320" height="90" class="box" />
+  <text x="460" y="415" class="label">8) Clean Branches</text>
+  <text x="460" y="440" class="text">Delete topic branch after merge</text>
+
+  <rect x="820" y="380" width="320" height="90" class="box" />
+  <text x="840" y="415" class="label">9) Release Closeout</text>
+  <text x="840" y="440" class="text">Update notes/runbooks, verify no leftovers</text>
+
+  <rect x="60" y="530" width="1080" height="90" class="box" />
+  <text x="80" y="565" class="label">10) Done Checklist</text>
+  <text x="80" y="590" class="text">All closeout steps completed and tracked</text>
+
+  <line x1="380" y1="125" x2="440" y2="125" class="arrow" />
+  <line x1="760" y1="125" x2="820" y2="125" class="arrow" />
+  <line x1="220" y1="170" x2="220" y2="230" class="arrow" />
+  <line x1="600" y1="170" x2="600" y2="230" class="arrow" />
+  <line x1="980" y1="170" x2="980" y2="230" class="arrow" />
+  <line x1="380" y1="275" x2="440" y2="275" class="arrow" />
+  <line x1="760" y1="275" x2="820" y2="275" class="arrow" />
+  <line x1="220" y1="320" x2="220" y2="380" class="arrow" />
+  <line x1="600" y1="320" x2="600" y2="380" class="arrow" />
+  <line x1="980" y1="320" x2="980" y2="380" class="arrow" />
+  <line x1="220" y1="470" x2="220" y2="530" class="arrow" />
+  <line x1="600" y1="470" x2="600" y2="530" class="arrow" />
+  <line x1="980" y1="470" x2="980" y2="530" class="arrow" />
+</svg>

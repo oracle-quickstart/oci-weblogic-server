@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="820" viewBox="0 0 1200 820">
+  <defs>
+    <style>
+      .title { font: 700 20px Arial, sans-serif; fill: #1f2933; }
+      .label { font: 600 14px Arial, sans-serif; fill: #1f2933; }
+      .text { font: 13px Arial, sans-serif; fill: #1f2933; }
+      .box { fill: #f5f7fa; stroke: #3e4c59; stroke-width: 1.5; rx: 10; ry: 10; }
+      .arrow { stroke: #52606d; stroke-width: 2; fill: none; marker-end: url(#arrowhead); }
+    </style>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#52606d" />
+    </marker>
+  </defs>
+
+  <rect width="1200" height="820" fill="#ffffff" />
+  <text x="40" y="40" class="title">Jira Ticket to Branch, PR, and Cleanup Workflow</text>
+
+  <rect x="60" y="80" width="320" height="90" class="box" />
+  <text x="80" y="115" class="label">1) Jira Intake</text>
+  <text x="80" y="140" class="text">Read ticket, capture scope &amp; release hints</text>
+
+  <rect x="440" y="80" width="320" height="90" class="box" />
+  <text x="460" y="115" class="label">2) Enumerate Code Changes</text>
+  <text x="460" y="140" class="text">Inventory impacted files, tests, docs</text>
+
+  <rect x="820" y="80" width="320" height="90" class="box" />
+  <text x="840" y="115" class="label">3) Create/Align Subtasks</text>
+  <text x="840" y="140" class="text">Split work if scope is broad</text>
+
+  <rect x="60" y="230" width="320" height="90" class="box" />
+  <text x="80" y="265" class="label">4) Create Topic Branch</text>
+  <text x="80" y="290" class="text">Sync base branch and create topic</text>
+
+  <rect x="440" y="230" width="320" height="90" class="box" />
+  <text x="460" y="265" class="label">5) Implement Ticket</text>
+  <text x="460" y="290" class="text">Make changes + follow header rules</text>
+
+  <rect x="820" y="230" width="320" height="90" class="box" />
+  <text x="840" y="265" class="label">6) Validate Before Commit</text>
+  <text x="840" y="290" class="text">Run minimal tests &amp; capture results</text>
+
+  <rect x="60" y="380" width="320" height="90" class="box" />
+  <text x="80" y="415" class="label">7) Commit &amp; Push</text>
+  <text x="80" y="440" class="text">Review diff, commit, push branch</text>
+
+  <rect x="440" y="380" width="320" height="90" class="box" />
+  <text x="460" y="415" class="label">8) Create Pull Request</text>
+  <text x="460" y="440" class="text">Use required PR template</text>
+
+  <rect x="820" y="380" width="320" height="90" class="box" />
+  <text x="840" y="415" class="label">9) Update Jira</text>
+  <text x="840" y="440" class="text">Add PR link + testing summary</text>
+
+  <rect x="60" y="530" width="320" height="90" class="box" />
+  <text x="80" y="565" class="label">10) Stretch Goal (Optional)</text>
+  <text x="80" y="590" class="text">After merge: resolve ticket &amp; cleanup</text>
+
+  <rect x="440" y="530" width="700" height="90" class="box" />
+  <text x="460" y="565" class="label">Done Checklist</text>
+  <text x="460" y="590" class="text">Confirm all workflow steps are complete</text>
+
+  <line x1="380" y1="125" x2="440" y2="125" class="arrow" />
+  <line x1="760" y1="125" x2="820" y2="125" class="arrow" />
+  <line x1="220" y1="170" x2="220" y2="230" class="arrow" />
+  <line x1="600" y1="170" x2="600" y2="230" class="arrow" />
+  <line x1="980" y1="170" x2="980" y2="230" class="arrow" />
+  <line x1="380" y1="275" x2="440" y2="275" class="arrow" />
+  <line x1="760" y1="275" x2="820" y2="275" class="arrow" />
+  <line x1="220" y1="320" x2="220" y2="380" class="arrow" />
+  <line x1="600" y1="320" x2="600" y2="380" class="arrow" />
+  <line x1="980" y1="320" x2="980" y2="380" class="arrow" />
+  <line x1="380" y1="425" x2="440" y2="425" class="arrow" />
+  <line x1="760" y1="425" x2="820" y2="425" class="arrow" />
+  <line x1="220" y1="470" x2="220" y2="530" class="arrow" />
+  <line x1="380" y1="575" x2="440" y2="575" class="arrow" />
+</svg>
