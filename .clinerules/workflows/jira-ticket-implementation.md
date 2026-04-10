@@ -191,35 +191,3 @@ Branch: <topic-branch>
 Base branch: <base-branch>
 Testing: <short test summary>
 ```
-
-### 10) Stretch goal: close ticket and clean branches
-Use this flow after the PR is merged or when the user explicitly asks for closure:
-- Confirm the PR is merged.
-- Transition the Jira subtask(s) and parent ticket to the appropriate done/resolved state.
-- Add a final Jira comment with:
-  - merged PR link
-  - merge commit or branch info
-  - test / verification summary
-
-Clean up git branches:
-```bash
-git checkout <base-branch>
-git pull --ff-only origin <base-branch>
-git branch -d <topic-branch>
-git push origin --delete <topic-branch>
-git fetch origin --prune
-```
-
-Only delete remote branches after merge confirmation or explicit user approval.
-
-### 13) Done checklist
-A Jira-backed change is complete when all of the following are done:
-- Jira ticket was read
-- code impact was enumerated
-- subtasks were created or confirmed as unnecessary
-- topic branch was created from the correct base branch
-- implementation and validation were completed
-- changes were committed and pushed
-- PR was created with Jira link and testing notes
-- Jira was updated with the PR link
-- optional closeout / branch cleanup was handled when requested

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="980" viewBox="0 0 1200 980">
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="860" viewBox="0 0 1200 860">
   <defs>
     <style>
       .title { font: 700 20px Arial, sans-serif; fill: #1f2933; }
@@ -13,7 +13,7 @@
     </marker>
   </defs>
 
-  <rect width="1200" height="980" fill="#ffffff" />
+  <rect width="1200" height="860" fill="#ffffff" />
   <text x="40" y="40" class="title">Jira Closure Workflow</text>
 
   <rect x="60" y="80" width="320" height="90" class="box" />
@@ -41,20 +41,20 @@
   <text x="840" y="290" class="text">PR link, merge commit, verification</text>
 
   <rect x="60" y="380" width="320" height="90" class="box" />
-  <text x="80" y="415" class="label">7) Notify Slack</text>
-  <text x="80" y="440" class="text">Post closeout message if requested</text>
+  <text x="80" y="415" class="label">7) Clean Branches</text>
+  <text x="80" y="440" class="text">Delete topic branch or document deferral</text>
 
   <rect x="440" y="380" width="320" height="90" class="box" />
-  <text x="460" y="415" class="label">8) Clean Branches</text>
-  <text x="460" y="440" class="text">Delete topic branch after merge</text>
+  <text x="460" y="415" class="label">8) Final Repo/Release Closeout</text>
+  <text x="460" y="440" class="text">Update deferred notes and tracking docs</text>
 
   <rect x="820" y="380" width="320" height="90" class="box" />
-  <text x="840" y="415" class="label">9) Release Closeout</text>
-  <text x="840" y="440" class="text">Update notes/runbooks, verify no leftovers</text>
+  <text x="840" y="415" class="label">9) Done Checklist</text>
+  <text x="840" y="440" class="text">Verify all required closeout actions complete</text>
 
   <rect x="60" y="530" width="1080" height="90" class="box" />
-  <text x="80" y="565" class="label">10) Done Checklist</text>
-  <text x="80" y="590" class="text">All closeout steps completed and tracked</text>
+  <text x="80" y="565" class="label">Done Criteria</text>
+  <text x="80" y="590" class="text">PR merged confirmed; Jira updated; branch cleanup handled; Slack optional when requested</text>
 
   <line x1="380" y1="125" x2="440" y2="125" class="arrow" />
   <line x1="760" y1="125" x2="820" y2="125" class="arrow" />

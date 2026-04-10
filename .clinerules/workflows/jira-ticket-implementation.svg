@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="820" viewBox="0 0 1200 820">
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760">
   <defs>
     <style>
       .title { font: 700 20px Arial, sans-serif; fill: #1f2933; }
@@ -13,7 +13,7 @@
     </marker>
   </defs>
 
-  <rect width="1200" height="820" fill="#ffffff" />
+  <rect width="1200" height="760" fill="#ffffff" />
   <text x="40" y="40" class="title">Jira Ticket to Branch, PR, and Cleanup Workflow</text>
 
   <rect x="60" y="80" width="320" height="90" class="box" />
@@ -52,13 +52,9 @@
   <text x="840" y="415" class="label">9) Update Jira</text>
   <text x="840" y="440" class="text">Add PR link + testing summary</text>
 
-  <rect x="60" y="530" width="320" height="90" class="box" />
-  <text x="80" y="565" class="label">10) Stretch Goal (Optional)</text>
-  <text x="80" y="590" class="text">After merge: resolve ticket &amp; cleanup</text>
-
-  <rect x="440" y="530" width="700" height="90" class="box" />
+  <rect x="60" y="530" width="1080" height="90" class="box" />
   <text x="460" y="565" class="label">Done Checklist</text>
-  <text x="460" y="590" class="text">Confirm all workflow steps are complete</text>
+  <text x="460" y="590" class="text">Confirm steps 1-9 complete with PR link and testing summary in Jira</text>
 
   <line x1="380" y1="125" x2="440" y2="125" class="arrow" />
   <line x1="760" y1="125" x2="820" y2="125" class="arrow" />
@@ -73,5 +69,6 @@
   <line x1="380" y1="425" x2="440" y2="425" class="arrow" />
   <line x1="760" y1="425" x2="820" y2="425" class="arrow" />
   <line x1="220" y1="470" x2="220" y2="530" class="arrow" />
-  <line x1="380" y1="575" x2="440" y2="575" class="arrow" />
+  <line x1="600" y1="470" x2="600" y2="530" class="arrow" />
+  <line x1="980" y1="470" x2="980" y2="530" class="arrow" />
 </svg>

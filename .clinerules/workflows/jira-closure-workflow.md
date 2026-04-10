@@ -86,26 +86,7 @@ Follow-up: <ticket links or none>
 
 ---
 
-## 7. Notify Slack
-
-Post a short closeout update to the requested Slack channel after Jira is updated.
-
-Suggested Slack message:
-
-```text
-<TICKET-KEY> merged and closed out
-PR: <PR-URL>
-Base branch: <BASE-BRANCH>
-Verification: <short summary>
-Follow-up: <ticket links or none>
-Jira: <JIRA-URL>
-```
-
-If no Slack channel is known and a message is required, ask once before posting.
-
----
-
-## 8. Clean up local and remote branches
+## 7. Clean up local and remote branches
 
 After merge confirmation, clean up the topic branch locally and remotely when appropriate.
 
@@ -123,7 +104,7 @@ If the branch must be retained for a release or backport reason, document that c
 
 ---
 
-## 9. Final repository and release closeout
+## 8. Final repository and release closeout
 
 - update any remaining release notes, runbooks, or tracking docs that were intentionally deferred until merge
 - ensure follow-up work is captured in Jira rather than left as tribal knowledge
@@ -131,7 +112,7 @@ If the branch must be retained for a release or backport reason, document that c
 
 ---
 
-## 10. Done checklist
+## 9. Done checklist
 
 A merged PR closeout is complete when all the following are done:
 - merged PR status was confirmed
