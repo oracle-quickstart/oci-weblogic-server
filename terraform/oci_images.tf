@@ -1,4 +1,4 @@
-# Copyright (c) 2023, Oracle and/or its affiliates.
+# Copyright (c) 2023, 2026, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 variable "marketplace_source_images" {
@@ -19,7 +19,7 @@ variable "marketplace_source_images" {
       compatible_shapes     = []
     }
     baselinux_instance_image = {
-      ocid                  = "ocid1.image.oc1..aaaaaaaablqmvpn633emdv7o2k42km6nxjt4i44aqwab3wxwquyz3ag6hvmq"
+      ocid                  = "ocid1.image.oc1..aaaaaaaamtpdyzgsl54ng4uzaj46sf7jgw6dfwbaqnuno4z36fvmgfuatkpa"
       is_pricing_associated = false
       compatible_shapes     = []
     }
