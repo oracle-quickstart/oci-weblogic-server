@@ -14,7 +14,7 @@ locals {
   validation_script_oci_db_dbsystem_id_param             = var.oci_db_dbsystem_id != "" ? format("--ocidbid %s", var.oci_db_dbsystem_id) : ""
   validation_script_oci_db_port_param                    = var.oci_db_port != 0 ? format("--ocidbport %s", var.oci_db_port) : ""
   validation_script_http_port_param                      = var.wls_extern_admin_port != "" ? format("--http_port %s", var.wls_extern_admin_port) : ""
-  validation_script_https_port_param                     = var.wls_extern_ssl_admin_port != "" ? format("--https_port %s", var.wls_extern_ssl_admin_port) : ""
+  validation_script_https_port_param                     = var.secure_mode ? var.administration_port : var.wls_extern_ssl_admin_port != "" ? format("--https_port %s", var.wls_extern_ssl_admin_port) : ""
   validation_script_existing_admin_server_nsg_id_param   = var.existing_admin_server_nsg_id != "" ? format("--adminsrvnsg %s", var.existing_admin_server_nsg_id) : ""
   validation_script_existing_managed_server_nsg_id_param = var.existing_managed_server_nsg_id != "" ? format("--managedsrvnsg %s", var.existing_managed_server_nsg_id) : ""
   validation_script_existing_lb_nsg_id_param             = var.existing_lb_nsg_id != "" ? format("--lbnsg %s", var.existing_lb_nsg_id) : ""

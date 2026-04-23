@@ -24,6 +24,7 @@ module "network-validation" {
   lb_source_cidr                 = var.add_load_balancer ? (var.is_lb_private ? "" : "0.0.0.0/0") : ""
   secure_mode                    = var.configure_secure_mode
   idcs_cloudgate_port            = var.idcs_cloudgate_port
+  administration_port            = var.administration_port
 }
 
 module "system-tags" {
