@@ -1273,18 +1273,25 @@ then
       fi
     fi
   fi
-  # Check if Egress rule to DB port is present in WLS subnet security list or Managed Server NSG
-  db_subnet_cidr_block=$(oci network subnet get --subnet-id ${ocidb_subnet_ocid} | jq -r '.data["cidr-block"]')
-  if [[ -n ${MANAGED_SRV_NSG_OCID} ]]; then
-    res=$(check_egress_db_traffic_in_nsg_or_seclist ${MANAGED_SRV_NSG_OCID}  "nsg" ${db_subnet_cidr_block} ${DB_PORT})
-  else
-    res=$(validate_db_egress_rule ${WLS_SUBNET_OCID} ${db_subnet_cidr_block} ${DB_PORT})
-  fi
 
-  if [[ $res -ne 0 ]]; then
-    echo "ERROR: Egress rule - DB port ${DB_PORT} is not open for access by DB Subnet CIDR [${db_subnet_cidr_block}] in WLS Subnet [${WLS_SUBNET_OCID}] or in WLS NSG [${MANAGED_SRV_NSG_OCID}]."
-    validation_return_code=2
-  fi
+  #####################################################################################################################
+  # This block of code is currently commented out since we are setting a broader egress rule which is open for
+  # all protocols on all ports. Later when we allow the customers to narrow down the egress rule to specific
+  # ports and specific protocols we can uncomment the below code as this would check for the egress rule on WLS
+  # subnet side for DB port
+  ######################################################################################################################
+  # Check if Egress rule to DB port is present in WLS subnet security list or Managed Server NSG
+#  db_subnet_cidr_block=$(oci network subnet get --subnet-id ${ocidb_subnet_ocid} | jq -r '.data["cidr-block"]')
+#  if [[ -n ${MANAGED_SRV_NSG_OCID} ]]; then
+#    res=$(check_egress_db_traffic_in_nsg_or_seclist ${MANAGED_SRV_NSG_OCID}  "nsg" ${db_subnet_cidr_block} ${DB_PORT})
+#  else
+#    res=$(validate_db_egress_rule ${WLS_SUBNET_OCID} ${db_subnet_cidr_block} ${DB_PORT})
+#  fi
+#
+#  if [[ $res -ne 0 ]]; then
+#    echo "ERROR: Egress rule - DB port ${DB_PORT} is not open for access by DB Subnet CIDR [${db_subnet_cidr_block}] in WLS Subnet [${WLS_SUBNET_OCID}] or in WLS NSG [${MANAGED_SRV_NSG_OCID}]."
+#    validation_return_code=2
+#  fi
 fi
 
 ### Validation - Only when ATP DB OCID is provided ###

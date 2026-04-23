@@ -100,3 +100,9 @@ variable "idcs_cloudgate_port" {
   type        = number
   description = "The listen port for the Identity Cloud Service App Gateway, which authenticates requests and redirects them to WebLogic Server"
 }
+
+variable "administration_port" {
+  type        = number
+  description = "The domain-wide administration port to configure a secure WebLogic domain"
+  default     = 9002
+}
