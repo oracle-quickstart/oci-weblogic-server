@@ -492,7 +492,16 @@ function check_egress_db_traffic_in_nsg_or_seclist() {
                 continue
             fi
 
-            if [[ $egress_protocol == "6"  && $egress_destination == "$db_cidr" && ( $db_port -ge $port_min && $db_port -le $port_max )  ]]
+            # If all protocols are allowed to all destinations, DB egress is already covered.
+            if [[ $egress_protocol == "all" && $egress_destination == "0.0.0.0/0" ]]
+            then
+              port_is_open=true
+              echo 0
+              return
+            fi
+
+            # Otherwise, verify that a specific TCP egress rule exists for the DB CIDR and DB port.
+            if [[ $egress_protocol == "6" && $egress_destination == "$db_cidr" && ( $db_port -ge $port_min && $db_port -le $port_max ) ]]
             then
               port_is_open=true
               echo 0
