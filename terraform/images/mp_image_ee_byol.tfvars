@@ -8,6 +8,6 @@ listing_resource_version = "26.2.1-ol8.10-26.01.29-260602-1"
 instance_image_id        = "ocid1.image.oc1..aaaaaaaat757fcvbyqn74nv3mphorbuxrcxvmuqj5l23uc2siio2o5lq36oa"
 
 ucm_listing_id               = "ocid1.appcataloglisting.oc1..aaaaaaaa653zc2e4fsem5hhwinmfgnv3xp4dmbq6c6gvf45okxf6xz3smhiq"
-ucm_listing_resource_version = "26.2.3-ol8.10-26.01.29-260617-1"
-ucm_instance_image_id        = "ocid1.image.oc1..aaaaaaaaz3t7m5pcjvwlri2hndmcsljldi2w4nnea5hrn6gsopmivdo7bkuq"
+ucm_listing_resource_version = "26.3.1-ol8.10-26.01.29-260804-1"
+ucm_instance_image_id        = "ocid1.image.oc1..aaaaaaaa2nwzvwx422dhuq3gvkdsiofxly4rzkrg4d7cosdhwspeata7ww4a"
 
