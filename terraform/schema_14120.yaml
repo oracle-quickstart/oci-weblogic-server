@@ -421,7 +421,7 @@ variables:
   wls_ocpu_count:
     type: integer
     title: "OCPU Count"
-    description: "The number of OCPU count for instances. Only required for VM.Standard.E3.Flex, VM.Standard.E4.Flex, VM.Standard.E5.Flex, VM.Standard.E6.Flex, VM.Optimized3.Flex, and VM.Standard3.Flex Shapes. The maximum number of ocpus for VM.Standard.E3.Flex and VM.Standard.E4.Flex is 64, for VM.Standard.E5.Flex is 94, while VM.Optimized3.Flex shape supports 18. When scaled-out, the changes in OCPU count will apply only to the added nodes."
+    description: "The number of OCPU count for instances. Only required for VM.Standard.E3.Flex, VM.Standard.E4.Flex, VM.Standard.E5.Flex, VM.Standard.E6.Flex, VM.Optimized3.Flex, VM.Standard3.Flex and VM.Standard.E6.Ax.Flex Shapes. Refer <a target=\"_blank\" href=\"https://docs.oracle.com/en-us/iaas/Content/Compute/References/computeshapes.htm#flexible\">Flexible shapes</a> document for maximum number of ocpus supported by the flexible shape. When scaled-out, the changes in OCPU count will apply only to the added nodes."
     minimum: 1
     maximum: 126
     multipleOf: 1
@@ -449,6 +449,9 @@ variables:
         - eq:
           - ${instance_shape}
           - "VM.Standard3.Flex"
+        - eq:
+          - ${instance_shape}
+          - "VM.Standard.E6.Ax.Flex"
 
   ssh_public_key:
     type: oci:core:ssh:publickey
