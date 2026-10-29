@@ -104,7 +104,7 @@ locals {
     local.lb_ip,
   ) : ""
 
-  async_prov_mode = !local.assign_weblogic_public_ip && !var.is_rms_private_endpoint_required && !var.is_bastion_instance_required ? "Asynchronous provisioning is enabled. Connect to each compute instance and confirm that the file /u01/data/domains/${format("%s_domain", local.service_name_prefix)}/provCompletedMarker exists. Details are found in the file /u01/logs/provisioning.log." : ""
+  async_prov_mode = !local.assign_weblogic_public_ip && !var.is_rms_private_endpoint_required && !local.is_bastion_instance_required ? "Asynchronous provisioning is enabled. Connect to each compute instance and confirm that the file /u01/data/domains/${format("%s_domain", local.service_name_prefix)}/provCompletedMarker exists. Details are found in the file /u01/logs/provisioning.log." : ""
 
   jdk_labels  = { jdk7 = "JDK 7", jdk8 = "JDK 8", jdk11 = "JDK 11", jdk17 = "JDK 17", jdk21 = "JDK 21" }
   jdk_version = lookup(
@@ -118,8 +118,8 @@ locals {
 
   user_defined_tag_values = values(var.service_tags.definedTags)
 
-  ssh_proxyjump_access = local.assign_weblogic_public_ip || !var.is_bastion_instance_required ? "" : format("ssh -i <privateKey> -o ProxyCommand=\"ssh -i <privateKey> -W %s -p 22 opc@%s\" -p 22 %s", "%h:%p", local.bastion_public_ip, "opc@<wls_vm_private_ip>")
-  ssh_dp_fwd           = local.assign_weblogic_public_ip || !var.is_bastion_instance_required ? "" : format("ssh -i <privatekey> -C -D <local-port> opc@%s", local.bastion_public_ip)
+  ssh_proxyjump_access = local.assign_weblogic_public_ip || !local.is_bastion_instance_required ? "" : format("ssh -i <privateKey> -o ProxyCommand=\"ssh -i <privateKey> -W %s -p 22 opc@%s\" -p 22 %s", "%h:%p", local.bastion_public_ip, "opc@<wls_vm_private_ip>")
+  ssh_dp_fwd           = local.assign_weblogic_public_ip || !local.is_bastion_instance_required ? "" : format("ssh -i <privatekey> -C -D <local-port> opc@%s", local.bastion_public_ip)
 
   use_existing_subnets = var.wls_subnet_id == "" && var.lb_subnet_1_id == "" && var.lb_subnet_2_id == "" ? false : true
 

@@ -1,4 +1,4 @@
-# Copyright (c) 2023, Oracle and/or its affiliates.
+# Copyright (c) 2023, 2026, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 # Variable used in UI only
@@ -265,10 +265,8 @@ variable "wait_time_wls_vnc_dns_resolver" {
   default = 60
 }
 
-/*
 variable "skip_network_validation" {
   type        = bool
-  description = "Used in case there is something really wrong with the validation and we need to skip it"
+  description = "Allows skipping the network validation when the validation cannot be completed successfully."
   default     = false
 }
-*/

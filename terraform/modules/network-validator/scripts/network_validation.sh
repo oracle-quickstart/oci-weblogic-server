@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Copyright (c) 2023, 2025, Oracle and/or its affiliates.
+# Copyright (c) 2023, 2026, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 #
 # ############################################################################
@@ -492,7 +492,16 @@ function check_egress_db_traffic_in_nsg_or_seclist() {
                 continue
             fi
 
-            if [[ $egress_protocol == "6"  && $egress_destination == "$db_cidr" && ( $db_port -ge $port_min && $db_port -le $port_max )  ]]
+            # If all protocols are allowed to all destinations, DB egress is already covered.
+            if [[ $egress_protocol == "all" && $egress_destination == "0.0.0.0/0" ]]
+            then
+              port_is_open=true
+              echo 0
+              return
+            fi
+
+            # Otherwise, verify that a specific TCP egress rule exists for the DB CIDR and DB port.
+            if [[ $egress_protocol == "6" && $egress_destination == "$db_cidr" && ( $db_port -ge $port_min && $db_port -le $port_max ) ]]
             then
               port_is_open=true
               echo 0
@@ -1273,18 +1282,25 @@ then
       fi
     fi
   fi
-  # Check if Egress rule to DB port is present in WLS subnet security list or Managed Server NSG
-  db_subnet_cidr_block=$(oci network subnet get --subnet-id ${ocidb_subnet_ocid} | jq -r '.data["cidr-block"]')
-  if [[ -n ${MANAGED_SRV_NSG_OCID} ]]; then
-    res=$(check_egress_db_traffic_in_nsg_or_seclist ${MANAGED_SRV_NSG_OCID}  "nsg" ${db_subnet_cidr_block} ${DB_PORT})
-  else
-    res=$(validate_db_egress_rule ${WLS_SUBNET_OCID} ${db_subnet_cidr_block} ${DB_PORT})
-  fi
 
-  if [[ $res -ne 0 ]]; then
-    echo "ERROR: Egress rule - DB port ${DB_PORT} is not open for access by DB Subnet CIDR [${db_subnet_cidr_block}] in WLS Subnet [${WLS_SUBNET_OCID}] or in WLS NSG [${MANAGED_SRV_NSG_OCID}]."
-    validation_return_code=2
-  fi
+  #####################################################################################################################
+  # This block of code is currently commented out since we are setting a broader egress rule which is open for
+  # all protocols on all ports. Later when we allow the customers to narrow down the egress rule to specific
+  # ports and specific protocols we can uncomment the below code as this would check for the egress rule on WLS
+  # subnet side for DB port
+  ######################################################################################################################
+  # Check if Egress rule to DB port is present in WLS subnet security list or Managed Server NSG
+#  db_subnet_cidr_block=$(oci network subnet get --subnet-id ${ocidb_subnet_ocid} | jq -r '.data["cidr-block"]')
+#  if [[ -n ${MANAGED_SRV_NSG_OCID} ]]; then
+#    res=$(check_egress_db_traffic_in_nsg_or_seclist ${MANAGED_SRV_NSG_OCID}  "nsg" ${db_subnet_cidr_block} ${DB_PORT})
+#  else
+#    res=$(validate_db_egress_rule ${WLS_SUBNET_OCID} ${db_subnet_cidr_block} ${DB_PORT})
+#  fi
+#
+#  if [[ $res -ne 0 ]]; then
+#    echo "ERROR: Egress rule - DB port ${DB_PORT} is not open for access by DB Subnet CIDR [${db_subnet_cidr_block}] in WLS Subnet [${WLS_SUBNET_OCID}] or in WLS NSG [${MANAGED_SRV_NSG_OCID}]."
+#    validation_return_code=2
+#  fi
 fi
 
 ### Validation - Only when ATP DB OCID is provided ###
@@ -1293,7 +1309,7 @@ if [[ -n ${ATPDB_OCID} ]]
 then
   atp_subnet_ocid=$(oci db autonomous-database get --autonomous-database-id ${ATPDB_OCID} | jq -r '.data["subnet-id"]')
   atp_nsg_ocid=$(oci db autonomous-database get --autonomous-database-id ${ATPDB_OCID} | jq -c '.data["nsg-ids"]')
-  if [[ $atp_subnet_ocid != null ]]; then
+  if [[ -n "${atp_subnet_ocid}" && "${atp_subnet_ocid}" != "null" ]]; then
     # Check if ATP DB port is open for access by WLS subnet CIDR in DB subnet/NSG
     res=$(validate_atpdb_port_access ${atp_subnet_ocid} ${ATPDB_OCID} ${wls_subnet_cidr_block})
     if [[ $res -ne 0 ]]; then
@@ -1336,18 +1352,19 @@ then
         validation_return_code=2
       fi
     fi
-  fi
-  # Check if Egress rule to DB port is present in WLS subnet security list or Managed Server NSG
-  db_subnet_cidr_block=$(oci network subnet get --subnet-id ${atp_subnet_ocid} | jq -r '.data["cidr-block"]')
-  if [[ -n ${MANAGED_SRV_NSG_OCID} ]]; then
-    res=$(check_egress_db_traffic_in_nsg_or_seclist ${MANAGED_SRV_NSG_OCID}  "nsg" ${db_subnet_cidr_block} ${ATP_DB_PORT})
-  else
-    res=$(validate_db_egress_rule ${WLS_SUBNET_OCID} ${db_subnet_cidr_block} ${ATP_DB_PORT})
-  fi
+    # Check egress only for an ATP database with a private endpoint. Public ATP
+    # databases have no subnet-id, which OCI CLI renders as the string "null".
+    db_subnet_cidr_block=$(oci network subnet get --subnet-id ${atp_subnet_ocid} | jq -r '.data["cidr-block"]')
+    if [[ -n ${MANAGED_SRV_NSG_OCID} ]]; then
+      res=$(check_egress_db_traffic_in_nsg_or_seclist ${MANAGED_SRV_NSG_OCID}  "nsg" ${db_subnet_cidr_block} ${ATP_DB_PORT})
+    else
+      res=$(validate_db_egress_rule ${WLS_SUBNET_OCID} ${db_subnet_cidr_block} ${ATP_DB_PORT})
+    fi
 
-  if [[ $res -ne 0 ]]; then
-    echo "ERROR: Egress rule - DB port ${DB_PORT} is not open for access by DB Subnet CIDR [${db_subnet_cidr_block}] in WLS Subnet [${WLS_SUBNET_OCID}] or in WLS NSG [${MANAGED_SRV_NSG_OCID}]."
-    validation_return_code=2
+    if [[ $res -ne 0 ]]; then
+      echo "ERROR: Egress rule - DB port ${ATP_DB_PORT} is not open for access by DB Subnet CIDR [${db_subnet_cidr_block}] in WLS Subnet [${WLS_SUBNET_OCID}] or in WLS NSG [${MANAGED_SRV_NSG_OCID}]."
+      validation_return_code=2
+    fi
   fi
 fi
 
@@ -1451,7 +1468,7 @@ then
           done
         elif [[ $res -ne 0 ]]
         then
-          echo "ERROR: Port ${ADMIN_HTTPS_PORT} is not open for access by [$bastion_cidr_block] in WLS Subnet [$WLS_SUBNET_OCID]. ${NETWORK_VALIDATION_MSG}"
+          echo "ERROR: Port ${ADMIN_HTTPS_PORT} is not open for access by bastion subnet cidr [$bastion_cidr_block] in WLS Subnet [$WLS_SUBNET_OCID]. ${NETWORK_VALIDATION_MSG}"
           validation_return_code=2
         fi
       fi
@@ -1466,7 +1483,7 @@ then
           done
         elif [[ $res -ne 0 ]]
         then
-          echo "ERROR: Port ${ADMIN_HTTPS_PORT} is not open for access by [$bastion_cidr_block] in Admin Server NSG [$ADMIN_SRV_NSG_OCID]. ${NETWORK_VALIDATION_MSG}"
+          echo "ERROR: Port ${ADMIN_HTTPS_PORT} is not open for access by bastion subnet cidr [$bastion_cidr_block] in Admin Server NSG [$ADMIN_SRV_NSG_OCID]. ${NETWORK_VALIDATION_MSG}"
           validation_return_code=2
         fi
       fi

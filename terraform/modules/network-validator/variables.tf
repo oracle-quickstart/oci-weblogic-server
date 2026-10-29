@@ -1,4 +1,4 @@
-# Copyright (c) 2023, Oracle and/or its affiliates.
+# Copyright (c) 2023, 2026, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 variable "wls_subnet_id" {
@@ -89,4 +89,20 @@ variable "existing_bastion_nsg_id" {
 variable "lb_source_cidr" {
   type        = string
   description = "Set to empty value if loadbalancer is set to private"
+}
+
+variable "secure_mode" {
+  type = bool
+  description = "Indicates whether the secure mode is enabled or not"
+}
+
+variable "idcs_cloudgate_port" {
+  type        = number
+  description = "The listen port for the Identity Cloud Service App Gateway, which authenticates requests and redirects them to WebLogic Server"
+}
+
+variable "administration_port" {
+  type        = number
+  description = "The domain-wide administration port to configure a secure WebLogic domain"
+  default     = 9002
 }
