@@ -1,3 +1,6 @@
+# Copyright (c) 2023, 2026, Oracle and/or its affiliates.
+# Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
+
 locals {
   all_tenancy_osmh_software_sources = data.oci_os_management_hub_software_sources.all_tenancy_osmh_software_sources.software_source_collection[0].items
   software_source_names = [
@@ -11,8 +14,15 @@ locals {
     "ol8_mysql80_community-x86_64"
   ]
 
+  software_source_id_by_name = {
+    for src in local.all_tenancy_osmh_software_sources :
+    src.display_name => src.id
+  }
+
   filtered_sources = [
-    for src in local.all_tenancy_osmh_software_sources : src.id
-    if contains(local.software_source_names, src.display_name)
+    for name in local.software_source_names :
+    local.software_source_id_by_name[name]
+    if contains(keys(local.software_source_id_by_name), name)
   ]
 }
+

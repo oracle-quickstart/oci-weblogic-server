@@ -1,4 +1,4 @@
-# Copyright (c) 2023, Oracle and/or its affiliates.
+# Copyright (c) 2023, 2026, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 locals {
@@ -14,10 +14,12 @@ locals {
   validation_script_oci_db_dbsystem_id_param             = var.oci_db_dbsystem_id != "" ? format("--ocidbid %s", var.oci_db_dbsystem_id) : ""
   validation_script_oci_db_port_param                    = var.oci_db_port != 0 ? format("--ocidbport %s", var.oci_db_port) : ""
   validation_script_http_port_param                      = var.wls_extern_admin_port != "" ? format("--http_port %s", var.wls_extern_admin_port) : ""
-  validation_script_https_port_param                     = var.wls_extern_ssl_admin_port != "" ? format("--https_port %s", var.wls_extern_ssl_admin_port) : ""
+  validation_script_https_port_param                     = var.secure_mode ? format("--https_port %s", var.administration_port) : (var.wls_extern_ssl_admin_port != "" ? format("--https_port %s", var.wls_extern_ssl_admin_port) : "")
   validation_script_existing_admin_server_nsg_id_param   = var.existing_admin_server_nsg_id != "" ? format("--adminsrvnsg %s", var.existing_admin_server_nsg_id) : ""
   validation_script_existing_managed_server_nsg_id_param = var.existing_managed_server_nsg_id != "" ? format("--managedsrvnsg %s", var.existing_managed_server_nsg_id) : ""
   validation_script_existing_lb_nsg_id_param             = var.existing_lb_nsg_id != "" ? format("--lbnsg %s", var.existing_lb_nsg_id) : ""
   validation_script_existing_mount_target_nsg_id_param   = var.existing_mount_target_nsg_id != "" ? format("--fssnsg %s", var.existing_mount_target_nsg_id) : ""
   validation_script_existing_bastion_nsg_id_param        = var.existing_bastion_nsg_id != "" ? format("--bastionnsg %s", var.existing_bastion_nsg_id) : ""
+  validation_script_secure_mode_param                    = var.secure_mode != "" ? format("--securemode %s", var.secure_mode) : ""
+  validation_script_idcs_cloudgate_port_param            = var.idcs_cloudgate_port != "" ? format("--idcs_port %s", var.idcs_cloudgate_port) : ""
 }
