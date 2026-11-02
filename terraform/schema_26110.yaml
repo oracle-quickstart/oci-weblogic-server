@@ -881,7 +881,7 @@ variables:
     visible: ${orm_create_mode}
     type: boolean
     required: true
-    default: false
+    default: true
     title: "Enable Secured Production Mode"
     description: "Configure a secure domain"
 
