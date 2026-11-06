@@ -216,6 +216,12 @@ variable "log_level" {
   default     = "INFO"
 }
 
+variable "deploy_hosted_console" {
+  type        = bool
+  description = "Set to true to deploy the hosted console"
+  default     = false
+}
+
 variable "deploy_sample_app" {
   type        = bool
   description = "Set to true if you want to have a sample application deployed to the WebLogic domain after creating it, to validate the domain was started successfully. This option is ignored for Standard Edition"

@@ -14,27 +14,27 @@ output "is_vcn_peered" {
 }
 
 output "fss_system_id" {
-  value = var.existing_fss_id != "" ? var.existing_fss_id : (var.add_fss ? module.fss[0].fss_id : "")
+  value = var.existing_fss_id != "" ? var.existing_fss_id : (var.add_fss ? module.fss[0].fss_id : null)
 }
 
 output "mount_target_id" {
-  value = var.add_fss ? (var.mount_target_id != "" ? var.mount_target_id : module.fss[0].mount_target_id) : ""
+  value = var.add_fss ? (var.mount_target_id != "" ? var.mount_target_id : module.fss[0].mount_target_id) : null
 }
 
 output "load_balancer_id" {
-  value = local.lb_id
+  value = local.lb_id != "" ? local.lb_id : null
 }
 
 output "load_balancer_ip" {
-  value = local.lb_ip
+  value = local.lb_ip != "" ? local.lb_ip : null
 }
 
 output "bastion_instance_id" {
-  value = element(concat(module.bastion[*].id, data.oci_core_instance.existing_bastion_instance.*.id, [""]), 0)
+  value = element(concat(module.bastion[*].id, data.oci_core_instance.existing_bastion_instance.*.id, [null]), 0)
 }
 
 output "bastion_instance_public_ip" {
-  value = local.bastion_public_ip
+  value = local.bastion_public_ip != "" ? local.bastion_public_ip : null
 }
 
 output "weblogic_instances" {
@@ -63,27 +63,27 @@ output "webLogic_server_domain_configuration" {
 }
 
 output "weblogic_server_administration_console" {
-  value = local.admin_console_app_url
+  value = local.admin_console_app_url != "" ? local.admin_console_app_url : null
 }
 
 output "fusion_middleware_control_console" {
-  value = local.fmw_console_app_url
+  value = local.fmw_console_app_url != "" ? local.fmw_console_app_url : null
 }
 
 output "sample_application" {
-  value = local.sample_app_url
+  value = local.sample_app_url != "" ? local.sample_app_url : null
 }
 
 output "sample_application_protected_by_idcs" {
-  value = local.sample_idcs_app_url
+  value = local.sample_idcs_app_url != "" ? local.sample_idcs_app_url : null
 }
 
 output "listing_version" {
-  value = var.tf_script_version
+  value = var.tf_script_version != "" ? var.tf_script_version : null
 }
 
 output "provisioning_status" {
-  value = local.async_prov_mode
+  value = local.async_prov_mode != "" ? local.async_prov_mode : null
 }
 
 output "jdk_version" {
@@ -91,27 +91,27 @@ output "jdk_version" {
 }
 
 output "rms_private_endpoint_id" {
-  value = var.is_rms_private_endpoint_required ? local.add_new_rms_private_endpoint ? module.rms-private-endpoint[0].rms_private_endpoint_id : var.rms_existing_private_endpoint_id : ""
+  value = var.is_rms_private_endpoint_required ? (local.add_new_rms_private_endpoint ? module.rms-private-endpoint[0].rms_private_endpoint_id : (var.rms_existing_private_endpoint_id != "" ? var.rms_existing_private_endpoint_id : null)) : null
 }
 
 output "weblogic_agent_configuration_id" {
-  value = element(concat(module.observability-logging[*].agent_config_id, [""]), 0)
+  value = element(concat(module.observability-logging[*].agent_config_id, [null]), 0)
 }
 
 output "weblogic_log_group_id" {
-  value = element(concat(module.observability-common[*].log_group_id, [""]), 0)
+  value = element(concat(module.observability-common[*].log_group_id, [null]), 0)
 }
 
 output "weblogic_log_id" {
-  value = element(concat(module.observability-logging[*].log_id, [""]), 0)
+  value = element(concat(module.observability-logging[*].log_id, [null]), 0)
 }
 
 output "ssh_command" {
-  value = local.ssh_proxyjump_access
+  value = local.ssh_proxyjump_access != "" ? local.ssh_proxyjump_access : null
 }
 
 output "ssh_command_with_dynamic_port_forwarding" {
-  value = local.ssh_dp_fwd
+  value = local.ssh_dp_fwd != "" ? local.ssh_dp_fwd : null
 }
 
 output "resource_identifier_value" {
@@ -119,13 +119,13 @@ output "resource_identifier_value" {
 }
 
 output "autoscaling_scaleout_monitoring_alarm_id" {
-  value = element(concat(module.observability-autoscaling[*].scaleout_monitoring_alarm, [""]), 0)
+  value = element(concat(module.observability-autoscaling[*].scaleout_monitoring_alarm, [null]), 0)
 }
 
 output "autoscaling_scalein_monitoring_alarm_id" {
-  value = element(concat(module.observability-autoscaling[*].scalein_monitoring_alarm, [""]), 0)
+  value = element(concat(module.observability-autoscaling[*].scalein_monitoring_alarm, [null]), 0)
 }
 
 output "autoscaling_function_application_id" {
-  value = element(concat(module.observability-autoscaling[*].autoscaling_function_application_id, [""]), 0)
+  value = element(concat(module.observability-autoscaling[*].autoscaling_function_application_id, [null]), 0)
 }

@@ -97,6 +97,7 @@ module "wls-instances" {
       data_vol_device      = lookup(var.volume_map[1], "device")
       data_volume          = module.data-volume.data_volume_ids[x / var.num_volumes]
 
+      deploy_hosted_console              = var.deploy_hosted_console
       deploy_sample_app                  = var.deploy_sample_app
       domain_dir                         = var.domain_dir
       logs_dir                           = var.logs_dir
