@@ -93,7 +93,8 @@ locals {
   deploy_sample_app = (var.deploy_sample_app && var.wls_edition != "SE")
 
   admin_ip_address      = local.assign_weblogic_public_ip ? module.compute.instance_public_ips[0] : module.compute.instance_private_ips[0]
-  admin_console_app_url = format("https://%s:%s/console", local.admin_ip_address, local.wls_extern_ssl_admin_port)
+  admin_console_path    = var.wls_version == "12.2.1.4" ? "/console" : (var.deploy_hosted_console ? "/rconsole" : "")
+  admin_console_app_url = local.admin_console_path != "" ? format("https://%s:%s%s", local.admin_ip_address, local.wls_extern_ssl_admin_port, local.admin_console_path) : ""
   sample_app_protocol   = local.add_load_balancer ? "https" : "http"
   sample_app_url_lb_ip  = local.deploy_sample_app && local.add_load_balancer ? format("%s://%s/sample-app", local.sample_app_protocol, local.lb_ip) : ""
   sample_app_url_wls_ip = local.deploy_sample_app ? format("https://%s:%s/sample-app", local.admin_ip_address, var.wls_ms_extern_ssl_port) : ""
