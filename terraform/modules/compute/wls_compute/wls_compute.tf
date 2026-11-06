@@ -82,7 +82,7 @@ module "wls-instances" {
       wls_secondary_admin_user           = var.wls_secondary_admin_user
       wls_secondary_admin_password_ocid  = var.wls_secondary_admin_password_id
 
-      user_data            = data.template_cloudinit_config.config.rendered
+      user_data            = data.cloudinit_config.config.rendered
       mode                 = var.mode
       wls_version          = var.wls_version
       wls_14c_jdk_version  = var.wls_14c_jdk_version
@@ -97,6 +97,7 @@ module "wls-instances" {
       data_vol_device      = lookup(var.volume_map[1], "device")
       data_volume          = module.data-volume.data_volume_ids[x / var.num_volumes]
 
+      deploy_hosted_console              = var.deploy_hosted_console
       deploy_sample_app                  = var.deploy_sample_app
       domain_dir                         = var.domain_dir
       logs_dir                           = var.logs_dir
@@ -167,7 +168,7 @@ module "wls-instances" {
       atp_db_level          = var.jrf_parameters.atp_db_parameters.atp_db_level
       is_atp_dedicated      = local.is_atp_db ? lookup(data.oci_database_autonomous_database.atp_db[0], "is_dedicated") : false
       atp_private_end_point = element(coalescelist(data.oci_database_autonomous_database.atp_db.*.private_endpoint, [""]), 0)
-      atp_nsg_id            = local.is_atp_db && !local.is_db_deleted ? data.template_file.atp_nsg_id[0].rendered : ""
+      atp_nsg_id            = local.is_atp_db && !local.is_db_deleted ? (length(data.oci_database_autonomous_database.atp_db[0].nsg_ids) > 0 ? data.oci_database_autonomous_database.atp_db[0].nsg_ids[0] : "") : ""
 
       # TODO: These variables are hardcoded to allow creating instances without app db. Remove them once app db code is removed from image
       is_atp_app_db       = "false"

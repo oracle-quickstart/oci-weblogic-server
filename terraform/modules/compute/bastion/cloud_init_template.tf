@@ -1,7 +1,7 @@
 # Copyright (c) 2023, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl.
 
-data "template_cloudinit_config" "bastion-config" {
+data "cloudinit_config" "bastion-config" {
   gzip          = true
   base64_encode = true
 
@@ -11,7 +11,7 @@ data "template_cloudinit_config" "bastion-config" {
   part {
     filename     = "ainit.sh"
     content_type = "text/x-shellscript"
-    content      = data.template_file.bastion_key_script.rendered
+    content      = local.bastion_key_script
   }
 
   part {

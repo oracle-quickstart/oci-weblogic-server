@@ -6,12 +6,10 @@ data "oci_identity_availability_domains" "ADs" {
   compartment_id = var.tenancy_id
 }
 
-data "template_file" "bastion_key_script" {
-  template = file("${path.module}/templates/bastion-keys.tpl")
-
-  vars = {
+locals {
+  bastion_key_script = templatefile("${path.module}/templates/bastion-keys.tpl", {
     pubKey = local.bastion_public_ssh_key
-  }
+  })
 }
 
 data "oci_core_shapes" "oci_shapes" {

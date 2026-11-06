@@ -5,7 +5,6 @@ locals {
   service_name_prefix = replace(var.service_name, "/[^a-zA-Z0-9]/", "")
 
   home_region                  = lookup(data.oci_identity_regions.home_region.regions[0], "name")
-  ad_names                     = compact(data.template_file.ad_names.*.rendered)
   export_path                  = format("/%s", var.service_name)
   vm_instance_image_id         = var.terms_and_conditions ? var.ucm_instance_image_id : var.instance_image_id
   add_existing_mount_target    = (var.add_existing_mount_target || var.add_existing_fss)
@@ -93,7 +92,8 @@ locals {
   deploy_sample_app = (var.deploy_sample_app && var.wls_edition != "SE")
 
   admin_ip_address      = local.assign_weblogic_public_ip ? module.compute.instance_public_ips[0] : module.compute.instance_private_ips[0]
-  admin_console_app_url = format("https://%s:%s/console", local.admin_ip_address, local.wls_extern_ssl_admin_port)
+  admin_console_path    = var.wls_version == "12.2.1.4" ? "/console" : (var.deploy_hosted_console ? "/rconsole" : "")
+  admin_console_app_url = local.admin_console_path != "" ? format("https://%s:%s%s", local.admin_ip_address, local.wls_extern_ssl_admin_port, local.admin_console_path) : ""
   sample_app_protocol   = local.add_load_balancer ? "https" : "http"
   sample_app_url_lb_ip  = local.deploy_sample_app && local.add_load_balancer ? format("%s://%s/sample-app", local.sample_app_protocol, local.lb_ip) : ""
   sample_app_url_wls_ip = local.deploy_sample_app ? format("https://%s:%s/sample-app", local.admin_ip_address, var.wls_ms_extern_ssl_port) : ""
