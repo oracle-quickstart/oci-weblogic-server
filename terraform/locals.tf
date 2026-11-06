@@ -5,6 +5,7 @@ locals {
   service_name_prefix = replace(var.service_name, "/[^a-zA-Z0-9]/", "")
 
   home_region                  = lookup(data.oci_identity_regions.home_region.regions[0], "name")
+  ad_names                     = compact(data.template_file.ad_names.*.rendered)
   export_path                  = format("/%s", var.service_name)
   vm_instance_image_id         = var.terms_and_conditions ? var.ucm_instance_image_id : var.instance_image_id
   add_existing_mount_target    = (var.add_existing_mount_target || var.add_existing_fss)

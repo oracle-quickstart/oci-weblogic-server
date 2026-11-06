@@ -6,11 +6,9 @@ data "oci_identity_fault_domains" "wls_fault_domains" {
   compartment_id      = var.compartment_id
 }
 
-locals {
-  ad_names = compact([
-    for i in range(var.num_ads) :
-    (length(regexall("^.*Flex", var.instance_shape.instanceShape)) > 0 || length(regexall("^BM.*", var.instance_shape.instanceShape)) > 0 || (tonumber(lookup(data.oci_limits_limit_values.compute_shape_service_limits[i].limit_values[0], "value")) > 0)) ? lookup(data.oci_identity_availability_domains.ADs.availability_domains[i], "name") : ""
-  ])
+data "template_file" "ad_names" {
+  count    = var.num_ads
+  template = (length(regexall("^.*Flex", var.instance_shape.instanceShape)) > 0 || length(regexall("^BM.*", var.instance_shape.instanceShape)) > 0 || (tonumber(lookup(data.oci_limits_limit_values.compute_shape_service_limits[count.index].limit_values[0], "value")) > 0)) ? lookup(data.oci_identity_availability_domains.ADs.availability_domains[count.index], "name") : ""
 }
 
 data "oci_identity_availability_domains" "ADs" {
@@ -26,18 +24,25 @@ data "oci_limits_limit_values" "compute_shape_service_limits" {
   name                = length(regexall("^.*Flex", var.instance_shape.instanceShape)) > 0 || length(regexall("^BM.*", var.instance_shape.instanceShape)) > 0 ? "" : format("%s-count", replace(var.instance_shape.instanceShape, ".", "-"))
 }
 
-locals {
-  key_script = templatefile("${path.module}/templates/keys.tpl", {
+data "template_file" "key_script" {
+  template = file("${path.module}/templates/keys.tpl")
+
+  vars = {
     pubKey = local.opc_key["public_key_openssh"]
 
     oracleKey    = local.oracle_key["public_key_openssh"]
     oraclePriKey = local.oracle_key["private_key_pem"]
-  })
+  }
 }
 
 data "oci_database_autonomous_database" "atp_db" {
   count                  = local.is_atp_db ? 1 : 0
   autonomous_database_id = var.jrf_parameters.atp_db_parameters.atp_db_id
+}
+
+data "template_file" "atp_nsg_id" {
+  count    = local.is_atp_db ? 1 : 0
+  template = length(data.oci_database_autonomous_database.atp_db[0].nsg_ids) > 0 ? data.oci_database_autonomous_database.atp_db[0].nsg_ids[0] : ""
 }
 
 data "oci_core_subnet" "wls_subnet" {
@@ -60,6 +65,6 @@ data "oci_database_database" "ocidb_database" {
 }
 
 data "oci_database_db_home" "ocidb_db_home" {
-  count      = local.is_ocidb_system_id_available ? 1 : 0
+  count      = local.is_ocidb_system_id_available  ? 1 : 0
   db_home_id = data.oci_database_database.ocidb_database[0].db_home_id
 }

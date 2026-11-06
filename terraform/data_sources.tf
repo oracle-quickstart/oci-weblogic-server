@@ -43,11 +43,9 @@ data "oci_core_subnet" "lb_subnet_2_id" {
   subnet_id = var.lb_subnet_2_id
 }
 
-locals {
-  ad_names = compact([
-    for i in range(length(data.oci_identity_availability_domains.ADs.availability_domains)) :
-    (length(regexall("^.*Flex", local.instance_shape.instanceShape)) > 0 || length(regexall("^BM.*", local.instance_shape.instanceShape)) > 0 || (tonumber(lookup(data.oci_limits_limit_values.compute_shape_service_limits[i].limit_values[0], "value")) > 0)) ? lookup(data.oci_identity_availability_domains.ADs.availability_domains[i], "name") : ""
-  ])
+data "template_file" "ad_names" {
+  count    = length(data.oci_identity_availability_domains.ADs.availability_domains)
+  template = (length(regexall("^.*Flex", local.instance_shape.instanceShape)) > 0 || length(regexall("^BM.*", local.instance_shape.instanceShape)) > 0 || (tonumber(lookup(data.oci_limits_limit_values.compute_shape_service_limits[count.index].limit_values[0], "value")) > 0)) ? lookup(data.oci_identity_availability_domains.ADs.availability_domains[count.index], "name") : ""
 }
 
 data "oci_identity_availability_domains" "ADs" {
