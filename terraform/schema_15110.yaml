@@ -22,6 +22,7 @@ groupings:
       - ${use_autoscaling}
       - ${add_fss}
       - ${configure_secure_mode}
+      - ${deploy_hosted_console}
 
   - title: "Virtual Cloud Networking"
     variables:
@@ -687,6 +688,13 @@ variables:
     title: "WebLogic Managed Server External SSL Port"
     description: "The managed server SSL port on which to send application traffic"
     required: true
+
+  deploy_hosted_console:
+    visible: ${orm_create_mode}
+    type: boolean
+    default: false
+    title: "Deploy Hosted Remote Console"
+    description: "Deploy the Hosted WebLogic Remote Console (browser-based) on the Administration Server"
 
   deploy_sample_app:
     visible:
