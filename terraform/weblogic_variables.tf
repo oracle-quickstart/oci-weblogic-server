@@ -202,6 +202,12 @@ variable "allow_manual_domain_extension" {
   default     = false
 }
 
+variable "deploy_hosted_console" {
+  type        = bool
+  description = "Set to true to deploy the hosted console"
+  default     = false
+}
+
 variable "deploy_sample_app" {
   type        = bool
   description = "Set to true to install a sample application in the WebLogic domain"
