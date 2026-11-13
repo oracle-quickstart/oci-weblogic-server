@@ -2262,7 +2262,7 @@ variables:
     minLength: 1
     maxLength: 1024
     title: "IDCS Host Domain Name"
-    description: "The domain name for the host that you use to access Identity Cloud Service"
+    description: "In the OCI Console, open your identity domain and select Details. From the Domain URL, enter the host domain name after idcs-{guid}. For example, for https://idcs-{guid}.identity.oraclecloud.com:443, enter identity.oraclecloud.com."
     required: true
     default: "identity.oraclecloud.com"
 
@@ -2278,7 +2278,7 @@ variables:
     maximum: 65535
     multipleOf: 1
     title: "IDCS Port"
-    description: "The port number that you use to access Identity Cloud Service"
+    description: "The HTTPS port used to access your identity domain. In the OCI Console, you can find the Domain URL on your identity domain's Details page. For example, https://idcs-{guid}.identity.oraclecloud.com:443 uses port 443."
     required: true
 
   idcs_tenant:
@@ -2291,7 +2291,7 @@ variables:
     minLength: 1
     maxLength: 1024
     title: "IDCS Tenant"
-    description: "The ID of your Identity Cloud Service tenant, which typically has the format idcs-{guid}, and is part of the host name that you use to access Identity Cloud Service"
+    description: "In the OCI Console, open your identity domain and select Details. From the Domain URL, copy the first part of the host name, including the idcs- prefix. For example, for https://idcs-{guid}.identity.oraclecloud.com:443, enter idcs-{guid}."
     required: true
 
   idcs_client_id:
@@ -2304,7 +2304,7 @@ variables:
     minLength: 1
     maxLength: 1024
     title: "IDCS Client ID"
-    description: "The client ID of a confidential application in Identity Cloud Service that is used to create the necessary artifacts in Identity Cloud Service. This application needs to be configured as client, and has to be granted with access to Identity Cloud Service Admin APIs, with Identity Domain Administrator app role. See <a target=\"_blank\" href=\"https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/you-begin-oracle-weblogic-cloud.html#GUID-807D5863-04A3-47A3-8D65-443B859B80FD\">Create a Confidential Application</a>."
+    description: "In the OCI Console, open your identity domain, select Integrated applications, and select your confidential application. Open OAuth configuration and copy the Client ID. This application is used to create the necessary artifacts in Identity Cloud Service. It must be configured as a client and granted access to Identity Cloud Service Admin APIs with the Identity Domain Administrator app role. See <a target=\"_blank\" href=\"https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/you-begin-oracle-weblogic-cloud.html#GUID-807D5863-04A3-47A3-8D65-443B859B80FD\">Create a Confidential Application</a>."
     required: true
 
   idcs_secret_compartment_id:
