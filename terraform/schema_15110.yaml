@@ -1807,7 +1807,7 @@ variables:
     minLength: 1
     maxLength: 1024
     title: "IDCS Host Domain Name"
-    description: "n the OCI Console, open your identity domain and select Details. From the Domain URL, enter the host domain name after idcs-{guid}. For example, for https://idcs-{guid}.identity.oraclecloud.com:443, enter identity.oraclecloud.com."
+    description: "Enter the DNS suffix from your identity domain’s Domain URL. In the OCI Console, go to Identity & Security → Domains, select your identity domain, and locate Domain URL on the details page. For example, if the URL is https://idcs-<identifier>.identity.oraclecloud.com, enter identity.oraclecloud.com. Do not include the idcs-<identifier> prefix, https://, port, or URL path."
     required: true
     default: "identity.oraclecloud.com"
 
@@ -1823,7 +1823,7 @@ variables:
     maximum: 65535
     multipleOf: 1
     title: "IDCS Port"
-    description: "The HTTPS port used to access your identity domain. In the OCI Console, you can find the Domain URL on your identity domain's Details page. For example, https://idcs-{guid}.identity.oraclecloud.com:443 uses port 443."
+    description: "Enter the HTTPS port for your identity domain. Use 443 unless your Domain URL explicitly specifies a different port. If the URL does not show a port, use 443. This is the identity domain endpoint port, not a WebLogic Server or App Gateway port."
     required: true
 
   idcs_tenant:
@@ -1836,7 +1836,7 @@ variables:
     minLength: 1
     maxLength: 1024
     title: "IDCS Tenant"
-    description: "In the OCI Console, open your identity domain and select Details. From the Domain URL, copy the first part of the host name, including the idcs- prefix. For example, for https://idcs-{guid}.identity.oraclecloud.com:443, enter idcs-{guid}."
+    description: "Enter the first component of the hostname in your identity domain’s Domain URL, including the idcs- prefix. For example, if the URL is https://idcs-<identifier>.identity.oraclecloud.com, enter idcs-<identifier>. Do not enter your OCI tenancy name, identity domain display name, or an OCID."
     required: true
 
   idcs_client_id:
@@ -1849,7 +1849,7 @@ variables:
     minLength: 1
     maxLength: 1024
     title: "IDCS Client ID"
-    description: "In the OCI Console, open your identity domain, select Integrated applications, and select your confidential application. Open OAuth configuration and copy the Client ID. This application is used to create the necessary artifacts in Identity Cloud Service. It must be configured as a client and granted access to Identity Cloud Service Admin APIs with the Identity Domain Administrator app role. See <a target=\"_blank\" href=\"https://docs.oracle.com/en/cloud/paas/weblogic-cloud/user/you-begin-oracle-weblogic-cloud.html#GUID-807D5863-04A3-47A3-8D65-443B859B80FD\">Create a Confidential Application</a>."
+    description: "Enter the Client ID of an activated confidential application in the Identity domain. In OCI console, go to Identity & Security --> Domains --> Select your identity domain -->Integrated applications --> Select your confidential application -->OAuth Configuration. Copy the Client ID. The applications must have the client credentials grant enabled and the Identity Domain Administrator application role for the stack to create the required Identity integration resources."
     required: true
 
   idcs_secret_compartment_id:
