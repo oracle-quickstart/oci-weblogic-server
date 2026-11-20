@@ -78,7 +78,7 @@ validate()
     echo "WebLogic version is not provided"
     help
     exit 1
-  elif [ "${WLS_VERSION}" != "12.2.1.4" ] && [ "${WLS_VERSION}" != "14.1.1.0" ] && [ "${WLS_VERSION}" != "14.1.2.0" ] && [ "${WLS_VERSION}" != "15.1.1.0" ]; then
+  elif [ "${WLS_VERSION}" != "12.2.1.4" ] && [ "${WLS_VERSION}" != "14.1.1.0" ] && [ "${WLS_VERSION}" != "14.1.2.0" ] && [ "${WLS_VERSION}" != "15.1.1.0" ] && [ "${WLS_VERSION}" != "26.1.0.0" ]; then
     echo "Please provide valid WebLogic version"
     help
     exit 1
@@ -97,6 +97,11 @@ validate()
   if [ "${BUNDLE_TYPE}" == "UCM" ] && [ "${WLS_EDITION}" == "SE" ]; then
     echo "Standard edition(SE) is not supported for UCM bundle. Please provide BYOL as bundle type"
     help
+    exit 1
+  fi
+
+  if [ "${BUNDLE_TYPE}" = "BYOL" ] && [ "${WLS_VERSION}" = "14.1.1.0" ]; then
+    echo "BYOL WebLogic 14.1.1.0 is excluded from release bundles" >&2
     exit 1
   fi
 }
@@ -783,17 +788,14 @@ if [ "${CREATE_ALL_BUNDLES}" == "true" ]; then
   create_ucm_suite_15110
   create_ucm_suite_26100
   create_byol_ee_12214
-  create_byol_ee_14110
   create_byol_ee_14120
   create_byol_ee_15110
   create_byol_ee_26100
   create_byol_suite_12214
-  create_byol_suite_14110
   create_byol_suite_14120
   create_byol_suite_15110
   create_byol_suite_26100
   create_byol_standard_12214
-  create_byol_standard_14110
   create_byol_standard_14120
   create_byol_standard_15110
   create_byol_standard_26100
@@ -829,8 +831,6 @@ else
     if [ "${WLS_EDITION}" == "EE" ]; then
       if [ "${WLS_VERSION}" == "12.2.1.4" ]; then
         create_byol_ee_12214
-      elif [ "${WLS_VERSION}" == "14.1.1.0" ]; then
-        create_byol_ee_14110
       elif [ "${WLS_VERSION}" == "14.1.2.0" ]; then
         create_byol_ee_14120
       elif [ "${WLS_VERSION}" == "26.1.0.0" ]; then
@@ -841,8 +841,6 @@ else
     elif [ "${WLS_EDITION}" == "SUITE" ]; then
       if [ "${WLS_VERSION}" == "12.2.1.4" ]; then
         create_byol_suite_12214
-      elif [ "${WLS_VERSION}" == "14.1.1.0" ]; then
-        create_byol_suite_14110
       elif [ "${WLS_VERSION}" == "14.1.2.0" ]; then
         create_byol_suite_14120
       elif [ "${WLS_VERSION}" == "26.1.0.0" ]; then
@@ -852,15 +850,13 @@ else
       fi
     else
       if [ "${WLS_VERSION}" == "12.2.1.4" ]; then
-        create_byol_se_12214
-      elif [ "${WLS_VERSION}" == "14.1.1.0" ]; then
-        create_byol_se_14110
+        create_byol_standard_12214
       elif [ "${WLS_VERSION}" == "14.1.2.0" ]; then
-        create_byol_se_14120
+        create_byol_standard_14120
       elif [ "${WLS_VERSION}" == "26.1.0.0" ]; then
-        create_byol_se_26100
+        create_byol_standard_26100
       else
-	      create_byol_se_15110
+	      create_byol_standard_15110
       fi
     fi
   fi

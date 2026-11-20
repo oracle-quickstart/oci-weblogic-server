@@ -49,7 +49,7 @@ groupings:
       - ${root_ca_id}
       - ${cert_compartment_id}
       - ${preserve_boot_properties}
-      - ${wls_26110_jdk_version}
+      - ${wls_26100_jdk_version}
       - ${deploy_sample_app}
       - ${wls_server_startup_args}
       - ${thread_pool_limit}
@@ -596,7 +596,7 @@ variables:
     dependsOn:
       compartmentId: ${wls_admin_secret_compartment_id}
 
-  wls_26110_jdk_version:
+  wls_26100_jdk_version:
     visible: ${orm_create_mode}
     type: enum
     title: "Java Development Kit version"
@@ -2361,5 +2361,5 @@ variables:
       - 14.1.1.0
       - 14.1.2.0
       - 15.1.1.0
-      - 26.1.1.0
+      - 26.1.0.0
     default: 12.2.1.4

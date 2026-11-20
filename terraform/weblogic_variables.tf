@@ -3,11 +3,11 @@
 
 variable "wls_version" {
   type        = string
-  description = "The WebLogic version to be installed for this stack. Accepted values are: 12.2.1.4, 14.1.1.0, 14.1.2.0, 15.1.1.0"
+  description = "The WebLogic version to be installed for this stack. Accepted values are: 12.2.1.4, 14.1.1.0, 14.1.2.0, 15.1.1.0, 26.1.0.0"
   default     = "12.2.1.4"
   validation {
-    condition     = contains(["12.2.1.4", "14.1.1.0","14.1.2.0","15.1.1.0"], var.wls_version)
-    error_message = "WLSC-ERROR: Allowed values for wls_version are 12.2.1.4, 14.1.1.0, 14.1.2.0, 15.1.1.0."
+    condition     = contains(["12.2.1.4", "14.1.1.0","14.1.2.0","15.1.1.0", "26.1.0.0"], var.wls_version)
+    error_message = "WLSC-ERROR: Allowed values for wls_version are 12.2.1.4, 14.1.1.0, 14.1.2.0, 15.1.1.0, 26.1.0.0."
   }
 }
 
@@ -286,4 +286,14 @@ variable "wls_secondary_admin_password_id" {
   type        = string
   description = "The OCID of the vault secret with the password for secondary WebLogic administration user"
   default     = ""
+}
+
+variable "wls_26100_jdk_version" {
+  type        = string
+  description = "JDK version for WebLogic 26.1.0.0. Allowed values: jdk21, jdk25"
+  default     = "jdk21"
+  validation {
+    condition     = contains(["jdk21", "jdk25"], var.wls_26100_jdk_version)
+    error_message = "WLSC-ERROR: Only jdk21 and jdk25 are supported with WebLogic version 26.1.0.0."
+  }
 }
