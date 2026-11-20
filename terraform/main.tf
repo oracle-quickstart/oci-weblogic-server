@@ -629,6 +629,7 @@ module "compute" {
   wls_14c_jdk_version       = var.wls_14c_jdk_version
   wls_14120_jdk_version     = var.wls_14120_jdk_version
   wls_15110_jdk_version     = var.wls_15110_jdk_version
+  wls_26100_jdk_version     = var.wls_26100_jdk_version
   wls_admin_user            = local.wls_admin_user
   wls_admin_password_id     = var.wls_admin_password_id
   wls_admin_server_name     = format("%s_adminserver", local.service_name_prefix)

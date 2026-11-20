@@ -124,7 +124,7 @@ create_26100_bundle()
 {
   cp -Rf ${SCRIPT_DIR}/../terraform/modules ${SCRIPT_DIR}/../terraform/*.tf ${SCRIPT_DIR}/../terraform/schema_26100.yaml ${TMP_BUILD}
   cp -f ${SCRIPT_DIR}/../terraform/orm/orm_provider.tf ${TMP_BUILD}/provider.tf
-  replace_15110_variables
+  replace_26100_variables
   (cd ${TMP_BUILD}; zip -r ${SCRIPT_DIR}/binaries/wlsoci-resource-manager-ee-26100.zip *; rm -Rf ${TMP_BUILD}/*)
 }
 

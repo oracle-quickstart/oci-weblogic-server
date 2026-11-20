@@ -167,10 +167,10 @@ variable "wls_admin_server_wait_timeout_mins" {
 
 variable "wls_version" {
   type        = string
-  description = "The WebLogic version to be installed in this instance. Accepted values are: 12.2.1.4, 14.1.1.0, 14.1.2.0, 15.1.1.0"
+  description = "The WebLogic version to be installed in this instance. Accepted values are: 12.2.1.4, 14.1.1.0, 14.1.2.0, 15.1.1.0, 26.1.0.0"
   validation {
-    condition     = contains(["12.2.1.4", "14.1.1.0", "14.1.2.0", "15.1.1.0"], var.wls_version)
-    error_message = "WLSC-ERROR: WebLogic Versions 12.2.1.4 , 14.1.1.0, 14.1.2.0, and 15.1.1.0 are the only versions supported."
+    condition     = contains(["12.2.1.4", "14.1.1.0", "14.1.2.0", "15.1.1.0", "26.1.0.0"], var.wls_version)
+    error_message = "WLSC-ERROR: WebLogic Versions 12.2.1.4 , 14.1.1.0, 14.1.2.0, 15.1.1.0, and 26.1.0.0 are the only versions supported."
   }
 }
 
@@ -210,6 +210,7 @@ variable "wls_version_to_fmw_map" {
     "14.1.1.0" = "/u01/zips/jcs/FMW/14.1.1.0.0/fmiddleware.zip"
     "14.1.2.0" = "/u01/zips/jcs/FMW/14.1.2.0.0/fmiddleware.zip"
     "15.1.1.0" = "/u01/zips/jcs/FMW/15.1.1.0.0/fmiddleware.zip"
+    "26.1.0.0" = "/u01/zips/jcs/FMW/26.1.0.0.0/fmiddleware.zip"
   }
 }
 
@@ -283,4 +284,22 @@ variable "wls_secondary_admin_user" {
 variable "wls_secondary_admin_password_id" {
   type        = string
   description = "The OCID of the vault secret with the password for secondary WebLogic administration user"
+}
+variable "wls_26100_jdk_version" {
+  type        = string
+  description = "JDK version for WebLogic 26.1.0.0. Allowed values: jdk21, jdk25"
+  default     = "jdk21"
+  validation {
+    condition     = contains(["jdk21", "jdk25"], var.wls_26100_jdk_version)
+    error_message = "WLSC-ERROR: Only jdk21 and jdk25 are supported with WebLogic version 26.1.0.0."
+  }
+}
+
+variable "wls_26100_to_jdk_map" {
+  type        = map(string)
+  description = "JDK payloads for WebLogic 26.1.0.0."
+  default = {
+    "jdk21" = "/u01/zips/jcs/JDK21.0/jdk.zip"
+    "jdk25" = "/u01/zips/jcs/JDK25.0/jdk.zip"
+  }
 }
