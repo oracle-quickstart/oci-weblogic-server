@@ -199,6 +199,7 @@ groupings:
       - ${log_level}
       - ${wls_14c_jdk_version}
       - ${wls_14120_jdk_version}
+      - ${wls_26100_jdk_version}
       #- ${instance_image_id}
       - ${marketplace_source_images}
       - ${use_regional_subnet}
