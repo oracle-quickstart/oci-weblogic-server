@@ -4,5 +4,5 @@
 tf_script_version        = "26.4.2-261120235720"
 use_marketplace_image    = true
 listing_id               = "ocid1.appcataloglisting.oc1..aaaaaaaaalcwal6mfwjbezzqyj3waoxrvigml4n3lcn3hfday3ozetjqn25a"
-listing_resource_version = "26.4.2-ol9.8-26.10.30-261119-0"
+listing_resource_version = "26.4.2-ol9.8-26.10.30-261120-0"
 instance_image_id        = "ocid1.image.oc1..aaaaaaaapqbqcu6rajiip2j27q2ltarqqeutb4b3vjx63icr5vrd2zed26da"
